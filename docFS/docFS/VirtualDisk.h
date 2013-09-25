@@ -30,19 +30,23 @@
 #include <string>
 
 class VirtualDisk {
-public:
-    explicit VirtualDisk(std::string new_disk_name);
-    VirtualDisk(std::string new_disk_name, unsigned int new_number_of_blocks, unsigned int new_block_size);
-    unsigned int get_block(unsigned int block_number, std::string& buffer);
-    unsigned int put_block(unsigned int block_number, std::string buffer);
-private:
-    inline unsigned int file_exists(std::string filename);
-    inline void create_file(std::string filename);
-    std::string disk_name;         // Filename of software disk
-    unsigned int number_of_blocks; // Number of blocks on disk
-    unsigned int block_size;       // Block size in bytes
+ public:
+  explicit VirtualDisk(std::string current_name);
+  VirtualDisk(std::string new_name,
+              unsigned int new_number_of_blocks,
+              unsigned int new_block_size);
+  unsigned int GetBlock(unsigned int block_number, std::string& buffer);
+  unsigned int PutBlock(unsigned int block_number, std::string buffer);
 
-    DISALLOW_COPY_AND_ASSIGN(VirtualDisk);
+  std::string GetName();
+  unsigned int GetNumberOfBlocks();
+  unsigned int GetBlockSize();
+ private:
+  std::string name;              // Filename of software disk
+  unsigned int number_of_blocks; // Number of blocks on disk
+  unsigned int block_size;       // Block size in bytes
+
+  DISALLOW_COPY_AND_ASSIGN(VirtualDisk);
 };
 
 #endif
