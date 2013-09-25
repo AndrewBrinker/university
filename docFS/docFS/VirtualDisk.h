@@ -20,8 +20,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#ifndef SDISK_H
-#define SDISK_H
+#ifndef VIRTUAL_DISK_H
+#define VIRTUAL_DISK_H
 
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \
   TypeName(const TypeName&);               \
@@ -29,20 +29,20 @@
 
 #include <string>
 
-class Sdisk {
+class VirtualDisk {
 public:
-    explicit Sdisk(std::string new_disk_name);
-    Sdisk(std::string new_disk_name, unsigned int new_number_of_blocks, unsigned int new_block_size);
-    unsigned int getblock(unsigned int block_number, std::string& buffer);
-    unsigned int putblock(unsigned int block_number, std::string buffer);
+    explicit VirtualDisk(std::string new_disk_name);
+    VirtualDisk(std::string new_disk_name, unsigned int new_number_of_blocks, unsigned int new_block_size);
+    unsigned int get_block(unsigned int block_number, std::string& buffer);
+    unsigned int put_block(unsigned int block_number, std::string buffer);
 private:
-    inline unsigned int fileexists(std::string filename);
-    inline void createfile(std::string filename);
+    inline unsigned int file_exists(std::string filename);
+    inline void create_file(std::string filename);
     std::string disk_name;         // Filename of software disk
     unsigned int number_of_blocks; // Number of blocks on disk
     unsigned int block_size;       // Block size in bytes
 
-    DISALLOW_COPY_AND_ASSIGN(Sdisk);
+    DISALLOW_COPY_AND_ASSIGN(VirtualDisk);
 };
 
 #endif

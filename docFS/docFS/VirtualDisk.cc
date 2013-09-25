@@ -20,7 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include "Sdisk.h"
+#include "VirtualDisk.h"
 #include <string>
 #include <fstream>
 #include <iostream>
@@ -31,10 +31,10 @@
 // it only attaches the instance to a disk that already exists.
 // It is the programmer's responsibility to make sure the name matches
 // the file you intend to access.
-Sdisk::Sdisk(std::string new_disk_name) {
+VirtualDisk::VirtualDisk(std::string new_disk_name) {
     disk_name = new_disk_name;
-    arch_file = disk_name + ".spc";
-    data_file = disk_name + ".dat";
+    std::string arch_file = disk_name + ".spc";
+    std::string data_file = disk_name + ".dat";
     
 }
 
@@ -42,40 +42,40 @@ Sdisk::Sdisk(std::string new_disk_name) {
 // Initializes a disk with a name, and a number of blocks of a certain size.
 // This constructor creates a new disk with the number of blocks and block size
 // given by the parameters.
-Sdisk::Sdisk(std::string new_disk_name,
+VirtualDisk::VirtualDisk(std::string new_disk_name,
              unsigned int new_number_of_blocks,
              unsigned int new_block_size) {
     disk_name = new_disk_name;
     number_of_blocks = new_number_of_blocks;
     block_size = new_block_size;
-    arch_file = disk_name + ".spc";
-    data_file = disk_name + ".dat";
+    std::string arch_file = disk_name + ".spc";
+    std::string data_file = disk_name + ".dat";
     
 }
 
 
 // Retrieves a block and stores it into the buffer.
 // It returns 1 if successful and 0 otherwise.
-unsigned int Sdisk::getblock(unsigned int block_number, std::string& buffer) {
+unsigned int VirtualDisk::get_block(unsigned int block_number, std::string& buffer) {
     return 1;
 }
 
 
 // Writes the buffer to the block.
 // Returns 1 if successful and 0 otherwise.
-unsigned int Sdisk::putblock(unsigned int block_number, std::string buffer) {
+unsigned int VirtualDisk::put_block(unsigned int block_number, std::string buffer) {
     return 1;
 }
 
 // Returns 1 is the file exists, 0 otherwise.
-inline unsigned int Sdisk::fileexists(std::string filename) {
+inline unsigned int VirtualDisk::file_exists(std::string filename) {
     std::ifstream file(filename.c_str());
     return file.good();
 }
 
 // Creates the given file if it doesn't already exist.
-inline void Sdisk::createfile(std::string filename) {
-    if(!Sdisk::fileexists(filename)) {
+inline void VirtualDisk::create_file(std::string filename) {
+    if(!VirtualDisk::file_exists(filename)) {
         std::ofstream file(filename.c_str());
         file.close();
     }

@@ -1,9 +1,10 @@
+CLASSES=VirtualDisk
+EXECUTABLE=run_this
+SOURCES=$(CLASSES).cc $(CLASSES).h test/$(CLASSES).cpp
 CC=g++
 CFLAGS=-c -pedantic -Wall -Wextra -Wcast-align -Wcast-qual -Wctor-dtor-privacy -Wdisabled-optimization -Wformat=2 -Winit-self -Wmissing-include-dirs -Wold-style-cast -Woverloaded-virtual -Wredundant-decls -Wshadow -Wsign-promo -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch-default -Wundef -Werror -Wno-unused
 LDFLAGS=
-SOURCES=main.cpp Sdisk.cc Sdisk.h
 OBJECTS=$(SOURCES:.cc=.o)
-EXECUTABLE=run_this
 
 all: $(SOURCES) $(EXECUTABLE)
 	

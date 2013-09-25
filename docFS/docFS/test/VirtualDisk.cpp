@@ -1,12 +1,12 @@
 #include <string>
 #include <iostream>
 #include <cassert>
-#include "Sdisk.h"
+#include "../VirtualDisk.h"
 
 int main() {
     // Create a new disk called test 1 with
     //   16 blocks of 32 bytes
-    Sdisk virtual_disk("test1", 16, 32);
+    VirtualDisk virtual_disk("test1", 16, 32);
 
     // Define input blocks
     std::string input_block_1 = "";
@@ -25,13 +25,13 @@ int main() {
     }
 
     // Put and get the block, and verify they are identical
-    virtual_disk.putblock(4, input_block_1);
-    virtual_disk.getblock(4, output_block_1);
+    virtual_disk.put_block(4, input_block_1);
+    virtual_disk.get_block(4, output_block_1);
     assert(input_block_1 == output_block_1);
 
     // Put and get the block, and verify they are identical
-    virtual_disk.putblock(8, input_block_2);
-    virtual_disk.getblock(8, output_block_2);
+    virtual_disk.put_block(8, input_block_2);
+    virtual_disk.get_block(8, output_block_2);
     assert(input_block_2 == output_block_2);
 
     std::cout << "All tests passed.";
