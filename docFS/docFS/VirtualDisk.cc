@@ -46,10 +46,10 @@ VirtualDisk::VirtualDisk(std::string current_name) {
 // This constructor creates a new disk with the number of blocks and block size
 // given by the parameters.
 VirtualDisk::VirtualDisk(std::string new_name,
-                         unsigned int new_number_of_blocks,
+                         unsigned int new_block_count,
                          unsigned int new_block_size) {
   name = new_name;
-  number_of_blocks = new_number_of_blocks;
+  block_count = new_block_count;
   block_size = new_block_size;
   std::string arch_file = name + ".spc";
   std::string data_file = name + ".dat";

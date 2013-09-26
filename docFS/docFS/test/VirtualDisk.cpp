@@ -34,7 +34,7 @@ int main(int argc, char** argv) {
   VirtualDisk disk1("test1", 16, 32);
 
   std::cout << "Name:             " << disk1.GetName() << std::endl;
-  std::cout << "Number of blocks: " << disk1.GetNumberOfBlocks() << std::endl;
+  std::cout << "Number of blocks: " << disk1.GetBlockCount() << std::endl;
   std::cout << "Block size:       " << disk1.GetBlockSize() << std::endl;
 
   // Define input blocks
