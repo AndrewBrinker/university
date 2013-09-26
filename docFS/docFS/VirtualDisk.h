@@ -20,6 +20,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+// This is the interface for the VirtualDisk class, which simulates a physical
+// disk by reading and writing to a data file. It also has an architecture file,
+// which contains information about the disk itself for persistence across
+// initializations of the class.
+// There are two constructors. The first just takes a disk name, and it used
+// only when the disk is already present. If the disk does not exist the
+// initialization fails. The second takes all the information needed to make a
+// new disk. If there is already a disk present it destroys the disk and makes a
+// new one. BE VERY CAREFUL ABOUT OVERWRITING EXISTING DISKS.
+
 #ifndef VIRTUAL_DISK_H
 #define VIRTUAL_DISK_H
 
@@ -38,9 +48,9 @@ class VirtualDisk {
   unsigned int GetBlock(unsigned int block_number, std::string& buffer);
   unsigned int PutBlock(unsigned int block_number, std::string buffer);
 
-  std::string GetName();
-  unsigned int GetNumberOfBlocks();
-  unsigned int GetBlockSize();
+  inline std::string GetName() { return name; }
+  inline unsigned int GetNumberOfBlocks() { return number_of_blocks; }
+  inline unsigned int GetBlockSize() { return block_size; }
  private:
   std::string name;              // Filename of software disk
   unsigned int number_of_blocks; // Number of blocks on disk
@@ -48,5 +58,4 @@ class VirtualDisk {
 
   DISALLOW_COPY_AND_ASSIGN(VirtualDisk);
 };
-
 #endif

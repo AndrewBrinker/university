@@ -20,6 +20,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+// This is the implementation of the class VirtualDisk defined in VirtualDisk.h
+// It defines all non-inline functions of the class.
+
 #include "VirtualDisk.h"
 #include <string>
 #include <fstream>
@@ -67,22 +70,4 @@ unsigned int VirtualDisk::GetBlock(unsigned int block_number,
 unsigned int VirtualDisk::PutBlock(unsigned int block_number,
                                    std::string buffer) {
   return 1;
-}
-
-
-// Accessor for disk_name
-std::string VirtualDisk::GetName() {
-  return name;
-}
-
-
-// Accessor for number_of_blocks
-unsigned int VirtualDisk::GetNumberOfBlocks() {
-  return number_of_blocks;
-}
-
-
-// Accessor for block_size
-unsigned int VirtualDisk::GetBlockSize() {
-  return block_size;
 }
