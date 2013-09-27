@@ -28,7 +28,6 @@
 #include <fstream>
 #include <iostream>
 
-
 // Initializes a disk with nothing but a name.
 // Assumes the disk already exists. It does nothing to create new files,
 // it only attaches the instance to a disk that already exists.
@@ -37,8 +36,14 @@
 VirtualDisk::VirtualDisk(std::string current_name) {
   name = current_name;
   std::string arch_file = name + ".spc";
-  std::string data_file = name + ".dat";
-    
+  std::ifstream file(arch_file.c_str());
+  if(file.good()) {
+    file >> block_count >> block_size;
+  } else {
+    std::cout << "The disk " << name << ".spc does not exist!" << std::endl;
+  }
+  file.close();
+  MakeDataFile();
 }
 
 
@@ -52,8 +57,10 @@ VirtualDisk::VirtualDisk(std::string new_name,
   block_count = new_block_count;
   block_size = new_block_size;
   std::string arch_file = name + ".spc";
-  std::string data_file = name + ".dat";
-    
+  std::ofstream file(arch_file.c_str());
+  file << block_count << " " << block_size;
+  file.close();
+  MakeDataFile();
 }
 
 
@@ -61,6 +68,13 @@ VirtualDisk::VirtualDisk(std::string new_name,
 // It returns 1 if successful and 0 otherwise.
 unsigned int VirtualDisk::GetBlock(unsigned int block_number,
                                    std::string& buffer) {
+  std::string data_file = name + ".dat";
+  std::ifstream file(data_file.c_str());
+  if(file.bad()) { return 0; }
+  file.seekg(block_number * block_size);
+  for(unsigned int i = 0; i < (block_number + 1) * block_size; ++i) {
+    buffer += file.get();
+  }
   return 1;
 }
 
@@ -69,5 +83,38 @@ unsigned int VirtualDisk::GetBlock(unsigned int block_number,
 // Returns 1 if successful and 0 otherwise.
 unsigned int VirtualDisk::PutBlock(unsigned int block_number,
                                    std::string buffer) {
+  std::cout << "PutBlock() called" << std::endl;
+  std::string data_file = name + ".dat";
+  std::ofstream file(data_file.c_str(), std::ofstream::app);
+  if(file.bad()) { return 0; }
+  if(GetFileSize(data_file) < (block_number + 1) * block_size - 1) {
+    return 0;
+  }
+  file.seekp(block_number * block_size);
+  for(unsigned int i = 0 ; i < block_size; ++i) {
+    char new_char = buffer.substr(i,1)[0];
+    file.put(new_char);
+  }
   return 1;
+}
+
+
+// Make the data file using the given filename.
+void VirtualDisk::MakeDataFile() {
+  std::string data_file = name + ".dat";
+  std::ofstream file(data_file.c_str());
+  for(unsigned int i = 0; i < block_size * block_count; ++i) {
+    file << "#";
+  }
+  file.close();
+}
+
+
+// Get the number of characters in the file.
+unsigned long int VirtualDisk::GetFileSize(std::string filename) {
+  std::ifstream file(filename.c_str());
+  file.seekg(0, file.end);
+  unsigned long int length = file.tellg();
+  file.seekg(0, file.beg);
+  return length;
 }

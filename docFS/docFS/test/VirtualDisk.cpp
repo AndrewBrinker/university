@@ -32,7 +32,6 @@ int main(int argc, char** argv) {
   // Create a new disk1 called test 1 with
   // 16 blocks of 32 bytes
   VirtualDisk disk1("test1", 16, 32);
-
   std::cout << "Name:             " << disk1.GetName() << std::endl;
   std::cout << "Number of blocks: " << disk1.GetBlockCount() << std::endl;
   std::cout << "Block size:       " << disk1.GetBlockSize() << std::endl;
@@ -57,11 +56,18 @@ int main(int argc, char** argv) {
   disk1.PutBlock(4, input1);
   disk1.GetBlock(4, output1);
   // assert(input1 == output1);
+  std::cout << input1 << std::endl;
+  std::cout << output1 << std::endl;
 
   // Put and get the block, and verify they are identical
   disk1.PutBlock(8, input2);
   disk1.GetBlock(8, output2);
   // assert(input2 == output2);
+
+  VirtualDisk disk2("test1");
+  std::cout << "Name:             " << disk2.GetName() << std::endl;
+  std::cout << "Number of blocks: " << disk2.GetBlockCount() << std::endl;
+  std::cout << "Block size:       " << disk2.GetBlockSize() << std::endl;
 
   std::cout << "All tests passed." << std::endl;
 }

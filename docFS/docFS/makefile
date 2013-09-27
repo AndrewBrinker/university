@@ -24,7 +24,7 @@ $(EXECUTABLE): $(OBJECTS)
 
 # target: clean - Removes unecessary files.
 clean:
-	rm -rf *.o $(EXECUTABLE)
+	rm -rf *.o *.spc *.dat $(EXECUTABLE)
 
 # target: help - Display callable targets.
 help:
