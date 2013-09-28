@@ -39,6 +39,7 @@
 
 #include <string>
 
+
 class VirtualDisk {
  public:
   explicit VirtualDisk(std::string current_name);
