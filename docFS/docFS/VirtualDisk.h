@@ -45,15 +45,15 @@ class VirtualDisk {
   VirtualDisk(std::string new_name,
               unsigned int new_block_count,
               unsigned int new_block_size);
-  unsigned int GetBlock(unsigned int block_number, std::string& buffer);
-  unsigned int PutBlock(unsigned int block_number, std::string buffer);
+  unsigned int getBlock(unsigned int block_number, std::string& buffer);
+  unsigned int putBlock(unsigned int block_number, std::string buffer);
 
-  inline std::string GetName() { return name; }
-  inline unsigned int GetBlockCount() { return block_count; }
-  inline unsigned int GetBlockSize() { return block_size; }
+  inline std::string getName() { return name; }
+  inline unsigned int getBlockCount() { return block_count; }
+  inline unsigned int getBlockSize() { return block_size; }
  private:
-  void MakeDataFile();
-  unsigned long int GetFileSize(std::string filename);
+  void makeDataFile();
+  unsigned long int getFileSize(std::string filename);
   std::string name;          // Filename of software disk
   unsigned int block_count;  // Number of blocks on disk
   unsigned int block_size;   // Block size in bytes

@@ -43,7 +43,7 @@ VirtualDisk::VirtualDisk(std::string current_name) {
     std::cout << "The disk " << name << ".spc does not exist!" << std::endl;
   }
   file.close();
-  MakeDataFile();
+  makeDataFile();
 }
 
 
@@ -60,19 +60,19 @@ VirtualDisk::VirtualDisk(std::string new_name,
   std::ofstream file(arch_file.c_str());
   file << block_count << " " << block_size;
   file.close();
-  MakeDataFile();
+  makeDataFile();
 }
 
 
 // Retrieves a block and stores it into the buffer.
 // It returns 1 if successful and 0 otherwise.
-unsigned int VirtualDisk::GetBlock(unsigned int block_number,
+unsigned int VirtualDisk::getBlock(unsigned int block_number,
                                    std::string& buffer) {
   std::string data_file = name + ".dat";
   std::ifstream file(data_file.c_str());
   if(file.bad()) { return 0; }
   file.seekg(block_number * block_size);
-  for(unsigned int i = 0; i < (block_number + 1) * block_size; ++i) {
+  for(unsigned int i = 0; i < block_size; ++i) {
     buffer += file.get();
   }
   return 1;
@@ -81,26 +81,42 @@ unsigned int VirtualDisk::GetBlock(unsigned int block_number,
 
 // Writes the buffer to the block.
 // Returns 1 if successful and 0 otherwise.
-unsigned int VirtualDisk::PutBlock(unsigned int block_number,
+unsigned int VirtualDisk::putBlock(unsigned int block_number,
                                    std::string buffer) {
-  std::cout << "PutBlock() called" << std::endl;
+  // Open the file for output in append mode.
   std::string data_file = name + ".dat";
-  std::ofstream file(data_file.c_str(), std::ofstream::app);
+  std::fstream file(data_file.c_str(),
+                    std::fstream::in |
+                    std::fstream::out);
   if(file.bad()) { return 0; }
-  if(GetFileSize(data_file) < (block_number + 1) * block_size - 1) {
+  if(getFileSize(data_file) < (block_number + 1) * block_size - 1) {
     return 0;
   }
-  file.seekp(block_number * block_size);
-  for(unsigned int i = 0 ; i < block_size; ++i) {
-    char new_char = buffer.substr(i,1)[0];
-    file.put(new_char);
+  // Copy the file to a string and delete the file.
+  std::string file_contents = "";
+  for(unsigned int i = 0; i < getFileSize(data_file); ++i) {
+    file_contents += file.get();
   }
+  file.close();
+  remove(data_file.c_str());
+  unsigned int start = block_number * block_size;
+  unsigned int end = ((block_number + 1) * block_size) - 1;
+  unsigned int count = 0;
+  for(start; start <= end; ++start) {
+    file_contents[start] = buffer.substr(count, 1)[0];
+    ++count;
+  }
+  std::ofstream new_file(data_file.c_str());
+  for(unsigned int i = 0; i < file_contents.length(); ++i) {
+    new_file << file_contents.substr(i, 1)[0];
+  }
+  new_file.close();
   return 1;
 }
 
 
 // Make the data file using the given filename.
-void VirtualDisk::MakeDataFile() {
+void VirtualDisk::makeDataFile() {
   std::string data_file = name + ".dat";
   std::ofstream file(data_file.c_str());
   for(unsigned int i = 0; i < block_size * block_count; ++i) {
@@ -111,10 +127,11 @@ void VirtualDisk::MakeDataFile() {
 
 
 // Get the number of characters in the file.
-unsigned long int VirtualDisk::GetFileSize(std::string filename) {
+unsigned long int VirtualDisk::getFileSize(std::string filename) {
   std::ifstream file(filename.c_str());
   file.seekg(0, file.end);
   unsigned long int length = file.tellg();
   file.seekg(0, file.beg);
+  file.close();
   return length;
 }
