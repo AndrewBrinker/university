@@ -53,7 +53,6 @@ class VirtualDisk {
   inline unsigned int getBlockCount() { return block_count; }
   inline unsigned int getBlockSize() { return block_size; }
  private:
-  void makeDataFile();
   unsigned long int getFileSize(std::string filename);
   std::string name;          // Filename of software disk
   unsigned int block_count;  // Number of blocks on disk
