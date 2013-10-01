@@ -21,3 +21,74 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+
+// This is the implementation of the class FileSystem. It implements all
+// non-inline functions of the class.
+
+#include "./FileSystem.h"
+#include <string>
+#include <fstream>
+#include <iostream>
+#include <vector>
+
+
+FileSystem::FileSystem(std::string new_name) : VirtualDisk(new_name) {
+
+}
+
+
+unsigned int FileSystem::fileClose() {
+  return 1;
+}
+
+
+unsigned int FileSystem::fileSync() {
+  return 1;
+}
+
+
+unsigned int FileSystem::newFile(std::string file) {
+  return 1;
+}
+
+
+unsigned int FileSystem::removeFile(std::string file) {
+  return 1;
+}
+
+
+unsigned int FileSystem::getFirstBlock(std::string file) {
+  return 1;
+}
+
+
+unsigned int FileSystem::nextBlock(std::string file,
+                                   unsigned int block_number) {
+  return 1;
+}
+
+
+unsigned int FileSystem::addBlock(std::string file,
+                                  std::string block) {
+  return 1;
+}
+
+
+unsigned int FileSystem::deleteBlock(std::string file,
+                                     unsigned int block_number) {
+  return 1;
+}
+
+
+unsigned int FileSystem::getBlock(std::string file,
+                                  unsigned int block_number,
+                                  std::string& buffer) {
+  return 1;
+}
+
+
+unsigned int FileSystem::putBlock(std::string file,
+                                  unsigned int block_number,
+                                  std::string buffer) {
+  return 1;
+}
