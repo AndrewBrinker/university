@@ -37,12 +37,12 @@ FileSystem::FileSystem(std::string new_name) : VirtualDisk(new_name) {
 }
 
 
-unsigned int FileSystem::fileClose() {
+unsigned int FileSystem::close() {
   return 1;
 }
 
 
-unsigned int FileSystem::fileSync() {
+unsigned int FileSystem::sync() {
   return 1;
 }
 

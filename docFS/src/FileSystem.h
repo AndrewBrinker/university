@@ -41,8 +41,8 @@ THE SOFTWARE.
 class FileSystem : public VirtualDisk {
  public:
   explicit FileSystem(std::string name);
-  unsigned int fileClose();
-  unsigned int fileSync();
+  unsigned int close();
+  unsigned int sync();
   unsigned int newFile(std::string file);
   unsigned int removeFile(std::string file);
   unsigned int getFirstBlock(std::string file);
