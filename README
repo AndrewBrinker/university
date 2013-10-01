@@ -1,4 +1,0 @@
-docFS: A Fake File System
--------------------------
-
-docFS is a fake filesystem built on a virtual disk. It is being developed as a project for CSE 350 at CSU, San Bernardino. It is in no way complete.
