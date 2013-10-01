@@ -40,27 +40,28 @@ THE SOFTWARE.
 
 class FileSystem : public VirtualDisk {
  public:
-  FileSystem(std::string name);
+  explicit FileSystem(std::string name);
   unsigned int fileClose();
   unsigned int fileSync();
   unsigned int newFile(std::string file);
   unsigned int removeFile(std::string file);
   unsigned int getFirstBlock(std::string file);
-  unsigned int nextBlock(std::string file, unsigned int blocknumber);
+  unsigned int nextBlock(std::string file, unsigned int block_number);
   unsigned int addBlock(std::string file, std::string block);
-  unsigned int deleteBlock(std::string file, unsigned int blocknumber);
+  unsigned int deleteBlock(std::string file, unsigned int block_number);
   unsigned int getBlock(std::string file,
-  	                    unsigned int blocknumber,
-  	                    std::string& buffer);
+                        unsigned int block_number,
+                        std::string& buffer);
   unsigned int putBlock(std::string file,
-  	                    unsigned int blocknumber,
-  	                    std::string buffer);
+                        unsigned int block_number,
+                        std::string buffer);
+
  private:
-  unsigned int rootsize;            // maximum number of entries in ROOT
-  unsigned int fatsize;             // number of blocks occupied by FAT
-  std::vector<std::string> filename;     // filenames in ROOT
-  std::vector<unsigned int> firstblock;  // firstblocks in ROOT
-  std::vector<unsigned int> fat;         // FAT
+  unsigned int root_size;                 // maximum number of entries in ROOT
+  unsigned int fat_size;                  // number of blocks occupied by FAT
+  std::vector<std::string> file_name;     // filenames in ROOT
+  std::vector<unsigned int> first_block;  // firstblocks in ROOT
+  std::vector<unsigned int> fat;          // FAT
 
   DISALLOW_COPY_AND_ASSIGN(FileSystem);
 };
