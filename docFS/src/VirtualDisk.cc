@@ -112,7 +112,6 @@ unsigned int VirtualDisk::getFileSize(std::string filename) {
   std::ifstream file(filename.c_str());
   file.seekg(0, file.end);
   unsigned int length = file.tellg();
-  file.seekg(0, file.beg);
   file.close();
   return length;
 }
