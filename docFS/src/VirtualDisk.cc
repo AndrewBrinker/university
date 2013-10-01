@@ -25,7 +25,7 @@ THE SOFTWARE.
 // This is the implementation of the class VirtualDisk defined in VirtualDisk.h
 // It defines all non-inline functions of the class.
 
-#include "src/VirtualDisk.h"
+#include "./VirtualDisk.h"
 #include <string>
 #include <fstream>
 #include <iostream>
