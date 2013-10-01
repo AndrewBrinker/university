@@ -25,18 +25,22 @@ THE SOFTWARE.
 // This is the central testing program.
 
 #include <iostream>
-#include "./FileSystem.cpp"
-#include "./VirtualDisk.cpp"
+#include <string>
+#include "./FileSystemTest.cc"
+#include "./VirtualDiskTest.cc"
 
 int main(int argc, char** argv) {
-  if (!virtualDiskTest()) {
-    std::cout << "VirtualDisk testing failed!" << std::endl;
+  std::string buffer;
+  if (!virtualDiskTest(buffer)) {
+    std::cout << "VirtualDisk testing failed with the error:\n    "
+              << buffer << std::endl;
     return 0;
   }
-  if (!fileSystemTest()) {
-    std::cout << "FileSystem testing failed!" << std::endl;
+  if (!fileSystemTest(buffer)) {
+    std::cout << "FileSystem testing failed with the error:\n"
+              << buffer << std::endl;
     return 0;
   }
-
+  std::cout << "All tests passed." << std::endl;
   return 1;
 }

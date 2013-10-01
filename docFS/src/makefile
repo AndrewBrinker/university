@@ -1,6 +1,8 @@
 SOURCES    = VirtualDisk.cc VirtualDisk.h \
              FileSystem.cc FileSystem.h \
              test/main.cpp
+TESTS      = test/VirtualDisk.cpp \
+             test/FileSystem.cpp
 EXECUTABLE = run_this
 CC         = g++
 CFLAGS     = -c -pedantic -Wall -Wextra -Wcast-align -Wcast-qual -Wctor-dtor-privacy -Wdisabled-optimization -Wformat=2 -Winit-self -Wmissing-include-dirs -Wold-style-cast -Woverloaded-virtual -Wredundant-decls -Wshadow -Wsign-promo -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch-default -Wundef -Werror -Wno-unused
@@ -30,11 +32,11 @@ prep:
 
 # target: lint - Runs cpplint.py on all files.
 lint:
-	python test/cpplint.py --filter=-readability/streams,-runtime/references $(SOURCES)
+	python test/cpplint.py --filter=-readability/streams,-runtime/references $(SOURCES) $(TESTS)
 
 # target: save - Commit changes to the source files.
 save:
-	git add makefile $(SOURCES) && git commit -m "Autosaving"
+	git add makefile $(SOURCES) $(TESTS) && git commit -m "Autosaving"
 
 # target: help - Display callable targets.
 help:
