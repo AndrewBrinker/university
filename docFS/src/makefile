@@ -26,6 +26,10 @@ $(EXECUTABLE): $(OBJECTS)
 clean:
 	rm -rf *.o *.spc *.dat $(EXECUTABLE)
 
+# target: lint - Runs cpplint.py on all files.
+lint:
+	python cpplint.py --filter=-readability/streams,-runtime/references $(SOURCES)
+
 # target: help - Display callable targets.
 help:
 	egrep "^# target:" [Mm]akefile

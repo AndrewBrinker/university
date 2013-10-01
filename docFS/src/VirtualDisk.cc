@@ -1,29 +1,31 @@
-// The MIT License (MIT)
-// 
-// Copyright (c) 2013 Andrew Brinker
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
+/*
+The MIT License (MIT)
+
+Copyright (c) 2013 Andrew Brinker
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+*/
 
 // This is the implementation of the class VirtualDisk defined in VirtualDisk.h
 // It defines all non-inline functions of the class.
 
-#include "VirtualDisk.h"
+#include "src/VirtualDisk.h"
 #include <string>
 #include <fstream>
 #include <iostream>
@@ -38,7 +40,7 @@ VirtualDisk::VirtualDisk(std::string current_name) {
   name = current_name;
   std::string arch_file = name + ".spc";
   std::ifstream file(arch_file.c_str());
-  if(file.good()) {
+  if (file.good()) {
     file >> block_count >> block_size;
   } else {
     std::cout << "The disk " << name << ".spc does not exist!" << std::endl;
@@ -62,7 +64,7 @@ VirtualDisk::VirtualDisk(std::string new_name,
   arch_file.close();
   std::string data_file_name = name + ".dat";
   std::ofstream data_file(data_file_name.c_str());
-  for(unsigned int i = 0; i < block_size * block_count; ++i) {
+  for (unsigned int i = 0; i < block_size * block_count; ++i) {
     data_file << "#";
   }
   data_file.close();
@@ -75,9 +77,9 @@ unsigned int VirtualDisk::getBlock(unsigned int block_number,
                                    std::string& buffer) {
   std::string data_file = name + ".dat";
   std::ifstream file(data_file.c_str());
-  if(file.bad()) { return 0; }
+  if (file.bad()) { return 0; }
   file.seekg(block_number * block_size);
-  for(unsigned int i = 0; i < block_size; ++i) {
+  for (unsigned int i = 0; i < block_size; ++i) {
     buffer += file.get();
   }
   return 1;
@@ -90,14 +92,14 @@ unsigned int VirtualDisk::putBlock(unsigned int block_number,
                                    std::string buffer) {
   std::string data_file = name + ".dat";
   std::fstream file(data_file.c_str(), std::fstream::in | std::fstream::out);
-  if(file.bad()) {
+  if (file.bad()) {
     return 0;
   }
-  if(getFileSize(data_file) < (block_number + 1) * block_size - 1) {
+  if (getFileSize(data_file) < (block_number + 1) * block_size - 1) {
     return 0;
   }
   file.seekp(block_number * block_size);
-  for(unsigned int i = 0; i < block_size; ++i) {
+  for (unsigned int i = 0; i < block_size; ++i) {
     file.put(buffer.substr(i, 1)[0]);
   }
   file.close();
@@ -106,10 +108,10 @@ unsigned int VirtualDisk::putBlock(unsigned int block_number,
 
 
 // Get the number of characters in the file.
-unsigned long int VirtualDisk::getFileSize(std::string filename) {
+unsigned int VirtualDisk::getFileSize(std::string filename) {
   std::ifstream file(filename.c_str());
   file.seekg(0, file.end);
-  unsigned long int length = file.tellg();
+  unsigned int length = file.tellg();
   file.seekg(0, file.beg);
   file.close();
   return length;
