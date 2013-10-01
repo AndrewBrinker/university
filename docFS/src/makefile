@@ -30,6 +30,10 @@ clean:
 lint:
 	python test/cpplint.py --filter=-readability/streams,-runtime/references $(SOURCES)
 
+# target: save - Commit changes to the source files.
+save:
+	git add makefile $(SOURCES) && git commit -m "Autosaving"
+
 # target: help - Display callable targets.
 help:
 	egrep "^# target:" [Mm]akefile
