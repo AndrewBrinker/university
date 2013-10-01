@@ -62,4 +62,6 @@ class VirtualDisk {
 
   DISALLOW_COPY_AND_ASSIGN(VirtualDisk);
 };
+
+
 #endif  // DOCFS_SRC_VIRTUALDISK_H_
