@@ -23,8 +23,8 @@ $(EXECUTABLE): $(OBJECTS)
 .cpp.o:
 	$(CC) $(CFLAGS) $< -o $@
 
-# target: clean - Removes unecessary files.
-clean:
+# target: prep - Removes unecessary files.
+prep:
 	rm -rf *.o *.spc *.dat $(EXECUTABLE)
 
 # target: lint - Runs cpplint.py on all files.
@@ -37,4 +37,8 @@ save:
 
 # target: help - Display callable targets.
 help:
+	egrep "^# target:" [Mm]akefile
+
+# target: list - An alias for 'make help'.
+list:
 	egrep "^# target:" [Mm]akefile
