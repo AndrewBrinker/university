@@ -29,15 +29,16 @@ THE SOFTWARE.
 #include "./FileSystemTest.cpp"
 #include "./VirtualDiskTest.cpp"
 
+
 int main(int argc, char** argv) {
-  std::string buffer;
+  std::string buffer = "";
   if (!virtualDiskTest(buffer)) {
     std::cout << "VirtualDisk testing failed with the error:\n    "
               << buffer << std::endl;
     return 0;
   }
   if (!fileSystemTest(buffer)) {
-    std::cout << "FileSystem testing failed with the error:\n"
+    std::cout << "FileSystem testing failed with the error:\n     "
               << buffer << std::endl;
     return 0;
   }
