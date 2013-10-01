@@ -3,3 +3,6 @@ makefile
 run_this
 *.sublime-project
 *.sublime-workspace
+*.dat
+*.spc
+cpplint.py
