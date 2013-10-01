@@ -59,8 +59,8 @@ class FileSystem : public VirtualDisk {
  private:
   unsigned int root_size;                 // maximum number of entries in ROOT
   unsigned int fat_size;                  // number of blocks occupied by FAT
-  std::vector<std::string> file_name;     // filenames in ROOT
-  std::vector<unsigned int> first_block;  // firstblocks in ROOT
+  std::vector<std::string> file_name;     // file names in ROOT
+  std::vector<unsigned int> first_block;  // first blocks in ROOT
   std::vector<unsigned int> fat;          // FAT
 
   DISALLOW_COPY_AND_ASSIGN(FileSystem);
