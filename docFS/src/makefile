@@ -1,8 +1,8 @@
 SOURCES    = VirtualDisk.cc VirtualDisk.h \
              FileSystem.cc FileSystem.h \
              test/main.cpp
-TESTS      = test/VirtualDisk.cpp \
-             test/FileSystem.cpp
+TESTS      = test/VirtualDiskTest.cpp \
+             test/FileSystemTest.cpp
 EXECUTABLE = run_this
 CC         = g++
 CFLAGS     = -c -pedantic -Wall -Wextra -Wcast-align -Wcast-qual -Wctor-dtor-privacy -Wdisabled-optimization -Wformat=2 -Winit-self -Wmissing-include-dirs -Wold-style-cast -Woverloaded-virtual -Wredundant-decls -Wshadow -Wsign-promo -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch-default -Wundef -Werror -Wno-unused

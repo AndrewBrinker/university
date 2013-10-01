@@ -22,25 +22,18 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-// This is the central testing program.
+// This is a collection of tests for the FileSystem class.
 
-#include <iostream>
+#ifndef DOCFS_SRC_TEST_FILESYSTEM_CPP_
+#define DOCFS_SRC_TEST_FILESYSTEM_CPP_
+
 #include <string>
-#include "./FileSystemTest.cpp"
-#include "./VirtualDiskTest.cpp"
+#include <iostream>
+#include "../FileSystem.h"
 
-int main(int argc, char** argv) {
-  std::string buffer;
-  if (!virtualDiskTest(buffer)) {
-    std::cout << "VirtualDisk testing failed with the error:\n    "
-              << buffer << std::endl;
-    return 0;
-  }
-  if (!fileSystemTest(buffer)) {
-    std::cout << "FileSystem testing failed with the error:\n"
-              << buffer << std::endl;
-    return 0;
-  }
-  std::cout << "All tests passed." << std::endl;
+
+int fileSystemTest(std::string& buffer) {
   return 1;
 }
+
+#endif  // DOCFS_SRC_TEST_FILESYSTEM_CPP_
