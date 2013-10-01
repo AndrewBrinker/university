@@ -33,7 +33,7 @@ THE SOFTWARE.
 
 
 FileSystem::FileSystem(std::string new_name) : VirtualDisk(new_name) {
-
+  std::cout << std::endl;
 }
 
 
