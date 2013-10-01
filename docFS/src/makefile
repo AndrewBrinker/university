@@ -28,7 +28,7 @@ clean:
 
 # target: lint - Runs cpplint.py on all files.
 lint:
-	python cpplint.py --filter=-readability/streams,-runtime/references $(SOURCES)
+	python test/cpplint.py --filter=-readability/streams,-runtime/references $(SOURCES)
 
 # target: help - Display callable targets.
 help:
