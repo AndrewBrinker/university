@@ -51,14 +51,9 @@ THE SOFTWARE.
 FileSystem::FileSystem(std::string new_name):VirtualDisk(new_name,
                                                          BLOCK_COUNT,
                                                          BLOCK_SIZE) {
-  if (!loadFileSystem(new_name)) {
-    makeFileSystem(new_name);
+  if (!loadFileSystem()) {
+    makeFileSystem();
   }
-}
-
-
-unsigned int FileSystem::close() {
-  return 1;
 }
 
 
@@ -115,15 +110,18 @@ unsigned int FileSystem::putBlock(std::string file,
 
 
 // Load an existing file system
-unsigned int FileSystem::loadFileSystem(std::string new_name) {
+unsigned int FileSystem::loadFileSystem() {
   return 1;
 }
 
 
 // Make a new file system
-unsigned int FileSystem::makeFileSystem(std::string new_name) {
+unsigned int FileSystem::makeFileSystem() {
   const std::string default_file_name("#", MAX_NAME_LENGTH);
 
+  // Because we already know the size, it's more efficient to resize now
+  // instead of using push_back over and over, which would potentially result
+  // in several resizes.
   root_file_names.resize(ROOT_ENTRY_COUNT);
   root_first_blocks.resize(ROOT_ENTRY_COUNT);
 
@@ -132,9 +130,7 @@ unsigned int FileSystem::makeFileSystem(std::string new_name) {
     root_first_blocks.push_back(EOF_CHAR);
   }
 
-  // Because we already know the size, it's more efficient to resize now
-  // instead of using push_back over and over, which would potentially result
-  // in several resizes
+  // Next we construct the FAT.
   fat.resize(BLOCK_COUNT);
 
   fat[0] = FAT_BLOCK_COUNT + 1;
@@ -146,7 +142,5 @@ unsigned int FileSystem::makeFileSystem(std::string new_name) {
   }
   fat[fat.size() - 1] = EOF_CHAR;
 
-  // Create the disk with the name
-
-  return 1;
+  return sync();
 }

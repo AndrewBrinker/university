@@ -41,7 +41,6 @@ THE SOFTWARE.
 class FileSystem : public VirtualDisk {
  public:
   explicit FileSystem(std::string name);
-  unsigned int close();
   unsigned int sync();
   unsigned int newFile(std::string file);
   unsigned int removeFile(std::string file);
@@ -57,8 +56,8 @@ class FileSystem : public VirtualDisk {
                         std::string buffer);
 
  private:
-  unsigned int loadFileSystem(std::string new_name);
-  unsigned int makeFileSystem(std::string new_name);
+  unsigned int loadFileSystem();
+  unsigned int makeFileSystem();
 
   std::vector<std::string> root_file_names;     // File names in ROOT
   std::vector<unsigned int> root_first_blocks;  // First blocks in ROOT
