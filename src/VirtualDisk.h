@@ -32,8 +32,8 @@ THE SOFTWARE.
 // new disk. If there is already a disk present it destroys the disk and makes a
 // new one. BE VERY CAREFUL ABOUT OVERWRITING EXISTING DISKS.
 
-#ifndef DOCFS_SRC_VIRTUALDISK_H_
-#define DOCFS_SRC_VIRTUALDISK_H_
+#ifndef SRC_VIRTUALDISK_H_
+#define SRC_VIRTUALDISK_H_
 
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \
   TypeName(const TypeName&);               \
@@ -64,4 +64,4 @@ class VirtualDisk {
 };
 
 
-#endif  // DOCFS_SRC_VIRTUALDISK_H_
+#endif  // SRC_VIRTUALDISK_H_

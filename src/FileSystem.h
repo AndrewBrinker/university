@@ -26,8 +26,8 @@ THE SOFTWARE.
 // system, and it does all of the heavy lifting, using VirtualDisk as the
 // back end. All the warnings that apply to VirtualDisk apply to FileSystem.
 
-#ifndef DOCFS_SRC_FILESYSTEM_H_
-#define DOCFS_SRC_FILESYSTEM_H_
+#ifndef SRC_FILESYSTEM_H_
+#define SRC_FILESYSTEM_H_
 
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \
   TypeName(const TypeName&);               \
@@ -57,14 +57,15 @@ class FileSystem : public VirtualDisk {
                         std::string buffer);
 
  private:
-  unsigned int root_size;                 // maximum number of entries in ROOT
-  unsigned int fat_size;                  // number of blocks occupied by FAT
-  std::vector<std::string> file_name;     // file names in ROOT
-  std::vector<unsigned int> first_block;  // first blocks in ROOT
-  std::vector<unsigned int> fat;          // FAT
+  unsigned int loadFileSystem(std::string new_name);
+  unsigned int makeFileSystem(std::string new_name);
+
+  std::vector<std::string> root_file_names;     // File names in ROOT
+  std::vector<unsigned int> root_first_blocks;  // First blocks in ROOT
+  std::vector<unsigned int> fat;                // FAT
 
   DISALLOW_COPY_AND_ASSIGN(FileSystem);
 };
 
 
-#endif  // DOCFS_SRC_FILESYSTEM_H_
+#endif  // SRC_FILESYSTEM_H_

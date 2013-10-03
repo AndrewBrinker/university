@@ -25,8 +25,8 @@ THE SOFTWARE.
 // This is a small collection of tests for the VirtualDisk class. It verifies
 // that PutBlock() and GetBlock() work correctly.
 
-#ifndef DOCFS_SRC_TEST_VIRTUALDISK_CPP_
-#define DOCFS_SRC_TEST_VIRTUALDISK_CPP_
+#ifndef SRC_TEST_VIRTUALDISK_CPP_
+#define SRC_TEST_VIRTUALDISK_CPP_
 
 #include <string>
 #include <iostream>
