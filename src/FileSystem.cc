@@ -117,7 +117,7 @@ unsigned int FileSystem::loadFileSystem() {
 
 // Make a new file system
 unsigned int FileSystem::makeFileSystem() {
-  const std::string default_file_name("#", MAX_NAME_LENGTH);
+  const std::string default_file_name(FILL_CHAR, MAX_NAME_LENGTH);
 
   // Because we already know the size, it's more efficient to resize now
   // instead of using push_back over and over, which would potentially result
