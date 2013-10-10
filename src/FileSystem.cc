@@ -39,8 +39,8 @@ THE SOFTWARE.
 #define BLOCK_COUNT      100
 #define MAX_NAME_LENGTH  16
 #define FILL_CHAR        '#'
-#define EOF_CHAR         '0'
-#define RESERVED_CHAR    '1'
+#define EOF_CHAR         0
+#define RESERVED_CHAR    1
 
 #define ROOT_BLOCK      1
 #define FAT_START_BLOCK 2
@@ -69,21 +69,23 @@ unsigned int FileSystem::sync() {
   std::vector<std::string> fat_vector;
   std::string partial_fat;
 
+  // Building the root stream
   for (unsigned int i = 0; i < root_file_names.size(); ++i) {
     root_stream << root_file_names[i] << " " << root_first_blocks[i] << " ";
   }
-
   for (unsigned int i = root_file_names.size(); i < ROOT_ENTRY_COUNT; ++i) {
     root_stream << std::string(MAX_NAME_LENGTH + ADDRESS_SPACE + 1, FILL_CHAR);
   }
 
+  // Place the root at ROOT_BLOCK. If it fails return an error code
   if (!VirtualDisk::putBlock(ROOT_BLOCK, root_stream.str())) {
     return 0;
   }
 
+  // Build the FAT stream
   for (unsigned int i = 0; i < fat.size(); ++i) {
-    fat_stream << std::setfill(FILL_CHAR) << std::setw(ADDRESS_LENGTH) << i
-               << FILL_CHAR;
+    fat_stream << std::setfill(FILL_CHAR) << std::setw(ADDRESS_LENGTH)
+               << fat[i] << FILL_CHAR;
   }
 
   for (unsigned int i = 0; i < fat_stream.str().size(); ++i) {
