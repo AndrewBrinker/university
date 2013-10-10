@@ -183,8 +183,8 @@ unsigned int FileSystem::makeFileSystem() {
   root_first_blocks.resize(ROOT_ENTRY_COUNT);
 
   for (unsigned int i = 0; i < ROOT_ENTRY_COUNT; ++i) {
-    root_file_names.push_back(default_file_name);
-    root_first_blocks.push_back(EOF_CHAR);
+    root_file_names[i] = default_file_name;
+    root_first_blocks[i] = EOF_CHAR;
   }
 
   // Next we construct the FAT.
@@ -198,6 +198,10 @@ unsigned int FileSystem::makeFileSystem() {
     fat[i] = i + 1;
   }
   fat[fat.size() - 1] = EOF_CHAR;
+
+  for (unsigned int i = 0; i < root_file_names.size(); ++i) {
+    std::cout << root_file_names[i] << " " << root_first_blocks[i] << std::endl;
+  }
 
   return sync();
 }
