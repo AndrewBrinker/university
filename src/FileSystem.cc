@@ -50,7 +50,7 @@ THE SOFTWARE.
 #define ADDRESS_SPACE    (ADDRESS_LENGTH+1)
 #define ROOT_ENTRY_SPACE (MAX_NAME_LENGTH+ADDRESS_LENGTH+2)
 #define ROOT_ENTRY_COUNT (BLOCK_SIZE/ROOT_ENTRY_SPACE)
-#define FAT_BLOCK_COUNT  ((ADDRESS_SPACE*BLOCK_COUNT)/BLOCK_SIZE)
+#define FAT_BLOCK_COUNT  ((ADDRESS_SPACE*BLOCK_COUNT)/BLOCK_SIZE+1)
 
 
 FileSystem::FileSystem(std::string new_name):VirtualDisk(new_name,
@@ -88,6 +88,7 @@ unsigned int FileSystem::sync() {
                << fat[i] << FILL_CHAR;
   }
 
+  // Separate the FAT into blocks
   for (unsigned int i = 0; i < fat_stream.str().size(); ++i) {
     char c = fat_stream.str()[i];
     if (partial_fat.length() < BLOCK_SIZE) {
@@ -99,6 +100,7 @@ unsigned int FileSystem::sync() {
     }
   }
 
+  // Output each block individually
   for (unsigned int i = 0; i < fat_vector.size(); ++i) {
     if (!VirtualDisk::putBlock(FAT_START_BLOCK + i, partial_fat)) {
       return 0;
@@ -180,14 +182,18 @@ unsigned int FileSystem::makeFileSystem() {
   // Next we construct the FAT.
   fat.resize(BLOCK_COUNT);
 
-  fat[0] = FAT_BLOCK_COUNT + 1;
-  for (unsigned int i = 1; i <= FAT_BLOCK_COUNT; ++i) {
+  fat[0] = FAT_BLOCK_COUNT + 2;
+  for (unsigned int i = 1; i < FAT_BLOCK_COUNT + 2; ++i) {
     fat[i] = RESERVED_CHAR;
   }
-  for (unsigned int i = FAT_BLOCK_COUNT + 1; i < fat.size(); ++i) {
+  for (unsigned int i = FAT_BLOCK_COUNT + 2; i < fat.size(); ++i) {
     fat[i] = i + 1;
   }
   fat[fat.size() - 1] = EOF_CHAR;
+
+  for (unsigned int i = 0; i < fat.size(); ++i) {
+    std::cout << fat[i] << std::endl;
+  }
 
   return sync();
 }
