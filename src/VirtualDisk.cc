@@ -98,6 +98,9 @@ unsigned int VirtualDisk::putBlock(unsigned int block_number,
   if (getFileSize(data_file) < (block_number + 1) * block_size - 1) {
     return 0;
   }
+  if (buffer.length() < block_size) {
+    return 0;
+  }
   file.seekp(block_number * block_size);
   for (unsigned int i = 0; i < block_size; ++i) {
     file.put(buffer[i]);

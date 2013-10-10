@@ -84,8 +84,8 @@ unsigned int FileSystem::sync() {
 
   // Build the FAT stream
   for (unsigned int i = 0; i < fat.size(); ++i) {
-    fat_stream << std::setfill(FILL_CHAR) << std::setw(ADDRESS_LENGTH)
-               << fat[i] << FILL_CHAR;
+    fat_stream << std::setfill(' ') << std::setw(ADDRESS_LENGTH)
+               << fat[i] << " ";
   }
 
   // Separate the FAT into blocks
@@ -98,6 +98,14 @@ unsigned int FileSystem::sync() {
       fat_vector.push_back(partial_fat);
       partial_fat.clear();
     }
+  }
+
+  if (partial_fat.length() != 0) {
+    // Make sure to add the last block and pad it if it's not the right size.
+    for (unsigned int i = partial_fat.length(); i < BLOCK_SIZE; ++i) {
+      partial_fat.push_back(FILL_CHAR);
+    }
+    fat_vector.push_back(partial_fat);
   }
 
   // Output each block individually
@@ -190,10 +198,6 @@ unsigned int FileSystem::makeFileSystem() {
     fat[i] = i + 1;
   }
   fat[fat.size() - 1] = EOF_CHAR;
-
-  for (unsigned int i = 0; i < fat.size(); ++i) {
-    std::cout << fat[i] << std::endl;
-  }
 
   return sync();
 }
