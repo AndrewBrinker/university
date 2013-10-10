@@ -33,6 +33,7 @@ THE SOFTWARE.
 
 
 int fileSystemTest(std::string& buffer) {
+  std::cout << "Testing the FileSystem class" << std::endl;
   FileSystem("fs1");
   return 1;
 }

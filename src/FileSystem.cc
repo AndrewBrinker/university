@@ -31,6 +31,8 @@ THE SOFTWARE.
 #include <fstream>
 #include <iostream>
 #include <vector>
+#include <sstream>
+#include <iomanip>
 
 // Defined defaults.
 #define BLOCK_SIZE       500
@@ -39,6 +41,9 @@ THE SOFTWARE.
 #define FILL_CHAR        '#'
 #define EOF_CHAR         '0'
 #define RESERVED_CHAR    '1'
+
+#define ROOT_BLOCK      1
+#define FAT_START_BLOCK 2
 
 // Calculated values.
 #define ADDRESS_LENGTH   (floor(log10(BLOCK_COUNT)))
@@ -52,22 +57,52 @@ FileSystem::FileSystem(std::string new_name):VirtualDisk(new_name,
                                                          BLOCK_COUNT,
                                                          BLOCK_SIZE) {
   if (!loadFileSystem()) {
+    std::cout << "Making the file system" << std::endl;
     makeFileSystem();
   }
 }
 
 
 unsigned int FileSystem::sync() {
-  std::string data_file_name = getName() + ".dat";
-  std::fstream data_file(data_file_name.c_str(),
-                         std::fstream::in | std::fstream::out);
-  if (!data_file.good()) {
+  std::stringstream root_stream;
+  std::stringstream fat_stream;
+  std::vector<std::string> fat_vector;
+  std::string partial_fat;
+
+  for (unsigned int i = 0; i < root_file_names.size(); ++i) {
+    root_stream << root_file_names[i] << " " << root_first_blocks[i] << " ";
+  }
+
+  for (unsigned int i = root_file_names.size(); i < ROOT_ENTRY_COUNT; ++i) {
+    root_stream << std::string(MAX_NAME_LENGTH + ADDRESS_SPACE + 1, FILL_CHAR);
+  }
+
+  if (!VirtualDisk::putBlock(ROOT_BLOCK, root_stream.str())) {
     return 0;
   }
-  for (unsigned int i = 0; i < root_file_names.size(); ++i) {
-    data_file << root_file_names[i] << " " << root_first_blocks[i] << " ";
+
+  for (unsigned int i = 0; i < fat.size(); ++i) {
+    fat_stream << std::setfill(FILL_CHAR) << std::setw(ADDRESS_LENGTH) << i
+               << FILL_CHAR;
   }
-  data_file.close();
+
+  for (unsigned int i = 0; i < fat_stream.str().size(); ++i) {
+    char c = fat_stream.str()[i];
+    if (partial_fat.length() < BLOCK_SIZE) {
+      partial_fat.push_back(c);
+    }
+    else {
+      fat_vector.push_back(partial_fat);
+      partial_fat.clear();
+    }
+  }
+
+  for (unsigned int i = 0; i < fat_vector.size(); ++i) {
+    if (!VirtualDisk::putBlock(FAT_START_BLOCK + i, partial_fat)) {
+      return 0;
+    }
+  }
+
   return 1;
 }
 
@@ -121,7 +156,7 @@ unsigned int FileSystem::putBlock(std::string file,
 
 // Load an existing file system
 unsigned int FileSystem::loadFileSystem() {
-  return 1;
+  return 0;
 }
 
 

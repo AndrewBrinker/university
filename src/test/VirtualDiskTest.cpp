@@ -34,6 +34,8 @@ THE SOFTWARE.
 
 
 int virtualDiskTest(std::string& buffer) {
+  std::cout << "Testing the VirtualDisk class" << std::endl;
+
   // Create a new vd1 called test 1 with
   // 16 blocks of 32 bytes
   VirtualDisk vd1("vd1", 16, 32);
