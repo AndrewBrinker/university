@@ -64,6 +64,7 @@ FileSystem::FileSystem(std::string new_name):VirtualDisk(new_name,
 
 
 unsigned int FileSystem::sync() {
+
   std::stringstream root_stream;
   std::stringstream fat_stream;
   std::vector<std::string> fat_vector;
@@ -74,7 +75,18 @@ unsigned int FileSystem::sync() {
     root_stream << root_file_names[i] << " " << root_first_blocks[i] << " ";
   }
   for (unsigned int i = root_file_names.size(); i < ROOT_ENTRY_COUNT; ++i) {
-    root_stream << std::string(MAX_NAME_LENGTH + ADDRESS_SPACE + 1, FILL_CHAR);
+    root_stream << std::string(MAX_NAME_LENGTH + ADDRESS_SPACE + 2, FILL_CHAR);
+  }
+
+  std::string root_string = root_stream.str();
+  unsigned int root_string_length = root_string.length();
+  std::cout << root_string_length << " " << BLOCK_SIZE << std::endl;
+  if (root_string_length < BLOCK_SIZE) {
+    std::cout << "Less than block size" << std::endl;
+  } else if (root_string_length > BLOCK_SIZE) {
+    std::cout << "Greater than block size" << std::endl;
+  } else {
+    std::cout << "Equal to block size. Carry on." << std::endl;
   }
 
   // Place the root at ROOT_BLOCK. If it fails return an error code
@@ -85,7 +97,7 @@ unsigned int FileSystem::sync() {
   // Build the FAT stream
   for (unsigned int i = 0; i < fat.size(); ++i) {
     fat_stream << std::setfill(' ') << std::setw(ADDRESS_LENGTH)
-               << fat[i] << " ";
+               << fat[i] << ' ';
   }
 
   // Separate the FAT into blocks
@@ -198,10 +210,6 @@ unsigned int FileSystem::makeFileSystem() {
     fat[i] = i + 1;
   }
   fat[fat.size() - 1] = EOF_CHAR;
-
-  for (unsigned int i = 0; i < root_file_names.size(); ++i) {
-    std::cout << root_file_names[i] << " " << root_first_blocks[i] << std::endl;
-  }
 
   return sync();
 }
