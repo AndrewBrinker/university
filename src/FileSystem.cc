@@ -57,7 +57,6 @@ FileSystem::FileSystem(std::string new_name):VirtualDisk(new_name,
                                                          BLOCK_COUNT,
                                                          BLOCK_SIZE) {
   if (!loadFileSystem()) {
-    std::cout << "Making the file system" << std::endl;
     makeFileSystem();
   }
 }
