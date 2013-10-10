@@ -33,6 +33,7 @@ THE SOFTWARE.
 
 
 int fileSystemTest(std::string& buffer) {
+  FileSystem("fs1");
   return 1;
 }
 

@@ -34,9 +34,9 @@ THE SOFTWARE.
 
 
 int virtualDiskTest(std::string& buffer) {
-  // Create a new disk1 called test 1 with
+  // Create a new vd1 called test 1 with
   // 16 blocks of 32 bytes
-  VirtualDisk disk1("test1", 16, 32);
+  VirtualDisk vd1("vd1", 16, 32);
 
   // Define input blocks
   std::string input1 = "";
@@ -55,16 +55,16 @@ int virtualDiskTest(std::string& buffer) {
   }
 
   // Put and get the block, and verify they are identical
-  disk1.putBlock(4, input1);
-  disk1.getBlock(4, output1);
+  vd1.putBlock(4, input1);
+  vd1.getBlock(4, output1);
   if (input1 != output1) {
     buffer = "putBlock and getBlock are not equivalent.";
     return 0;
   }
 
   // Put and get the block, and verify they are identical
-  disk1.putBlock(8, input2);
-  disk1.getBlock(8, output2);
+  vd1.putBlock(8, input2);
+  vd1.getBlock(8, output2);
   if (input2 != output2) {
     buffer = "putBlock and getBlock are not equivalent.";
     return 0;

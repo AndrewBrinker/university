@@ -26,7 +26,7 @@ THE SOFTWARE.
 // non-inline functions of the class.
 
 #include "./FileSystem.h"
-#include <math.h>
+#include <cmath>
 #include <string>
 #include <fstream>
 #include <iostream>
@@ -41,11 +41,11 @@ THE SOFTWARE.
 #define RESERVED_CHAR    '1'
 
 // Calculated values.
-#define ADDRESS_LENGTH   floor(log10(BLOCK_COUNT))
-#define ADDRESS_SPACE    ADDRESS_LENGTH+1
-#define ROOT_ENTRY_SPACE MAX_NAME_LENGTH+ADDRESS_LENGTH+2
-#define ROOT_ENTRY_COUNT BLOCK_SIZE/ROOT_ENTRY_SPACE
-#define FAT_BLOCK_COUNT  (ADDRESS_SPACE*BLOCK_COUNT)/BLOCK_SIZE
+#define ADDRESS_LENGTH   (floor(log10(BLOCK_COUNT)))
+#define ADDRESS_SPACE    (ADDRESS_LENGTH+1)
+#define ROOT_ENTRY_SPACE (MAX_NAME_LENGTH+ADDRESS_LENGTH+2)
+#define ROOT_ENTRY_COUNT (BLOCK_SIZE/ROOT_ENTRY_SPACE)
+#define FAT_BLOCK_COUNT  ((ADDRESS_SPACE*BLOCK_COUNT)/BLOCK_SIZE)
 
 
 FileSystem::FileSystem(std::string new_name):VirtualDisk(new_name,
@@ -58,6 +58,16 @@ FileSystem::FileSystem(std::string new_name):VirtualDisk(new_name,
 
 
 unsigned int FileSystem::sync() {
+  std::string data_file_name = getName() + ".dat";
+  std::fstream data_file(data_file_name.c_str(),
+                         std::fstream::in | std::fstream::out);
+  if (!data_file.good()) {
+    return 0;
+  }
+  for (unsigned int i = 0; i < root_file_names.size(); ++i) {
+    data_file << root_file_names[i] << " " << root_first_blocks[i] << " ";
+  }
+  data_file.close();
   return 1;
 }
 
@@ -117,7 +127,7 @@ unsigned int FileSystem::loadFileSystem() {
 
 // Make a new file system
 unsigned int FileSystem::makeFileSystem() {
-  const std::string default_file_name(FILL_CHAR, MAX_NAME_LENGTH);
+  const std::string default_file_name(MAX_NAME_LENGTH, FILL_CHAR);
 
   // Because we already know the size, it's more efficient to resize now
   // instead of using push_back over and over, which would potentially result
