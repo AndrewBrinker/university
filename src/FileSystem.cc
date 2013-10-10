@@ -72,21 +72,16 @@ unsigned int FileSystem::sync() {
 
   // Building the root stream
   for (unsigned int i = 0; i < root_file_names.size(); ++i) {
-    root_stream << root_file_names[i] << " " << root_first_blocks[i] << " ";
-  }
-  for (unsigned int i = root_file_names.size(); i < ROOT_ENTRY_COUNT; ++i) {
-    root_stream << std::string(MAX_NAME_LENGTH + ADDRESS_SPACE + 2, FILL_CHAR);
+    root_stream << root_file_names[i]
+                << std::string(MAX_NAME_LENGTH - root_file_names[i].length(),
+                               FILL_CHAR)
+                << " " << std::setfill(' ') << std::setw(ADDRESS_LENGTH)
+                << root_first_blocks[i] << " ";
   }
 
-  std::string root_string = root_stream.str();
-  unsigned int root_string_length = root_string.length();
-  std::cout << root_string_length << " " << BLOCK_SIZE << std::endl;
-  if (root_string_length < BLOCK_SIZE) {
-    std::cout << "Less than block size" << std::endl;
-  } else if (root_string_length > BLOCK_SIZE) {
-    std::cout << "Greater than block size" << std::endl;
-  } else {
-    std::cout << "Equal to block size. Carry on." << std::endl;
+  // Pad the root size
+  while (root_stream.str().length() < BLOCK_SIZE) {
+      root_stream << FILL_CHAR;
   }
 
   // Place the root at ROOT_BLOCK. If it fails return an error code
