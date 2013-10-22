@@ -312,7 +312,7 @@ unsigned int FileSystem::loadFat(std::string fat_string) {
   std::string raw_value = "";
   unsigned int current_value = 0;
   std::stringstream fat_stream;
-  while(fat_string[0] != FILL_CHAR) {
+  while (fat_string[0] != FILL_CHAR) {
     raw_value = fat_string.substr(0, ADDRESS_SPACE);
     fat_string.erase(0, ADDRESS_SPACE);
     strip(raw_value, ' ');
@@ -355,10 +355,10 @@ unsigned int FileSystem::loadRoot(std::string root_string) {
 
 // Remove extra characters.
 void FileSystem::strip(std::string& new_string, const char fill = FILL_CHAR) {
-  while(new_string[0] == fill) {
+  while (new_string[0] == fill) {
     new_string.erase(0, 1);
   }
-  while(new_string[new_string.length() - 1] == fill) {
+  while (new_string[new_string.length() - 1] == fill) {
     new_string.erase(new_string.length() - 1);
   }
 }
