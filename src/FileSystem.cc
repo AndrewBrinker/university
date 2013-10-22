@@ -53,17 +53,19 @@ THE SOFTWARE.
 #define FAT_BLOCK_COUNT  ((ADDRESS_SPACE*BLOCK_COUNT)/BLOCK_SIZE+1)
 
 
+// Checks if the file system has already been made. If it has, it loads the
+// file system. If not, it makes a new one.
 FileSystem::FileSystem(std::string new_name):VirtualDisk(new_name,
                                                          BLOCK_COUNT,
                                                          BLOCK_SIZE) {
-  if (!loadFileSystem()) {
+  if (!loadFileSystem(new_name)) {
     makeFileSystem();
   }
 }
 
 
+// Writes out the current state of the root and the FAT to the disk.
 unsigned int FileSystem::sync() {
-
   std::stringstream root_stream;
   std::stringstream fat_stream;
   std::vector<std::string> fat_vector;
@@ -99,8 +101,7 @@ unsigned int FileSystem::sync() {
     char c = fat_stream.str()[i];
     if (partial_fat.length() < BLOCK_SIZE) {
       partial_fat.push_back(c);
-    }
-    else {
+    } else {
       fat_vector.push_back(partial_fat);
       partial_fat.clear();
     }
@@ -125,18 +126,81 @@ unsigned int FileSystem::sync() {
 }
 
 
+// Creates a new file with no allocated blocks. Returns 0 if the length of the
+// filename is too big, if the file already exists, or if there is no more room
+// in the root.
 unsigned int FileSystem::newFile(std::string file) {
-  return 1;
+  const std::string default_file_name(MAX_NAME_LENGTH, FILL_CHAR);
+
+  // If the length of the filename is wrong. Return 0.
+  if (file.length() != MAX_NAME_LENGTH) {
+    return 0;
+  }
+
+  // Iterate through root_file_names
+  for (unsigned int i = 0; i < root_file_names.size(); ++i) {
+    // If the filename is already present, return 0;
+    if (file == root_file_names[i]) {
+      return 0;
+    }
+  }
+
+  // Iterate again
+  for (unsigned int i = 0; i < root_file_names.size(); ++i) {
+    // If the current filename is the default, put the new file here.
+    if (default_file_name == root_file_names[i]) {
+      root_file_names[i]   = file;
+      root_first_blocks[i] = 0;
+
+      sync();
+      return 1;
+    }
+  }
+
+  return 0;
 }
 
 
+// Deletes a file from the root. Returns 0 if the filename is the wrong length,
+// or if the file is not empty, or if it's not in the root.
 unsigned int FileSystem::removeFile(std::string file) {
-  return 1;
+  const std::string default_file_name(MAX_NAME_LENGTH, FILL_CHAR);
+
+  // If the filename is the wrong length, return 0
+  if (file.length() != MAX_NAME_LENGTH) {
+    return 0;
+  }
+
+  // Iterate through the root
+  for (unsigned int i = 0; i < root_file_names.size(); ++i) {
+    // If the file is present...
+    if (root_file_names[i] == file) {
+      // If the file is not empty, return 0
+      if (root_first_blocks[i] != 0) {
+        return 0;
+      }
+      // Otherwise, delete it from the root.
+      root_file_names[i] = default_file_name;
+
+      sync();
+      return 1;
+    }
+  }
+  return 0;
 }
 
 
+// Returns the first block of a given file. Returns 0 if the file doesn't exist
+// or is empty.
 unsigned int FileSystem::getFirstBlock(std::string file) {
-  return 1;
+  // Go through the root. If the file exists, return its first block number
+  for (unsigned int i = 0; i < root_file_names[i]; ++i) {
+    if (file == root_file_names[i]]) {
+      return root_first_blocks[i];
+    }
+  }
+  // Otherwise, return 0
+  return 0;
 }
 
 
@@ -158,22 +222,35 @@ unsigned int FileSystem::deleteBlock(std::string file,
 }
 
 
-unsigned int FileSystem::getBlock(std::string file,
-                                  unsigned int block_number,
-                                  std::string& buffer) {
+unsigned int FileSystem::readBlock(std::string file,
+                                   unsigned int block_number,
+                                   std::string& buffer) {
   return 1;
 }
 
 
-unsigned int FileSystem::putBlock(std::string file,
-                                  unsigned int block_number,
-                                  std::string buffer) {
+unsigned int FileSystem::writeBlock(std::string file,
+                                    unsigned int block_number,
+                                    std::string buffer) {
   return 1;
 }
 
 
 // Load an existing file system
-unsigned int FileSystem::loadFileSystem() {
+unsigned int FileSystem::loadFileSystem(std::string name) {
+  std::fstream arch_file(name + ".spc");
+  std::fstream data_file(name + ".dat");
+  if (!arch_file.good()) {
+    arch_file.close();
+    return 0;
+  } else if (!data_file.good()) {
+    data_file.close();
+    return 0;
+  }
+  std::stringstream root_stream;
+
+  // Load the root and FAT.
+
   return 0;
 }
 

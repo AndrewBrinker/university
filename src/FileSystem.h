@@ -48,15 +48,15 @@ class FileSystem : public VirtualDisk {
   unsigned int nextBlock(std::string file, unsigned int block_number);
   unsigned int addBlock(std::string file, std::string block);
   unsigned int deleteBlock(std::string file, unsigned int block_number);
-  unsigned int getBlock(std::string file,
-                        unsigned int block_number,
-                        std::string& buffer);
-  unsigned int putBlock(std::string file,
-                        unsigned int block_number,
-                        std::string buffer);
+  unsigned int readBlock(std::string file,
+                         unsigned int block_number,
+                         std::string& buffer);
+  unsigned int writeBlock(std::string file,
+                          unsigned int block_number,
+                          std::string buffer);
 
  private:
-  unsigned int loadFileSystem();
+  unsigned int loadFileSystem(std::string name);
   unsigned int makeFileSystem();
 
   std::vector<std::string> root_file_names;     // File names in ROOT

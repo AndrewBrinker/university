@@ -34,7 +34,40 @@ THE SOFTWARE.
 
 int fileSystemTest(std::string& buffer) {
   std::cout << "Testing the FileSystem class" << std::endl;
-  FileSystem("fs1");
+
+  VirtualDisk disk1("fs1", 256, 128);
+  FileSystem fsys("fs1");
+  fsys.newFile("file1");
+  fsys.newFile("file2");
+
+/*
+  std::string bfile;
+
+  for (unsigned int i = 1; i <= 1024; ++i) {
+    bfile += "1";
+  }
+
+  std::vector<std::string> blocks = block(bfile, 128);
+
+  unsigned int blocknumber = 0;
+
+  for (unsigned int i = 0; i <= blocks.size(); ++i) {
+    blocknumber = fsys.addBlock("file1", blocks[i]);
+  }
+
+  fsys.deleteBlock("file1", fsys.getFirstBlock("file1"));
+
+  for (unsigned int i = 1; i <= 2048; ++i) {
+    bfile+="2";
+  }
+
+  for (unsigned int i = 0; i <= blocks.size(); ++i) {
+    blocknumber = fsys.addBlock("file2", blocks[i]);
+  }
+
+  fsys.deleteBlock("file2", blocknumber);
+*/
+
   return 1;
 }
 
