@@ -152,8 +152,7 @@ unsigned int FileSystem::newFile(std::string file) {
       root_file_names[i]   = file;
       root_first_blocks[i] = 0;
 
-      sync();
-      return 1;
+      return sync();
     }
   }
 
@@ -182,8 +181,7 @@ unsigned int FileSystem::removeFile(std::string file) {
       // Otherwise, delete it from the root.
       root_file_names[i] = default_file_name;
 
-      sync();
-      return 1;
+      return sync();
     }
   }
   return 0;
