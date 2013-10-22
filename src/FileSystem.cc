@@ -234,6 +234,11 @@ int FileSystem::addBlock(std::string file,
 
 unsigned int FileSystem::deleteBlock(std::string file,
                                      unsigned int block_number) {
+  // If the file doesn't have the block, return 0.
+  if (!fileHasBlock(file, block_number)) {
+    return 0;
+  }
+  // Delete the block
   return 1;
 }
 
@@ -241,14 +246,20 @@ unsigned int FileSystem::deleteBlock(std::string file,
 unsigned int FileSystem::readBlock(std::string file,
                                    unsigned int block_number,
                                    std::string& buffer) {
-  return 1;
+  if (fileHasBlock(file, block_number)) {
+    return VirtualDisk::getBlock(block_number, buffer);
+  }
+  return 0;
 }
 
 
 unsigned int FileSystem::writeBlock(std::string file,
                                     unsigned int block_number,
                                     std::string buffer) {
-  return 1;
+  if (fileHasBlock(file, block_number)) {
+    return VirtualDisk::putBlock(block_number, buffer);
+  }
+  return 0;
 }
 
 
@@ -352,6 +363,32 @@ unsigned int FileSystem::loadRoot(std::string root_string) {
   }
   return 1;
 }
+
+
+// Returns 1 if the file has the block, -1 if the file doesn't exist, and
+// 0 otherwise.
+int FileSystem::fileHasBlock(std::string filename, unsigned int block_number) {
+  unsigned int file_exists = 0;
+  unsigned int file_index = 0;
+  for (unsigned int i = 0; i < root_file_names.size(); ++i) {
+    if (filename == root_file_names[i]) {
+      file_exists = 1;
+      file_index = i;
+    }
+  }
+  if (file_exists == 0) {
+    return 0;
+  }
+  unsigned int current_block = root_first_blocks[file_index];
+  while(current_block != 0) {
+    if (block_number == current_block) {
+      return 1;
+    }
+    current_block = fat[current_block];
+  }
+  return 0;
+}
+
 
 // Remove extra characters.
 void FileSystem::strip(std::string& new_string, const char fill = FILL_CHAR) {
