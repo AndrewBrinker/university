@@ -202,14 +202,32 @@ unsigned int FileSystem::getFirstBlock(std::string file) {
 }
 
 
-unsigned int FileSystem::nextBlock(std::string file,
-                                   unsigned int block_number) {
-  return 1;
-}
-
-
-unsigned int FileSystem::addBlock(std::string file,
-                                  std::string block) {
+// Add a block for a file that already exists.
+int FileSystem::addBlock(std::string file,
+                         std::string buffer) {
+  if (fat[0] == 0) {
+    return -1;
+  }
+  unsigned int file_exists = 0;
+  unsigned int file_index = 0;
+  for (unsigned int i = 0; i < root_file_names.size(); ++i) {
+    if (file == root_file_names[i]) {
+      file_exists = 1;
+      file_index = i;
+    }
+  }
+  if (file_exists == 0) {
+    return 0;
+  }
+  unsigned int first_free = fat[0];
+  unsigned int current_block = root_first_blocks[file_index];
+  fat[0] = fat[first_free];
+  fat[first_free] = 0;
+  while (fat[current_block] != 0) {
+    current_block = fat[current_block];
+  }
+  fat[current_block] = first_free;
+  VirtualDisk::putBlock(first_free, buffer);
   return 1;
 }
 
