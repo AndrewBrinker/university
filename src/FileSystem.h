@@ -56,8 +56,11 @@ class FileSystem : public VirtualDisk {
                           std::string buffer);
 
  private:
-  unsigned int loadFileSystem(std::string name);
+  unsigned int loadFileSystem();
   unsigned int makeFileSystem();
+  unsigned int loadFat(std::string fat_string);
+  unsigned int loadRoot(std::string root_string);
+  void strip(std::string& new_string, const char fill);
 
   std::vector<std::string> root_file_names;     // File names in ROOT
   std::vector<unsigned int> root_first_blocks;  // First blocks in ROOT

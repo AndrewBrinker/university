@@ -58,7 +58,7 @@ THE SOFTWARE.
 FileSystem::FileSystem(std::string new_name):VirtualDisk(new_name,
                                                          BLOCK_COUNT,
                                                          BLOCK_SIZE) {
-  if (!loadFileSystem(new_name)) {
+  if (!loadFileSystem()) {
     makeFileSystem();
   }
 }
@@ -194,8 +194,8 @@ unsigned int FileSystem::removeFile(std::string file) {
 // or is empty.
 unsigned int FileSystem::getFirstBlock(std::string file) {
   // Go through the root. If the file exists, return its first block number
-  for (unsigned int i = 0; i < root_file_names[i]; ++i) {
-    if (file == root_file_names[i]]) {
+  for (unsigned int i = 0; i < root_file_names.size(); ++i) {
+    if (file == root_file_names[i]) {
       return root_first_blocks[i];
     }
   }
@@ -237,21 +237,26 @@ unsigned int FileSystem::writeBlock(std::string file,
 
 
 // Load an existing file system
-unsigned int FileSystem::loadFileSystem(std::string name) {
-  std::fstream arch_file(name + ".spc");
-  std::fstream data_file(name + ".dat");
-  if (!arch_file.good()) {
-    arch_file.close();
-    return 0;
-  } else if (!data_file.good()) {
-    data_file.close();
+unsigned int FileSystem::loadFileSystem() {
+  std::string fat_string = "";
+  VirtualDisk::getBlock(2, fat_string);
+  if (fat_string == std::string(BLOCK_SIZE, FILL_CHAR)) {
+    return false;
+  }
+  std::string remaining_fat;
+  for (unsigned int i = 1; i < FAT_BLOCK_COUNT; ++i) {
+    VirtualDisk::getBlock(i, remaining_fat);
+    fat_string += remaining_fat;
+  }
+  if (!loadFat(fat_string)) {
     return 0;
   }
-  std::stringstream root_stream;
-
-  // Load the root and FAT.
-
-  return 0;
+  std::string root_string;
+  VirtualDisk::getBlock(1, root_string);
+  if (!loadRoot(root_string)) {
+    return 0;
+  }
+  return 1;
 }
 
 
@@ -283,4 +288,61 @@ unsigned int FileSystem::makeFileSystem() {
   fat[fat.size() - 1] = EOF_CHAR;
 
   return sync();
+}
+
+
+// Load the FAT
+unsigned int FileSystem::loadFat(std::string fat_string) {
+  std::string raw_value = "";
+  unsigned int current_value = 0;
+  std::stringstream fat_stream;
+  while(fat_string[0] != FILL_CHAR) {
+    raw_value = fat_string.substr(0, ADDRESS_SPACE);
+    fat_string.erase(0, ADDRESS_SPACE);
+    strip(raw_value, ' ');
+    fat_stream << raw_value;
+    if (fat_stream >> current_value) {
+      fat.push_back(current_value);
+    } else {
+      return 0;
+    }
+    fat_stream.clear();
+  }
+  return 1;
+}
+
+
+// Load the Root
+unsigned int FileSystem::loadRoot(std::string root_string) {
+  std::string raw_value = "";
+  std::string filename = "";
+  unsigned int address = 0;
+  std::stringstream root_stream;
+  while (root_string[0] != FILL_CHAR) {
+    filename = root_string.substr(0, MAX_NAME_LENGTH);
+    root_string.erase(0, MAX_NAME_LENGTH + 1);
+    strip(filename, FILL_CHAR);
+    raw_value = root_string.substr(0, ADDRESS_SPACE);
+    root_string.erase(0, ADDRESS_SPACE);
+    strip(raw_value, ' ');
+    root_stream << raw_value;
+    if (root_stream >> address) {
+      root_file_names.push_back(filename);
+      root_first_blocks.push_back(address);
+    } else {
+      return 0;
+    }
+    root_stream.clear();
+  }
+  return 1;
+}
+
+// Remove extra characters.
+void FileSystem::strip(std::string& new_string, const char fill = FILL_CHAR) {
+  while(new_string[0] == fill) {
+    new_string.erase(0, 1);
+  }
+  while(new_string[new_string.length() - 1] == fill) {
+    new_string.erase(new_string.length() - 1);
+  }
 }
