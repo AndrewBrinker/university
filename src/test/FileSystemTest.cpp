@@ -28,8 +28,33 @@ THE SOFTWARE.
 #define DOCFS_SRC_TEST_FILESYSTEM_CPP_
 
 #include <string>
+#include <vector>
 #include <iostream>
 #include "../FileSystem.h"
+
+std::vector<std::string> block(std::string blocks, unsigned int block_size) {
+  std::string partial = "";
+  std::vector<std::string> result;
+  for (unsigned int i = 0; i < blocks.length(); ++i) {
+    char c = blocks[i];
+    if (partial.length() < block_size) {
+      partial.push_back(c);
+    } else {
+      result.push_back(partial);
+      partial.clear();
+    }
+  }
+
+  if (partial.length() != 0) {
+    // Make sure to add the last block and pad it if it's not the right size.
+    for (unsigned int i = partial.length(); i < block_size; ++i) {
+      partial.push_back('#');
+    }
+    result.push_back(partial);
+  }
+
+  return result;
+}
 
 
 int fileSystemTest(std::string& buffer) {
@@ -40,7 +65,6 @@ int fileSystemTest(std::string& buffer) {
   fsys.newFile("file1");
   fsys.newFile("file2");
 
-/*
   std::string bfile;
 
   for (unsigned int i = 1; i <= 1024; ++i) {
@@ -58,7 +82,7 @@ int fileSystemTest(std::string& buffer) {
   fsys.deleteBlock("file1", fsys.getFirstBlock("file1"));
 
   for (unsigned int i = 1; i <= 2048; ++i) {
-    bfile+="2";
+    bfile += "2";
   }
 
   for (unsigned int i = 0; i <= blocks.size(); ++i) {
@@ -66,7 +90,6 @@ int fileSystemTest(std::string& buffer) {
   }
 
   fsys.deleteBlock("file2", blocknumber);
-*/
 
   return 1;
 }

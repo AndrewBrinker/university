@@ -234,12 +234,29 @@ int FileSystem::addBlock(std::string file,
 
 unsigned int FileSystem::deleteBlock(std::string file,
                                      unsigned int block_number) {
-  // If the file doesn't have the block, return 0.
-  if (!fileHasBlock(file, block_number)) {
-    return 0;
+  // Go through the file blocks.
+  // If you hit the block you're looking for, set the previous block equal to
+  // the value of the block you're deleting, and update the free list by setting
+  // the deleted block equal to the value of fat[0], and set fat[0] equal to the
+  // index of the deleted block.
+  unsigned int block_index;
+  for (unsigned int i = 0; i < root_file_names.size(); ++i) {
+    if (file == root_file_names[i]) {
+      block_index = i;
+    }
   }
-  // Delete the block
-  return 1;
+  unsigned int current_block = block_index;
+  while (current_block != 0) {
+    if (current_block == block_number) {
+      unsigned int previous_block = fat[current_block];
+      unsigned int temp = current_block;
+      current_block = fat[0];
+      fat[0] = temp;
+      return 1;
+    }
+    current_block = fat[current_block];
+  }
+  return 0;
 }
 
 
@@ -365,9 +382,8 @@ unsigned int FileSystem::loadRoot(std::string root_string) {
 }
 
 
-// Returns 1 if the file has the block, -1 if the file doesn't exist, and
-// 0 otherwise.
-int FileSystem::fileHasBlock(std::string filename, unsigned int block_number) {
+// Returns 1 if the file has the block, 0 otherwise.
+unsigned int FileSystem::fileHasBlock(std::string filename, unsigned int block_number) {
   unsigned int file_exists = 0;
   unsigned int file_index = 0;
   for (unsigned int i = 0; i < root_file_names.size(); ++i) {
