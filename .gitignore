@@ -6,3 +6,4 @@ run_this
 *.dat
 *.spc
 cpplint.py
+*.png
