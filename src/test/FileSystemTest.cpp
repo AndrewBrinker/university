@@ -33,7 +33,7 @@ THE SOFTWARE.
 #include "../FileSystem.h"
 
 std::vector<std::string> block(std::string blocks, unsigned int block_size) {
-  std::string partial = "";
+  std::string partial;
   std::vector<std::string> result;
   for (unsigned int i = 0; i < blocks.length(); ++i) {
     char c = blocks[i];
@@ -44,15 +44,14 @@ std::vector<std::string> block(std::string blocks, unsigned int block_size) {
       partial.clear();
     }
   }
-
   if (partial.length() != 0) {
     // Make sure to add the last block and pad it if it's not the right size.
     for (unsigned int i = partial.length(); i < block_size; ++i) {
       partial.push_back('#');
     }
     result.push_back(partial);
+    partial.clear();
   }
-
   return result;
 }
 
@@ -60,32 +59,31 @@ std::vector<std::string> block(std::string blocks, unsigned int block_size) {
 int fileSystemTest(std::string& buffer) {
   std::cout << "Testing the FileSystem class" << std::endl;
 
-  VirtualDisk disk1("fs1", 256, 128);
-  FileSystem fsys("fs1");
+  VirtualDisk disk1("disk1",256,128);
+  FileSystem fsys("disk1");
   fsys.newFile("file1");
   fsys.newFile("file2");
 
   std::string bfile;
 
-  for (unsigned int i = 1; i <= 1024; ++i) {
+  for (int i = 1; i <= 1024; ++i) {
     bfile += "1";
   }
 
   std::vector<std::string> blocks = block(bfile, 128);
+  int blocknumber = 0;
 
-  unsigned int blocknumber = 0;
-
-  for (unsigned int i = 0; i <= blocks.size(); ++i) {
+  for (int i = 0; i <= blocks.size(); ++i) {
     blocknumber = fsys.addBlock("file1", blocks[i]);
   }
 
   fsys.deleteBlock("file1", fsys.getFirstBlock("file1"));
 
-  for (unsigned int i = 1; i <= 2048; ++i) {
+  for (int i = 1; i <= 2048; ++i) {
     bfile += "2";
   }
 
-  for (unsigned int i = 0; i <= blocks.size(); ++i) {
+  for (int i = 0; i <= blocks.size(); ++i) {
     blocknumber = fsys.addBlock("file2", blocks[i]);
   }
 
