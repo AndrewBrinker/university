@@ -410,7 +410,7 @@ unsigned int FileSystem::fileHasBlock(std::string filename,
     return 0;
   }
   unsigned int current_block = root_first_blocks[file_index];
-  while(current_block != 0) {
+  while (current_block != 0) {
     if (block_number == current_block) {
       return 1;
     }
