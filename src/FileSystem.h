@@ -60,6 +60,7 @@ class FileSystem : public VirtualDisk {
   unsigned int loadFat(std::string fat_string);
   unsigned int loadRoot(std::string root_string);
   unsigned int fileHasBlock(std::string filename, unsigned int block_number);
+  unsigned int prepFileName(std::string& file);
   void strip(std::string& new_string, const char fill);
 
   std::vector<std::string> root_file_names;     // File names in ROOT

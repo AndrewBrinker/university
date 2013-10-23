@@ -59,29 +59,27 @@ std::vector<std::string> block(std::string blocks, unsigned int block_size) {
 int fileSystemTest(std::string& buffer) {
   std::cout << "Testing the FileSystem class" << std::endl;
 
-  VirtualDisk disk1("disk1", 256, 128);
+  VirtualDisk disk1("disk1", 100, 500);
   FileSystem fsys("disk1");
-  fsys.newFile("file1");
-  fsys.newFile("file2");
+  fsys.newFile("file1###########");
+  fsys.newFile("file2###########");
 
   std::string bfile;
 
-  for (int i = 1; i <= 1024; ++i) {
+  for (int i = 1; i <= 1500; ++i) {
     bfile += "1";
   }
 
-  std::vector<std::string> blocks = block(bfile, 128);
+  std::vector<std::string> blocks = block(bfile, 500);
   int blocknumber = 0;
 
   for (int i = 0; i < blocks.size(); ++i) {
     blocknumber = fsys.addBlock("file1", blocks[i]);
   }
 
-
-
   fsys.deleteBlock("file1", fsys.getFirstBlock("file1"));
 
-  for (int i = 1; i <= 2048; ++i) {
+  for (int i = 1; i <= 2000; ++i) {
     bfile += "2";
   }
 
