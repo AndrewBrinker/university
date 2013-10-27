@@ -26,9 +26,8 @@ THE SOFTWARE.
 
 #include <iostream>
 #include <string>
-#include "./FileSystemTest.cpp"
-#include "./VirtualDiskTest.cpp"
-
+#include "VirtualDiskTest.cpp"
+#include "FileSystemTest.cpp"
 
 int main(int argc, char** argv) {
   std::string buffer = "";
