@@ -1,5 +1,4 @@
 *.o
-makefile
 run_this
 *.sublime-project
 *.sublime-workspace
