@@ -75,4 +75,4 @@ int virtualDiskTest(std::string& buffer) {
   return 1;
 }
 
-#endif  // DOCFS_SRC_TEST_FILESYSTEM_CPP_
+#endif  // SRC_TEST_FILESYSTEM_CPP_
