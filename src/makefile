@@ -1,8 +1,10 @@
 SOURCES    = VirtualDisk.cc \
              FileSystem.cc \
+             Table.cc \
              test/main.cpp
 TESTS      = test/VirtualDiskTest.cpp \
-             test/FileSystemTest.cpp
+             test/FileSystemTest.cpp \
+             test/TableTest.cpp
 EXECUTABLE = run_this
 CC         = g++
 INCLUDES   = test/
@@ -17,7 +19,7 @@ SHELL = /bin/sh
 
 # target: all - Default target. Compiles all sources and tests.
 all: $(SOURCES) $(EXECUTABLE)
-	
+
 $(EXECUTABLE): $(OBJECTS)
 	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
 
