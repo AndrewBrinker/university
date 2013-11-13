@@ -44,4 +44,4 @@ class Irec {
   DISALLOW_COPY_AND_ASSIGN(Irec);
 };
 
-#endif  // SRC_IREC_H
+#endif  // SRC_IREC_H_

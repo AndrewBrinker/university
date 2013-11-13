@@ -28,7 +28,6 @@ THE SOFTWARE.
 // non-inline functions of the class.
 =============================================================================*/
 
-#include "./FileSystem.h"
 #include <cmath>
 #include <string>
 #include <fstream>
@@ -36,6 +35,7 @@ THE SOFTWARE.
 #include <vector>
 #include <sstream>
 #include <iomanip>
+#include "./FileSystem.h"
 
 // Defined defaults.
 #define BLOCK_SIZE       500
