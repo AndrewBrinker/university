@@ -59,15 +59,3 @@ Bnode::Bnode(std::vector<std::string> new_key,
     buffer.push_back(FILL_CHAR);
   }
 }
-
-std::string Bnode::getBuffer() {
-  return buffer;
-}
-
-std::vector<std::string> Bnode::getKeys() {
-  return key;
-}
-
-std::vector<unsigned int> Bnode::getBlockIDs() {
-  return block_id;
-}

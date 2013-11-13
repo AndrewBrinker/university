@@ -38,9 +38,9 @@ class Bnode {
   Bnode(std::vector<std::string> new_key,
         std::vector<unsigned int> new_block_id,
         unsigned int new_block_size);
-  std::string getBuffer();
-  std::vector<std::string> getKeys();
-  std::vector<unsigned int> getBlockIDs();
+  inline std::string getBuffer() { return buffer; }
+  inline std::vector<std::string> getKeys() { return key; }
+  inline std::vector<unsigned int> getBlockIDs() { return block_id; }
 
  private:
   std::string buffer;

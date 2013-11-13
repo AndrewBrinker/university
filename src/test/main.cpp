@@ -28,6 +28,7 @@ THE SOFTWARE.
 #include <string>
 #include "VirtualDiskTest.cpp"
 #include "FileSystemTest.cpp"
+#include "TableTest.cpp"
 
 int main(int argc, char** argv) {
   std::string buffer = "";
@@ -37,7 +38,12 @@ int main(int argc, char** argv) {
     return 0;
   }
   if (!fileSystemTest(buffer)) {
-    std::cout << "FileSystem testing failed with the error:\n     "
+    std::cout << "FileSystem testing failed with the error:\n    "
+              << buffer << std::endl;
+    return 0;
+  }
+  if (!tableTest(buffer)) {
+    std::cout << "Table testing failed with the error:\n    "
               << buffer << std::endl;
     return 0;
   }

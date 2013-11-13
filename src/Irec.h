@@ -34,8 +34,8 @@ THE SOFTWARE.
 class Irec {
  public:
   Irec(std::string new_key, unsigned int new_block_id);
-  std::string getKey();
-  unsigned int getBlockID();
+  inline std::string getKey() { return key; }
+  inline unsigned int getBlockID() { return block_id; }
 
  private:
   std::string key;
