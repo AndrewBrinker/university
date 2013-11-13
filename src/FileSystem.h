@@ -63,6 +63,7 @@ class FileSystem : public VirtualDisk {
   unsigned int fileHasBlock(std::string filename, unsigned int block_number);
   unsigned int prepFileName(std::string& file);
   void strip(std::string& new_string, const char fill);
+  std::vector<std::string> block(std::string blocks);
 
   std::vector<std::string> root_file_names;     // File names in ROOT
   std::vector<unsigned int> root_first_blocks;  // First blocks in ROOT

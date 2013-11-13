@@ -33,6 +33,8 @@ THE SOFTWARE.
 #include <string>
 #include <vector>
 #include "./FileSystem.h"
+#include "./Irec.h"
+#include "./Bnode.h"
 
 
 class Table : public FileSystem {
