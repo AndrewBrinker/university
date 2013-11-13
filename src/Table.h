@@ -39,7 +39,9 @@ THE SOFTWARE.
 
 class Table : public FileSystem {
  public:
-  Table(std::string new_diskname, std::string new_flat_file, std::string new_index_file);
+  Table(std::string new_diskname,
+        std::string new_flat_file,
+        std::string new_index_file);
   unsigned int buildTable(std::string input_file);
   inline unsigned int search(std::string value) { return indexSearch(value); }
  private:

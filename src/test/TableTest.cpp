@@ -34,7 +34,7 @@ THE SOFTWARE.
 
 
 int tableTest(std::string& buffer) {
-  std::cout << "Testing the FileSystem class" << std::endl;
+  std::cout << "Testing the Table class" << std::endl;
   return 1;
 }
 

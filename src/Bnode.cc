@@ -25,7 +25,7 @@ THE SOFTWARE.
 #include <sstream>
 #include <string>
 #include <vector>
-#include "Bnode.h"
+#include "./Bnode.h"
 
 #define FILL_CHAR '#'
 
