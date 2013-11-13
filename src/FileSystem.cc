@@ -207,6 +207,34 @@ unsigned int FileSystem::getFirstBlock(std::string file) {
 }
 
 
+int FileSystem::getNextBlock(std::string file, unsigned int block_number) {
+  prepFileName(file);
+  unsigned int current_block = 0;
+  int block_found = 0;
+  for (unsigned int i = 0; i < root_file_names.size(); ++i) {
+    if (file == root_file_names[i]) {
+      current_block = root_first_blocks[i];
+      block_found = 1;
+      break;
+    }
+  }
+  // If the file doesn't exist, or has no blocks, return -1.
+  if (block_found == 0 || current_block == 0) {
+    return -1;
+  }
+  // Then go from block to block. If any of the blocks matches block_number,
+  // return the next block. If there are no blocks after block_number,
+  // return 0. If block_number never occurs, return -1.
+  while (current_block != 0) {
+    if (current_block == block_number) {
+      return fat[current_block];
+    }
+    current_block = fat[current_block];
+  }
+  return -1;
+}
+
+
 // Add a block for a file that already exists.
 int FileSystem::addBlock(std::string file,
                          std::string buffer) {

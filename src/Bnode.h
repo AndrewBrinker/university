@@ -22,42 +22,32 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#include "./Table.h"
+#ifndef SRC_BNODE_H_
+#define SRC_BNODE_H_
+
+#define DISALLOW_COPY_AND_ASSIGN(TypeName) \
+  TypeName(const TypeName&);               \
+  void operator=(const TypeName&)
+
 #include <string>
-#include <fstream>
-#include <iostream>
 #include <vector>
 
-#define MAX_RECORD_LENGTH      120
-#define INDEX_LENGTH           10
-#define DATE_LENGTH            5
-#define END_LENGTH             5
-#define TYPE_LENGTH            8
-#define PLACE_LENGTH           15
-#define REFERENCE_LENGTH       7
-#define MAX_DESCRIPTION_LENGTH (MAX_RECORD_LENGTH - INDEX_LENGH \
-                                - DATE_LENGTH - END_LENGTH - TYPE_LENGTH \
-                                - PLACE_LENGTH - REFERENCE_LENGTH)
+class Bnode {
+ public:
+  explicit Bnode(std::string new_buffer);
+  Bnode(std::vector<std::string> new_key,
+        std::vector<unsigned int> new_block_id,
+        unsigned int new_block_size);
+  std::string getBuffer();
+  std::vector<std::string> getKeys();
+  std::vector<unsigned int> getBlockIDs();
 
+ private:
+  std::string buffer;
+  std::vector<std::string> key;
+  std::vector<unsigned int> block_id;
 
-Table::Table(std::string new_diskname,
-             std::string new_flat_file,
-             std::string new_index_file):
-             FileSystem(new_diskname),
-             flat_file(new_flat_file),
-             index_file(new_index_file) {
-    FileSystem::newFile(new_flat_file);
-    FileSystem::newFile(new_index_file);
-}
+  DISALLOW_COPY_AND_ASSIGN(Bnode);
+};
 
-
-unsigned int Table::buildTable(std::string input_file) {
-    std::string blah = input_file;
-    return 0;
-}
-
-
-unsigned int Table::indexSearch(std::string value) {
-    std::string blah = value;
-    return 0;
-}
+#endif  // SRC_BNODE_H_

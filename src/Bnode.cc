@@ -22,42 +22,52 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#include "./Table.h"
+#include <sstream>
 #include <string>
-#include <fstream>
-#include <iostream>
 #include <vector>
+#include "Bnode.h"
 
-#define MAX_RECORD_LENGTH      120
-#define INDEX_LENGTH           10
-#define DATE_LENGTH            5
-#define END_LENGTH             5
-#define TYPE_LENGTH            8
-#define PLACE_LENGTH           15
-#define REFERENCE_LENGTH       7
-#define MAX_DESCRIPTION_LENGTH (MAX_RECORD_LENGTH - INDEX_LENGH \
-                                - DATE_LENGTH - END_LENGTH - TYPE_LENGTH \
-                                - PLACE_LENGTH - REFERENCE_LENGTH)
+#define FILL_CHAR '#'
 
-
-Table::Table(std::string new_diskname,
-             std::string new_flat_file,
-             std::string new_index_file):
-             FileSystem(new_diskname),
-             flat_file(new_flat_file),
-             index_file(new_index_file) {
-    FileSystem::newFile(new_flat_file);
-    FileSystem::newFile(new_index_file);
+Bnode::Bnode(std::string new_buffer) {
+  buffer = new_buffer;
+  std::istringstream instream;
+  instream.str(buffer);
+  unsigned int vsize = 0;
+  instream >> vsize;
+  std::string k;
+  unsigned int b = 0;
+  for (unsigned int i = 0; i < vsize; ++i) {
+    instream >> k >> b;
+    key.push_back(k);
+    block_id.push_back(b);
+  }
 }
 
-
-unsigned int Table::buildTable(std::string input_file) {
-    std::string blah = input_file;
-    return 0;
+Bnode::Bnode(std::vector<std::string> new_key,
+             std::vector<unsigned int> new_block_id,
+             unsigned int new_block_size) {
+  key = new_key;
+  block_id = new_block_id;
+  std::ostringstream outstream;
+  outstream << key.size() << " ";
+  for (unsigned int i = 0; i < key.size(); ++i) {
+    outstream << key[i] << " " << block_id[i] << " ";
+  }
+  buffer = outstream.str();
+  for (unsigned int i = buffer.length(); i < new_block_size; ++i) {
+    buffer.push_back(FILL_CHAR);
+  }
 }
 
+std::string Bnode::getBuffer() {
+  return buffer;
+}
 
-unsigned int Table::indexSearch(std::string value) {
-    std::string blah = value;
-    return 0;
+std::vector<std::string> Bnode::getKeys() {
+  return key;
+}
+
+std::vector<unsigned int> Bnode::getBlockIDs() {
+  return block_id;
 }

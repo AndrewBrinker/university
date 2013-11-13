@@ -45,6 +45,7 @@ class FileSystem : public VirtualDisk {
   unsigned int newFile(std::string file);
   unsigned int removeFile(std::string file);
   unsigned int getFirstBlock(std::string file);
+  int getNextBlock(std::string file, unsigned int block_number);
   int addBlock(std::string file, std::string buffer);
   unsigned int deleteBlock(std::string file, unsigned int block_number);
   unsigned int readBlock(std::string file,

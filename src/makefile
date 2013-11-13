@@ -1,14 +1,21 @@
 SOURCES    = VirtualDisk.cc \
              FileSystem.cc \
              Table.cc \
+             Irec.cc \
+             Bnode.cc \
              test/main.cpp
 TESTS      = test/VirtualDiskTest.cpp \
              test/FileSystemTest.cpp \
              test/TableTest.cpp
+HEADERS    = VirtualDisk.h \
+             FileSystem.h \
+             Irec.h \
+             Bnode.h \
+             Table.h
 EXECUTABLE = run_this
 CC         = g++
 INCLUDES   = test/
-CFLAGS     = -c -pedantic -Wall -Wextra -Wcast-align -Wcast-qual -Wctor-dtor-privacy -Wdisabled-optimization -Wformat=2 -Winit-self -Wmissing-include-dirs -Wold-style-cast -Woverloaded-virtual -Wredundant-decls -Wshadow -Wsign-promo -Wstrict-overflow=5 -Wswitch-default -Wundef -Werror -Wno-unused
+CFLAGS     = -std=c++11 -c -pedantic -Wall -Wextra -Wcast-align -Wcast-qual -Wctor-dtor-privacy -Wdisabled-optimization -Wformat=2 -Winit-self -Wmissing-include-dirs -Wold-style-cast -Woverloaded-virtual -Wredundant-decls -Wshadow -Wsign-promo -Wstrict-overflow=5 -Wswitch-default -Wundef -Werror -Wno-unused
 LDFLAGS    =
 OBJECTS    = $(SOURCES:.cc=.o)
 
@@ -35,7 +42,7 @@ prep:
 
 # target: lint - Runs cpplint.py on all files.
 lint:
-	python test/cpplint.py --filter=-readability/streams,-runtime/references $(SOURCES) $(TESTS)
+	python test/cpplint.py --filter=-readability/streams,-runtime/references $(SOURCES) $(TESTS) $(HEADERS)
 
 # target: save - Commit changes to the source files.
 save:
