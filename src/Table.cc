@@ -23,6 +23,8 @@ THE SOFTWARE.
 */
 
 #include <string>
+#include <cstring>
+#include <cstdio>
 #include <fstream>
 #include <iostream>
 #include <vector>
@@ -105,12 +107,38 @@ unsigned int Table::buildTable(std::string input_file) {
 }
 
 
+unsigned int Table::search(std::string value) {
+    unsigned int block = indexSearch(value);
+    if (block == 0) {
+        return 0;
+    }
+    std::string block_contents(BLOCK_SIZE, FILL_CHAR);
+    FileSystem::readBlock(flat_file, block, block_contents);
+    for (std::string::const_iterator it = block_contents.cbegin(); it != block_contents.end(); ++it) {
+        if (*it == "\n" or it == block_contents.cbegin()) {
+            if (strncmp(&*(++it), value.c_str(), DATE_LENGTH) == 0) {
+                while (*it != "\n") {
+                    putchar(*it);
+                }
+                putchar("\n");
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
+
 unsigned int Table::indexSearch(std::string value) {
-    std::string blah = value;
-    // 1) Read in the blocks for the index to a string.
-    // 2) Starting at the first 5 bytes, jump from date to date until a match
-    //    is found.
-    // 3) When found, load the block containing the record.
-    // 4) Search the block for the specific record you need.
+    unsigned int current_block = FileSystem::getFirstBlock(index_file);
+    std::string block_contents(BLOCK_SIZE, FILL_CHAR);
+    do {
+        FileSystem::readBlock(index_file, current_block, block_contents);
+        for (std::string::const_iterator it = block_contents.cbegin(); it != block_contents.cend(); i += INDEX_LENGTH) {
+            if (strncmp(&*it, value.c_str(), DATE_LENGTH) == 0) {
+                return current_block;
+            }
+        }
+    } while(current_block = FileSystem::getNextBlock(index_file, current_block));
     return 0;
 }

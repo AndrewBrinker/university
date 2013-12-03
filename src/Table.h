@@ -43,7 +43,7 @@ class Table : public FileSystem {
         std::string new_flat_file,
         std::string new_index_file);
   unsigned int buildTable(std::string input_file);
-  inline unsigned int search(std::string value) { return indexSearch(value); }
+  unsigned int search(std::string value);
  private:
   unsigned int indexSearch(std::string value);
   std::string flat_file;
