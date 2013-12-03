@@ -1,5 +1,9 @@
-#ifndef DOCFS_SRC_IREC_H
-#define DOCFS_SRC_IREC_H
+/*
+ * Copyright 2013 Andrew Brinker
+ */
+
+#ifndef SRC_DOCFS_IREC_H_
+#define SRC_DOCFS_IREC_H_
 
 #include <string>
 
@@ -20,4 +24,4 @@ class Irec {
   DISALLOW_COPY_AND_ASSIGN(Irec);
 };
 
-#endif  // DOCFS_SRC_IREC_H
+#endif  // SRC_DOCFS_IREC_H_

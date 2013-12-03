@@ -1,9 +1,13 @@
+/*
+ * Copyright 2013 Andrew Brinker
+ */
+
 // This is the interface for the FileSystem class. This is the actual file
 // system, and it does all of the heavy lifting, using Vdisk as the
 // back end. All the warnings that apply to Vdisk apply to FileSystem.
 
-#ifndef DOCFS_SRC_FILESYS_H
-#define DOCFS_SRC_FILESYS_H
+#ifndef SRC_DOCFS_FILESYS_H_
+#define SRC_DOCFS_FILESYS_H_
 
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \
   TypeName(const TypeName&);               \
@@ -31,7 +35,7 @@ class FileSys : public Vdisk {
                           unsigned int block_number,
                           std::string buffer);
 
-protected:
+ protected:
   std::vector<std::string> block(std::string blocks);
 
  private:
@@ -51,4 +55,4 @@ protected:
 };
 
 
-#endif  // DOCFS_SRC_FILESYS_H
+#endif  // SRC_DOCFS_FILESYS_H_

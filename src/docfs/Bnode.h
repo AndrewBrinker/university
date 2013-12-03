@@ -1,5 +1,9 @@
-#ifndef DOCFS_SRC_BNODE_H
-#define DOCFS_SRC_BNODE_H
+/*
+ * Copyright 2013 Andrew Brinker
+ */
+
+#ifndef SRC_DOCFS_BNODE_H_
+#define SRC_DOCFS_BNODE_H_
 
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \
   TypeName(const TypeName&);               \
@@ -26,4 +30,4 @@ class Bnode {
   DISALLOW_COPY_AND_ASSIGN(Bnode);
 };
 
-#endif  // DOCFS_SRC_BNODE_H
+#endif  // SRC_DOCFS_BNODE_H_

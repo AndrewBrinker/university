@@ -1,11 +1,14 @@
+/*
+ * Copyright 2013 Andrew Brinker
+ */
+
 // This is the implementation of the class Vdisk defined in Vdisk.h
 // It defines all non-inline functions of the class.
 
-#include "./Vdisk.h"
 #include <string>
 #include <fstream>
 #include <iostream>
-
+#include "./Vdisk.h"
 
 // Initializes a disk with nothing but a name.
 // Assumes the disk already exists. It does nothing to create new files,

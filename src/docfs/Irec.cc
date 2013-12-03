@@ -1,3 +1,7 @@
+/*
+ * Copyright 2013 Andrew Brinker
+ */
+
 #include <string>
 #include "./Irec.h"
 

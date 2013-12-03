@@ -1,12 +1,18 @@
+/*
+ * Copyright 2013 Andrew Brinker
+ */
+
 #include <string>
 #include <cstring>
 #include <cstdio>
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #include <vector>
 #include "./Table.h"
-#include "./FileSys.cc"
 
+#define BLOCK_SIZE         500
+#define FILL_CHAR          '#'
 #define MAX_RECORD_LENGTH  120
 #define DATE_LENGTH        5
 #define END_LENGTH         5
@@ -61,7 +67,7 @@ unsigned int Table::buildTable(std::string input_file) {
         while (FileSys::getNextBlock(flat_file, current_block) != 0) {
             current_block = FileSys::getNextBlock(flat_file, current_block);
         }
-        // current block now equals the block number the stuff was written out to.
+        // current block now equals the block number the stuff was written to.
         // now I need to save to the index_file.
         // I need to turn current_block into a string of 5 characters.
         std::ostringstream outs;
@@ -94,8 +100,10 @@ unsigned int Table::search(std::string value) {
     }
     std::string block_contents(BLOCK_SIZE, FILL_CHAR);
     FileSys::readBlock(flat_file, block, block_contents);
-    for (std::string::const_iterator it = block_contents.cbegin(); it != block_contents.end(); ++it) {
-        if (*it == '\n' or it == block_contents.cbegin()) {
+    for (std::string::const_iterator it = block_contents.cbegin();
+         it != block_contents.end();
+         ++it) {
+        if (*it == '\n' || it == block_contents.cbegin()) {
             if (strncmp(&*(++it), value.c_str(), DATE_LENGTH) == 0) {
                 while (*it != '\n') {
                     std::putchar(*it);
@@ -110,15 +118,17 @@ unsigned int Table::search(std::string value) {
 
 
 unsigned int Table::indexSearch(std::string value) {
-    unsigned int current_block = FileSys::getFirstBlock(index_file);
+    int current_block = FileSys::getFirstBlock(index_file);
     std::string block_contents(BLOCK_SIZE, FILL_CHAR);
     do {
         FileSys::readBlock(index_file, current_block, block_contents);
-        for (std::string::const_iterator it = block_contents.cbegin(); it != block_contents.cend(); it += INDEX_LENGTH) {
+        for (std::string::const_iterator it = block_contents.cbegin();
+             it != block_contents.cend();
+             it += INDEX_LENGTH) {
             if (strncmp(&*it, value.c_str(), DATE_LENGTH) == 0) {
                 return current_block;
             }
         }
-    } while(current_block == FileSys::getNextBlock(index_file, current_block));
+    } while (current_block == FileSys::getNextBlock(index_file, current_block));
     return 0;
 }

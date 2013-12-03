@@ -1,5 +1,9 @@
-#ifndef DOCFS_SRC_TABLE_H
-#define DOCFS_SRC_TABLE_H
+/*
+ * Copyright 2013 Andrew Brinker
+ */
+
+#ifndef SRC_DOCFS_TABLE_H_
+#define SRC_DOCFS_TABLE_H_
 
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \
   TypeName(const TypeName&);               \
@@ -24,4 +28,4 @@ class Table : public FileSys {
   DISALLOW_COPY_AND_ASSIGN(Table);
 };
 
-#endif  // DOCFS_SRC_TABLE_H
+#endif  // SRC_DOCFS_TABLE_H_

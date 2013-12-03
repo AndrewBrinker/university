@@ -1,44 +1,24 @@
 /*
-The MIT License (MIT)
-
-Copyright (c) 2013 Andrew Brinker
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-*/
+ * Copyright 2013 Andrew Brinker
+ */
 
 // This is a small collection of tests for the VirtualDisk class. It verifies
 // that PutBlock() and GetBlock() work correctly.
 
-#ifndef SRC_TESTS_VDISK_CPP_
-#define SRC_TESTS_VDISK_CPP_
+#ifndef SRC_TESTS_VDISK_CPP
+#define SRC_TESTS_VDISK_CPP
 
+#include <docfs/Vdisk.h>
 #include <string>
 #include <iostream>
-#include "../src/Vdisk.h"
 
 
 int virtualDiskTest(std::string& buffer) {
-  std::cout << "Testing the VirtualDisk class" << std::endl;
+  std::cout << "Testing the Vdisk class" << std::endl;
 
   // Create a new vd1 called test 1 with
   // 16 blocks of 32 bytes
-  VirtualDisk vd1("vd1", 16, 32);
+  Vdisk vd1("vd1", 16, 32);
 
   // Define input blocks
   std::string input1 = "";
@@ -75,4 +55,4 @@ int virtualDiskTest(std::string& buffer) {
   return 1;
 }
 
-#endif  // SRC_TEST_FILESYSTEM_CPP_
+#endif  // SRC_TESTS_VDISK_CPP

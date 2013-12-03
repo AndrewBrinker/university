@@ -1,3 +1,7 @@
+/*
+ * Copyright 2013 Andrew Brinker
+ */
+
 // This is the interface for the VirtualDisk class, which simulates a physical
 // disk by reading and writing to a data file. It also has an architecture file,
 // which contains information about the disk itself for persistence across
@@ -8,8 +12,8 @@
 // new disk. If there is already a disk present it destroys the disk and makes a
 // new one. BE VERY CAREFUL ABOUT OVERWRITING EXISTING DISKS.
 
-#ifndef DOCFS_SRC_VDISK_H
-#define DOCFS_SRC_VDISK_H
+#ifndef SRC_DOCFS_VDISK_H_
+#define SRC_DOCFS_VDISK_H_
 
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \
   TypeName(const TypeName&);               \
@@ -39,5 +43,4 @@ class Vdisk {
   DISALLOW_COPY_AND_ASSIGN(Vdisk);
 };
 
-
-#endif  // DOCFS_SRC_VDISK_H
+#endif  // SRC_DOCFS_VDISK_H_

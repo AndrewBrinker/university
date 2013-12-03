@@ -1,3 +1,7 @@
+/*
+ * Copyright 2013 Andrew Brinker
+ */
+
 /*=============================================================================
 // This is the implementation of the class FileSys. It implements all
 // non-inline functions of the class.
@@ -84,12 +88,10 @@ unsigned int FileSys::sync() {
   fat_vector = block(fat_stream.str());
 
   // Output each block individually
-  unsigned int index = 0;
-  for (auto i : fat_vector) {
-    if (!Vdisk::putBlock(FAT_START_BLOCK + index, fat_vector[index])) {
+  for (unsigned int i = 0; i < fat_vector.size(); ++i) {
+    if (!Vdisk::putBlock(FAT_START_BLOCK + i, fat_vector[i])) {
       return 0;
     }
-    ++index;
   }
   return 1;
 }
@@ -273,7 +275,6 @@ unsigned int FileSys::deleteBlock(std::string file,
   unsigned int current_block = block_index;
   while (current_block != 0) {
     if (current_block == block_number) {
-      unsigned int previous_block = fat[current_block];
       unsigned int temp = current_block;
       current_block = fat[0];
       fat[0] = temp;
