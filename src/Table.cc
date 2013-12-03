@@ -1,27 +1,3 @@
-/*
-The MIT License (MIT)
-
-Copyright (c) 2013 Andrew Brinker
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-*/
-
 #include <string>
 #include <cstring>
 #include <cstdio>
@@ -29,6 +5,7 @@ THE SOFTWARE.
 #include <iostream>
 #include <vector>
 #include "./Table.h"
+#include "./FileSys.cc"
 
 #define MAX_RECORD_LENGTH  120
 #define DATE_LENGTH        5
@@ -45,11 +22,11 @@ THE SOFTWARE.
 Table::Table(std::string new_diskname,
              std::string new_flat_file,
              std::string new_index_file):
-             FileSystem(new_diskname),
+             FileSys(new_diskname),
              flat_file(new_flat_file),
              index_file(new_index_file) {
-    FileSystem::newFile(new_flat_file);
-    FileSystem::newFile(new_index_file);
+    FileSys::newFile(new_flat_file);
+    FileSys::newFile(new_index_file);
 }
 
 
@@ -76,14 +53,13 @@ unsigned int Table::buildTable(std::string input_file) {
         } while (count < (BLOCK_SIZE / MAX_RECORD_LENGTH));
         std::string record_string = "";
         for (unsigned int i = 0; i < records.size(); ++i) {
-            record_string.push_back(records[i]);
+            record_string.append(records[i]);
         }
-        record_string = FileSystem::block(record_string)[0];
+        record_string = FileSys::block(record_string)[0];
 
-        FileSystem::addBlock(flat_file);
-        unsigned int current_block = FileSystem::getFirstBlock(flat_file);
-        while (FileSystem::getNextBlock(flat_file, current_block) != 0) {
-            current_block = FileSystem::getNextBlock(flat_file, current_block);
+        unsigned int current_block = FileSys::getFirstBlock(flat_file);
+        while (FileSys::getNextBlock(flat_file, current_block) != 0) {
+            current_block = FileSys::getNextBlock(flat_file, current_block);
         }
         // current block now equals the block number the stuff was written out to.
         // now I need to save to the index_file.
@@ -98,9 +74,13 @@ unsigned int Table::buildTable(std::string input_file) {
         for (unsigned int i = 0; i < dates.size(); ++i) {
             indices.push_back(dates[i] + block_string);
         }
-        indices = FileSystem::block(indices);
+        std::string indices_string;
         for (unsigned int i = 0; i < indices.size(); ++i) {
-            FileSystem::addBlock(index_file, indices[i]);
+            indices_string.append(indices[i]);
+        }
+        indices = FileSys::block(indices_string);
+        for (unsigned int i = 0; i < indices.size(); ++i) {
+            FileSys::addBlock(index_file, indices[i]);
         }
     }
     return 0;
@@ -113,14 +93,14 @@ unsigned int Table::search(std::string value) {
         return 0;
     }
     std::string block_contents(BLOCK_SIZE, FILL_CHAR);
-    FileSystem::readBlock(flat_file, block, block_contents);
+    FileSys::readBlock(flat_file, block, block_contents);
     for (std::string::const_iterator it = block_contents.cbegin(); it != block_contents.end(); ++it) {
-        if (*it == "\n" or it == block_contents.cbegin()) {
+        if (*it == '\n' or it == block_contents.cbegin()) {
             if (strncmp(&*(++it), value.c_str(), DATE_LENGTH) == 0) {
-                while (*it != "\n") {
-                    putchar(*it);
+                while (*it != '\n') {
+                    std::putchar(*it);
                 }
-                putchar("\n");
+                std::putchar('\n');
                 return 1;
             }
         }
@@ -130,15 +110,15 @@ unsigned int Table::search(std::string value) {
 
 
 unsigned int Table::indexSearch(std::string value) {
-    unsigned int current_block = FileSystem::getFirstBlock(index_file);
+    unsigned int current_block = FileSys::getFirstBlock(index_file);
     std::string block_contents(BLOCK_SIZE, FILL_CHAR);
     do {
-        FileSystem::readBlock(index_file, current_block, block_contents);
-        for (std::string::const_iterator it = block_contents.cbegin(); it != block_contents.cend(); i += INDEX_LENGTH) {
+        FileSys::readBlock(index_file, current_block, block_contents);
+        for (std::string::const_iterator it = block_contents.cbegin(); it != block_contents.cend(); it += INDEX_LENGTH) {
             if (strncmp(&*it, value.c_str(), DATE_LENGTH) == 0) {
                 return current_block;
             }
         }
-    } while(current_block = FileSystem::getNextBlock(index_file, current_block));
+    } while(current_block == FileSys::getNextBlock(index_file, current_block));
     return 0;
 }

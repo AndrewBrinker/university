@@ -1,4 +1,4 @@
-FLAGS=-g -O2 -Wall -Wextra -Isrc -rdynamic -DNDEBUG $(OPTFLAGS)
+FLAGS=-std=c++0x -g -O2 -Wall -Wextra -Isrc -rdynamic -DNDEBUG $(OPTFLAGS)
 LIBS=-ldl $(OPTLIBS)
 PREFIX?=/usr/local
 
@@ -8,8 +8,8 @@ SOURCES=$(wildcard src/**/*.cc src/*.cc)
 OBJECTS=$(patsubst %.cc,%.o,$(SOURCES))
 HEADERS=$(patsubst %.cc,%.h,$(SOURCES))
 
-TEST_SRC=$(wildcard tests/*_tests.c)
-TESTS=$(patsubst %.cc,%,$(TEST_SRC))
+TEST_SRC=$(wildcard tests/*_tests.cpp)
+TESTS=$(patsubst %.cpp,%,$(TEST_SRC))
 
 TARGET=build/docFS.a
 SO_TARGET=$(patsubst %.a,%.so,$(TARGET))
@@ -17,7 +17,7 @@ SO_TARGET=$(patsubst %.a,%.so,$(TARGET))
 # target: all       Default target. Creates all the important files.
 all: $(TARGET) $(SO_TARGET) tests
 
-dev: CFLAGS=-g -Wall -Isrc -Wall -Wextra $(OPTFLAGS)
+dev: CFLAGS=-std=c++0x -g -Wall -Isrc -Wall -Wextra $(OPTFLAGS)
 dev: all
 
 $(TARGET): CFLAGS += -fPIC
@@ -26,7 +26,7 @@ $(TARGET): build $(OBJECTS)
 	ranlib $@
 
 $(SO_TARGET): $(TARGET) $(OBJECTS)
-	$(CC) -shared -o $@ $(OBJECTS)
+	$(CC) -std=c++0x -shared -o $@ $(OBJECTS)
 
 # target: build     Create the build and bin directories
 build:

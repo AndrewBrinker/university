@@ -1,30 +1,5 @@
-/*
-The MIT License (MIT)
-
-Copyright (c) 2013 Andrew Brinker
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-*/
-
-
 /*=============================================================================
-// This is the implementation of the class FileSystem. It implements all
+// This is the implementation of the class FileSys. It implements all
 // non-inline functions of the class.
 =============================================================================*/
 
@@ -35,7 +10,7 @@ THE SOFTWARE.
 #include <vector>
 #include <sstream>
 #include <iomanip>
-#include "./FileSystem.h"
+#include "./FileSys.h"
 
 // Defined defaults.
 #define BLOCK_SIZE       500
@@ -61,9 +36,9 @@ THE SOFTWARE.
 // file system. If not, it makes a new one.
 =============================================================================*/
 
-FileSystem::FileSystem(std::string new_name):VirtualDisk(new_name,
-                                                         BLOCK_COUNT,
-                                                         BLOCK_SIZE) {
+FileSys::FileSys(std::string new_name):Vdisk(new_name,
+                                             BLOCK_COUNT,
+                                             BLOCK_SIZE) {
   if (!loadFileSystem()) {
     makeFileSystem();
   }
@@ -74,7 +49,7 @@ FileSystem::FileSystem(std::string new_name):VirtualDisk(new_name,
 // Writes out the current state of the root and the FAT to the disk.
 =============================================================================*/
 
-unsigned int FileSystem::sync() {
+unsigned int FileSys::sync() {
   std::stringstream root_stream;
   std::stringstream fat_stream;
   std::vector<std::string> fat_vector;
@@ -95,7 +70,7 @@ unsigned int FileSystem::sync() {
   }
 
   // Place the root at ROOT_BLOCK. If it fails return an error code
-  if (!VirtualDisk::putBlock(ROOT_BLOCK, root_stream.str())) {
+  if (!Vdisk::putBlock(ROOT_BLOCK, root_stream.str())) {
     return 0;
   }
 
@@ -111,7 +86,7 @@ unsigned int FileSystem::sync() {
   // Output each block individually
   unsigned int index = 0;
   for (auto i : fat_vector) {
-    if (!VirtualDisk::putBlock(FAT_START_BLOCK + index, fat_vector[index])) {
+    if (!Vdisk::putBlock(FAT_START_BLOCK + index, fat_vector[index])) {
       return 0;
     }
     ++index;
@@ -126,7 +101,7 @@ unsigned int FileSystem::sync() {
 // in the root.
 =============================================================================*/
 
-unsigned int FileSystem::newFile(std::string file) {
+unsigned int FileSys::newFile(std::string file) {
   const std::string default_file_name(MAX_NAME_LENGTH, FILL_CHAR);
 
   // If the length of the filename is wrong. Return 0.
@@ -164,7 +139,7 @@ unsigned int FileSystem::newFile(std::string file) {
 // or if the file is not empty, or if it's not in the root.
 =============================================================================*/
 
-unsigned int FileSystem::removeFile(std::string file) {
+unsigned int FileSys::removeFile(std::string file) {
   const std::string default_file_name(MAX_NAME_LENGTH, FILL_CHAR);
 
   // If the filename is the wrong length, return 0
@@ -198,7 +173,7 @@ unsigned int FileSystem::removeFile(std::string file) {
 // or is empty.
 =============================================================================*/
 
-unsigned int FileSystem::getFirstBlock(std::string file) {
+unsigned int FileSys::getFirstBlock(std::string file) {
   prepFileName(file);
   // Go through the root. If the file exists, return its first block number
   for (unsigned int i = 0; i < root_file_names.size(); ++i) {
@@ -215,7 +190,7 @@ unsigned int FileSystem::getFirstBlock(std::string file) {
 // Returns the next block after block_number for file.
 =============================================================================*/
 
-int FileSystem::getNextBlock(std::string file, unsigned int block_number) {
+int FileSys::getNextBlock(std::string file, unsigned int block_number) {
   prepFileName(file);
   unsigned int current_block = 0;
   int block_found = 0;
@@ -247,7 +222,7 @@ int FileSystem::getNextBlock(std::string file, unsigned int block_number) {
 // Add a block for a file that already exists.
 =============================================================================*/
 
-int FileSystem::addBlock(std::string file,
+int FileSys::addBlock(std::string file,
                          std::string buffer) {
   prepFileName(file);
   if (fat[0] == 0) {
@@ -272,7 +247,7 @@ int FileSystem::addBlock(std::string file,
     current_block = fat[current_block];
   }
   fat[current_block] = first_free;
-  VirtualDisk::putBlock(first_free, buffer);
+  Vdisk::putBlock(first_free, buffer);
   return sync();
 }
 
@@ -281,7 +256,7 @@ int FileSystem::addBlock(std::string file,
 // Delete block block-number from file.
 =============================================================================*/
 
-unsigned int FileSystem::deleteBlock(std::string file,
+unsigned int FileSys::deleteBlock(std::string file,
                                      unsigned int block_number) {
   prepFileName(file);
   // Go through the file blocks.
@@ -314,12 +289,12 @@ unsigned int FileSystem::deleteBlock(std::string file,
 // Read data from block block_number in file into buffer.
 =============================================================================*/
 
-unsigned int FileSystem::readBlock(std::string file,
+unsigned int FileSys::readBlock(std::string file,
                                    unsigned int block_number,
                                    std::string& buffer) {
   prepFileName(file);
   if (fileHasBlock(file, block_number)) {
-    return VirtualDisk::getBlock(block_number, buffer);
+    return Vdisk::getBlock(block_number, buffer);
   }
   return 0;
 }
@@ -329,12 +304,12 @@ unsigned int FileSystem::readBlock(std::string file,
 // Write data from buffer to block block_number in file.
 =============================================================================*/
 
-unsigned int FileSystem::writeBlock(std::string file,
+unsigned int FileSys::writeBlock(std::string file,
                                     unsigned int block_number,
                                     std::string buffer) {
   prepFileName(file);
   if (fileHasBlock(file, block_number)) {
-    return VirtualDisk::putBlock(block_number, buffer);
+    return Vdisk::putBlock(block_number, buffer);
   }
   return 0;
 }
@@ -344,10 +319,10 @@ unsigned int FileSystem::writeBlock(std::string file,
 // Load an existing file system.
 =============================================================================*/
 
-unsigned int FileSystem::loadFileSystem() {
+unsigned int FileSys::loadFileSystem() {
   std::string fat_string = "";
   // Get the contents of the first FAT block
-  VirtualDisk::getBlock(2, fat_string);
+  Vdisk::getBlock(2, fat_string);
   // If they are just filler, return 0.
   if (fat_string == std::string(BLOCK_SIZE, FILL_CHAR)) {
     return 0;
@@ -355,14 +330,14 @@ unsigned int FileSystem::loadFileSystem() {
   // Otherwise, get the rest of the FAT.
   std::string remaining_fat;
   for (unsigned int i = 1; i < FAT_BLOCK_COUNT; ++i) {
-    VirtualDisk::getBlock(i, remaining_fat);
+    Vdisk::getBlock(i, remaining_fat);
     fat_string += remaining_fat;
   }
   if (!loadFat(fat_string)) {
     return 0;
   }
   std::string root_string;
-  VirtualDisk::getBlock(1, root_string);
+  Vdisk::getBlock(1, root_string);
   if (!loadRoot(root_string)) {
     return 0;
   }
@@ -374,7 +349,7 @@ unsigned int FileSystem::loadFileSystem() {
 // Make a new file system.
 =============================================================================*/
 
-unsigned int FileSystem::makeFileSystem() {
+unsigned int FileSys::makeFileSystem() {
   const std::string default_file_name(MAX_NAME_LENGTH, FILL_CHAR);
 
   // Because we already know the size, it's more efficient to resize now
@@ -408,7 +383,7 @@ unsigned int FileSystem::makeFileSystem() {
 // Load the FAT.
 =============================================================================*/
 
-unsigned int FileSystem::loadFat(std::string fat_string) {
+unsigned int FileSys::loadFat(std::string fat_string) {
   std::string raw_value = "";
   unsigned int current_value = 0;
   std::stringstream fat_stream;
@@ -432,7 +407,7 @@ unsigned int FileSystem::loadFat(std::string fat_string) {
 // Load the Root.
 =============================================================================*/
 
-unsigned int FileSystem::loadRoot(std::string root_string) {
+unsigned int FileSys::loadRoot(std::string root_string) {
   std::string raw_value = "";
   std::string filename = "";
   unsigned int address = 0;
@@ -461,7 +436,7 @@ unsigned int FileSystem::loadRoot(std::string root_string) {
 // Returns 1 if the file has the block, 0 otherwise.
 =============================================================================*/
 
-unsigned int FileSystem::fileHasBlock(std::string filename,
+unsigned int FileSys::fileHasBlock(std::string filename,
                                       unsigned int block_number) {
   prepFileName(filename);
   unsigned int file_exists = 0;
@@ -490,7 +465,7 @@ unsigned int FileSystem::fileHasBlock(std::string filename,
 // Make the filename the correct length.
 =============================================================================*/
 
-unsigned int FileSystem::prepFileName(std::string& file) {
+unsigned int FileSys::prepFileName(std::string& file) {
   if (file.length() >= MAX_NAME_LENGTH) {
     return 0;
   }
@@ -501,7 +476,7 @@ unsigned int FileSystem::prepFileName(std::string& file) {
 }
 
 // Remove extra characters.
-void FileSystem::strip(std::string& new_string, const char fill = FILL_CHAR) {
+void FileSys::strip(std::string& new_string, const char fill = FILL_CHAR) {
   while (new_string[0] == fill) {
     new_string.erase(0, 1);
   }
@@ -515,7 +490,7 @@ void FileSystem::strip(std::string& new_string, const char fill = FILL_CHAR) {
 // Separate the input into blocks.
 =============================================================================*/
 
-std::vector<std::string> FileSystem::block(std::string blocks) {
+std::vector<std::string> FileSys::block(std::string blocks) {
   std::string partial;
   std::vector<std::string> result;
   for (unsigned int i = 0; i < blocks.length(); ++i) {

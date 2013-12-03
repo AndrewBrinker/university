@@ -25,12 +25,12 @@ THE SOFTWARE.
 // This is a small collection of tests for the VirtualDisk class. It verifies
 // that PutBlock() and GetBlock() work correctly.
 
-#ifndef SRC_TEST_VIRTUALDISK_CPP_
-#define SRC_TEST_VIRTUALDISK_CPP_
+#ifndef SRC_TESTS_VDISK_CPP_
+#define SRC_TESTS_VDISK_CPP_
 
 #include <string>
 #include <iostream>
-#include "../VirtualDisk.h"
+#include "../src/Vdisk.h"
 
 
 int virtualDiskTest(std::string& buffer) {

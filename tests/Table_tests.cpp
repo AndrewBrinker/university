@@ -24,13 +24,13 @@ THE SOFTWARE.
 
 // This is a collection of tests for the Table class.
 
-#ifndef DOCFS_SRC_TEST_TABLE_CPP_
-#define DOCFS_SRC_TEST_TABLE_CPP_
+#ifndef DOCFS_TESTS_TABLE_CPP_
+#define DOCFS_TESTS_TABLE_CPP_
 
 #include <string>
 #include <vector>
 #include <iostream>
-#include "../Table.h"
+#include "../src/Table.h"
 
 
 int tableTest(std::string& buffer) {

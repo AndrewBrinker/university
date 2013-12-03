@@ -24,13 +24,13 @@ THE SOFTWARE.
 
 // This is a collection of tests for the FileSystem class.
 
-#ifndef DOCFS_SRC_TEST_FILESYSTEM_CPP_
-#define DOCFS_SRC_TEST_FILESYSTEM_CPP_
+#ifndef DOCFS_TESTS_FILESYS_CPP_
+#define DOCFS_TESTS_FILESYS_CPP_
 
 #include <string>
 #include <vector>
 #include <iostream>
-#include "../FileSystem.h"
+#include "../src/FileSys.h"
 
 std::vector<std::string> block(std::string blocks, unsigned int block_size) {
   std::string partial;
