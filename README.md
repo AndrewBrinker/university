@@ -4,8 +4,13 @@
 
 docFS is a DOS-ish virtual filesystem built on a virtual disk. It is being developed as a project for CSE 350 (File Systems) at CSU, San Bernardino. It is in no way complete.
 
-## Warning
+## Usage
 
-The code here is in no way complete, and shouldn't be used on any project right now. It is just a public record of my work.
+To use the docfs library:
 
-In fact, the code does not currently build, and the tests are woefully incomplete. This is kept here as a reminder for me, and it makes discussing my code with other students quite easy. Don't use this, it doesn't work, and isn't particularly nice at all.
+1. Download or clone the repo to a local directory
+2. Open your terminal and navigate to that directory
+3. Run `make`
+4. Run `make install`
+5. (Optional) Run `make tests && ./bin/test`
+
