@@ -12,13 +12,27 @@
 #include <vector>
 #include <iostream>
 
+int tableQuery(Table &table, std::string query) {
+    std::string date = "";
+    for (unsigned int i = 0; i < query.length(); ++i) {
+        if (query[i] == '=') {
+            for (unsigned int j = i; j < query.length(); ++j) {
+                date += query[j];
+            }
+            break;
+        }
+    }
+    if (date == "") return 1;
+    table.search(date);
+    return 0;
+}
+
 
 int tableTest(std::string& buffer) {
   std::cout << "Testing the Table class" << std::endl;
-  if (false) {
-    // Will write tests later.
-    buffer = "";
-  }
+  Table table("table1", "flat1", "index1");
+  table.buildTable("data.txt");
+  tableQuery(table, "What record has date=50");
   return 1;
 }
 
