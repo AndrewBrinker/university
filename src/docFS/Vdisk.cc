@@ -2,19 +2,20 @@
  * Copyright 2013 Andrew Brinker
  */
 
-// This is the implementation of the class Vdisk defined in Vdisk.h
-// It defines all non-inline functions of the class.
-
 #include <string>
 #include <fstream>
 #include <iostream>
 #include "./Vdisk.h"
 
-// Initializes a disk with nothing but a name.
-// Assumes the disk already exists. It does nothing to create new files,
-// it only attaches the instance to a disk that already exists.
-// It is the programmer's responsibility to make sure the name matches
-// the file you intend to access.
+/*
+ * Vdisk()
+ *
+ * @in: std::string current_name
+ *   - The name of the disk to be loaded.
+ * @return: none
+ *
+ * Load a disk, assuming one already exists.
+ */
 Vdisk::Vdisk(std::string current_name) {
   name = current_name;
   std::string arch_file = name + ".spc";
@@ -28,9 +29,18 @@ Vdisk::Vdisk(std::string current_name) {
 }
 
 
-// Initializes a disk with a name, and a number of blocks of a certain size.
-// This constructor creates a new disk with the number of blocks and block size
-// given by the parameters.
+/*
+ * Vdisk()
+ *
+ * @in: std::string new_name
+ *   - The name of the disk being made
+ * @in: unsigned int new_block_count
+ *   - The number of blocks on the disk
+ * @in: unsigned int new_block_size
+ *   - The size of each block on the disk
+ *
+ * Create a new disk, assuming it doesn't already exist
+ */
 Vdisk::Vdisk(std::string new_name,
              unsigned int new_block_count,
              unsigned int new_block_size) {
@@ -50,10 +60,21 @@ Vdisk::Vdisk(std::string new_name,
 }
 
 
-// Retrieves a block and stores it into the buffer.
-// It returns 1 if successful and 0 otherwise.
+/*
+ * getBlock()
+ *
+ * @in: unsigned int block_number
+ *   - The block number data is being retrieved from
+ * @out: std::string& block
+ *   - The buffer the block contents are written out to
+ * @return:
+ *   - 1 if successful
+ *   - 0 otherwise
+ *
+ * Retrieve data from the specified block and write it to the buffer.
+ */
 unsigned int Vdisk::getBlock(unsigned int block_number,
-                                   std::string& buffer) {
+                             std::string& buffer) {
   std::string data_file = name + ".dat";
   std::ifstream file(data_file.c_str());
   if (file.bad()) { return 0; }
@@ -65,10 +86,21 @@ unsigned int Vdisk::getBlock(unsigned int block_number,
 }
 
 
-// Writes the buffer to the block.
-// Returns 1 if successful and 0 otherwise.
+/*
+ * putBlock()
+ *
+ * @in: unsigned int block_number
+ *   - The block number being read from
+ * @in: std::string buffer
+ *   - The buffer being written to the block
+ * @return:
+ *   - 1 if successful
+ *   - 0 otherwise
+ *
+ * Write the buffer to the block
+ */
 unsigned int Vdisk::putBlock(unsigned int block_number,
-                                   std::string buffer) {
+                             std::string buffer) {
   std::string data_file = name + ".dat";
   std::fstream file(data_file.c_str(), std::fstream::in | std::fstream::out);
   if (file.bad()) {
@@ -89,7 +121,16 @@ unsigned int Vdisk::putBlock(unsigned int block_number,
 }
 
 
-// Get the number of characters in the file.
+/*
+ * getFileSize()
+ *
+ * @in: std::string filename
+ *   - The name of the file being checked
+ * @return:
+ *   - The size of the file, in bytes
+ *
+ * Get the size of the given file in bytes.
+ */
 unsigned int Vdisk::getFileSize(std::string filename) {
   std::ifstream file(filename.c_str());
   file.seekg(0, file.end);

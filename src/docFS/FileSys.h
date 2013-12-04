@@ -2,10 +2,6 @@
  * Copyright 2013 Andrew Brinker
  */
 
-// This is the interface for the FileSystem class. This is the actual file
-// system, and it does all of the heavy lifting, using Vdisk as the
-// back end. All the warnings that apply to Vdisk apply to FileSystem.
-
 #ifndef SRC_DOCFS_FILESYS_H_
 #define SRC_DOCFS_FILESYS_H_
 

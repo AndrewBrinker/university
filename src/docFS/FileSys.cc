@@ -2,11 +2,6 @@
  * Copyright 2013 Andrew Brinker
  */
 
-/*=============================================================================
-// This is the implementation of the class FileSys. It implements all
-// non-inline functions of the class.
-=============================================================================*/
-
 #include <cmath>
 #include <string>
 #include <fstream>
@@ -35,11 +30,15 @@
 #define FAT_BLOCK_COUNT  ((ADDRESS_SPACE*BLOCK_COUNT)/BLOCK_SIZE+1)
 
 
-/*=============================================================================
-// Checks if the file system has already been made. If it has, it loads the
-// file system. If not, it makes a new one.
-=============================================================================*/
-
+/*
+ * FileSys()
+ *
+ * @in: std::string new_name
+ *   - The name of the file system being created
+ * @return: none
+ *
+ * Try to load the file system, if it fails, make a new one.
+ */
 FileSys::FileSys(std::string new_name):Vdisk(new_name,
                                              BLOCK_COUNT,
                                              BLOCK_SIZE) {
@@ -49,10 +48,15 @@ FileSys::FileSys(std::string new_name):Vdisk(new_name,
 }
 
 
-/*=============================================================================
-// Writes out the current state of the root and the FAT to the disk.
-=============================================================================*/
-
+/*
+ * sync()
+ *
+ * @return:
+ *   - 1 if successful
+ *   - 0 otherwise
+ *
+ * Write the Root and FAT to the disk.
+ */
 unsigned int FileSys::sync() {
   std::stringstream root_stream;
   std::stringstream fat_stream;
@@ -97,12 +101,17 @@ unsigned int FileSys::sync() {
 }
 
 
-/*=============================================================================
-// Creates a new file with no allocated blocks. Returns 0 if the length of the
-// filename is too big, if the file already exists, or if there is no more room
-// in the root.
-=============================================================================*/
-
+/*
+ * newFile()
+ *
+ * @in: std::string file
+ *   - The name of the file being created.
+ * @return:
+ *   - sync() if successful
+ *   - 0 otherwise
+ *
+ * Creates a new file and syncs the changes to the disk.
+ */
 unsigned int FileSys::newFile(std::string file) {
   const std::string default_file_name(MAX_NAME_LENGTH, FILL_CHAR);
 
@@ -136,11 +145,17 @@ unsigned int FileSys::newFile(std::string file) {
 }
 
 
-/*=============================================================================
-// Deletes a file from the root. Returns 0 if the filename is the wrong length,
-// or if the file is not empty, or if it's not in the root.
-=============================================================================*/
-
+/*
+ * removeFile()
+ *
+ * @in: std::string file
+ *   - The name of the file being deleted.
+ * @return:
+ *   - sync() if successful
+ *   - 0 otherwise
+ *
+ * Delete the file and sync the changes to the disk.
+ */
 unsigned int FileSys::removeFile(std::string file) {
   const std::string default_file_name(MAX_NAME_LENGTH, FILL_CHAR);
 
@@ -170,11 +185,16 @@ unsigned int FileSys::removeFile(std::string file) {
 }
 
 
-/*=============================================================================
-// Returns the first block of a given file. Returns 0 if the file doesn't exist
-// or is empty.
-=============================================================================*/
-
+/*
+ * getFirstBlock()
+ *
+ * @in: std::string file
+ *   - The name of the file the first block is being retrieved from.
+ * @return:
+ *   - The block number or 0.
+ *
+ * Gets the first block of the given file.
+ */
 unsigned int FileSys::getFirstBlock(std::string file) {
   prepFileName(file);
   // Go through the root. If the file exists, return its first block number
@@ -188,10 +208,19 @@ unsigned int FileSys::getFirstBlock(std::string file) {
 }
 
 
-/*=============================================================================
-// Returns the next block after block_number for file.
-=============================================================================*/
-
+/*
+ * getNextBlock()
+ *
+ * @in: std::string file
+ *   - The name of the file being searched through
+ * @in: unsigned int block_number
+ *   - The number of the current block in the given file
+ * @return:
+ *   - next block if successful
+ *   - -1 if the block doesn't exist, or has no blocks
+ *
+ * Gets the block after the block_number block.
+ */
 int FileSys::getNextBlock(std::string file, unsigned int block_number) {
   prepFileName(file);
   unsigned int current_block = 0;
@@ -220,12 +249,21 @@ int FileSys::getNextBlock(std::string file, unsigned int block_number) {
 }
 
 
-/*=============================================================================
-// Add a block for a file that already exists.
-=============================================================================*/
-
+/*
+ * addBlock()
+ *
+ * @in: std::string file
+ *   - The file being added to
+ * @in: std::string buffer
+ *   - The buffer containing the data being added to the file.
+ * @return:
+ *   - 1 if successful
+ *   - 0 otherwise
+ *
+ * Adds a block to the given file, and writes the buffer to the block.
+ */
 int FileSys::addBlock(std::string file,
-                         std::string buffer) {
+                      std::string buffer) {
   prepFileName(file);
   if (fat[0] == 0) {
     return -1;
@@ -254,12 +292,19 @@ int FileSys::addBlock(std::string file,
 }
 
 
-/*=============================================================================
-// Delete block block-number from file.
-=============================================================================*/
-
+/*
+ * deleteBlock()
+ *
+ * @in: std::string file
+ *   - The file being deleted from
+ * @in: unsigned int block_number
+ *   - The block number being deleted
+ * @return:
+ *   - sync if successful
+ *   - 0 otherwise
+ */
 unsigned int FileSys::deleteBlock(std::string file,
-                                     unsigned int block_number) {
+                                  unsigned int block_number) {
   prepFileName(file);
   // Go through the file blocks.
   // If you hit the block you're looking for, set the previous block equal to
@@ -286,13 +331,24 @@ unsigned int FileSys::deleteBlock(std::string file,
 }
 
 
-/*=============================================================================
-// Read data from block block_number in file into buffer.
-=============================================================================*/
-
+/*
+ * readBlock()
+ *
+ * @in: std::string file
+ *   - The file being read from
+ * @in: unsigned int block_number
+ *   - The block number in the file being read from
+ * @output: std::string& buffer
+ *   - The buffer being written to
+ * @return:
+ *   - 1 if successful
+ *   - 0 otherwise
+ *
+ * Reads from the given block.
+ */
 unsigned int FileSys::readBlock(std::string file,
-                                   unsigned int block_number,
-                                   std::string& buffer) {
+                                unsigned int block_number,
+                                std::string& buffer) {
   prepFileName(file);
   if (fileHasBlock(file, block_number)) {
     return Vdisk::getBlock(block_number, buffer);
@@ -301,10 +357,21 @@ unsigned int FileSys::readBlock(std::string file,
 }
 
 
-/*=============================================================================
-// Write data from buffer to block block_number in file.
-=============================================================================*/
-
+/*
+ * writeBlock()
+ *
+ * @in: std::string file
+ *   - The file being written to
+ * @in: unsigned int block_number
+ *   - The block number being written to
+ * @in: std::string buffer
+ *   - The contents being written to the given block
+ * @return:
+ *   - 1 if successful
+ *   - 0 otherwise
+ *
+ * Writes the buffer to the given block.
+ */
 unsigned int FileSys::writeBlock(std::string file,
                                     unsigned int block_number,
                                     std::string buffer) {
@@ -316,10 +383,16 @@ unsigned int FileSys::writeBlock(std::string file,
 }
 
 
-/*=============================================================================
-// Load an existing file system.
-=============================================================================*/
-
+/*
+ * loadFileSystem()
+ *
+ * @return:
+ *   - 1 if successful
+ *   - 0 otherwise
+ *
+ * Attempts to load the given file system. If the system doesn't exist, it
+ * returns 0.
+ */
 unsigned int FileSys::loadFileSystem() {
   std::string fat_string = "";
   // Get the contents of the first FAT block
@@ -346,10 +419,15 @@ unsigned int FileSys::loadFileSystem() {
 }
 
 
-/*=============================================================================
-// Make a new file system.
-=============================================================================*/
-
+/*
+ * makeFileSystem()
+ *
+ * @return:
+ *   - 1 if successful
+ *   - 0 otherwise
+ *
+ * Creates a new file system based on the macros set at the top of the file.
+ */
 unsigned int FileSys::makeFileSystem() {
   const std::string default_file_name(MAX_NAME_LENGTH, FILL_CHAR);
 
@@ -380,10 +458,17 @@ unsigned int FileSys::makeFileSystem() {
 }
 
 
-/*=============================================================================
-// Load the FAT.
-=============================================================================*/
-
+/*
+ * loadFat()
+ *
+ * @in: std::string fat_string
+ *   - The string containing the FAT
+ * @return:
+ *   - 1 if successful
+ *   - 0 otherwise
+ *
+ * Attempts to load and store the FAT in the disk.
+ */
 unsigned int FileSys::loadFat(std::string fat_string) {
   std::string raw_value = "";
   unsigned int current_value = 0;
@@ -404,10 +489,17 @@ unsigned int FileSys::loadFat(std::string fat_string) {
 }
 
 
-/*=============================================================================
-// Load the Root.
-=============================================================================*/
-
+/*
+ * loadRoot()
+ *
+ * @in: std::string root_string
+ *   - The contents of the Root
+ * @return:
+ *   - 1 if successful
+ *   - 0 otherwise
+ *
+ * Attempts to load and store the Root in the disk.
+ */
 unsigned int FileSys::loadRoot(std::string root_string) {
   std::string raw_value = "";
   std::string filename = "";
@@ -433,10 +525,19 @@ unsigned int FileSys::loadRoot(std::string root_string) {
 }
 
 
-/*=============================================================================
-// Returns 1 if the file has the block, 0 otherwise.
-=============================================================================*/
-
+/*
+ * fileHasBlock()
+ *
+ * @in: std::string filename
+ *   - The file being checked
+ * @in: unsigned int block_number
+ *   - The block being checked
+ * @return:
+ *   - 1 if successful
+ *   - 0 otherwise
+ *
+ * Checks whether the given file has the given block.
+ */
 unsigned int FileSys::fileHasBlock(std::string filename,
                                       unsigned int block_number) {
   prepFileName(filename);
@@ -462,10 +563,17 @@ unsigned int FileSys::fileHasBlock(std::string filename,
 }
 
 
-/*=============================================================================
-// Make the filename the correct length.
-=============================================================================*/
-
+/*
+ * prepFileName()
+ *
+ * @inout: std::string& file
+ *   - The filename being modified
+ * @return:
+ *   - 1 if successful
+ *   - 0 otherwise
+ *
+ * Modifies the given file name to fit the specifications of the disk.
+ */
 unsigned int FileSys::prepFileName(std::string& file) {
   if (file.length() >= MAX_NAME_LENGTH) {
     return 0;
@@ -476,7 +584,18 @@ unsigned int FileSys::prepFileName(std::string& file) {
   return 1;
 }
 
-// Remove extra characters.
+
+/*
+ * strip()
+ *
+ * @inout: std::string& new_string
+ *   - The string being stripped
+ * @in: const char fill = FILL_CHAR
+ *   - The fill character being stripped to the new string
+ * @return: none
+ *
+ * Strips excess characters from the front of the string.
+ */
 void FileSys::strip(std::string& new_string, const char fill = FILL_CHAR) {
   while (new_string[0] == fill) {
     new_string.erase(0, 1);
@@ -487,10 +606,16 @@ void FileSys::strip(std::string& new_string, const char fill = FILL_CHAR) {
 }
 
 
-/*=============================================================================
-// Separate the input into blocks.
-=============================================================================*/
-
+/*
+ * block()
+ *
+ * @in: std::string blocks
+ *   - The string to be partitioned
+ * @return:
+ *   - The partitioned string
+ *
+ * Partitions the given string into block-sized increments.
+ */
 std::vector<std::string> FileSys::block(std::string blocks) {
   std::string partial;
   std::vector<std::string> result;

@@ -25,6 +25,19 @@
 #define INDEX_LENGTH       DATE_LENGTH + END_LENGTH
 
 
+/*
+ * Table()
+ *
+ * @in: std::string new_diskname
+ *   - The name of the virtual disk to be created
+ * @in: std::string new_flat_file
+ *   - The name of the flat file to be made on the disk
+ * @in: std::string new_index_file
+ *   - The name of the index file to be made on the disk
+ * @return: none
+ *
+ * Create the two files which will be used by buildTable()
+ */
 Table::Table(std::string new_diskname,
              std::string new_flat_file,
              std::string new_index_file):
@@ -36,6 +49,15 @@ Table::Table(std::string new_diskname,
 }
 
 
+/*
+ * buildTable()
+ *
+ * @in: std::string input_file
+ *   - The name of the data file being used to construct the table
+ * @return: 0
+ *
+ * Construct a database table using the data from the input file
+ */
 unsigned int Table::buildTable(std::string input_file) {
     std::ifstream read_input(input_file);
     // 1) Read in a number of records that can be contained in a block.
@@ -93,6 +115,17 @@ unsigned int Table::buildTable(std::string input_file) {
 }
 
 
+/*
+ * search()
+ *
+ * @in: std::string value
+ *   - The date being searched for
+ * @return:
+ *   - 0 if unsuccessful
+ *   - 1 is successful
+ *
+ * Uses indexSearch() for searching the database, and prints the proper record.
+ */
 unsigned int Table::search(std::string value) {
     unsigned int block = indexSearch(value);
     if (block == 0) {
@@ -117,6 +150,17 @@ unsigned int Table::search(std::string value) {
 }
 
 
+/*
+ * indexSearch()
+ *
+ * @in: std::string value
+ *   - The date being searched for
+ * @return:
+ *   - 0 if unsuccessful
+ *   - the block number of the proper record if successful
+ *
+ * Search the table and return the block number of the desired record.
+ */
 unsigned int Table::indexSearch(std::string value) {
     int current_block = FileSys::getFirstBlock(index_file);
     std::string block_contents(BLOCK_SIZE, FILL_CHAR);
