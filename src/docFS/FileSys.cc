@@ -250,6 +250,45 @@ int FileSys::getNextBlock(std::string file, unsigned int block_number) {
 
 
 /*
+ * getLastBlock()
+ *
+ * @in: std::string file
+ *   - The name of the file being searched
+ * @return:
+ *   - The block number if it exists
+ *   - 0 otherwise
+ *
+ * Gets the last block of the given file.
+ */
+int FileSys::getLastBlock(std::string file) {
+  prepFileName(file);
+  unsigned int current_block = 0;
+  int block_found = 0;
+  for (unsigned int i = 0; i < root_file_names.size(); ++i) {
+    if (file == root_file_names[i]) {
+      current_block = root_first_blocks[i];
+      block_found = 1;
+      break;
+    }
+  }
+  // If the file doesn't exist, or has no blocks, return 0.
+  if (block_found == 0 || current_block == 0) {
+    return 0;
+  }
+  // Then go from block to block. If any of the blocks matches block_number,
+  // return the next block. If there are no blocks after block_number,
+  // return 0. If block_number never occurs, return 0.
+  while (current_block != 0) {
+    if (fat[current_block] == 0) {
+      return current_block;
+    }
+    current_block = fat[current_block];
+  }
+  return 0;
+}
+
+
+/*
  * addBlock()
  *
  * @in: std::string file

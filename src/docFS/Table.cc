@@ -59,13 +59,13 @@ Table::Table(std::string new_diskname,
  * Construct a database table using the data from the input file
  */
 unsigned int Table::buildTable(std::string input_file) {
-    std::ifstream read_input(input_file);
     // 1) Read in a number of records that can be contained in a block.
     // 2) Pad that block to the full block size.
     // 3) Add a block to flat_file containing those records
     // 4) Update index_file containing the dates just saved, and the block they
     //    were saved to.
     // 5) Repeat until all records have been saved.
+    std::ifstream read_input(input_file);
     while (read_input.good()) {
         std::string records;
         std::vector<std::string> dates;
@@ -77,37 +77,21 @@ unsigned int Table::buildTable(std::string input_file) {
         }
         records = FileSys::block(records)[0];
         FileSys::addBlock(flat_file, records);
-
-        // I now have two vectors, one with all the records from the file,
-        // the other with all the dates. I need to block out the records first.
-        // Then I need to write the blocks, one by one, to the flat_file, and
-        // save what blocks they went to alongside the dates, then block and
-        // write all of that out to the index_file.
-
-        unsigned int current_block = FileSys::getFirstBlock(flat_file);
-        while (FileSys::getNextBlock(flat_file, current_block) != 0) {
-            current_block = FileSys::getNextBlock(flat_file, current_block);
+        unsigned int current_block = FileSys::getLastBlock(flat_file);
+        std::string block = std::to_string(current_block);
+        for (unsigned int i = block.length(); i < 5; ++i) {
+            block.push_back(' ');
         }
-        // current block now equals the block number the stuff was written to.
-        // now I need to save to the index_file.
-        // I need to turn current_block into a string of 5 characters.
-        std::ostringstream outs;
-        outs << current_block;
-        std::string block_string = outs.str();
-        for (unsigned int i = block_string.length(); i < 5; ++i) {
-            block_string.push_back(' ');
-        }
-        std::vector<std::string> indices;
+        std::string indices;
         for (unsigned int i = 0; i < dates.size(); ++i) {
-            indices.push_back(dates[i] + block_string);
+            indices.append(dates[i] + " " + block);
         }
-        std::string indices_string;
+        std::cout << "Adding indices to index file" << std::endl;
+        std::vector<std::string> index_blocks = FileSys::block(indices);
         for (unsigned int i = 0; i < indices.size(); ++i) {
-            indices_string.append(indices[i]);
-        }
-        indices = FileSys::block(indices_string);
-        for (unsigned int i = 0; i < indices.size(); ++i) {
-            FileSys::addBlock(index_file, indices[i]);
+            std::cout << "Adding " << indices.size()
+                      << " records." << std::endl;
+            FileSys::addBlock(index_file, index_blocks[i]);
         }
     }
     return 0;

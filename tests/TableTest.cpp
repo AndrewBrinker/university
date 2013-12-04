@@ -35,7 +35,7 @@ int tableTest(std::string& buffer) {
   std::cout << "Building the Table" << std::endl;
   table.buildTable("data.txt");
   std::cout << "Querying the Table" << std::endl;
-  tableQuery(table, "What record has date=50");
+  tableQuery(table, "What record has date=43");
   return 1;
 }
 
