@@ -7,10 +7,6 @@
 
 #include <string>
 
-#define DISALLOW_COPY_AND_ASSIGN(TypeName) \
-  TypeName(const TypeName&);               \
-  void operator=(const TypeName&)
-
 class Irec {
  public:
   Irec(std::string new_key, unsigned int new_block_id);
@@ -20,8 +16,6 @@ class Irec {
  private:
   std::string key;
   unsigned int block_id;
-
-  DISALLOW_COPY_AND_ASSIGN(Irec);
 };
 
 #endif  // SRC_DOCFS_IREC_H_

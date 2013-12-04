@@ -2,17 +2,9 @@
  * Copyright 2013 Andrew Brinker
  */
 
-
-BTreeTable(std::string new_diskname,
-         std::string new_flat_file,
-         std::string new_index_file) {
-  //
-}
-
-
-unsigned int buildTable(std::string input_file) {
-  //
-}
+#include "Bnode.h"
+#include "Irec.h"
+#include "BTreeTable.h"
 
 
 void BTreeTable::buildRoot(Irec r1, Irec r2) {
@@ -23,7 +15,7 @@ void BTreeTable::buildRoot(Irec r1, Irec r2) {
   }
 
   std::vector<std::string> k;
-  std::vector<int> b;
+  std::vector<unsigned int> b;
 
   // Build the left side
   k.push_back("NU");
@@ -47,8 +39,8 @@ void BTreeTable::buildRoot(Irec r1, Irec r2) {
 
   Bnode right(k, b, getBlockSize());
 
-  int left_block  = addBlock("indexfile2", left.getBuffer());
-  int right_block = addBlock("indexfile2", right.getBuffer());
+  unsigned int leftBlock  = addBlock("indexfile2", left.getBuffer());
+  unsigned int rightBlock = addBlock("indexfile2", right.getBuffer());
 
   // Clear vectors
   k.clear();
@@ -68,21 +60,8 @@ void BTreeTable::buildRoot(Irec r1, Irec r2) {
 }
 
 
-unsigned int addIndexRecord(Bnode node, Irec record) {
-  //
-}
-
-unsigned int search(std::string value) {
-  //
-}
-
-
-unsigned int indexSearch(std::string value) {
-  //
-}
-
-
-int Table::searchbtreeindexfile(int node, string key) {
+unsigned int BTreeTable::searchbtreeindexfile(unsigned int node,
+                                              std::string key) {
   // This is how the Search function is modified:
   // int flatfileblockid = searchbtreeindexfile(root, key);
   // in function search(string key).
@@ -91,7 +70,7 @@ int Table::searchbtreeindexfile(int node, string key) {
   unsigned int error = readBlock("indexfile2", node, buffer);
   Bnode c(buffer);
   std::vector<std::string> k = c.getKeys();
-  std::vector<int> b = c.getBlockIDs();
+  std::vector<unsigned int> b = c.getBlockIDs();
 
   // External node
   if (b[0] == 0) {
@@ -103,7 +82,7 @@ int Table::searchbtreeindexfile(int node, string key) {
     }
   } else {
     // Internal node
-    int i = 1;
+    unsigned int i = 1;
     while (i < k.size() && key > k[i]) {
       ++i;
     }
@@ -113,21 +92,21 @@ int Table::searchbtreeindexfile(int node, string key) {
 }
 
 
-Irec BTreeTable::addBTree(int node, Irec r) {
+Irec BTreeTable::addBTree(unsigned int node, Irec r) {
   std::string buffer;
   unsigned int error = readBlock("indexfile2", node, buffer);
 
   Bnode c(buffer);
 
   std::vector<std::string> k = c.getKeys();
-  std::vector<int> b = c.getBlockIDs();
+  std::vector<unsigned int> b = c.getBlockIDs();
 
   // External node
   if (b[0] == 0) {
     return addExternNode(node, r);
   } else {
     // Internal node
-    int i = 1;
+    unsigned int i = 1;
     while (i < k.size() && key > k[i]) {
       ++i;
     }
@@ -139,7 +118,7 @@ Irec BTreeTable::addBTree(int node, Irec r) {
 }
 
 
-Irec BTreeTable::addExternNode(int node, Irec r) {
+Irec BTreeTable::addExternNode(unsigned int node, Irec r) {
   std::string buffer;
 
   readBlock("indexfile2", node, buffer);
@@ -147,7 +126,7 @@ Irec BTreeTable::addExternNode(int node, Irec r) {
   Bnode b(buffer);
 
   std::vector<std::string> C = C.getKey();
-  std::vector<int> B = C.getBlockIDs();
+  std::vector<unsigned int> B = C.getBlockIDs();
 
   key = r.getKey();
   blockid = r.getBlockID();
@@ -156,10 +135,10 @@ Irec BTreeTable::addExternNode(int node, Irec r) {
   C.push_back(key);
   B.push_back(blockid);
 
-  int i = k.size() -1;
+  unsigned int i = k.size() -1;
 
   while (i > 1 && k[i] < k[i - 1]) {
-    int temp = k[i - 1];
+    unsigned int temp = k[i - 1];
     k[i - 1] =  k[i];
     k[i] = temp;
   }
@@ -169,14 +148,14 @@ Irec BTreeTable::addExternNode(int node, Irec r) {
 
     // Left Child
     std::vector<std::string> Lkeys;
-    std::vector<int> Lblocks;
+    std::vector<unsigned int> Lblocks;
 
     // First block
     Lkeys.push_back("NU");
     Lblocks.push_back(0);
 
     // Rest of the blocks
-    for (int i = 1; i < (k.size() / 2); ++i) {
+    for (unsigned int i = 1; i < (k.size() / 2); ++i) {
       Lkeys.push_back(k[i]);
       Lblocks.push_back(b[i]);
     }
@@ -187,36 +166,33 @@ Irec BTreeTable::addExternNode(int node, Irec r) {
 
     // Right Child
     std::vector<std::string> Rkeys;
-    vector<int> Rblocks;
+    vector<unsigned int> Rblocks;
 
     // First block
     Rkeys.push_back("NU");
     Rblocks.push_back(0);
 
     // Rest of the blocks
-    for (int i = (k.size() / 2); i < k.size(); ++i) {
+    for (unsigned int i = (k.size() / 2); i < k.size(); ++i) {
       Rkeys.push_back(k[i]);
       Rblocks.push_back(b[i]);
     }
 
     Bnode Rchild(Rkeys, Rblocks);
-
-    int newnode = addBlock("indexfile2", Rchild.getBuffer());
-
-    int j = ((k.size / 2) - 1);
-
+    unsigned int newnode = addBlock("indexfile2", Rchild.getBuffer());
+    unsigned int j = ((k.size / 2) - 1);
     return Irec(k[j], newnode);
   }
 }
 
 
-Irec addInternNode(int node, Irec r) {
+Irec BTreeTable::addInternNode(unsigned int node, Irec r) {
   std::string buffer;
   readBlock("indexfile2", node, buffer);
   Bnode b(buffer);
 
   std::vector<std::string> C = C.getKey();
-  std::vector<int> B = C.getBlockIDs();
+  std::vector<unsigned int> B = C.getBlockIDs();
 
   key = r.getKey();
   blockid = r.getBlockID();
@@ -225,10 +201,10 @@ Irec addInternNode(int node, Irec r) {
   C.push_back(key);
   B.push_back(blockid);
 
-  int i = k.size() - 1;
+  unsigned int i = k.size() - 1;
 
   while (i > 1 && k[i] < k[i - 1]) {
-    int temp = k[i - 1];
+    unsigned int temp = k[i - 1];
     k[i - 1] =  k[i];
     k[i] = temp;
   }
@@ -237,9 +213,9 @@ Irec addInternNode(int node, Irec r) {
     // Global variable = 5
     // Left Child
     std::vector<std::string> Lkeys;
-    std::vector<int> Lblocks;
+    std::vector<unsigned int> Lblocks;
 
-    for (int i = 0; i < (k.size() / 2); ++i) {
+    for (unsigned int i = 0; i < (k.size() / 2); ++i) {
       Lkeys.push_back(k[i]);
       Lblocks.push_back(b[i]);
     }
@@ -248,31 +224,31 @@ Irec addInternNode(int node, Irec r) {
     writeBlock("indexfile2", node, Lchild.getBuffer());
     // Right Child
     std::vector<std::string> Rkeys;
-    std::vector<int> Rblocks;
+    std::vector<unsigned int> Rblocks;
 
     // First block
     Rkeys.push_back("NU");
     Rblocks.push_back((b.size() / 2));
 
     // Rest of the blocks
-    for (int i = ((k.size() / 2 + 1)); i < k.size(); ++i) {
+    for (unsigned int i = ((k.size() / 2 + 1)); i < k.size(); ++i) {
       Rkeys.push_back(k[i]);
       Rblocks.push_back(b[i]);
     }
     Bnode Rchild(Rkeys, Rblocks);
-    int newnode = addBlock("indexfile2", Rchild.getBuffer());
-    int j=(k.size / 2);
+    unsigned int newnode = addBlock("indexfile2", Rchild.getBuffer());
+    unsigned int j = (k.size / 2);
     return Irec(k[j], newnode);
   }
 }
 
 
-void Table::BuildBtree() {
+void BTreeTable::buildBTree() {
   // You need to get the index records for the next line;
   std::vector<Irec> indexrecords;
   BuildRoot(indexrecords[0], indexrecords[1]);
 
-  for (int i = 2; i < indexrecords.size(); ++i) {
+  for (unsigned int i = 2; i < indexrecords.size(); ++i) {
     Irec r = addbtree(root, indexrecords[i]);
 
     if (r.getblockid() != 0)
@@ -280,7 +256,7 @@ void Table::BuildBtree() {
     }
 
     std::vector<std::string> k;
-    std::vector<int> b;
+    std::vector<unsigned int> b;
 
     k.push_back("NU");
     b.push_back(root);
@@ -293,9 +269,9 @@ void Table::BuildBtree() {
     root = addBlock("indexfile2", C.getBuffer());
 }
 
-void Table::Buildnewroot(Irec r) {
+void BTreeTable::BuildNewRoot(Irec r) {
   std::vector<std::string> k;
-  std::vector<int> b;
+  std::vector<unsigned int> b;
   // Build the root
   k.push_back("NU");
   k.push_back(r.getkey());

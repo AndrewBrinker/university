@@ -5,10 +5,6 @@
 #ifndef SRC_DOCFS_BNODE_H_
 #define SRC_DOCFS_BNODE_H_
 
-#define DISALLOW_COPY_AND_ASSIGN(TypeName) \
-  TypeName(const TypeName&);               \
-  void operator=(const TypeName&)
-
 #include <string>
 #include <vector>
 
@@ -26,8 +22,6 @@ class Bnode {
   std::string buffer;
   std::vector<std::string> key;
   std::vector<unsigned int> block_id;
-
-  DISALLOW_COPY_AND_ASSIGN(Bnode);
 };
 
 #endif  // SRC_DOCFS_BNODE_H_

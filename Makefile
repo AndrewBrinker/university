@@ -21,8 +21,8 @@ dev: all
 
 $(TARGET): CPPFLAGS += -fPIC
 $(TARGET): build $(OBJECTS)
-	ar rcs $@ $(OBJECTS)
-	ranlib $@
+	@ar rcs $@ $(OBJECTS)
+	@ranlib $@
 
 $(SO_TARGET): $(TARGET) $(OBJECTS)
 	$(CC) -shared -std=c++11 -stdlib=libc++ -lc++abi -o $@ $(OBJECTS)
@@ -41,11 +41,11 @@ tests: $(TESTS)
 # target: clean     Remove the compiled files.
 .PHONY: clean
 clean:
-	rm -rf build $(OBJECTS) $(TESTS)
-	rm -f tests/tests.log
-	find . -name "*.gc*" -exec rm {} \;
-	rm -rf `find . -name "*.dSYM" -print`
-	rm -rf **/*.spc *.spc **/*.dat *.dat **/test test
+	@rm -rf build $(OBJECTS) $(TESTS)
+	@rm -f tests/tests.log
+	@find . -name "*.gc*" -exec rm {} \;
+	@rm -rf `find . -name "*.dSYM" -print`
+	@rm -rf **/*.spc *.spc **/*.dat *.dat **/test test
 
 # target: install   Install the library to the prefixed directory.
 .PHONY: install
