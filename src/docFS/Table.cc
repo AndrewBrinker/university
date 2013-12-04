@@ -67,23 +67,22 @@ unsigned int Table::buildTable(std::string input_file) {
     //    were saved to.
     // 5) Repeat until all records have been saved.
     while (read_input.good()) {
-        std::string record = "";
-        unsigned int count = 0;
-        std::vector<std::string> records;
+        std::string records;
         std::vector<std::string> dates;
-
-        do {
-            record.clear();
+        for (unsigned int i = 0; i < (BLOCK_SIZE / MAX_RECORD_LENGTH); ++i) {
+            std::string record = "";
             getline(read_input, record);
             dates.push_back(record.substr(0, 5));
-            records.push_back(record);
-            ++count;
-        } while (count < (BLOCK_SIZE / MAX_RECORD_LENGTH));
-        std::string record_string = "";
-        for (unsigned int i = 0; i < records.size(); ++i) {
-            record_string.append(records[i]);
+            records.append(record);
         }
-        record_string = FileSys::block(record_string)[0];
+        records = FileSys::block(records)[0];
+        FileSys::addBlock(flat_file, records);
+
+        // I now have two vectors, one with all the records from the file,
+        // the other with all the dates. I need to block out the records first.
+        // Then I need to write the blocks, one by one, to the flat_file, and
+        // save what blocks they went to alongside the dates, then block and
+        // write all of that out to the index_file.
 
         unsigned int current_block = FileSys::getFirstBlock(flat_file);
         while (FileSys::getNextBlock(flat_file, current_block) != 0) {

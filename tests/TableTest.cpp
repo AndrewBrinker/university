@@ -23,6 +23,7 @@ int tableQuery(Table &table, std::string query) {
         }
     }
     if (date == "") return 1;
+    std::cout << "Searching..." << std::endl;
     table.search(date);
     return 0;
 }
@@ -31,7 +32,9 @@ int tableQuery(Table &table, std::string query) {
 int tableTest(std::string& buffer) {
   std::cout << "Testing the Table class" << std::endl;
   Table table("table1", "flat1", "index1");
+  std::cout << "Building the Table" << std::endl;
   table.buildTable("data.txt");
+  std::cout << "Querying the Table" << std::endl;
   tableQuery(table, "What record has date=50");
   return 1;
 }
