@@ -7,7 +7,7 @@
 #ifndef DOCFS_TESTS_TABLE_CPP
 #define DOCFS_TESTS_TABLE_CPP
 
-#include <docfs/Table.h>
+#include <docFS/Table.h>
 #include <string>
 #include <vector>
 #include <iostream>

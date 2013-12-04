@@ -7,7 +7,7 @@
 #ifndef DOCFS_TESTS_FILESYS_CPP
 #define DOCFS_TESTS_FILESYS_CPP
 
-#include <docfs/FileSys.h>
+#include <docFS/FileSys.h>
 #include <string>
 #include <vector>
 #include <iostream>

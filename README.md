@@ -6,7 +6,7 @@ docFS is a DOS-ish virtual filesystem built on a virtual disk. It is being devel
 
 ## Usage
 
-To use the docfs library:
+To use the docFS library:
 
 1. Download or clone the repo to a local directory
 2. Open your terminal and navigate to that directory

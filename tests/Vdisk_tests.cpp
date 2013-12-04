@@ -8,7 +8,7 @@
 #ifndef SRC_TESTS_VDISK_CPP
 #define SRC_TESTS_VDISK_CPP
 
-#include <docfs/Vdisk.h>
+#include <docFS/Vdisk.h>
 #include <string>
 #include <iostream>
 
