@@ -6,9 +6,9 @@
 
 #include <iostream>
 #include <string>
-#include "Vdisk_tests.cpp"
-#include "FileSys_tests.cpp"
-#include "Table_tests.cpp"
+#include "VdiskTest.cpp"
+#include "FileSysTest.cpp"
+#include "TableTest.cpp"
 
 int main() {
   std::string buffer = "";
