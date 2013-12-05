@@ -15,6 +15,10 @@ int virtualDiskTest(std::string& buffer);
 int fileSystemTest(std::string& buffer);
 int tableTest(std::string& buffer);
 
+/*=============================================================================
+ * Test Dispatcher
+ ============================================================================*/
+
 int main() {
   std::string buffer = "";
   if (!virtualDiskTest(buffer)) {
@@ -37,6 +41,10 @@ int main() {
 }
 
 
+/*=============================================================================
+ * Vdisk Testing
+ ============================================================================*/
+
 int virtualDiskTest(std::string& buffer) {
   std::cout << "Testing the Vdisk class" << std::endl;
 
@@ -54,7 +62,7 @@ int virtualDiskTest(std::string& buffer) {
 
   // Append characters to blocks 1 and 2
   for (unsigned int i = 1; i <= 32; ++i) {
-      input1 = input1 + "1";
+      input1 = input1 + "1"
   }
   for (unsigned int i = 1; i <= 32; ++i) {
       input2 = input2 + "2";
@@ -78,6 +86,11 @@ int virtualDiskTest(std::string& buffer) {
 
   return 1;
 }
+
+
+/*=============================================================================
+ * FileSys Testing
+ ============================================================================*/
 
 std::vector<std::string> block(std::string blocks, unsigned int block_size) {
   std::string partial;
@@ -143,6 +156,11 @@ int fileSystemTest(std::string& buffer) {
 
   return 1;
 }
+
+
+/*=============================================================================
+ * Table Testing
+ ============================================================================*/
 
 void strip(std::string& str, const char c = FILL_CHAR) {
   while (str.front() == c) str.erase(0, 1);
