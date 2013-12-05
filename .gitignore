@@ -1,10 +1,7 @@
 temp/
-data.txt
 *.o
 run_this
 *.sublime-project
 *.sublime-workspace
 *.dat
 *.spc
-cpplint.py
-*.png
