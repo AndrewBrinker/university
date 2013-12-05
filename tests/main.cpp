@@ -11,8 +11,8 @@
 #include <string>
 #include <vector>
 
-int virtualDiskTest(std::string& buffer);
-int fileSystemTest(std::string& buffer);
+int vdiskTest(std::string& buffer);
+int fileSysTest(std::string& buffer);
 int tableTest(std::string& buffer);
 
 /*=============================================================================
@@ -21,13 +21,13 @@ int tableTest(std::string& buffer);
 
 int main() {
   std::string buffer = "";
-  if (!virtualDiskTest(buffer)) {
-    std::cout << "VirtualDisk testing failed with the error:\n    "
+  if (!vdiskTest(buffer)) {
+    std::cout << "Vdisk testing failed with the error:\n    "
               << buffer << std::endl;
     return 0;
   }
-  if (!fileSystemTest(buffer)) {
-    std::cout << "FileSystem testing failed with the error:\n    "
+  if (!fileSysTest(buffer)) {
+    std::cout << "FileSys testing failed with the error:\n    "
               << buffer << std::endl;
     return 0;
   }
@@ -45,7 +45,7 @@ int main() {
  * Vdisk Testing
  ============================================================================*/
 
-int virtualDiskTest(std::string& buffer) {
+int vdiskTest(std::string& buffer) {
   std::cout << "Testing the Vdisk class" << std::endl;
 
   // Create a new vd1 called test 1 with
@@ -62,7 +62,7 @@ int virtualDiskTest(std::string& buffer) {
 
   // Append characters to blocks 1 and 2
   for (unsigned int i = 1; i <= 32; ++i) {
-      input1 = input1 + "1"
+      input1 = input1 + "1";
   }
   for (unsigned int i = 1; i <= 32; ++i) {
       input2 = input2 + "2";
@@ -116,7 +116,7 @@ std::vector<std::string> block(std::string blocks, unsigned int block_size) {
 }
 
 
-int fileSystemTest(std::string& buffer) {
+int fileSysTest(std::string& buffer) {
   std::cout << "Testing the FileSys class" << std::endl;
 
   Vdisk disk1("disk1", 100, 500);
