@@ -7,134 +7,90 @@
 #include <iostream>
 #include "./Vdisk.h"
 
-/*
- * Vdisk()
- *
- * @in: std::string current_name
- *   - The name of the disk to be loaded.
- * @return: none
- *
- * Load a disk, assuming one already exists.
- */
-Vdisk::Vdisk(std::string current_name) {
-  name = current_name;
-  std::string arch_file = name + ".spc";
-  std::ifstream file(arch_file.c_str());
-  if (file.good()) {
-    file >> block_count >> block_size;
-  } else {
-    std::cout << "The disk " << name << ".spc does not exist!" << std::endl;
+class CorruptDisk : public std::exception {
+  const char* what() const throw() {
+    return "Bad disk or disk spec";
   }
-  file.close();
-}
+};
 
 
-/*
- * Vdisk()
- *
- * @in: std::string new_name
- *   - The name of the disk being made
- * @in: unsigned int new_block_count
- *   - The number of blocks on the disk
- * @in: unsigned int new_block_size
- *   - The size of each block on the disk
- *
- * Create a new disk, assuming it doesn't already exist
- */
-Vdisk::Vdisk(std::string new_name,
-             unsigned int new_block_count,
-             unsigned int new_block_size) {
+Vdisk::Vdisk(const std::string new_name)
+           : Vdisk(new_name, DEFAULT_BLOCK_COUNT, DEFAULT_BLOCK_SIZE) {}
+
+
+Vdisk::Vdisk(const std::string new_name,
+             const unsigned int new_block_count,
+             const unsigned int new_block_size) {
   name = new_name;
   block_count = new_block_count;
   block_size = new_block_size;
-  std::string arch_file_name = name + ".spc";
-  std::ofstream arch_file(arch_file_name.c_str());
-  arch_file << block_count << " " << block_size;
-  arch_file.close();
-  std::string data_file_name = name + ".dat";
-  std::ofstream data_file(data_file_name.c_str());
-  for (unsigned int i = 0; i < block_size * block_count; ++i) {
-    data_file << "#";
+
+  std::fstream io_file;
+
+  io_file.open((name + ".spc").c_str(), std::ios::in);
+
+  if (io_file.good()) {
+    io_file >> block_count >> block_size;
+
+    if (io_file.fail()) {
+      throw CorruptDisk();
+    }
+    io_file.close();
+
+    io_file.open((name + ".dat").c_str(), std::ios::in);
+    unsigned int count = 0;
+
+    while (!io_file.eof() && !io_file.fail() && ++count) {
+      io_file.get();
+    }
+
+    if (count != block_count * block_size + 1) {
+      throw CorruptDisk();
+    }
+  } else {
+    io_file.close();
+    io_file.open((name + ".spc").c_str(), std::ios::out);
+    io_file << block_count << ' ' << block_size;
+    io_file.close();
+
+    io_file.open((name + ".dat").c_str(), std::ios::out);
+
+    for (unsigned int i = 0; i < block_count * block_size; ++i) {
+      io_file.put(FILL_CHAR);
+    }
+    io_file.close();
   }
-  data_file.close();
 }
 
 
-/*
- * getBlock()
- *
- * @in: unsigned int block_number
- *   - The block number data is being retrieved from
- * @out: std::string& block
- *   - The buffer the block contents are written out to
- * @return:
- *   - 1 if successful
- *   - 0 otherwise
- *
- * Retrieve data from the specified block and write it to the buffer.
- */
-unsigned int Vdisk::getBlock(unsigned int block_number,
-                             std::string& buffer) {
-  std::string data_file = name + ".dat";
-  std::ifstream file(data_file.c_str());
-  if (file.bad()) { return 0; }
-  file.seekg(block_number * block_size);
-  for (unsigned int i = 0; i < block_size; ++i) {
-    buffer += file.get();
+int Vdisk::getBlock(const unsigned int block_number,
+                    std::string& buffer) const {
+  std::ifstream input_file;
+  int success = 0;
+  input_file.open((name + ".dat").c_str());
+  input_file.seekg(block_number * block_size);
+  char* buf = new char[block_size + 1];
+  input_file.get(buf, block_size + 1);
+  buffer.assign(buf);
+  if (input_file.good()) {
+    success = 1;
   }
-  return 1;
+  delete[] buf;
+  input_file.close();
+  return success;
 }
 
 
-/*
- * putBlock()
- *
- * @in: unsigned int block_number
- *   - The block number being read from
- * @in: std::string buffer
- *   - The buffer being written to the block
- * @return:
- *   - 1 if successful
- *   - 0 otherwise
- *
- * Write the buffer to the block
- */
-unsigned int Vdisk::putBlock(unsigned int block_number,
-                             std::string buffer) {
-  std::string data_file = name + ".dat";
-  std::fstream file(data_file.c_str(), std::fstream::in | std::fstream::out);
-  if (file.bad()) {
-    return 0;
+int Vdisk::putBlock(const unsigned int block_number,
+                    const std::string buffer) const {
+  std::fstream io_file;
+  int success = 0;
+  io_file.open((name + ".dat").c_str(), std::ios::out | std::ios::in);
+  io_file.seekp(block_number * block_size);
+  io_file.write(buffer.c_str(), block_size);
+  if (io_file.good()) {
+    success = 1;
   }
-  if (getFileSize(data_file) < (block_number + 1) * block_size - 1) {
-    return 0;
-  }
-  if (buffer.length() != block_size) {
-    return 0;
-  }
-  file.seekp(block_number * block_size);
-  for (unsigned int i = 0; i < block_size; ++i) {
-    file.put(buffer[i]);
-  }
-  file.close();
-  return 1;
-}
-
-
-/*
- * getFileSize()
- *
- * @in: std::string filename
- *   - The name of the file being checked
- * @return:
- *   - The size of the file, in bytes
- *
- * Get the size of the given file in bytes.
- */
-unsigned int Vdisk::getFileSize(std::string filename) {
-  std::ifstream file(filename.c_str());
-  file.seekg(0, file.end);
-  unsigned int length = file.tellg();
-  file.close();
-  return length;
+  io_file.close();
+  return success;
 }

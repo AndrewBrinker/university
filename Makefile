@@ -1,4 +1,4 @@
-CPPFLAGS=-g -O2 -Wall -Wextra -Isrc -DNDEBUG $(OPTFLAGS)
+CPPFLAGS=-std=c++11 -g -O2 -Wall -Wextra -Isrc -DNDEBUG $(OPTFLAGS)
 LIBS=-ldl $(OPTLIBS)
 PREFIX?=usr/local
 CC=clang++
@@ -42,7 +42,6 @@ tests: $(TESTS)
 .PHONY: clean
 clean:
 	@rm -rf build $(OBJECTS) $(TESTS)
-	@rm -f tests/tests.log
 	@find . -name "*.gc*" -exec rm {} \;
 	@rm -rf `find . -name "*.dSYM" -print`
 	@rm -rf **/*.spc *.spc **/*.dat *.dat **/test test
@@ -57,7 +56,7 @@ install: all
 #target: lint       Check the files against Google's C++ StyleGuide.
 .PHONY: lint
 lint:
-	@python bin/cpplint.py --filter=-readability/streams,-runtime/references $(SOURCES) $(HEADERS) $(TEST_SRC)
+	@python lint/cpplint.py --filter=-readability/streams,-runtime/references,-runtime/printf $(SOURCES) $(HEADERS) $(TEST_SRC)
 
 # target: check     Check the files for potentially dangerous functions.
 BADFUNCS='[^_.>a-zA-Z0-9](str(n?cpy|n?cat|xfrm|n?dup|str|pbrk|tok|_)|stpn?cpy|a?sn?printf|byte_)'

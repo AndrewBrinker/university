@@ -2,98 +2,75 @@
  * Copyright 2013 Andrew Brinker
  */
 
-#include <cmath>
-#include <string>
-#include <fstream>
-#include <iostream>
-#include <vector>
+#include <algorithm>
 #include <sstream>
 #include <iomanip>
+#include <cstdio>
 #include "./FileSys.h"
 
-// Defined defaults.
-#define BLOCK_SIZE       500
-#define BLOCK_COUNT      100
-#define MAX_NAME_LENGTH  16
-#define FILL_CHAR        '#'
-#define EOF_CHAR         0
-#define RESERVED_CHAR    1
 
-#define ROOT_BLOCK      1
-#define FAT_START_BLOCK 2
-
-// Calculated values.
-#define ADDRESS_LENGTH   (floor(log10(BLOCK_COUNT)))
-#define ADDRESS_SPACE    (ADDRESS_LENGTH+1)
-#define ROOT_ENTRY_SPACE (MAX_NAME_LENGTH+ADDRESS_LENGTH+2)
-#define ROOT_ENTRY_COUNT (BLOCK_SIZE/ROOT_ENTRY_SPACE)
-#define FAT_BLOCK_COUNT  ((ADDRESS_SPACE*BLOCK_COUNT)/BLOCK_SIZE+1)
-
-
-/*
- * FileSys()
- *
- * @in: std::string new_name
- *   - The name of the file system being created
- * @return: none
- *
- * Try to load the file system, if it fails, make a new one.
- */
-FileSys::FileSys(std::string new_name):Vdisk(new_name,
-                                             BLOCK_COUNT,
-                                             BLOCK_SIZE) {
-  if (!loadFileSystem()) {
-    makeFileSystem();
-  }
+FileSys::FileSys(std::string new_name) : Vdisk(new_name) {
+  if (!loadFileSys()) makeFileSys();
 }
 
 
-/*
- * sync()
- *
- * @return:
- *   - 1 if successful
- *   - 0 otherwise
- *
- * Write the Root and FAT to the disk.
- */
-unsigned int FileSys::sync() {
-  std::stringstream root_stream;
-  std::stringstream fat_stream;
+int FileSys::sync() const {
+  std::stringstream ssroot, ssfat;
+  std::string fat_part;
   std::vector<std::string> fat_vector;
-  std::string partial_fat;
 
-  // Building the root stream
-  for (unsigned int i = 0; i < root_file_names.size(); ++i) {
-    root_stream << root_file_names[i]
-                << std::string(MAX_NAME_LENGTH - root_file_names[i].length(),
-                               FILL_CHAR)
-                << " " << std::setfill(' ') << std::setw(ADDRESS_LENGTH)
-                << root_first_blocks[i] << " ";
+  // Build the root stringstream
+  for (RootEntry entry : root) {
+    ssroot << entry.filename
+           << std::string(
+                FILE_NAME_LENGTH - entry.filename.length(),
+                FILL_CHAR
+              )
+           << ' ' << std::setfill(' ')
+           << std::setw(ADDRESS_LENGTH) << entry.startblock
+           << ' ';
+  }
+  for (unsigned int i = root.size(); i < MAX_ROOT_SIZE; ++i) {
+    ssroot << std::string(FILE_NAME_LENGTH, FILL_CHAR)
+           << ' '
+           << std::setfill(' ')
+           << std::setw(ADDRESS_LENGTH) << 0 << ' ';
   }
 
-  // Pad the root size
-  while (root_stream.str().length() < BLOCK_SIZE) {
-      root_stream << FILL_CHAR;
+  while (ssroot.str().length() < block_size) {
+    ssroot << FILL_CHAR;
   }
 
-  // Place the root at ROOT_BLOCK. If it fails return an error code
-  if (!Vdisk::putBlock(ROOT_BLOCK, root_stream.str())) {
-    return 0;
+  // Place the root block
+  if (!Vdisk::putBlock(ROOT_BLOCK, ssroot.str())) {
+      return 0;
   }
 
-  // Build the FAT stream
-  for (unsigned int i = 0; i < fat.size(); ++i) {
-    fat_stream << std::setfill(' ') << std::setw(ADDRESS_LENGTH)
-               << fat[i] << ' ';
+  // Create the fat stream
+  for (unsigned int i : fat) {
+    ssfat << std::setfill(' ') << std::setw(ADDRESS_LENGTH)
+          << i << ' ';
   }
 
-  // Separate the FAT into blocks
-  fat_vector = block(fat_stream.str());
+  // Separate the fat into blocks
+  for (char c : ssfat.str()) {
+    if (fat_part.length() < block_size) {
+      fat_part.push_back(c);
+    } else {
+      fat_vector.push_back(fat_part);
+      fat_part.clear();
+    }
+  }
+  if (fat_part.length() != 0) {
+    for (unsigned int i = fat_part.length(); i < block_size; ++i) {
+      fat_part.push_back(FILL_CHAR);
+    }
+    fat_vector.push_back(fat_part);
+  }
 
-  // Output each block individually
+  // Place the fat blocks
   for (unsigned int i = 0; i < fat_vector.size(); ++i) {
-    if (!Vdisk::putBlock(FAT_START_BLOCK + i, fat_vector[i])) {
+    if (!Vdisk::putBlock(FAT_BLOCK + i, fat_part)) {
       return 0;
     }
   }
@@ -101,579 +78,214 @@ unsigned int FileSys::sync() {
 }
 
 
-/*
- * newFile()
- *
- * @in: std::string file
- *   - The name of the file being created.
- * @return:
- *   - sync() if successful
- *   - 0 otherwise
- *
- * Creates a new file and syncs the changes to the disk.
- */
-unsigned int FileSys::newFile(std::string file) {
-  const std::string default_file_name(MAX_NAME_LENGTH, FILL_CHAR);
+int FileSys::makeFile(const std::string filename) {
+  if (root.size() >= MAX_ROOT_SIZE) return 0;
+  if (fat[0] == 0) return 0;
+  if (root.find({filename}) != root.end()) return 0;
 
-  // If the length of the filename is wrong. Return 0.
-  if (file.length() > MAX_NAME_LENGTH) {
-    return 0;
-  } else if (file.length() < MAX_NAME_LENGTH) {
-    for (unsigned int i = file.length(); i < MAX_NAME_LENGTH; ++i) {
-      file += FILL_CHAR;
-    }
-  }
-
-  // Iterate through root_file_names
-  for (unsigned int i = 0; i < root_file_names.size(); ++i) {
-    // If the filename is already present, return 0;
-    if (file == root_file_names[i]) {
-      return 0;
-    }
-  }
-
-  // Iterate again
-  for (unsigned int i = 0; i < root_file_names.size(); ++i) {
-    // If the current filename is the default, put the new file here.
-    if (default_file_name == root_file_names[i]) {
-      root_file_names[i]   = file;
-      root_first_blocks[i] = 0;
-      return sync();
-    }
-  }
-  return 0;
-}
-
-
-/*
- * removeFile()
- *
- * @in: std::string file
- *   - The name of the file being deleted.
- * @return:
- *   - sync() if successful
- *   - 0 otherwise
- *
- * Delete the file and sync the changes to the disk.
- */
-unsigned int FileSys::removeFile(std::string file) {
-  const std::string default_file_name(MAX_NAME_LENGTH, FILL_CHAR);
-
-  // If the filename is the wrong length, return 0
-  if (file.length() > MAX_NAME_LENGTH) {
-    return 0;
-  } else if (file.length() < MAX_NAME_LENGTH) {
-    for (unsigned int i = file.length(); i < MAX_NAME_LENGTH; ++i) {
-      file += FILL_CHAR;
-    }
-  }
-
-  // Iterate through the root
-  for (unsigned int i = 0; i < root_file_names.size(); ++i) {
-    // If the file is present...
-    if (root_file_names[i] == file) {
-      // If the file is not empty, return 0
-      if (root_first_blocks[i] != 0) {
-        return 0;
-      }
-      // Otherwise, delete it from the root.
-      root_file_names[i] = default_file_name;
-      return sync();
-    }
-  }
-  return 0;
-}
-
-
-/*
- * getFirstBlock()
- *
- * @in: std::string file
- *   - The name of the file the first block is being retrieved from.
- * @return:
- *   - The block number or 0.
- *
- * Gets the first block of the given file.
- */
-unsigned int FileSys::getFirstBlock(std::string file) {
-  prepFileName(file);
-  // Go through the root. If the file exists, return its first block number
-  for (unsigned int i = 0; i < root_file_names.size(); ++i) {
-    if (file == root_file_names[i]) {
-      return root_first_blocks[i];
-    }
-  }
-  // Otherwise, return 0
-  return 0;
-}
-
-
-/*
- * getNextBlock()
- *
- * @in: std::string file
- *   - The name of the file being searched through
- * @in: unsigned int block_number
- *   - The number of the current block in the given file
- * @return:
- *   - next block if successful
- *   - -1 if the block doesn't exist, or has no blocks
- *
- * Gets the block after the block_number block.
- */
-int FileSys::getNextBlock(std::string file, unsigned int block_number) {
-  prepFileName(file);
-  unsigned int current_block = 0;
-  int block_found = 0;
-  for (unsigned int i = 0; i < root_file_names.size(); ++i) {
-    if (file == root_file_names[i]) {
-      current_block = root_first_blocks[i];
-      block_found = 1;
-      break;
-    }
-  }
-  // If the file doesn't exist, or has no blocks, return -1.
-  if (block_found == 0 || current_block == 0) {
-    return -1;
-  }
-  // Then go from block to block. If any of the blocks matches block_number,
-  // return the next block. If there are no blocks after block_number,
-  // return 0. If block_number never occurs, return -1.
-  while (current_block != 0) {
-    if (current_block == block_number) {
-      return fat[current_block];
-    }
-    current_block = fat[current_block];
-  }
-  return -1;
-}
-
-
-/*
- * getLastBlock()
- *
- * @in: std::string file
- *   - The name of the file being searched
- * @return:
- *   - The block number if it exists
- *   - 0 otherwise
- *
- * Gets the last block of the given file.
- */
-int FileSys::getLastBlock(std::string file) {
-  prepFileName(file);
-  unsigned int current_block = 0;
-  int block_found = 0;
-  for (unsigned int i = 0; i < root_file_names.size(); ++i) {
-    if (file == root_file_names[i]) {
-      current_block = root_first_blocks[i];
-      block_found = 1;
-      break;
-    }
-  }
-  // If the file doesn't exist, or has no blocks, return 0.
-  if (block_found == 0 || current_block == 0) {
-    return 0;
-  }
-  // Then go from block to block. If any of the blocks matches block_number,
-  // return the next block. If there are no blocks after block_number,
-  // return 0. If block_number never occurs, return 0.
-  while (current_block != 0) {
-    if (fat[current_block] == 0) {
-      return current_block;
-    }
-    current_block = fat[current_block];
-  }
-  return 0;
-}
-
-
-/*
- * addBlock()
- *
- * @in: std::string file
- *   - The file being added to
- * @in: std::string buffer
- *   - The buffer containing the data being added to the file.
- * @return:
- *   - 1 if successful
- *   - 0 otherwise
- *
- * Adds a block to the given file, and writes the buffer to the block.
- */
-int FileSys::addBlock(std::string file,
-                      std::string buffer) {
-  prepFileName(file);
-  if (fat[0] == 0) {
-    return -1;
-  }
-  unsigned int file_exists = 0;
-  unsigned int file_index = 0;
-  for (unsigned int i = 0; i < root_file_names.size(); ++i) {
-    if (file == root_file_names[i]) {
-      file_exists = 1;
-      file_index = i;
-    }
-  }
-  if (file_exists == 0) {
-    return 0;
-  }
-  unsigned int first_free = fat[0];
-  unsigned int current_block = root_first_blocks[file_index];
-  fat[0] = fat[first_free];
-  fat[first_free] = 0;
-  while (fat[current_block] != 0) {
-    current_block = fat[current_block];
-  }
-  fat[current_block] = first_free;
-  Vdisk::putBlock(first_free, buffer);
+  root.insert({filename, 0});
   return sync();
 }
 
 
-/*
- * deleteBlock()
- *
- * @in: std::string file
- *   - The file being deleted from
- * @in: unsigned int block_number
- *   - The block number being deleted
- * @return:
- *   - sync if successful
- *   - 0 otherwise
- */
-unsigned int FileSys::deleteBlock(std::string file,
-                                  unsigned int block_number) {
-  prepFileName(file);
-  // Go through the file blocks.
-  // If you hit the block you're looking for, set the previous block equal to
-  // the value of the block you're deleting, and update the free list by setting
-  // the deleted block equal to the value of fat[0], and set fat[0] equal to the
-  // index of the deleted block.
-  unsigned int block_index;
-  for (unsigned int i = 0; i < root_file_names.size(); ++i) {
-    if (file == root_file_names[i]) {
-      block_index = i;
+int FileSys::removeFile(const std::string filename) {
+  std::set<RootEntry>::const_iterator it = root.find({filename});
+  if (it == root.end()) return 0;
+  if (it->startblock != 0) return 0;
+
+  fat[it->startblock] = fat[0];
+  root.erase(it);
+  return sync();
+}
+
+
+unsigned int FileSys::getFirstBlock(const std::string filename) const {
+  std::set<RootEntry>::const_iterator it = root.find({filename});
+  if (it == root.end()) return -1;
+  return it->startblock;
+}
+
+
+int FileSys::addBlock(const std::string filename, const std::string buffer) {
+  std::set<RootEntry>::const_iterator it = root.find({filename});
+
+  if (it == root.end()) return 0;
+  if (fat[0] == 0) return -1;
+
+  unsigned int block = fat[0];
+  unsigned int currblock = it->startblock;
+
+  fat[0] = fat[block];
+  fat[block] = 0;
+
+  if (currblock != 0) {
+    while (fat[currblock] != 0) {
+      currblock = fat[currblock];
     }
+    fat[currblock] = block;
+  } else {
+    root.erase(it);
+    root.insert({filename, block});
   }
-  unsigned int current_block = block_index;
-  while (current_block != 0) {
-    if (current_block == block_number) {
-      unsigned int temp = current_block;
-      current_block = fat[0];
-      fat[0] = temp;
-      return sync();
+
+  Vdisk::putBlock(block, buffer);
+  return sync();
+}
+
+
+int FileSys::deleteBlock(const std::string filename,
+                         const unsigned int iBlock) {
+  std::set<RootEntry>::const_iterator it = root.find({filename});
+  if (it == root.end()) return 0;
+
+  if (it->startblock == iBlock) {
+    root.erase(it);
+    root.insert({filename, fat[iBlock]});
+    fat[iBlock] = fat[0];
+    fat[0] = iBlock;
+    return 1;
+  }
+
+  unsigned int previousBlock = it->startblock;
+  while (fat[previousBlock] != iBlock) {
+    if (fat[previousBlock] == END) {
+      return 0;
     }
-    current_block = fat[current_block];
+    previousBlock = fat[previousBlock];
   }
-  return 0;
+  fat[previousBlock] = fat[iBlock];
+  fat[iBlock] = fat[0];
+  fat[0] = iBlock;
+
+  return sync();
 }
 
 
-/*
- * readBlock()
- *
- * @in: std::string file
- *   - The file being read from
- * @in: unsigned int block_number
- *   - The block number in the file being read from
- * @output: std::string& buffer
- *   - The buffer being written to
- * @return:
- *   - 1 if successful
- *   - 0 otherwise
- *
- * Reads from the given block.
- */
-unsigned int FileSys::readBlock(std::string file,
-                                unsigned int block_number,
-                                std::string& buffer) {
-  prepFileName(file);
-  if (fileHasBlock(file, block_number)) {
-    return Vdisk::getBlock(block_number, buffer);
+int FileSys::readBlock(const std::string filename, const unsigned int iBlock,
+                       std::string& buffer) const {
+  std::set<RootEntry>::const_iterator it = root.find({filename});
+  if (it == root.end()) return 0;
+  unsigned int block = it->startblock;
+  while (block != iBlock) {
+    if (block == END) {
+      return 0;
+    }
+    block = fat[block];
   }
-  return 0;
+  return Vdisk::getBlock(iBlock, buffer);
 }
 
 
-/*
- * writeBlock()
- *
- * @in: std::string file
- *   - The file being written to
- * @in: unsigned int block_number
- *   - The block number being written to
- * @in: std::string buffer
- *   - The contents being written to the given block
- * @return:
- *   - 1 if successful
- *   - 0 otherwise
- *
- * Writes the buffer to the given block.
- */
-unsigned int FileSys::writeBlock(std::string file,
-                                    unsigned int block_number,
-                                    std::string buffer) {
-  prepFileName(file);
-  if (fileHasBlock(file, block_number)) {
-    return Vdisk::putBlock(block_number, buffer);
-  }
-  return 0;
-}
-
-
-/*
- * loadFileSystem()
- *
- * @return:
- *   - 1 if successful
- *   - 0 otherwise
- *
- * Attempts to load the given file system. If the system doesn't exist, it
- * returns 0.
- */
-unsigned int FileSys::loadFileSystem() {
-  std::string fat_string = "";
-  // Get the contents of the first FAT block
-  Vdisk::getBlock(2, fat_string);
-  // If they are just filler, return 0.
-  if (fat_string == std::string(BLOCK_SIZE, FILL_CHAR)) {
+int FileSys::writeBlock(const std::string filename, const unsigned int iBlock,
+                        const std::string buffer) const {
+  std::set<RootEntry>::const_iterator it = root.find({filename});
+  if (it == root.end()) {
     return 0;
   }
-  // Otherwise, get the rest of the FAT.
-  std::string remaining_fat;
-  for (unsigned int i = 1; i < FAT_BLOCK_COUNT; ++i) {
-    Vdisk::getBlock(i, remaining_fat);
-    fat_string += remaining_fat;
+  unsigned int block = it->startblock;
+  while (block != iBlock) {
+    if (block == END) {
+      return 0;
+    }
+    block = fat[block];
   }
-  if (!loadFat(fat_string)) {
-    return 0;
-  }
-  std::string root_string;
-  Vdisk::getBlock(1, root_string);
-  if (!loadRoot(root_string)) {
-    return 0;
-  }
-  return 1;
+  return Vdisk::putBlock(iBlock, buffer);
 }
 
 
-/*
- * makeFileSystem()
- *
- * @return:
- *   - 1 if successful
- *   - 0 otherwise
- *
- * Creates a new file system based on the macros set at the top of the file.
- */
-unsigned int FileSys::makeFileSystem() {
-  const std::string default_file_name(MAX_NAME_LENGTH, FILL_CHAR);
+int FileSys::getNextBlock(const std::string filename,
+                          const unsigned int iBlock) const {
+  std::set<RootEntry>::const_iterator it = root.find({filename});
+  if (it == root.end()) return -1;
+  unsigned int block = it->startblock;
+  while (block != iBlock) {
+    if (block == END) {
+      return 0;
+    }
+    block = fat[block];
+  }
+  return fat[block];
+}
 
-  // Because we already know the size, it's more efficient to resize now
-  // instead of using push_back over and over, which would potentially result
-  // in several resizes.
-  root_file_names.resize(ROOT_ENTRY_COUNT);
-  root_first_blocks.resize(ROOT_ENTRY_COUNT);
 
-  for (unsigned int i = 0; i < ROOT_ENTRY_COUNT; ++i) {
-    root_file_names[i] = default_file_name;
-    root_first_blocks[i] = EOF_CHAR;
+bool FileSys::loadFileSys() {
+  std::string sfat;
+  Vdisk::getBlock(FAT_BLOCK, sfat);
+  if (sfat == std::string(block_size, FILL_CHAR)) return false;
+  std::string morefat;
+  for (unsigned int i = 1; i < FAT_SIZE; ++i) {
+    Vdisk::getBlock(i, morefat);
+    sfat += morefat;
+  }
+  if (!loadFAT(sfat)) return false;
+  std::string sroot;
+  Vdisk::getBlock(ROOT_BLOCK, sroot);
+  if (!loadRoot(sroot)) return false;
+  return true;
+}
+
+
+void FileSys::makeFileSys() {
+  fat.resize(block_count);
+  fat[0] = 2 + FAT_SIZE;
+
+  for (unsigned int i = 1; i < fat[0]; ++i) {
+    fat[i] = RESERVED;
   }
 
-  // Next we construct the FAT.
-  fat.resize(BLOCK_COUNT);
-
-  fat[0] = FAT_BLOCK_COUNT + 2;
-  for (unsigned int i = 1; i < FAT_BLOCK_COUNT + 2; ++i) {
-    fat[i] = RESERVED_CHAR;
-  }
-  for (unsigned int i = FAT_BLOCK_COUNT + 2; i < fat.size(); ++i) {
+  for (unsigned int i = fat[0]; i < fat.size() - 1; ++i) {
     fat[i] = i + 1;
   }
-  fat[fat.size() - 1] = EOF_CHAR;
-
-  return sync();
+  fat[fat.size() - 1] = END;
+  sync();
 }
 
 
-/*
- * loadFat()
- *
- * @in: std::string fat_string
- *   - The string containing the FAT
- * @return:
- *   - 1 if successful
- *   - 0 otherwise
- *
- * Attempts to load and store the FAT in the disk.
- */
-unsigned int FileSys::loadFat(std::string fat_string) {
-  std::string raw_value = "";
-  unsigned int current_value = 0;
-  std::stringstream fat_stream;
-  while (fat_string[0] != FILL_CHAR) {
-    raw_value = fat_string.substr(0, ADDRESS_SPACE);
-    fat_string.erase(0, ADDRESS_SPACE);
-    strip(raw_value, ' ');
-    fat_stream << raw_value;
-    if (fat_stream >> current_value) {
-      fat.push_back(current_value);
+bool FileSys::loadFAT(std::string sfat) {
+  std::string raw;
+  int i;
+  std::stringstream ss;
+  while (sfat[0] != FILL_CHAR) {
+    raw = sfat.substr(0, ADDRESS_SPACE);
+    sfat.erase(0, ADDRESS_SPACE);
+    strip(raw, ' ');
+    ss << raw;
+    if (ss >> i) {
+      fat.push_back(i);
     } else {
-      return 0;
+      return false;
     }
-    fat_stream.clear();
+    ss.clear();
   }
-  return 1;
+  return true;
 }
 
 
-/*
- * loadRoot()
- *
- * @in: std::string root_string
- *   - The contents of the Root
- * @return:
- *   - 1 if successful
- *   - 0 otherwise
- *
- * Attempts to load and store the Root in the disk.
- */
-unsigned int FileSys::loadRoot(std::string root_string) {
-  std::string raw_value = "";
-  std::string filename = "";
-  unsigned int address = 0;
-  std::stringstream root_stream;
-  while (root_string[0] != FILL_CHAR) {
-    filename = root_string.substr(0, MAX_NAME_LENGTH);
-    root_string.erase(0, MAX_NAME_LENGTH + 1);
+bool FileSys::loadRoot(std::string sroot) {
+  std::string raw, filename;
+  unsigned int address;
+  std::stringstream ss;
+
+  while (sroot[0] != FILL_CHAR) {
+    filename = sroot.substr(0, FILE_NAME_LENGTH);
+    sroot.erase(0, FILE_NAME_LENGTH + 1);
     strip(filename, FILL_CHAR);
-    raw_value = root_string.substr(0, ADDRESS_SPACE);
-    root_string.erase(0, ADDRESS_SPACE);
-    strip(raw_value, ' ');
-    root_stream << raw_value;
-    if (root_stream >> address) {
-      root_file_names.push_back(filename);
-      root_first_blocks.push_back(address);
+    raw = sroot.substr(0, ADDRESS_SPACE);
+    sroot.erase(0, ADDRESS_SPACE);
+    strip(raw, ' ');
+    ss << raw;
+    if (ss >> address) {
+      root.insert({filename, address});
     } else {
-      return 0;
+      return false;
     }
-    root_stream.clear();
+    ss.clear();
   }
-  return 1;
+  return true;
 }
 
 
-/*
- * fileHasBlock()
- *
- * @in: std::string filename
- *   - The file being checked
- * @in: unsigned int block_number
- *   - The block being checked
- * @return:
- *   - 1 if successful
- *   - 0 otherwise
- *
- * Checks whether the given file has the given block.
- */
-unsigned int FileSys::fileHasBlock(std::string filename,
-                                      unsigned int block_number) {
-  prepFileName(filename);
-  unsigned int file_exists = 0;
-  unsigned int file_index = 0;
-  for (unsigned int i = 0; i < root_file_names.size(); ++i) {
-    if (filename == root_file_names[i]) {
-      file_exists = 1;
-      file_index = i;
-    }
-  }
-  if (file_exists == 0) {
-    return 0;
-  }
-  unsigned int current_block = root_first_blocks[file_index];
-  while (current_block != 0) {
-    if (block_number == current_block) {
-      return 1;
-    }
-    current_block = fat[current_block];
-  }
-  return 0;
-}
-
-
-/*
- * prepFileName()
- *
- * @inout: std::string& file
- *   - The filename being modified
- * @return:
- *   - 1 if successful
- *   - 0 otherwise
- *
- * Modifies the given file name to fit the specifications of the disk.
- */
-unsigned int FileSys::prepFileName(std::string& file) {
-  if (file.length() >= MAX_NAME_LENGTH) {
-    return 0;
-  }
-  for (unsigned int i = file.length(); i < MAX_NAME_LENGTH; ++i) {
-    file += FILL_CHAR;
-  }
-  return 1;
-}
-
-
-/*
- * strip()
- *
- * @inout: std::string& new_string
- *   - The string being stripped
- * @in: const char fill = FILL_CHAR
- *   - The fill character being stripped to the new string
- * @return: none
- *
- * Strips excess characters from the front of the string.
- */
-void FileSys::strip(std::string& new_string, const char fill = FILL_CHAR) {
-  while (new_string[0] == fill) {
-    new_string.erase(0, 1);
-  }
-  while (new_string[new_string.length() - 1] == fill) {
-    new_string.erase(new_string.length() - 1);
-  }
-}
-
-
-/*
- * block()
- *
- * @in: std::string blocks
- *   - The string to be partitioned
- * @return:
- *   - The partitioned string
- *
- * Partitions the given string into block-sized increments.
- */
-std::vector<std::string> FileSys::block(std::string blocks) {
-  std::string partial;
-  std::vector<std::string> result;
-  for (unsigned int i = 0; i < blocks.length(); ++i) {
-    char c = blocks[i];
-    if (partial.length() < BLOCK_SIZE) {
-      partial.push_back(c);
-    } else {
-      result.push_back(partial);
-      partial.clear();
-    }
-  }
-  if (partial.length() != 0) {
-    // Make sure to add the last block and pad it if it's not the right size.
-    for (unsigned int i = partial.length(); i < BLOCK_SIZE; ++i) {
-      partial.push_back('#');
-    }
-    result.push_back(partial);
-    partial.clear();
-  }
-  return result;
+void FileSys::strip(std::string& str, const char c = FILL_CHAR) {
+  while (str.front() == c) str.erase(0, 1);
+  while (str.back() == c) str.erase(str.length() - 1);
 }

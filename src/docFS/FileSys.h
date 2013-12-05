@@ -11,42 +11,81 @@
 
 #include <string>
 #include <vector>
+#include <set>
+#include <iostream>
 #include "./Vdisk.h"
+
+#define FILE_NAME_LENGTH   16
+#define END                0
+#define RESERVED           1
+#define DEFAULT_FILE_NAME  std::string(FILE_NAME_LENGTH, FILL_CHAR)
+
+#define ADDRESS_LENGTH     intlog(block_count - 1, 10)
+#define ADDRESS_SPACE      (ADDRESS_LENGTH + 1)
+#define FAT_SIZE           ((ADDRESS_SPACE * block_count) / block_size + 1)
+#define MAX_ROOT_SIZE      (block_size / (FILE_NAME_LENGTH + 1 + ADDRESS_SPACE))
+#define DEFAULT_ROOT_ENTRY RootEntry(DEFAULT_FILE_NAME, 0)
+
+#define ROOT_BLOCK         1
+#define FAT_BLOCK          2
+
+constexpr unsigned int intlog(const unsigned int n,
+                              const unsigned int b = 10,
+                              const unsigned int i = 1) {
+    return (n / b == 0) ? i : intlog(n / b, b, i + 1);
+}
+
+
+struct RootEntry {
+  RootEntry()
+          : RootEntry(DEFAULT_FILE_NAME, 0) {}
+  RootEntry(std::string f)
+          : RootEntry(f, 0) {}
+  RootEntry(std::string f, unsigned int s)
+          : filename(f), startblock(s) {}
+
+  std::string filename = DEFAULT_FILE_NAME;
+  unsigned int startblock = 0;
+
+  bool empty() const {
+    return (filename == DEFAULT_FILE_NAME);
+  }
+
+  bool operator < (const RootEntry& other) const {
+    return (other.filename == DEFAULT_FILE_NAME) ? true :
+      filename < other.filename;
+  }
+};
 
 
 class FileSys : public Vdisk {
  public:
-  explicit FileSys(std::string name);
-  unsigned int sync();
-  unsigned int newFile(std::string file);
-  unsigned int removeFile(std::string file);
-  unsigned int getFirstBlock(std::string file);
-  int getNextBlock(std::string file, unsigned int block_number);
-  int getLastBlock(std::string file);
-  int addBlock(std::string file, std::string buffer);
-  unsigned int deleteBlock(std::string file, unsigned int block_number);
-  unsigned int readBlock(std::string file,
-                         unsigned int block_number,
-                         std::string& buffer);
-  unsigned int writeBlock(std::string file,
-                          unsigned int block_number,
-                          std::string buffer);
+  explicit FileSys(std::string disk_name);
+  int sync() const;
+  int makeFile(const std::string);
+  int removeFile(const std::string);
+  int addBlock(const std::string, const std::string);
+  int deleteBlock(const std::string, const unsigned int);
+  int readBlock(const std::string,
+                const unsigned int,
+                std::string&) const;
+  int writeBlock(const std::string,
+                 const unsigned int,
+                 const std::string) const;
+  int getNextBlock(const std::string, const unsigned int) const;
+  unsigned int getFirstBlock(const std::string) const;
 
  protected:
-  std::vector<std::string> block(std::string blocks);
+  bool loadFileSys();
+  void makeFileSys();
+
+  std::set<RootEntry> root;
+  std::vector<unsigned int> fat;
 
  private:
-  unsigned int loadFileSystem();
-  unsigned int makeFileSystem();
-  unsigned int loadFat(std::string fat_string);
-  unsigned int loadRoot(std::string root_string);
-  unsigned int fileHasBlock(std::string filename, unsigned int block_number);
-  unsigned int prepFileName(std::string& file);
-  void strip(std::string& new_string, const char fill);
-
-  std::vector<std::string> root_file_names;     // File names in ROOT
-  std::vector<unsigned int> root_first_blocks;  // First blocks in ROOT
-  std::vector<unsigned int> fat;                // FAT
+  bool loadFAT(std::string);
+  bool loadRoot(std::string);
+  static void strip(std::string&, char);
 
   DISALLOW_COPY_AND_ASSIGN(FileSys);
 };
