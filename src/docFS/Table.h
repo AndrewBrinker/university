@@ -5,7 +5,6 @@
 #ifndef SRC_DOCFS_TABLE_H_
 #define SRC_DOCFS_TABLE_H_
 
-
 #include <string>
 #include "./FileSys.h"
 
@@ -28,11 +27,9 @@
 
 class Table : public FileSys {
  public:
-  Table(std::string new_name,
-        std::string new_flat_file,
-        std::string new_index_file);
+  Table(std::string, std::string, std::string);
   int buildTable(std::string);
-  int search(std::string value);
+  int search(std::string);
 
  private:
   int indexSearch(std::string);

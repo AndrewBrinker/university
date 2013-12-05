@@ -50,7 +50,7 @@ int vdiskTest(std::string& buffer) {
 
   // Create a new vd1 called test 1 with
   // 16 blocks of 32 bytes
-  Vdisk vd1("vd1", 16, 32);
+  Vdisk vd1("vdisk1", 16, 32);
 
   // Define input blocks
   std::string input1 = "";
@@ -119,10 +119,10 @@ std::vector<std::string> block(std::string blocks, unsigned int block_size) {
 int fileSysTest(std::string& buffer) {
   std::cout << "Testing the FileSys class" << std::endl;
 
-  Vdisk disk1("disk1", 100, 500);
-  FileSys fsys("disk1");
-  fsys.makeFile("file1###########");
-  fsys.makeFile("file2###########");
+  Vdisk disk1("filesys1", 100, 500);
+  FileSys fsys("filesys1");
+  fsys.makeFile("file1");
+  fsys.makeFile("file2");
 
   std::string bfile;
 

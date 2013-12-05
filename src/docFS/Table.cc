@@ -93,7 +93,7 @@ int Table::buildTable(std::string inputFile) {
 
 
 int Table::search(std::string value) {
-  unsigned int block = indexSearch(value);
+  int block = indexSearch(value);
   if (block == 0) return block;
   std::string block_contents(DEFAULT_BLOCK_SIZE, FILL_CHAR);
   readBlock(flat_file, block, block_contents);
@@ -113,10 +113,10 @@ int Table::search(std::string value) {
 
 
 int Table::indexSearch(std::string value) {
-  unsigned int index_block_number = getFirstBlock(index_file);
-  unsigned int i_value;
-  unsigned int date;
-  unsigned int flat_block_number;
+  int index_block_number = getFirstBlock(index_file);
+  int flat_block_number;
+  int i_value;
+  int date;
   std::string index_record;
   std::string index_block_contents(DEFAULT_BLOCK_SIZE, FILL_CHAR);
   sscanf(value.c_str(), "%d", &i_value);
