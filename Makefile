@@ -56,7 +56,7 @@ install: all
 #target: lint       Check the files against Google's C++ StyleGuide.
 .PHONY: lint
 lint:
-	@python lint/cpplint.py --filter=-readability/streams,-runtime/references,-runtime/printf $(SOURCES) $(HEADERS) $(TEST_SRC)
+	@python lint/cpplint.py --filter=-readability/streams,-runtime/references,-runtime/printf,-runtime/explicit $(SOURCES) $(HEADERS) $(TEST_SRC)
 
 # target: check     Check the files for potentially dangerous functions.
 BADFUNCS='[^_.>a-zA-Z0-9](str(n?cpy|n?cat|xfrm|n?dup|str|pbrk|tok|_)|stpn?cpy|a?sn?printf|byte_)'
