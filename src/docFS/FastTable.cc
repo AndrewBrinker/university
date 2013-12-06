@@ -5,6 +5,16 @@
 #include "./FastTable.h"
 
 
+FastTable::FastTable(std::string new_diskname,
+                     std::string new_flat_file,
+                     std::string new_index_file)
+                   : FileSys(new_diskname),
+                     flat_file(new_flat_file),
+                     index_file(new_index_file) {
+  makeFile(new_flat_file);
+  makeFile(new_index_file);
+}
+
 void FastTable::buildRoot(Irec r1, Irec r2) {
   if (r1.getKey() > r2.getKey()) {
     Irec temp = r1;
@@ -22,7 +32,7 @@ void FastTable::buildRoot(Irec r1, Irec r2) {
   b.push_back(0);
   b.push_back(r1.getBlockID());
 
-  Bnode left(k, b, getBlockSize());
+  Bnode left(k, b, DEFAULT_BLOCK_SIZE);
 
   // Empty the vectors
   k.clear();
@@ -35,7 +45,7 @@ void FastTable::buildRoot(Irec r1, Irec r2) {
   b.push_back(0);
   b.push_back(r2.getBlockID());
 
-  Bnode right(k, b, getBlockSize());
+  Bnode right(k, b, DEFAULT_BLOCK_SIZE);
 
   unsigned int leftBlock  = addBlock("indexfile2", left.getBuffer());
   unsigned int rightBlock = addBlock("indexfile2", right.getBuffer());
@@ -51,21 +61,21 @@ void FastTable::buildRoot(Irec r1, Irec r2) {
   b.push_back(leftBlock);
   b.push_back(rightBlock);
 
-  Bnode rt(k, b, getBlockSize());
+  Bnode rt(k, b, DEFAULT_BLOCK_SIZE);
 
   // NOTE: root is an attribute
   root_block = addBlock("indexfile2", rt.getBuffer());
 }
 
 
-unsigned int FastTable::searchbtreeindexfile(unsigned int node,
-                                              std::string key) {
+unsigned int FastTable::indexSearch(unsigned int node,
+                                    std::string key) {
   // This is how the Search function is modified:
   // int flatfileblockid = searchbtreeindexfile(root, key);
   // in function search(string key).
   // returns the blockid of the index record
   std::string buffer;
-  unsigned int error = readBlock("indexfile2", node, buffer);
+  readBlock("indexfile2", node, buffer);
   Bnode c(buffer);
   std::vector<std::string> k = c.getKeys();
   std::vector<unsigned int> b = c.getBlockIDs();
@@ -74,10 +84,10 @@ unsigned int FastTable::searchbtreeindexfile(unsigned int node,
   if (b[0] == 0) {
     for (unsigned int i = 1; i < k.size(); ++i) {
       if (k[i] == key) {
-        return;
+        return i;
       }
-      return -1;
     }
+    return -1;
   } else {
     // Internal node
     unsigned int i = 1;
@@ -85,11 +95,11 @@ unsigned int FastTable::searchbtreeindexfile(unsigned int node,
       ++i;
     }
     // i-1 is the index of the link to visit
-    return searchbtreeindexfile(b[i - 1], key);
+    return indexSearch(b[i - 1], key);
   }
 }
 
-
+/*
 Irec FastTable::addBTree(unsigned int node, Irec r) {
   std::string buffer;
   unsigned int error = readBlock("indexfile2", node, buffer);
@@ -114,7 +124,6 @@ Irec FastTable::addBTree(unsigned int node, Irec r) {
     addInternNode(node, r);
   }
 }
-
 
 Irec FastTable::addExternNode(unsigned int node, Irec r) {
   std::string buffer;
@@ -282,3 +291,4 @@ void FastTable::BuildNewRoot(Irec r) {
   // NOTE: root is an attribute
   root_block = addBlock("indexfile2", rt.getBuffer());
 }
+*/

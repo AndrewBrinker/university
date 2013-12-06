@@ -16,8 +16,8 @@ Table::Table(std::string new_diskname,
            : FileSys(new_diskname),
              flat_file(new_flat_file),
              index_file(new_index_file) {
-    makeFile(new_flat_file);
-    makeFile(new_index_file);
+  makeFile(new_flat_file);
+  makeFile(new_index_file);
 }
 
 
@@ -31,17 +31,18 @@ int Table::buildTable(std::string inputFile) {
   char index[DATE_LENGTH + 1];
   unsigned int flatFileBlock = 0;
   unsigned int offset;
+  bool done = false;
 
   record.reserve(MAX_RECORD_LENGTH);
   flat_block.reserve(DEFAULT_BLOCK_SIZE);
   index_block.reserve(DEFAULT_BLOCK_SIZE);
   date.reserve(DATE_LENGTH);
 
-  while (true) {
+  while (!done) {
     std::getline(iFile, record);
 
     if (record.length() == 0) {
-      break;
+      done = true;
     }
 
     while (record.length() < MAX_RECORD_LENGTH) {
@@ -50,7 +51,7 @@ int Table::buildTable(std::string inputFile) {
 
     flat_block += record;
 
-    if (flat_block.length() + MAX_RECORD_LENGTH <= DEFAULT_BLOCK_SIZE) {
+    if (flat_block.length() + MAX_RECORD_LENGTH <= DEFAULT_BLOCK_SIZE && !done) {
       continue;
     }
 
@@ -73,13 +74,18 @@ int Table::buildTable(std::string inputFile) {
     for (offset = 0;
          offset < flat_block.length();
          offset += MAX_RECORD_LENGTH) {
-      date = flat_block.substr(offset, DATE_LENGTH);
-      if (date[0] == FILL_CHAR) {
-        continue;
+      if (done) {
+        while (index_block.length() < DEFAULT_BLOCK_SIZE) {
+          index_block.push_back(FILL_CHAR);
+        }
+      } else {
+        date = flat_block.substr(offset, DATE_LENGTH);
+        if (date[0] == FILL_CHAR) {
+          continue;
+        }
+        index_block += date;
+        index_block += index;
       }
-      index_block += date;
-      index_block += index;
-
       if (index_block.length() + INDEX_RECORD_LENGTH > DEFAULT_BLOCK_SIZE) {
         addBlock(index_file, index_block);
         index_block.erase();

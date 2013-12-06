@@ -7,36 +7,49 @@
 #include <docFs/Vdisk.h>
 #include <docFS/FileSys.h>
 #include <docFS/Table.h>
+#include <docFS/FastTable.h>
 #include <iostream>
 #include <string>
 #include <vector>
+#include <cctype>
 
-int vdiskTest(std::string& buffer);
-int fileSysTest(std::string& buffer);
-int tableTest(std::string& buffer);
+int vdiskTest();
+int fileSysTest();
+int tableTest();
+int fastTableTest();
 
 /*=============================================================================
  * Test Dispatcher
  ============================================================================*/
 
 int main() {
-  std::string buffer = "";
-  if (!vdiskTest(buffer)) {
-    std::cout << "Vdisk testing failed with the error:\n    "
-              << buffer << std::endl;
+  std::cout << "\nStarting testing:\n" << std::endl;
+
+  std::cout << "Testing the Vdisk class..." << std::endl;
+  if (!vdiskTest()) {
+    std::cout << "  - Vdisk testing failed." << std::endl;
     return 0;
   }
-  if (!fileSysTest(buffer)) {
-    std::cout << "FileSys testing failed with the error:\n    "
-              << buffer << std::endl;
+  std::cout << "  + Vdisk testing succeeded!" << std::endl;
+  std::cout << "Testing the FileSys class..." << std::endl;
+  if (!fileSysTest()) {
+    std::cout << "  - FileSys testing failed." << std::endl;
     return 0;
   }
-  if (!tableTest(buffer)) {
-    std::cout << "Table testing failed with the error:\n    "
-              << buffer << std::endl;
+  std::cout << "  + FileSys testing succeeded!" << std::endl;
+  std::cout << "Testing the Table class..." << std::endl;
+  if (!tableTest()) {
+    std::cout << "  - Table testing failed." << std::endl;
     return 0;
   }
-  std::cout << "All tests passed." << std::endl;
+  std::cout << "  + Table testing succeeded!" << std::endl;
+  std::cout << "Testing the FastTable class..." << std::endl;
+  if (!fastTableTest()) {
+    std::cout << "  - FastTable testing failed." << std::endl;
+    return 0;
+  }
+  std::cout << "  + FastTable testing succeeded!" << std::endl;
+  std::cout << "\nAll tests passed!\n" << std::endl;
   return 1;
 }
 
@@ -45,9 +58,7 @@ int main() {
  * Vdisk Testing
  ============================================================================*/
 
-int vdiskTest(std::string& buffer) {
-  std::cout << "Testing the Vdisk class" << std::endl;
-
+int vdiskTest() {
   // Create a new vd1 called test 1 with
   // 16 blocks of 32 bytes
   Vdisk vd1("vdisk1", 16, 32);
@@ -72,7 +83,6 @@ int vdiskTest(std::string& buffer) {
   vd1.putBlock(4, input1);
   vd1.getBlock(4, output1);
   if (input1 != output1) {
-    buffer = "putBlock and getBlock are not equivalent.";
     return 0;
   }
 
@@ -80,7 +90,6 @@ int vdiskTest(std::string& buffer) {
   vd1.putBlock(8, input2);
   vd1.getBlock(8, output2);
   if (input2 != output2) {
-    buffer = "putBlock and getBlock are not equivalent.";
     return 0;
   }
 
@@ -116,9 +125,7 @@ std::vector<std::string> block(std::string blocks, unsigned int block_size) {
 }
 
 
-int fileSysTest(std::string& buffer) {
-  std::cout << "Testing the FileSys class" << std::endl;
-
+int fileSysTest() {
   Vdisk disk1("filesys1", 100, 500);
   FileSys fsys("filesys1");
   fsys.makeFile("file1");
@@ -149,11 +156,6 @@ int fileSysTest(std::string& buffer) {
 
   fsys.deleteBlock("file2", blocknumber);
 
-  if (false) {
-    // Will write tests later.
-    buffer = "";
-  }
-
   return 1;
 }
 
@@ -162,41 +164,33 @@ int fileSysTest(std::string& buffer) {
  * Table Testing
  ============================================================================*/
 
-void strip(std::string& str, const char c = FILL_CHAR) {
-  while (str.front() == c) str.erase(0, 1);
-  while (str.back() == c) str.erase(str.length() - 1);
-}
-
-int tableQuery(Table &table, std::string query) {
-    std::string date = "";
-    for (unsigned int i = 0; i < query.length(); ++i) {
-        if (query[i] == '=') {
-            for (unsigned int j = i + 1; j < query.length(); ++j) {
-                date += query[j];
-            }
-            break;
-        }
-    }
-    if (date == "") return 1;
-    strip(date, ' ');
-    std::cout << date << std::endl;
-    table.search(date);
-    return 0;
+void prep_query(std::string& str) {
+  while (!isdigit(str.front()) && str.front() != '-') str.erase(0, 1);
+  while (!isdigit(str.back())) str.erase(str.length() - 1);
 }
 
 
-int tableTest(std::string& buffer) {
-  if (false) {
-    buffer = "";
-  }
-  std::cout << "Testing the Table class" << std::endl;
+int tableTest() {
   Table table("table1", "flat1", "index1");
   table.buildTable("data.txt");
-
-  std::string input;
-  do {
-    getline(std::cin, input, '\n');
-    tableQuery(table, input);
-  } while (std::cin.good());
+  std::cout << "For testing you're limited to 4 searches" << std::endl;
+  for (int i = 0; i < 4; ++i) {
+    std::cout << "\nWhat date do you want to know about?\n    > ";
+    std::string input;
+    getline(std::cin, input);
+    prep_query(input);
+    table.search(input);
+  }
   return 1;
 }
+
+
+/*=============================================================================
+ * FastTable Testing
+ ============================================================================*/
+
+int fastTableTest() {
+  FastTable fast_table("fast_table1", "flat1", "index1");
+  return 1;
+}
+

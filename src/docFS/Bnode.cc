@@ -7,6 +7,8 @@
 #include <vector>
 #include "./Bnode.h"
 
+#define FILL_CHAR '#'
+
 Bnode::Bnode(std::string new_buffer) {
   buffer = new_buffer;
   std::istringstream instream;
@@ -29,9 +31,9 @@ Bnode::Bnode(std::vector<std::string> new_keys,
   keys = new_keys;
   block_ids = new_block_ids;
   std::ostringstream outstream;
-  outstream << key.size() << " ";
-  for (unsigned int i = 0; i < key.size(); ++i) {
-    outstream << key[i] << " " << block_ids[i] << " ";
+  outstream << keys.size() << " ";
+  for (unsigned int i = 0; i < keys.size(); ++i) {
+    outstream << keys[i] << " " << block_ids[i] << " ";
   }
   buffer = outstream.str();
   for (unsigned int i = buffer.length(); i < new_block_size; ++i) {

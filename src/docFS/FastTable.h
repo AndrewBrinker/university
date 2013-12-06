@@ -17,15 +17,12 @@
 
 class FastTable : public FileSys {
  public:
-  BTreeTable(std::string,
-             std::string,
-             std::string);
-  unsigned int buildTable(std::string input_file);
+  FastTable(std::string, std::string, std::string);
   void buildRoot(Irec, Irec);
   unsigned int addIndexRecord(Bnode, Irec);
   unsigned int search(std::string);
  private:
-  unsigned int indexSearch(std::string);
+  unsigned int indexSearch(unsigned int node, std::string);
 
   int root_block;
   std::string flat_file;
