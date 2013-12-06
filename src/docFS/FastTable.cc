@@ -2,6 +2,13 @@
  * Copyright 2013 Andrew Brinker
  */
 
+/*
+ * NOTE:
+ *
+ * This code is non-functional, and is left here only as a reminder of what
+ * could have been.
+ */
+
 #include <string>
 #include <vector>
 #include <sstream>
@@ -51,10 +58,25 @@ FastTable::FastTable(std::string new_diskname,
 }
 
 
-int FastTable::buildTable(std::string blah) {
-  std::string wumbo = blah;
+int FastTable::buildTable(std::string inputFile) {
+  std::string temp = inputFile;
   return 1;
 }
+
+/*
+void FastTable::BuildBtree(){
+  // Get the index records off the sequental index file
+  // Let key1 blockid1, and key2 blockid2 be the first two index records
+  Buildroot(Irec(key1,blockid1).Irec(key2, blockid2));
+
+  for (the rest of the index records) {
+    Irec ir = addbtree(Irec(,), root); //returns an Irec
+    if (ir.getblockid() != 0) {
+      buildnewroot(ir);
+    }
+  }
+}
+*/
 
 
 void FastTable::buildRoot(Irec r1, Irec r2) {
@@ -91,7 +113,7 @@ void FastTable::buildRoot(Irec r1, Irec r2) {
   int leftBlock = getFirstBlock(index_file);
 
   if (!addBlock(index_file, right.buffer)) return;
-  int rightBlock = getNextBlock( index_file, leftBlock );
+  int rightBlock = getNextBlock(index_file, leftBlock);
 
   k.clear();
   b.clear();
@@ -121,7 +143,6 @@ int FastTable::treeIndexSearch(int node,
   std::vector<std::string> k = c.keys;
   std::vector<int> b = c.block_ids;
 
-  // External node
   if (b[0] == 0) {
     for (unsigned int i = 1; i < k.size(); ++i) {
       if (k[i] == key) {
@@ -130,12 +151,10 @@ int FastTable::treeIndexSearch(int node,
     }
     return 0;
   } else {
-    // Internal node
     unsigned int i = 1;
     while (i < k.size() && key > k[i]) {
       ++i;
     }
-    // i-1 is the index of the link to visit
     return treeIndexSearch(b[i - 1], key);
   }
 }

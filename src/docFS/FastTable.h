@@ -35,9 +35,9 @@ class FastTable : public Table {
   int search(std::string);
 
  private:
+  void buildRoot(Irec, Irec);
   int indexSearch(std::string);
   int treeIndexSearch(int node, std::string);
-  void buildRoot(Irec, Irec);
 
   int root_block;
   std::string flat_file;

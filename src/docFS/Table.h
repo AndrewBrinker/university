@@ -32,7 +32,7 @@ class Table : public FileSys {
   int search(std::string);
 
  private:
-  int indexSearch(unsigned int, std::string);
+  int indexSearch(std::string);
   std::string flat_file;
   std::string index_file;
 

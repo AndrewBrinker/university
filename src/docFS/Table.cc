@@ -51,7 +51,8 @@ int Table::buildTable(std::string inputFile) {
 
     flat_block += record;
 
-    if (flat_block.length() + MAX_RECORD_LENGTH <= DEFAULT_BLOCK_SIZE && !done) {
+    if (flat_block.length() + MAX_RECORD_LENGTH <= DEFAULT_BLOCK_SIZE
+        && !done) {
       continue;
     }
 

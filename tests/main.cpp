@@ -190,6 +190,7 @@ int tableTest() {
  ============================================================================*/
 
 int fastTableTest() {
+  // This just verifies the constructor works for now.
   FastTable fast_table("fast_table1", "flat1", "index1");
   return 1;
 }
