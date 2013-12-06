@@ -1,4 +1,6 @@
-temp/
+bin/test
+build/
+*.dSYM/
 *.o
 run_this
 *.sublime-project

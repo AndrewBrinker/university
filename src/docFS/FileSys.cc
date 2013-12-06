@@ -15,62 +15,62 @@ FileSys::FileSys(std::string new_name) : Vdisk(new_name) {
 
 
 int FileSys::sync() const {
-  std::stringstream ssroot, ssfat;
-  std::string fat_part;
+  std::stringstream root_str, fat_str;
+  std::string fat_partial;
   std::vector<std::string> fat_vector;
 
   // Build the root stringstream
   for (RootEntry entry : root) {
-    ssroot << entry.filename
+    root_str << entry.file_name
            << std::string(
-                FILE_NAME_LENGTH - entry.filename.length(),
+                FILE_NAME_LENGTH - entry.file_name.length(),
                 FILL_CHAR
               )
            << ' ' << std::setfill(' ')
-           << std::setw(ADDRESS_LENGTH) << entry.startblock
+           << std::setw(ADDRESS_LENGTH) << entry.start_block
            << ' ';
   }
   for (unsigned int i = root.size(); i < MAX_ROOT_SIZE; ++i) {
-    ssroot << std::string(FILE_NAME_LENGTH, FILL_CHAR)
+    root_str << std::string(FILE_NAME_LENGTH, FILL_CHAR)
            << ' '
            << std::setfill(' ')
            << std::setw(ADDRESS_LENGTH) << 0 << ' ';
   }
 
-  while (ssroot.str().length() < block_size) {
-    ssroot << FILL_CHAR;
+  while (root_str.str().length() < block_size) {
+    root_str << FILL_CHAR;
   }
 
   // Place the root block
-  if (!Vdisk::putBlock(ROOT_BLOCK, ssroot.str())) {
+  if (!Vdisk::putBlock(ROOT_BLOCK, root_str.str())) {
       return 0;
   }
 
   // Create the fat stream
   for (unsigned int i : fat) {
-    ssfat << std::setfill(' ') << std::setw(ADDRESS_LENGTH)
+    fat_str << std::setfill(' ') << std::setw(ADDRESS_LENGTH)
           << i << ' ';
   }
 
   // Separate the fat into blocks
-  for (char c : ssfat.str()) {
-    if (fat_part.length() < block_size) {
-      fat_part.push_back(c);
+  for (char c : fat_str.str()) {
+    if (fat_partial.length() < block_size) {
+      fat_partial.push_back(c);
     } else {
-      fat_vector.push_back(fat_part);
-      fat_part.clear();
+      fat_vector.push_back(fat_partial);
+      fat_partial.clear();
     }
   }
-  if (fat_part.length() != 0) {
-    for (unsigned int i = fat_part.length(); i < block_size; ++i) {
-      fat_part.push_back(FILL_CHAR);
+  if (fat_partial.length() != 0) {
+    for (unsigned int i = fat_partial.length(); i < block_size; ++i) {
+      fat_partial.push_back(FILL_CHAR);
     }
-    fat_vector.push_back(fat_part);
+    fat_vector.push_back(fat_partial);
   }
 
   // Place the fat blocks
   for (unsigned int i = 0; i < fat_vector.size(); ++i) {
-    if (!Vdisk::putBlock(FAT_BLOCK + i, fat_part)) {
+    if (!Vdisk::putBlock(FAT_BLOCK + i, fat_partial)) {
       return 0;
     }
   }
@@ -78,54 +78,54 @@ int FileSys::sync() const {
 }
 
 
-int FileSys::makeFile(const std::string filename) {
+int FileSys::makeFile(const std::string file_name) {
   if (root.size() >= MAX_ROOT_SIZE) return 0;
   if (fat[0] == 0) return 0;
-  if (root.find({filename}) != root.end()) return 0;
+  if (root.find({file_name}) != root.end()) return 0;
 
-  root.insert({filename, 0});
+  root.insert({file_name, 0});
   return sync();
 }
 
 
-int FileSys::removeFile(const std::string filename) {
-  std::set<RootEntry>::const_iterator it = root.find({filename});
+int FileSys::removeFile(const std::string file_name) {
+  std::set<RootEntry>::const_iterator it = root.find({file_name});
   if (it == root.end()) return 0;
-  if (it->startblock != 0) return 0;
+  if (it->start_block != 0) return 0;
 
-  fat[it->startblock] = fat[0];
+  fat[it->start_block] = fat[0];
   root.erase(it);
   return sync();
 }
 
 
-unsigned int FileSys::getFirstBlock(const std::string filename) const {
-  std::set<RootEntry>::const_iterator it = root.find({filename});
+unsigned int FileSys::getFirstBlock(const std::string file_name) const {
+  std::set<RootEntry>::const_iterator it = root.find({file_name});
   if (it == root.end()) return -1;
-  return it->startblock;
+  return it->start_block;
 }
 
 
-int FileSys::addBlock(const std::string filename, const std::string buffer) {
-  std::set<RootEntry>::const_iterator it = root.find({filename});
+int FileSys::addBlock(const std::string file_name, const std::string buffer) {
+  std::set<RootEntry>::const_iterator it = root.find({file_name});
 
   if (it == root.end()) return 0;
   if (fat[0] == 0) return -1;
 
   unsigned int block = fat[0];
-  unsigned int currblock = it->startblock;
+  unsigned int current_block = it->start_block;
 
   fat[0] = fat[block];
   fat[block] = 0;
 
-  if (currblock != 0) {
-    while (fat[currblock] != 0) {
-      currblock = fat[currblock];
+  if (current_block != 0) {
+    while (fat[current_block] != 0) {
+      current_block = fat[current_block];
     }
-    fat[currblock] = block;
+    fat[current_block] = block;
   } else {
     root.erase(it);
-    root.insert({filename, block});
+    root.insert({file_name, block});
   }
 
   Vdisk::putBlock(block, buffer);
@@ -133,72 +133,74 @@ int FileSys::addBlock(const std::string filename, const std::string buffer) {
 }
 
 
-int FileSys::deleteBlock(const std::string filename,
-                         const unsigned int iBlock) {
-  std::set<RootEntry>::const_iterator it = root.find({filename});
+int FileSys::deleteBlock(const std::string file_name,
+                         const unsigned int input_block) {
+  std::set<RootEntry>::const_iterator it = root.find({file_name});
   if (it == root.end()) return 0;
 
-  if (it->startblock == iBlock) {
+  if (it->start_block == input_block) {
     root.erase(it);
-    root.insert({filename, fat[iBlock]});
-    fat[iBlock] = fat[0];
-    fat[0] = iBlock;
+    root.insert({file_name, fat[input_block]});
+    fat[input_block] = fat[0];
+    fat[0] = input_block;
     return 1;
   }
 
-  unsigned int previousBlock = it->startblock;
-  while (fat[previousBlock] != iBlock) {
-    if (fat[previousBlock] == END) {
+  unsigned int previous_block = it->start_block;
+  while (fat[previous_block] != input_block) {
+    if (fat[previous_block] == END) {
       return 0;
     }
-    previousBlock = fat[previousBlock];
+    previous_block = fat[previous_block];
   }
-  fat[previousBlock] = fat[iBlock];
-  fat[iBlock] = fat[0];
-  fat[0] = iBlock;
+  fat[previous_block] = fat[input_block];
+  fat[input_block] = fat[0];
+  fat[0] = input_block;
 
   return sync();
 }
 
 
-int FileSys::readBlock(const std::string filename, const unsigned int iBlock,
+int FileSys::readBlock(const std::string file_name,
+                       const unsigned int input_block,
                        std::string& buffer) const {
-  std::set<RootEntry>::const_iterator it = root.find({filename});
+  std::set<RootEntry>::const_iterator it = root.find({file_name});
   if (it == root.end()) return 0;
-  unsigned int block = it->startblock;
-  while (block != iBlock) {
+  unsigned int block = it->start_block;
+  while (block != input_block) {
     if (block == END) {
       return 0;
     }
     block = fat[block];
   }
-  return Vdisk::getBlock(iBlock, buffer);
+  return Vdisk::getBlock(input_block, buffer);
 }
 
 
-int FileSys::writeBlock(const std::string filename, const unsigned int iBlock,
+int FileSys::writeBlock(const std::string file_name,
+                        const unsigned int input_block,
                         const std::string buffer) const {
-  std::set<RootEntry>::const_iterator it = root.find({filename});
+  std::set<RootEntry>::const_iterator it = root.find({file_name});
   if (it == root.end()) {
     return 0;
   }
-  unsigned int block = it->startblock;
-  while (block != iBlock) {
+  unsigned int block = it->start_block;
+  while (block != input_block) {
     if (block == END) {
       return 0;
     }
     block = fat[block];
   }
-  return Vdisk::putBlock(iBlock, buffer);
+  return Vdisk::putBlock(input_block, buffer);
 }
 
 
-int FileSys::getNextBlock(const std::string filename,
-                          const unsigned int iBlock) const {
-  std::set<RootEntry>::const_iterator it = root.find({filename});
+int FileSys::getNextBlock(const std::string file_name,
+                          const unsigned int input_block) const {
+  std::set<RootEntry>::const_iterator it = root.find({file_name});
   if (it == root.end()) return -1;
-  unsigned int block = it->startblock;
-  while (block != iBlock) {
+  unsigned int block = it->start_block;
+  while (block != input_block) {
     if (block == END) {
       return 0;
     }
@@ -262,20 +264,20 @@ bool FileSys::loadFAT(std::string sfat) {
 
 
 bool FileSys::loadRoot(std::string sroot) {
-  std::string raw, filename;
+  std::string raw, file_name;
   unsigned int address;
   std::stringstream ss;
 
   while (sroot[0] != FILL_CHAR) {
-    filename = sroot.substr(0, FILE_NAME_LENGTH);
+    file_name = sroot.substr(0, FILE_NAME_LENGTH);
     sroot.erase(0, FILE_NAME_LENGTH + 1);
-    strip(filename, FILL_CHAR);
+    strip(file_name, FILL_CHAR);
     raw = sroot.substr(0, ADDRESS_SPACE);
     sroot.erase(0, ADDRESS_SPACE);
     strip(raw, ' ');
     ss << raw;
     if (ss >> address) {
-      root.insert({filename, address});
+      root.insert({file_name, address});
     } else {
       return false;
     }

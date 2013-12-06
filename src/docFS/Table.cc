@@ -21,15 +21,15 @@ Table::Table(std::string new_diskname,
 }
 
 
-int Table::buildTable(std::string inputFile) {
-  std::ifstream iFile(inputFile);
+int Table::buildTable(std::string input_file) {
+  std::ifstream iFile(input_file);
 
   std::string record;
   std::string flat_block;
   std::string index_block;
   std::string date;
   char index[DATE_LENGTH + 1];
-  unsigned int flatFileBlock = 0;
+  unsigned int flat_file_block = 0;
   unsigned int offset;
   bool done = false;
 
@@ -64,13 +64,13 @@ int Table::buildTable(std::string inputFile) {
       return 0;
     }
 
-    if (flatFileBlock == 0) {
-      flatFileBlock = getFirstBlock(flat_file);
+    if (flat_file_block == 0) {
+      flat_file_block = getFirstBlock(flat_file);
     } else {
-      flatFileBlock = getNextBlock(flat_file, flatFileBlock);
+      flat_file_block = getNextBlock(flat_file, flat_file_block);
     }
 
-    sprintf(index, "%*d", DATE_LENGTH, flatFileBlock);
+    sprintf(index, "%*d", DATE_LENGTH, flat_file_block);
 
     for (offset = 0;
          offset < flat_block.length();

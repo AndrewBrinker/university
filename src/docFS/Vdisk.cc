@@ -9,7 +9,7 @@
 
 class CorruptDisk : public std::exception {
   const char* what() const throw() {
-    return "Bad disk or disk spec";
+    return "Bad disk or disk specification.";
   }
 };
 

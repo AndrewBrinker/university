@@ -42,18 +42,19 @@ struct RootEntry {
   RootEntry(std::string f)
           : RootEntry(f, 0) {}
   RootEntry(std::string f, unsigned int s)
-          : filename(f), startblock(s) {}
+          : file_name(f), start_block(s) {}
 
-  std::string filename = DEFAULT_FILE_NAME;
-  unsigned int startblock = 0;
+  std::string file_name = DEFAULT_FILE_NAME;
+  unsigned int start_block = 0;
 
   bool empty() const {
-    return (filename == DEFAULT_FILE_NAME);
+    return (file_name == DEFAULT_FILE_NAME);
   }
 
   bool operator < (const RootEntry& other) const {
-    return (other.filename == DEFAULT_FILE_NAME) ? true :
-      filename < other.filename;
+    return (other.file_name == DEFAULT_FILE_NAME) ?
+      true :
+      file_name < other.file_name;
   }
 };
 
