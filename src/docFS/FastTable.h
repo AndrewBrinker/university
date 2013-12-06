@@ -5,24 +5,39 @@
 #ifndef SRC_DOCFS_FASTTABLE_H_
 #define SRC_DOCFS_FASTTABLE_H_
 
+#include <string>
+#include <vector>
+#include "./Table.h"
+
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \
   TypeName(const TypeName&);               \
   void operator=(const TypeName&)
 
-#include <string>
-#include <vector>
-#include "./FileSys.h"
-#include "./Bnode.h"
-#include "./Irec.h"
 
-class FastTable : public FileSys {
+struct Bnode {
+  Bnode(std::string);
+  Bnode(std::vector<std::string>, std::vector<int>, int);
+  std::string buffer;
+  std::vector<std::string> keys;
+  std::vector<int> block_ids;
+};
+
+typedef struct {
+  std::string key;
+  int block_id;
+} Irec;
+
+
+class FastTable : public Table {
  public:
   FastTable(std::string, std::string, std::string);
-  void buildRoot(Irec, Irec);
-  unsigned int addIndexRecord(Bnode, Irec);
-  unsigned int search(std::string);
+  int buildTable(std::string);
+  int search(std::string);
+
  private:
-  unsigned int indexSearch(unsigned int node, std::string);
+  int indexSearch(std::string);
+  int treeIndexSearch(int node, std::string);
+  void buildRoot(Irec, Irec);
 
   int root_block;
   std::string flat_file;
