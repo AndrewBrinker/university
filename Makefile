@@ -1,13 +1,13 @@
 CPPFLAGS  = -std=c++11 -g -O2 -Wall -Wextra -Isrc -DNDEBUG $(OPTFLAGS)
 LIBS      = -ldl $(OPTLIBS)
-PREFIX   ?= usr/local
+PREFIX   ?= /usr/local
 CC        = clang++
 TARGET    = build/libdocfs.a
 
 SOURCES   = $(wildcard src/**/*.cc src/*.cc)
 OBJECTS   = $(patsubst %.cc,%.o,$(SOURCES))
 HEADERS   = $(patsubst %.cc,%.h,$(SOURCES))
-TEST_SRC  = $(wildcard tests/main.cpp)
+TEST_SRC  = $(wildcard tests/**.*.cpp tests/*.cpp)
 TESTS     = $(patsubst %.cpp,%,$(TEST_SRC))
 SO_TARGET = $(patsubst %.a,%.so,$(TARGET))
 
