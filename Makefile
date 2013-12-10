@@ -46,7 +46,7 @@ clean:
 install: all
 	@install -d $(DESTDIR)/$(PREFIX)/lib/
 	@install $(TARGET) $(DESTDIR)/$(PREFIX)/lib/
-	@echo Installed to $(DESTDIR)/$(PREFIX)/lib
+	echo Installed to $(DESTDIR)/$(PREFIX)/lib
 
 
 #target: lint       Check source files with bin/cpplint.py
