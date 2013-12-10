@@ -1,6 +1,6 @@
 CPPFLAGS  = -std=c++11 -g -O2 -Wall -Wextra -Isrc -DNDEBUG $(OPTFLAGS)
 LIBS      = -ldl $(OPTLIBS)
-PREFIX   ?= /usr/local
+PREFIX   ?= usr/local
 CC        = clang++
 TARGET    = build/libdocfs.a
 
@@ -46,7 +46,7 @@ clean:
 install: all
 	@install -d $(DESTDIR)/$(PREFIX)/lib/
 	@install $(TARGET) $(DESTDIR)/$(PREFIX)/lib/
-	echo Installed to $(DESTDIR)/$(PREFIX)/lib
+	@echo Installed to $(DESTDIR)/$(PREFIX)/lib
 
 
 #target: lint       Check source files with bin/cpplint.py
