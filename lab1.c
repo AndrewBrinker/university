@@ -111,7 +111,7 @@ int regularExpressionMatch(char string[]) {
   DFA  automata = {TABLE, START_STATE, HALT_STATE};
   int  counter  = 0;
   char current  = string[0];
-  while(current != '\0') {
+  while (current != '\0') {
     int transition = getTransitionCode(current);
     if (transition == -1) { return EXIT_FAILURE; }
     automata.state = automata.table[automata.state][transition];
