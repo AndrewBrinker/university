@@ -29,8 +29,8 @@
 #define ALPHABET      {'a', 'b'}
 #define STATE_COUNT   4
 #define SYMBOL_COUNT  2
-#define START         0
-#define HALT          3
+#define START_STATE   0
+#define HALT_STATE    3
 
 
 /*
@@ -66,7 +66,7 @@
 
 typedef struct {
   int table[STATE_COUNT][SYMBOL_COUNT];
-  int start;
+  int state;
   int halt;
 } DFA;
 
@@ -108,20 +108,17 @@ int getTransitionCode(char symbol) {
  */
 
 int regularExpressionMatch(char string[]) {
-  DFA  automata = {TABLE, START, HALT};
-  int  state    = START;
+  DFA  automata = {TABLE, START_STATE, HALT_STATE};
   int  counter  = 0;
   char current  = string[0];
   while(current != '\0') {
     int transition = getTransitionCode(current);
-    if (transition == -1) {
-      return EXIT_FAILURE;
-    }
-    state   = automata.table[state][transition];
+    if (transition == -1) { return EXIT_FAILURE; }
+    automata.state = automata.table[automata.state][transition];
     current = string[counter];
     ++counter;
   }
-  if (state == HALT) {
+  if (automata.state == automata.halt) {
     return EXIT_SUCCESS;
   }
   return EXIT_FAILURE;
