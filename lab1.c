@@ -27,10 +27,10 @@
 #define EXPRESSION    "(a|b)*abb"
 #define TABLE         {{1,0}, {0,2}, {0, 3}, {0, 0}}
 #define ALPHABET      {'a', 'b'}
-#define STATE_COUNT   4
-#define SYMBOL_COUNT  2
 #define START_STATE   0
 #define HALT_STATE    3
+#define STATE_COUNT   4
+#define SYMBOL_COUNT  2
 
 
 /*
@@ -81,7 +81,7 @@ typedef struct {
  * called. Not a huge performance gain, but it's something.
  */
 
-static Language language = {ALPHABET, SYMBOL_COUNT};
+static const Language language = {ALPHABET, SYMBOL_COUNT};
 
 
 /*
