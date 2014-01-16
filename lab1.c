@@ -35,7 +35,7 @@
 
 /*
  * Some nice terminal coloring using ANSI color codes. You can turn it off if
- * it's giving you trouble by just setting COLOUR_OUTPUT to anything besides 1.
+ * it's giving you trouble by just setting COLOR_OUTPUT to anything besides 1.
  */
 
 #define COLOR_OUTPUT  1
@@ -146,10 +146,10 @@ int main(int argc, char *argv[]) {
     printf("Input String: " COLOR_MAGENTA "%s\n" COLOR_RESET, argv[i]);
     switch (regularExpressionMatch(argv[i])) {
       case EXIT_SUCCESS:
-        printf(COLOR_GREEN "  > Input accepted!\n\n" COLOR_RESET);
+        printf(COLOR_GREEN "  + Input accepted!\n\n" COLOR_RESET);
         break;
       case EXIT_FAILURE:
-        printf(COLOR_RED "  ! Input failed.\n\n" COLOR_RESET);
+        printf(COLOR_RED "  - Input failed.\n\n" COLOR_RESET);
         break;
     }
   }
