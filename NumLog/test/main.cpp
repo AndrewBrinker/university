@@ -27,14 +27,16 @@ int main() {
     /*
      * Get the user's input.
      */
-    std::cout << "\tInput numeric values. End with ^D." << std::endl;
+    std::cout << "Number of values to be entered: ";
+    int count = 0;
+    std::cin >> count;
+    std::cout << "\tInput numeric values..." << std::endl;
     float input = 0.0;
     std::vector<float> values;
-    std::cin >> input;
-    do {
-      values.push_back(input);
+    for (int i = 0; i < count; ++i) {
       std::cin >> input;
-    } while (std::cin.good());
+      values.push_back(input);
+    }
     logger.write(values);
     std::cout << "\n\tResults are saved in "
               << filename << std::endl;
@@ -43,7 +45,7 @@ int main() {
      * Output what they input.
      */
     std::vector<float> values;
-    std::cout << "\tHere are the numbers stored in : "
+    std::cout << "\tHere are the numbers stored in: "
               << filename << std::endl;
     logger.read(&values);
     for (unsigned i = 0; i < values.size(); ++i) {
