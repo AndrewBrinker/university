@@ -21,8 +21,6 @@
  */
 NumLog::NumLog(std::string name) {
   file_name = name;
-  std::fstream file_stream(file_name, std::ios::out);
-  file_stream.close();
 }
 
 

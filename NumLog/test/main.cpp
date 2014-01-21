@@ -17,27 +17,41 @@ int main() {
   NumLog logger(filename);
 
   /*
-   * Get the user's input.
+   * Choose a mode (read or write).
    */
-  std::cout << "Input numeric values. End with ^D." << std::endl;
-  float input = 0.0;
-  std::vector<float> values;
-  std::cin >> input;
-  do {
-    values.push_back(input);
-    std::cin >> input;
-  } while (std::cin.good());
-  logger.write(values);
+  std::cout << "Choose mode ('read' or 'write'): ";
+  std::string mode = "";
+  std::cin >> mode;
 
-  /*
-   * Output what they input.
-   */
-  std::cout << "Here's what you input: " << std::endl;
-  logger.read(&values);
-  for (unsigned i = 0; i < values.size(); ++i) {
-    std::cout << (float) values[i] << std::endl;
+  if (mode == "write") {
+    /*
+     * Get the user's input.
+     */
+    std::cout << "\tInput numeric values. End with ^D." << std::endl;
+    float input = 0.0;
+    std::vector<float> values;
+    std::cin >> input;
+    do {
+      values.push_back(input);
+      std::cin >> input;
+    } while (std::cin.good());
+    logger.write(values);
+    std::cout << "\n\tResults are saved in "
+              << filename << std::endl;
+  } else if (mode == "read") {
+    /*
+     * Output what they input.
+     */
+    std::vector<float> values;
+    std::cout << "\tHere are the numbers stored in : "
+              << filename << std::endl;
+    logger.read(&values);
+    for (unsigned i = 0; i < values.size(); ++i) {
+      std::cout << (float) values[i] << std::endl;
+    }
+  } else {
+    std::cout << "\tMode not recognized. Please try again." << std::endl;
   }
 
-  std::cout << "\nTests passed. Results are saved in " << filename << std::endl;
   return 0;
 }
