@@ -1,0 +1,6 @@
+bin/
+lint/
+build/
+*.o
+*.dSYM/
+
