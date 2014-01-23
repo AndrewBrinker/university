@@ -25,7 +25,7 @@
  */
 
 #define EXPRESSION    "(a|b)*abb"
-#define TABLE         {{1,0}, {0,2}, {0, 3}, {0, 0}}
+#define TABLE         {{1,0}, {1,2}, {1, 3}, {1, 0}}
 #define ALPHABET      {'a', 'b'}
 #define START_STATE   0
 #define HALT_STATE    3
@@ -115,7 +115,6 @@ int regularExpressionMatch(char string[]) {
     int transition = getTransitionCode(current);
     if (transition == -1) { return EXIT_FAILURE; }
     automata.state = automata.table[automata.state][transition];
-    printf("To: %d\n", automata.state);
     ++counter;
     current = string[counter];
   }
