@@ -115,8 +115,9 @@ int regularExpressionMatch(char string[]) {
     int transition = getTransitionCode(current);
     if (transition == -1) { return EXIT_FAILURE; }
     automata.state = automata.table[automata.state][transition];
-    current = string[counter];
+    printf("To: %d\n", automata.state);
     ++counter;
+    current = string[counter];
   }
   if (automata.state == automata.halt) {
     return EXIT_SUCCESS;
