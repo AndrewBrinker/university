@@ -7,6 +7,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <sstream>
+#include <iomanip>
 #include "./NumLog.h"
 
 
@@ -35,9 +36,9 @@ NumLog::NumLog(std::string name) {
  * @return: EXIT_SUCCESS if successful, EXIT_FAILURE otherwise.
  */
 int NumLog::write(std::vector<float> input) {
-  std::ofstream file_stream(file_name, std::ios::out | std::ios::app);
+  std::ofstream file_stream(file_name, std::ios::out);
   for (size_t i = 0; i < input.size(); ++i) {
-    file_stream << input[i] << "\n";
+    file_stream << std::fixed << std::setprecision(5) << input[i] << "\n";
   }
   file_stream.close();
   return EXIT_SUCCESS;

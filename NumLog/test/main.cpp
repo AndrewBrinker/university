@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <iomanip>
 
 int main() {
   /*
@@ -49,7 +50,7 @@ int main() {
               << filename << std::endl;
     logger.read(&values);
     for (unsigned i = 0; i < values.size(); ++i) {
-      std::cout << (float) values[i] << std::endl;
+      std::cout << std::fixed << std::setprecision(5) << values[i] << std::endl;
     }
   } else {
     std::cout << "\tMode not recognized. Please try again." << std::endl;
