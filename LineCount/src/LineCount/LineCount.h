@@ -31,9 +31,14 @@ class LineCount {
 
  private:
   bool fileExists(std::string);
+  bool lineIsComment(std::string);
+  bool lineHasSemicolon(const std::string&);
+  void trim(std::string *);
 
   bool _is_good;
   unsigned _loc;
+
+  bool _in_comment;
 
   DISALLOW_COPY_AND_ASSIGN(LineCount);
 };
