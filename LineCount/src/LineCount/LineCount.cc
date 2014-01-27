@@ -143,7 +143,7 @@ bool LineCount::lineIsComment(std::string line) {
   } else if (first_two == "*/") {
     _in_comment = false;
     return false;
-  } else if (first_two.substr(0,1) == "*" && _in_comment == true) {
+  } else if (first_two.substr(0, 1) == "*" && _in_comment == true) {
     return true;
   }
   return false;

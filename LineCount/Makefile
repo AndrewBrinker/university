@@ -39,7 +39,7 @@ clean:
 	@find . -name "*.gc*" -exec rm {} \;
 	@rm -rf `find . -name "*.dSYM" -print`
 
-# target: install   Install libdocfs.a to the system
+# target: install   Install libnumlog.a to the system
 install: all
 	@install -d $(DESTDIR)/$(PREFIX)/lib/
 	@install $(TARGET) $(DESTDIR)/$(PREFIX)/lib/
