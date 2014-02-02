@@ -7,9 +7,9 @@
  * Copyright 2014 Andrew Brinker
  */
 
-#include "./LineCount.h"
 #include <string>
 #include <istream>
+#include "./LineCount.h"
 
 #ifndef LC_OBJECT_COUNT_H
 #define LC_OBJECT_COUNT_H

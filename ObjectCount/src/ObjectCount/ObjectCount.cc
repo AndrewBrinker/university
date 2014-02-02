@@ -13,7 +13,6 @@
 #include <istream>
 #include <fstream>
 #include <algorithm>
-#include <iostream>
 
 namespace lc {
 
