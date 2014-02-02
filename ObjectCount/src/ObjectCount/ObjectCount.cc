@@ -13,6 +13,7 @@
 #include <istream>
 #include <fstream>
 #include <algorithm>
+#include <iostream>
 
 namespace lc {
 
@@ -26,6 +27,17 @@ namespace lc {
 ObjectCount::ObjectCount() : LineCount(), _method_count(0) {}
 
 
+/** Alias for scan()
+ *
+ * Just calls scan().
+ */
+
+void ObjectCount::operator<<(std::string file_name) {
+  scan(file_name);
+  return;
+}
+
+
 /*
  * Strip file extension, if present
  * Search for both .h and .cc file
@@ -35,6 +47,7 @@ ObjectCount::ObjectCount() : LineCount(), _method_count(0) {}
  * The # of method is LOC(.h)
  *
  */
+
 void ObjectCount::scan(std::string file_name) {
   removeExtension(&file_name);
   std::string implementation_file_name = file_name + ".cc";

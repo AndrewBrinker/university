@@ -23,6 +23,7 @@ namespace lc {
 class ObjectCount : public LineCount {
  public:
   ObjectCount();
+  void operator<<(std::string);
   void scan(std::string);
 
   void clear();
