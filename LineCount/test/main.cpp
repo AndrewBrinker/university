@@ -11,18 +11,23 @@
 #include <iostream>
 #include <string>
 
-int main() {
-  std::string file_name;
-  std::cout << "Filename: ";
-  std::cin >> file_name;
-
-  // Scan the file with the given name, and provide the appropriate response.
-  lc::count << file_name;
-  if (lc::count.good()) {
-    std::cout << "Lines of code: " << lc::count.loc() << std::endl;
-  } else {
-    std::cout << "Input failed. Please try again." << std::endl;
+int main(int argc, char **argv) {
+  if (argc < 2) {
+    std::cout << "Usage: " << argv[0] << " <file name>" << std::endl;
+    return 0;
   }
-
+  int total = 0;
+  for (int i = 1; i < argc; ++i) {
+    std::cout << "Filename: " << argv[i] << std::endl;
+    lc::count << argv[i];
+    if (lc::count.good()) {
+      std::cout << "\tLines of code: " << lc::count.loc() << std::endl;
+      total += lc::count.loc();
+    } else {
+      std::cout << "\tInput failed. Please try again." << std::endl;
+    }
+    lc::count.clear();
+  }
+  std::cout << "Total: " << total << std::endl;
   return 0;
 }
