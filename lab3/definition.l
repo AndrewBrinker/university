@@ -3,7 +3,6 @@
 
 %{
 #include <stdio.h>
-static FILE *file = fopen("temp.txt", "w");
 %}
 
 NUMBER   [1-9][0-9]*
@@ -16,7 +15,7 @@ KEYWORD  alignas|alignof|and|and_eq|asm|auto|bitand|bitor|bool|break|case|catch|
 
 {STRING}  {}
 {KEYWORD} {}
-{IDENT}   { fprintf(file, "%d %s\n", yylineno, yytext); }
+{IDENT}   { yytext = yylineno + " " + yytext; ECHO; }
 {NUMBER}  {}
 {LINE}    {}
 .         {}
@@ -25,8 +24,9 @@ KEYWORD  alignas|alignof|and|and_eq|asm|auto|bitand|bitor|bool|break|case|catch|
 
 int main(int argc, char *argv[]) {
     ++argv, --argc;
-    if (argc > 0) {
+    if (argc == 2) {
         yyin = fopen(argv[0], "r");
+        yyout = fopen(argv[1], "w");
     } else {
         yyin = stdin;
     }

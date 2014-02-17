@@ -1,0 +1,41 @@
+#include <Grammar/grammar.h>
+#include <set>
+#include <iostream>
+#include <vector>
+#include <string>
+
+template<typename T>
+void print_set(std::set<T> input) {
+    for (auto it = input.begin(); it != input.end(); ++it) {
+        std::cout << *it << std::endl;
+    }
+}
+
+int main(int argc, char **argv) {
+    if (argc < 2) {
+        std::cout << "Usage: " << argv[0] << " <filename>" << std::endl;
+        return 0;
+    }
+
+    Grammar grammar;
+    grammar.load(argv[1]);
+
+    grammar.parse();
+    /*
+    if (failed) {
+        std::cout << "Parsing failed." << std::endl;
+        return 0;
+    }
+
+    auto first = grammar.first();
+    auto follow = grammar.follow();
+
+    std::cout << "First: ";
+    print_set(first);
+
+    std::cout << "Follow: ";
+    print_set(follow);
+    */
+
+    return 0;
+}
