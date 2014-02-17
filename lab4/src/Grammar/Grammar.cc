@@ -47,7 +47,23 @@ std::vector<std::set<std::string>> Grammar::follow() const {
 bool Grammar::getFirst() {
   /*
    * 1) if X is a terminal, FIRST(X) = X
+   * 2) if X->e, add e to FIRST(X)
+   * 3) if X is a nonterminal with some production, check each value on the
+   *    right of the production for e. If it has e, move to the next one, if it
+   *    doesn't, add FIRST(Y_i). If you get to the end, add e.
+   * 4) Repeat until no change.
    */
+  for (int i = 0; i < _productions.size(); ++i) {
+    // For each production
+    const char left_side         = _productions[i][0];
+    const std::string right_side = _productions[i].substr(3);
+    for (int j = 0; i < right_side.size(); ++j) {
+      char current = right_side[j];
+      if (isTerminal(current)) {
+        // Add current to FIRST(current)
+      }
+    }
+  }
   return false;
 }
 
