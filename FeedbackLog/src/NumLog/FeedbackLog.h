@@ -18,13 +18,10 @@ class FeedbackLog {
   explicit FeedbackLog(std::string);
 
  private:
-  void run();
-  void read();
-  void write();
-  void save();
-
-  void displayIntroMessage();
-  void displayExitMessage();
+  void input();
+  void output();
+  void process();
+  void message(const unsigned) const;
 
   std::string file_name;
   std::list<float> data;
