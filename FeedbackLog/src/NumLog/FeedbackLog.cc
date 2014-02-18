@@ -81,7 +81,7 @@ void FeedbackLog::process() {
       case 'i':
         std::cin.clear();
         std::cin.ignore();
-        while(true) {
+        while (true) {
           std::cout << "\tInsert a number: ";
           std::getline(std::cin, input);
           std::stringstream stream(input);
