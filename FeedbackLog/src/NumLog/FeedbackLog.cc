@@ -2,12 +2,12 @@
  * Name:       Andrew Brinker
  * Class:      CSE 455, Software Engineering (Winter 2014)
  * School:     California State University, San Bernardino
- * Assignment: 2B
+ * Assignment: 3B
  *
  * Copyright 2014 Andrew Brinker
  */
 
-#include "./InteractiveLog.h"
+#include "./FeedbackLog.h"
 #include <list>
 #include <string>
 #include <cstdlib>
@@ -18,14 +18,14 @@
 typedef std::list<float>::iterator list_iterator;
 
 
-InteractiveLog::InteractiveLog(std::string name) : file_name(name) {
+FeedbackLog::FeedbackLog(std::string name) : file_name(name) {
   read();
   run();
   save();
 }
 
 
-void InteractiveLog::run() {
+void FeedbackLog::run() {
   displayIntroMessage();
   std::string input;
   float new_num;
@@ -64,7 +64,7 @@ void InteractiveLog::run() {
 }
 
 
-void InteractiveLog::read() {
+void FeedbackLog::read() {
   std::ifstream file_stream(file_name);
   for (std::string line; std::getline(file_stream, line);) {
     data.push_back(atof(line.c_str()));
@@ -73,7 +73,7 @@ void InteractiveLog::read() {
 }
 
 
-void InteractiveLog::write() {
+void FeedbackLog::write() {
   std::ofstream file_stream(file_name, std::ios::out);
   for (list_iterator it = data.begin(); it != data.end(); ++it) {
     file_stream << std::fixed << std::setprecision(5) << *it << "\n";
@@ -82,14 +82,14 @@ void InteractiveLog::write() {
 }
 
 
-void InteractiveLog::save() {
+void FeedbackLog::save() {
   std::cout << "Save to file: ";
   std::cin >> file_name;
   write();
 }
 
 
-void InteractiveLog::displayIntroMessage() {
+void FeedbackLog::displayIntroMessage() {
   std::cout << "Welcome to your interactive logging session.\n"
             << "\n"
             << "For each number you may:\n"
@@ -102,7 +102,7 @@ void InteractiveLog::displayIntroMessage() {
 }
 
 
-void InteractiveLog::displayExitMessage() {
+void FeedbackLog::displayExitMessage() {
   std::cout << "Finished. Exiting." << std::endl;
 }
 

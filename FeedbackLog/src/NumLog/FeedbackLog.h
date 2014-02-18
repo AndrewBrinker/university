@@ -2,7 +2,7 @@
  * Name:       Andrew Brinker
  * Class:      CSE 455, Software Engineering (Winter 2014)
  * School:     California State University, San Bernardino
- * Assignment: 2B
+ * Assignment: 3B
  *
  * Copyright 2014 Andrew Brinker
  */
@@ -10,12 +10,12 @@
 #include <string>
 #include <list>
 
-#ifndef INTERACTIVELOG_H
-#define INTERACTIVELOG_H
+#ifndef FEEDBACKLOG_H
+#define FEEDBACKLOG_H
 
-class InteractiveLog {
+class FeedbackLog {
  public:
-  explicit InteractiveLog(std::string);
+  explicit FeedbackLog(std::string);
 
  private:
   void run();
@@ -30,4 +30,4 @@ class InteractiveLog {
   std::list<float> data;
 };
 
-#endif  // INTERACTIVELOG_H
+#endif  // FEEDBACKLOG_H
