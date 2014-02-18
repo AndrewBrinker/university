@@ -14,6 +14,7 @@
 #include <fstream>
 #include <iostream>
 #include <iomanip>
+#include <sstream>
 
 
 #define FL_MSG_IN  0
@@ -60,8 +61,15 @@ void FeedbackLog::process() {
         break;
       case 'R':
       case 'r':
-        std::cout << "\tPick a new number: ";
-        std::cin >> new_num;
+        std::cin.clear();
+        std::cin.ignore();
+        while (true) {
+          std::cout << "\tPick a new number: ";
+          std::getline(std::cin, input);
+          std::stringstream stream(input);
+          if (stream >> new_num) break;
+          std::cout << "Not a number. Please try again." << std::endl;
+        }
         *it = new_num;
         break;
       case 'D':
@@ -71,8 +79,15 @@ void FeedbackLog::process() {
         break;
       case 'I':
       case 'i':
-        std::cout << "\tInsert a number: ";
-        std::cin >> new_num;
+        std::cin.clear();
+        std::cin.ignore();
+        while(true) {
+          std::cout << "\tInsert a number: ";
+          std::getline(std::cin, input);
+          std::stringstream stream(input);
+          if (stream >> new_num) break;
+          std::cout << "Not a number. Please try again." << std::endl;
+        }
         ++it;
         it = data.insert(it, new_num);
         break;
