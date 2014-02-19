@@ -121,7 +121,7 @@ unsigned LineCount::loc() {
 
 bool LineCount::fileExists(std::string file_name) {
   struct stat buffer;
-  return (stat (file_name.c_str(), &buffer) == 0);
+  return (stat(file_name.c_str(), &buffer) == 0);
 }
 
 
