@@ -8,6 +8,7 @@
  */
 
 #include "./FeedbackLog.h"
+#include <sys/stat.h>
 #include <list>
 #include <string>
 #include <cstdlib>
@@ -15,7 +16,6 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
-#include <sys/stat.h>
 
 
 #define FL_MSG_IN  0
