@@ -30,6 +30,12 @@ FeedbackLog::FeedbackLog(std::string name) : file_name(name) {
 
 
 void FeedbackLog::input() {
+  while (true) {
+    if (fileExists(file_name)) break;
+    std::cout << "This file does not exist. Please choose another file name." << std::endl;
+    std::cout << "Read from file: ";
+    std::cin >> file_name;
+  }
   std::ifstream file_stream(file_name);
   for (std::string line; std::getline(file_stream, line);) {
     data.push_back(atof(line.c_str()));
@@ -39,8 +45,12 @@ void FeedbackLog::input() {
 
 
 void FeedbackLog::output() {
-  std::cout << "Save to file: ";
-  std::cin >> file_name;
+  while (true) {
+    std::cout << "Save to file: ";
+    std::cin >> file_name;
+    if (!fileExists(file_name)) break;
+    std::cout << "File already exists. Please choose another file name." << std::endl;
+  }
   std::ofstream file_stream(file_name, std::ios::out);
   for (auto it = data.begin(); it != data.end(); ++it) {
     file_stream << std::fixed << std::setprecision(5) << *it << "\n";
@@ -125,6 +135,6 @@ void FeedbackLog::message(const unsigned code) const {
 
 bool FeedbackLog::fileExists(std::string file_name) {
   struct stat buffer;
-  return (stat(file_name.c_str(), &buffer) == 0);
+  return stat(file_name.c_str(), &buffer) == 0;
 }
 
