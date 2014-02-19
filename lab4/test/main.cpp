@@ -19,23 +19,7 @@ int main(int argc, char **argv) {
 
     Grammar grammar;
     grammar.load(argv[1]);
-
     grammar.parse();
-    /*
-    if (failed) {
-        std::cout << "Parsing failed." << std::endl;
-        return 0;
-    }
-
-    auto first = grammar.first();
-    auto follow = grammar.follow();
-
-    std::cout << "First: ";
-    print_set(first);
-
-    std::cout << "Follow: ";
-    print_set(follow);
-    */
 
     return 0;
 }

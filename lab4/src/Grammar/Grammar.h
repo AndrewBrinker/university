@@ -3,8 +3,8 @@
  */
 
 #include <string>
-#include <vector>
 #include <set>
+#include <map>
 
 #ifndef GRAMMAR_H
 #define GRAMMAR_H
@@ -19,19 +19,19 @@ class Grammar {
   int load(std::string);
   int parse();
 
-  std::vector<std::set<std::string>> first() const;
-  std::vector<std::set<std::string>> follow() const;
+  std::map<char, std::set<char>> first() const;
+  std::map<char, std::set<char>> follow() const;
 
  private:
-  bool getFirst();
-  bool getFollow();
+  bool findFirst();
+  bool findFollow();
 
-  std::vector<std::set<std::string>> _first;
-  std::vector<std::set<std::string>> _follow;
+  std::set<char> _terminals;
+  std::set<char> _non_terminals;
+  std::set<std::string> _productions;
 
-  std::string _name;
-  std::vector<std::string> _terminals;
-  std::vector<std::string> _productions;
+  std::map<char, std::set<char>> _first;
+  std::map<char, std::set<char>> _follow;
 
   DISALLOW_COPY_AND_ASSIGN(Grammar);
 };

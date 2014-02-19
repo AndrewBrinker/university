@@ -4,6 +4,7 @@
 
 #include "./Grammar.h"
 #include <set>
+#include <map>
 #include <string>
 #include <fstream>
 
@@ -12,39 +13,31 @@ Grammar::Grammar() {}
 
 
 int Grammar::load(std::string file_name) {
-  _name = file_name;
-  std::ifstream input_file(_name);
+  std::ifstream input_file(file_name);
+  // The terminals section
   for (std::string line; getline(input_file, line);) {
     if (line == "$") break;
-    _terminals.push_back(line);
+    _terminals.insert(line[0]);
   }
+  // The productions section
   for (std::string line; getline(input_file, line);) {
     if (line == "$") break;
-    _productions.push_back(line);
+    _non_terminals.insert(line[0]);
+    _productions.insert(line);
   }
   return 0;
 }
 
 
 int Grammar::parse() {
-  bool failed = getFirst();
+  bool failed = findFirst();
   if (failed) return 1;
-  failed = getFollow();
+  failed = findFollow();
   return failed;
 }
 
 
-std::vector<std::set<std::string>> Grammar::first() const {
-  return _first;
-}
-
-
-std::vector<std::set<std::string>> Grammar::follow() const {
-  return _follow;
-}
-
-
-bool Grammar::getFirst() {
+bool Grammar::findFirst() {
   /*
    * 1) if X is a terminal, FIRST(X) = X
    * 2) if X->e, add e to FIRST(X)
@@ -53,25 +46,48 @@ bool Grammar::getFirst() {
    *    doesn't, add FIRST(Y_i). If you get to the end, add e.
    * 4) Repeat until no change.
    */
-  for (int i = 0; i < _productions.size(); ++i) {
-    // For each production
-    const char left_side         = _productions[i][0];
-    const std::string right_side = _productions[i].substr(3);
-    for (int j = 0; i < right_side.size(); ++j) {
-      char current = right_side[j];
-      if (isTerminal(current)) {
-        // Add current to FIRST(current)
-      }
+  for (auto it = _terminals.begin(); it != _terminals.end(); ++it) {
+    // Add '*it' to FIRST(*it)
+  }
+  for (auto it = _productions.begin(); it != _productions.end(); ++it) {
+    if (it->substr(3) == "e") {
+      // Add 'e' to FIRST(lhs)
     }
   }
+  bool changed = false;
+  do {
+    for (auto p_it = _productions.begin(); p_it != _productions.end(); ++p_it) {
+      std::string rhs = it->substr(3);
+      for (auto s_it = rhs.begin(); s_it != rhs.end(); ++s_it) {
+        std::set<char> curr_first = _first[*it];
+        if (curr_first.find('e') != curr_first.end()) {
+          ++s_it;
+        } else {
+          // Add FIRST(*it) to FIRST(lhs)
+          changed = true;
+        }
+        if (s_it == rhs.end()) {
+          // Add 'e' to FIRST(lhs)
+          changed = true;
+        }
+      }
+    }
+  } while(changed);
   return false;
 }
 
 
-bool Grammar::getFollow() {
+bool Grammar::findFollow() {
   return false;
 }
 
 
+std::map<char, std::set<char>> Grammar::first() const {
+  return _first;
+}
 
+
+std::map<char, std::set<char>> Grammar::follow() const {
+  return _follow;
+}
 
