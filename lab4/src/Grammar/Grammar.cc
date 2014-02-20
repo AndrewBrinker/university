@@ -6,6 +6,7 @@
 #include <set>
 #include <map>
 #include <string>
+#include <iostream>
 #include <fstream>
 
 #define EOI_STR      "$"
@@ -43,40 +44,45 @@ int Grammar::parse() {
 
 
 bool Grammar::findFirst() {
-  for (auto it = _terminals.begin(); it != _terminals.end(); ++it) {
-    _first[*it].insert(*it);
-  }
+  firstRuleOne();
+  firstRuleTwo();
+  firstRuleThree();
+  return false;
+}
+
+
+void Grammar::firstRuleOne() {
+  for (auto it = _terminals.begin(); it != _terminals.end(); ++it) _first[*it].insert(*it);
+}
+
+
+void Grammar::firstRuleTwo() {
   for (auto it = _productions.begin(); it != _productions.end(); ++it) {
-    if (it->substr(3) == EPSILON_STR) {
-      std::string lhs = it->substr(0,3);
-      _first[lhs[0]].insert(EPSILON_CHAR);
-    }
+    if (it->substr(3) == EPSILON_STR) _first[it->substr(0,3)[0]].insert(EPSILON_CHAR);
   }
-  bool changed = false;
-  do {
-    for (auto p_it = _productions.begin(); p_it != _productions.end(); ++p_it) {
-      std::string rhs = p_it->substr(3);
-      int i = 1;
-      while (i <= (int) rhs.length()) {
-        std::set<char> current_first = _first[rhs[i]];
-        if (current_first.find(EPSILON_CHAR) != current_first.end()) {
-          ++i;
-        } else {
-          // add FIRST(rhs[i]) to FIRST[lhs]
-          std::string lhs = p_it->substr(0,3);
-          _first[lhs[0]].insert(current_first.begin(), current_first.end());
-          changed = true;
-          break;
-        }
-        if (i > (int) rhs.length()) {
-          std::string lhs = p_it->substr(0,3);
-          _first[lhs[0]].insert(EPSILON_CHAR);
-          changed = true;
-        }
+}
+
+
+void Grammar::firstRuleThree() {
+  for (auto it = _productions.begin(); it != _productions.end(); ++it) {
+    std::string rhs = it->substr(3);
+    size_t i = 1;
+    while (i <= rhs.length()) {
+      std::set<char> current_first = _first[rhs[i]];
+      if (current_first.find(EPSILON_CHAR) != current_first.end()) {
+        ++i;
+      } else {
+        std::string lhs = it->substr(0,3);
+        _first[lhs[0]].insert(current_first.begin(), current_first.end());
+        break;
+      }
+      if (i > rhs.length()) {
+        std::cout << "Past the end!" << std::endl;
+        std::string lhs = it->substr(0,3);
+        _first[lhs[0]].insert(EPSILON_CHAR);
       }
     }
-  } while(changed);
-  return false;
+  }
 }
 
 

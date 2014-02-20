@@ -4,10 +4,13 @@
 #include <vector>
 #include <string>
 
-template<typename T>
-void print_set(std::set<T> input) {
+void print_mapset(mapset input) {
     for (auto it = input.begin(); it != input.end(); ++it) {
-        std::cout << *it << std::endl;
+        std::cout << it->first << " => {";
+        for (auto it2 = it->second.begin(); it2 != it->second.end(); ++it2) {
+            std::cout << *it2;
+        }
+        std::cout << "}" << std::endl;
     }
 }
 
@@ -20,6 +23,8 @@ int main(int argc, char **argv) {
     Grammar grammar;
     grammar.load(argv[1]);
     grammar.parse();
+    mapset results = grammar.first();
+    print_mapset(results);
 
     return 0;
 }

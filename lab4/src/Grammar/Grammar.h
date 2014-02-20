@@ -28,6 +28,10 @@ class Grammar {
   bool findFirst();
   bool findFollow();
 
+  void firstRuleOne();
+  void firstRuleTwo();
+  void firstRuleThree();
+
   std::set<char> _terminals;
   std::set<char> _non_terminals;
   std::set<std::string> _productions;
