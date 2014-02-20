@@ -1,3 +1,4 @@
 *.yy.c
 run_this
 build/*
+bin/*

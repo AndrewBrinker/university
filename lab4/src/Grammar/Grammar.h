@@ -13,14 +13,16 @@
   TypeName(const TypeName&);               \
   void operator=(const TypeName&)
 
+typedef std::map<char, std::set<char>> mapset;
+
 class Grammar {
  public:
   Grammar();
   int load(std::string);
   int parse();
 
-  std::map<char, std::set<char>> first() const;
-  std::map<char, std::set<char>> follow() const;
+  mapset first() const;
+  mapset follow() const;
 
  private:
   bool findFirst();
@@ -30,8 +32,8 @@ class Grammar {
   std::set<char> _non_terminals;
   std::set<std::string> _productions;
 
-  std::map<char, std::set<char>> _first;
-  std::map<char, std::set<char>> _follow;
+  mapset _first;
+  mapset _follow;
 
   DISALLOW_COPY_AND_ASSIGN(Grammar);
 };

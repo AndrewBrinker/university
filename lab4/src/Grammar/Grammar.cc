@@ -8,6 +8,11 @@
 #include <string>
 #include <fstream>
 
+#define EOI_STR      "$"
+#define EOI_CHAR     '$'
+#define EPSILON_STR  "e"
+#define EPSILON_CHAR 'e'
+
 
 Grammar::Grammar() {}
 
@@ -16,7 +21,7 @@ int Grammar::load(std::string file_name) {
   std::ifstream input_file(file_name);
   // The terminals section
   for (std::string line; getline(input_file, line);) {
-    if (line == "$") break;
+    if (line == EOI_STR) break;
     _terminals.insert(line[0]);
   }
   // The productions section
@@ -38,36 +43,32 @@ int Grammar::parse() {
 
 
 bool Grammar::findFirst() {
-  /*
-   * 1) if X is a terminal, FIRST(X) = X
-   * 2) if X->e, add e to FIRST(X)
-   * 3) if X is a nonterminal with some production, check each value on the
-   *    right of the production for e. If it has e, move to the next one, if it
-   *    doesn't, add FIRST(Y_i). If you get to the end, add e.
-   * 4) Repeat until no change.
-   */
   for (auto it = _terminals.begin(); it != _terminals.end(); ++it) {
-    // Add '*it' to FIRST(*it)
+    _first[*it].insert(*it);
   }
   for (auto it = _productions.begin(); it != _productions.end(); ++it) {
-    if (it->substr(3) == "e") {
-      // Add 'e' to FIRST(lhs)
+    if (it->substr(3) == EPSILON_STR) {
+      std::string lhs = it->substr(0,3);
+      _first[lhs[0]].insert(EPSILON_CHAR);
     }
   }
   bool changed = false;
   do {
     for (auto p_it = _productions.begin(); p_it != _productions.end(); ++p_it) {
-      std::string rhs = it->substr(3);
-      for (auto s_it = rhs.begin(); s_it != rhs.end(); ++s_it) {
-        std::set<char> curr_first = _first[*it];
-        if (curr_first.find('e') != curr_first.end()) {
-          ++s_it;
+      std::string rhs = p_it->substr(3);
+      int i = 1;
+      while (i <= (int) rhs.length()) {
+        std::set<char> current_first = _first[rhs[i]];
+        if (current_first.find(EPSILON_CHAR) != current_first.end()) {
+          ++i;
         } else {
-          // Add FIRST(*it) to FIRST(lhs)
+          // add FIRST(rhs[i]) to FIRST[lhs]
           changed = true;
+          break;
         }
-        if (s_it == rhs.end()) {
-          // Add 'e' to FIRST(lhs)
+        if (i > (int) rhs.length()) {
+          std::string lhs = p_it->substr(0,3);
+          _first[lhs[0]].insert(EPSILON_CHAR);
           changed = true;
         }
       }
@@ -82,12 +83,12 @@ bool Grammar::findFollow() {
 }
 
 
-std::map<char, std::set<char>> Grammar::first() const {
+mapset Grammar::first() const {
   return _first;
 }
 
 
-std::map<char, std::set<char>> Grammar::follow() const {
+mapset Grammar::follow() const {
   return _follow;
 }
 
