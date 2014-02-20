@@ -1,5 +1,6 @@
 *.yy.c
-run_this
-build/*
-bin/*
 *.o
+run_this
+build/
+bin/
+
