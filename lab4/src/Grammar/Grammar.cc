@@ -14,6 +14,14 @@
 #define EPSILON_STR  "e"
 #define EPSILON_CHAR 'e'
 
+template <class T>
+void print_set(std::set<T> input) {
+  for (auto it = input.begin(); it != input.end(); ++it) {
+    std::cout << *it << " ";
+  }
+  std::cout << std::endl;
+}
+
 
 Grammar::Grammar() {}
 
@@ -77,21 +85,16 @@ void Grammar::firstRuleThree() {
     for (auto it = _productions.begin(); it != _productions.end(); ++it) {
       // Get the right hand side of the current production
       std::string rhs = it->substr(3);
-
-      std::cout << "Current rhs: " << rhs << std::endl;
-
       // Iterate through the right hand side of the current production
       size_t i = 1;
       while (i < rhs.length()) {
-        std::cout << "i: " << i << std::endl;
         // Get the FIRST of the rhs of the current production
         std::set<char> current_first = _first[rhs[i]];
+        print_set(current_first);
         // If epsilon is present in that FIRST, then move on to the next char
         if (current_first.find(EPSILON_CHAR) != current_first.end()) {
-          std::cout << "Epsilon found!" << std::endl;
           ++i;
         } else {
-          std::cout << "No epsilon!" << std::endl;
           // Otherwise, add the FIRST of the current char to the FIRST of the
           // lhs
           std::string lhs = it->substr(0, 3);
@@ -105,7 +108,6 @@ void Grammar::firstRuleThree() {
         // If nothing has been added yet (that is, everything is epsilons) add
         // epsilon.
         if (i >= rhs.length()) {
-          std::cout << "Past the end!" << std::endl;
           std::string lhs = it->substr(0, 3);
           auto result = _first[lhs[0]].insert(EPSILON_CHAR);
           if (result.second) changed = true;
