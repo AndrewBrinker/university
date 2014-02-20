@@ -64,25 +64,31 @@ void Grammar::firstRuleTwo() {
 
 
 void Grammar::firstRuleThree() {
-  for (auto it = _productions.begin(); it != _productions.end(); ++it) {
-    std::string rhs = it->substr(3);
-    size_t i = 1;
-    while (i <= rhs.length()) {
-      std::set<char> current_first = _first[rhs[i]];
-      if (current_first.find(EPSILON_CHAR) != current_first.end()) {
-        ++i;
-      } else {
-        std::string lhs = it->substr(0,3);
-        _first[lhs[0]].insert(current_first.begin(), current_first.end());
-        break;
-      }
-      if (i > rhs.length()) {
-        std::cout << "Past the end!" << std::endl;
-        std::string lhs = it->substr(0,3);
-        _first[lhs[0]].insert(EPSILON_CHAR);
+  bool changed;
+  do {
+    changed = false;
+    for (auto it = _productions.begin(); it != _productions.end(); ++it) {
+      std::string rhs = it->substr(3);
+      size_t i = 1;
+      while (i <= rhs.length()) {
+        std::set<char> current_first = _first[rhs[i]];
+        if (current_first.find(EPSILON_CHAR) != current_first.end()) {
+          ++i;
+        } else {
+          std::string lhs = it->substr(0,3);
+          _first[lhs[0]].insert(current_first.begin(), current_first.end());
+          changed = true;
+          break;
+        }
+        if (i > rhs.length()) {
+          std::cout << "Past the end!" << std::endl;
+          std::string lhs = it->substr(0,3);
+          _first[lhs[0]].insert(EPSILON_CHAR);
+          changed = true;
+        }
       }
     }
-  }
+  } while(changed);
 }
 
 
