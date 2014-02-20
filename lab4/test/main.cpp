@@ -1,3 +1,7 @@
+/**
+ * Copyright 2014 Andrew Brinker
+ */
+
 #include <Grammar/grammar.h>
 #include <set>
 #include <iostream>
