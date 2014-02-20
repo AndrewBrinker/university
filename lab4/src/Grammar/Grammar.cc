@@ -63,6 +63,8 @@ bool Grammar::findFirst() {
           ++i;
         } else {
           // add FIRST(rhs[i]) to FIRST[lhs]
+          std::string lhs = p_it->substr(0,3);
+          _first[lhs[0]].insert(current_first.begin(), current_first.end());
           changed = true;
           break;
         }
