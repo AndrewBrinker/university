@@ -1,9 +1,8 @@
 bin/test
 build/
+lint/
 *.dSYM/
 *.o
 run_this
 *.sublime-project
 *.sublime-workspace
-*.dat
-*.spc
