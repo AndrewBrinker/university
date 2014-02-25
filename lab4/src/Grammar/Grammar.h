@@ -17,8 +17,7 @@ typedef std::map<char, std::set<char>> mapset;
 
 class Grammar {
  public:
-  Grammar();
-  int load(std::string);
+  explicit Grammar(std::string);
   int parse();
 
   mapset first() const;

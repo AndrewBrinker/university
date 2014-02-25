@@ -10,16 +10,8 @@
 #include <fstream>
 #include <cstdio>
 
-#define EOI     "$"
+#define DELIM   "$"
 #define EPSILON "e"
-
-
-/** Do nothing
- *
- * Constructors can't return values or throw error, and are therefore a poor
- * place to do work. The constructor does absolutely nothing. Use load().
- */
-Grammar::Grammar() {}
 
 
 /**
@@ -27,11 +19,11 @@ Grammar::Grammar() {}
  * @param  file_name -> name of the file being loaded
  * @return           -> exit code
  */
-int Grammar::load(std::string file_name) {
+Grammar::Grammar(std::string file_name) {
   std::ifstream input_file(file_name);
   // The terminals section
   for (std::string line; getline(input_file, line);) {
-    if (line == EOI) break;
+    if (line == DELIM) break;
     _terminals.insert(line[0]);
   }
   // The productions section
@@ -40,7 +32,6 @@ int Grammar::load(std::string file_name) {
     _non_terminals.insert(line[0]);
     _productions.insert(line);
   }
-  return 0;
 }
 
 

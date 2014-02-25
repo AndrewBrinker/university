@@ -23,8 +23,7 @@ int main(int argc, char **argv) {
         return 0;
     }
 
-    Grammar grammar;
-    grammar.load(argv[1]);
+    Grammar grammar(argv[1]);
     grammar.parse();
     mapset results = grammar.first();
     print_mapset(results);
