@@ -87,10 +87,10 @@ void Grammar::firstRuleThree() {
         std::set<char> first = _first[rhs[i]];
         if (hasEpsilon(first)) {
           first.erase(first.find(EPSILON_CHAR));
-          addToFirst(first, production, changed);
+          addToFirst(first, lhs, changed);
           ++i;
         } else {
-          addToFirst(first, production, changed);
+          addToFirst(first, lhs, changed);
         }
         if (i >= rhs.length()) {
           auto result = _first[lhs].insert(EPSILON_CHAR);
@@ -109,11 +109,10 @@ bool Grammar::hasEpsilon(std::set<char> first) {
 
 
 void Grammar::addToFirst(std::set<char> first,
-                         std::string production,
+                         char nonterminal,
                          bool &changed) {
-  char lhs = production[0];
   for (auto symbol : first) {
-    auto result = _first[lhs].insert(symbol);
+    auto result = _first[nonterminal].insert(symbol);
     if (result.second) changed = true;
   }
 }
