@@ -3,24 +3,13 @@
  */
 
 #include "./Grammar.h"
-#include <set>
-#include <map>
+#include "./Symbol.h"
 #include <string>
 #include <iostream>
 #include <fstream>
 
-#define EOI_STR      "$"
-#define EOI_CHAR     '$'
-#define EPSILON_STR  "e"
-#define EPSILON_CHAR 'e'
-
-template <class T>
-void print_set(std::set<T> input) {
-  for (auto it = input.begin(); it != input.end(); ++it) {
-    std::cout << *it << " ";
-  }
-  std::cout << std::endl;
-}
+#define END_OF_INPUT "$"
+#define EPSILON      "e"
 
 
 Grammar::Grammar() {}
@@ -28,16 +17,14 @@ Grammar::Grammar() {}
 
 int Grammar::load(std::string file_name) {
   std::ifstream input_file(file_name);
-  // The terminals section
   for (std::string line; getline(input_file, line);) {
-    if (line == EOI_STR) break;
-    _terminals.insert(line[0]);
+    if (line == END_OF_INPUT) break;
+    _symbols.push_back(Symbol(line[0], true));
   }
-  // The productions section
   for (std::string line; getline(input_file, line);) {
-    if (line == "$") break;
-    _non_terminals.insert(line[0]);
-    _productions.insert(line);
+    if (line == END_OF_INPUT) break;
+    _symbols.push_back(Symbol(line[0]));
+    _productions.push_back(line);
   }
   return 0;
 }
@@ -60,8 +47,8 @@ bool Grammar::findFirst() {
 
 
 void Grammar::firstRuleOne() {
-  for (auto it = _terminals.begin(); it != _terminals.end(); ++it) {
-    _first[*it].insert(*it);
+  for (auto it = _symbols.begin(); it != _symbols.end(); ++it) {
+    if (it->is_terminal) it->follow[*it].insert(*it);
   }
 }
 
@@ -120,15 +107,5 @@ void Grammar::firstRuleThree() {
 
 bool Grammar::findFollow() {
   return false;
-}
-
-
-mapset Grammar::first() const {
-  return _first;
-}
-
-
-mapset Grammar::follow() const {
-  return _follow;
 }
 

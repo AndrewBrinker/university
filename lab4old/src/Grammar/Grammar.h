@@ -3,8 +3,7 @@
  */
 
 #include <string>
-#include <set>
-#include <map>
+#include <vector>
 
 #ifndef GRAMMAR_H
 #define GRAMMAR_H
@@ -13,34 +12,18 @@
   TypeName(const TypeName&);               \
   void operator=(const TypeName&)
 
-typedef std::map<char, std::set<char>> mapset;
-
 class Grammar {
  public:
   Grammar();
   int load(std::string);
   int parse();
 
-  mapset first() const;
-  mapset follow() const;
-
  private:
   bool findFirst();
   bool findFollow();
 
-  void firstRuleOne();
-  void firstRuleTwo();
-  void firstRuleThree();
-
-  std::set<char> _terminals;
-  std::set<char> _non_terminals;
-  std::set<std::string> _productions;
-
-  mapset _first;
-  mapset _follow;
-
-  template <class T>
-  friend void print_set(std::set<T> input);
+  std::vector<Symbol> _symbols;
+  std::vector<std::string> _productions;
 
   DISALLOW_COPY_AND_ASSIGN(Grammar);
 };
