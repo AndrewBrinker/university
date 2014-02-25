@@ -3,13 +3,24 @@
  */
 
 #include "./Grammar.h"
-#include "./Symbol.h"
+#include <set>
+#include <map>
 #include <string>
 #include <iostream>
 #include <fstream>
 
-#define END_OF_INPUT "$"
-#define EPSILON      "e"
+#define EOI_STR "$"
+#define EOI_CHAR '$'
+#define EPSILON_STR "e"
+#define EPSILON_CHAR 'e'
+
+template <class T>
+void print_set(std::set<T> input) {
+  for (auto it = input.begin(); it != input.end(); ++it) {
+    std::cout << *it << " ";
+  }
+  std::cout << std::endl;
+}
 
 
 Grammar::Grammar() {}
@@ -17,14 +28,16 @@ Grammar::Grammar() {}
 
 int Grammar::load(std::string file_name) {
   std::ifstream input_file(file_name);
+  // The terminals section
   for (std::string line; getline(input_file, line);) {
-    if (line == END_OF_INPUT) break;
-    _symbols.push_back(Symbol(line[0], true));
+    if (line == EOI_STR) break;
+    _terminals.insert(line[0]);
   }
+  // The productions section
   for (std::string line; getline(input_file, line);) {
-    if (line == END_OF_INPUT) break;
-    _symbols.push_back(Symbol(line[0]));
-    _productions.push_back(line);
+    if (line == "$") break;
+    _non_terminals.insert(line[0]);
+    _productions.insert(line);
   }
   return 0;
 }
@@ -47,8 +60,8 @@ bool Grammar::findFirst() {
 
 
 void Grammar::firstRuleOne() {
-  for (auto it = _symbols.begin(); it != _symbols.end(); ++it) {
-    if (it->is_terminal) it->follow[*it].insert(*it);
+  for (auto it = _terminals.begin(); it != _terminals.end(); ++it) {
+    _first[*it].insert(*it);
   }
 }
 
@@ -80,6 +93,16 @@ void Grammar::firstRuleThree() {
         print_set(current_first);
         // If epsilon is present in that FIRST, then move on to the next char
         if (current_first.find(EPSILON_CHAR) != current_first.end()) {
+          // Add all of current first except epsilon to _first[lhs[0]]
+          std::set<char> temp_first = current_first;
+          temp_first.erase(temp_first.find(EPSILON_CHAR));
+          std::string lhs = it->substr(0, 3);
+          for (auto it2 = temp_first.begin();
+                    it2 != temp_first.end();
+                    ++it2) {
+            auto result = _first[lhs[0]].insert(*it2);
+            if (result.second) changed = true;
+          }
           ++i;
         } else {
           // Otherwise, add the FIRST of the current char to the FIRST of the
