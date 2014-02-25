@@ -107,7 +107,9 @@ bool Grammar::hasEpsilon(std::set<char> first) {
 }
 
 
-void Grammar::addToFirst(std::set<char> first, std::string production, bool &changed) {
+void Grammar::addToFirst(std::set<char> first,
+                         std::string production,
+                         bool &changed) {
   char lhs = production[0];
   for (auto symbol : first) {
     auto result = _first[lhs].insert(symbol);
