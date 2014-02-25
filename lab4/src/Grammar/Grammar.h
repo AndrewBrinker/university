@@ -32,6 +32,9 @@ class Grammar {
   void firstRuleTwo();
   void firstRuleThree();
 
+  std::string getLHS(std::string);
+  std::string getRHS(std::string);
+
   std::set<char> _terminals;
   std::set<char> _non_terminals;
   std::set<std::string> _productions;

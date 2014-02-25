@@ -122,6 +122,7 @@ void Grammar::firstRuleThree() {
           auto result = _first[lhs[0]].insert(EPSILON_CHAR);
           if (result.second) changed = true;
         }
+        ++i;
       }
     }
   } while (changed);
