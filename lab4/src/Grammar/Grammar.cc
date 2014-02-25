@@ -76,56 +76,43 @@ void Grammar::firstRuleTwo() {
 
 
 void Grammar::firstRuleThree() {
-  // Variable to track whether a change was made in the last sweep
-  // Keep checking until no change occurs
   bool changed;
   do {
     changed = false;
-    // Iterate through all the productions
-    for (auto it = _productions.begin(); it != _productions.end(); ++it) {
-      // Get the right hand side of the current production
-      std::string rhs = it->substr(3);
-      // Iterate through the right hand side of the current production
+    for (auto it : _productions) {
+      std::string rhs = it.substr(3);
       size_t i = 1;
       while (i < rhs.length()) {
-        // Get the FIRST of the rhs of the current production
-        std::set<char> current_first = _first[rhs[i]];
-        print_set(current_first);
-        // If epsilon is present in that FIRST, then move on to the next char
-        if (current_first.find(EPSILON_CHAR) != current_first.end()) {
-          // Add all of current first except epsilon to _first[lhs[0]]
-          std::set<char> temp_first = current_first;
-          temp_first.erase(temp_first.find(EPSILON_CHAR));
-          std::string lhs = it->substr(0, 3);
-          for (auto it2 = temp_first.begin();
-                    it2 != temp_first.end();
-                    ++it2) {
-            auto result = _first[lhs[0]].insert(*it2);
-            if (result.second) changed = true;
-          }
+        std::set<char> first = _first[rhs[i]];
+        if (hasEpsilon(first)) {
+          first.erase(first.find(EPSILON_CHAR));
+          addToFirst(first, it, changed);
           ++i;
         } else {
-          // Otherwise, add the FIRST of the current char to the FIRST of the
-          // lhs
-          std::string lhs = it->substr(0, 3);
-          for (auto it2 = current_first.begin();
-               it2 != current_first.end();
-               ++it2) {
-            auto result = _first[lhs[0]].insert(*it2);
-            if (result.second) changed = true;
-          }
+          addToFirst(first, it, changed);
         }
-        // If nothing has been added yet (that is, everything is epsilons) add
-        // epsilon.
         if (i >= rhs.length()) {
-          std::string lhs = it->substr(0, 3);
-          auto result = _first[lhs[0]].insert(EPSILON_CHAR);
+          auto result = _first[it[0]].insert(EPSILON_CHAR);
           if (result.second) changed = true;
         }
         ++i;
       }
     }
   } while (changed);
+}
+
+
+bool Grammar::hasEpsilon(std::set<char> first) {
+  return first.find(EPSILON_CHAR) != first.end();
+}
+
+
+void Grammar::addToFirst(std::set<char> first, std::string production, bool &changed) {
+  char lhs = production[0];
+  for (auto symbol : first) {
+    auto result = _first[lhs].insert(symbol);
+    if (result.second) changed = true;
+  }
 }
 
 
