@@ -6,7 +6,6 @@
 #include <set>
 #include <map>
 #include <string>
-#include <iostream>
 #include <fstream>
 #include <cstdio>
 
@@ -52,9 +51,9 @@ int Grammar::parse() {
  * @return exit code
  */
 bool Grammar::findFirst() {
-  firstRuleOne();
-  firstRuleTwo();
-  firstRuleThree();
+  firstForTerminals();
+  firstForEpsilonProductions();
+  firstForNonterminals();
   return false;
 }
 
@@ -62,9 +61,9 @@ bool Grammar::findFirst() {
 /**
  * Applies the first rule for finding the follow sets
  */
-void Grammar::firstRuleOne() {
-  for (auto it = _terminals.begin(); it != _terminals.end(); ++it) {
-    _first[*it].insert(*it);
+void Grammar::firstForTerminals() {
+  for (auto terminal : _terminals) {
+    _first[terminal].insert(terminal);
   }
 }
 
@@ -72,10 +71,10 @@ void Grammar::firstRuleOne() {
 /**
  * Applies the second rule for finding the follow sets
  */
-void Grammar::firstRuleTwo() {
-  for (auto it = _productions.begin(); it != _productions.end(); ++it) {
-    if (it->substr(3) == EPSILON) {
-      _first[it->substr(0, 3)[0]].insert(EPSILON[0]);
+void Grammar::firstForEpsilonProductions() {
+  for (auto production : _productions) {
+    if (production.substr(3) == EPSILON) {
+      _first[production[0]].insert(EPSILON[0]);
     }
   }
 }
@@ -84,7 +83,7 @@ void Grammar::firstRuleTwo() {
 /**
  * Applies the third rule for finding the follow set
  */
-void Grammar::firstRuleThree() {
+void Grammar::firstForNonterminals() {
   bool changed;
   do {
     changed = false;
@@ -162,7 +161,7 @@ bool Grammar::findFollow() {
  * Returns the first sets for the grammar
  * @return the first sets
  */
-mapset Grammar::first() const {
+std::map<char, std::set<char>> Grammar::first() const {
   return _first;
 }
 
@@ -171,7 +170,7 @@ mapset Grammar::first() const {
  * Returns the follow sets for the grammar
  * @return the follow sets
  */
-mapset Grammar::follow() const {
+std::map<char, std::set<char>> Grammar::follow() const {
   return _follow;
 }
 

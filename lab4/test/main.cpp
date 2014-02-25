@@ -4,18 +4,17 @@
 
 #include <Grammar/Grammar.h>
 #include <set>
-#include <iostream>
-#include <vector>
-#include <string>
 #include <cstdio>
 
-void print_mapset(mapset input) {
+
+void print_mapset(std::map<char, std::set<char>> input) {
     for (auto pair : input) {
         printf("%c => { ", pair.first);
         for (auto item : pair.second) printf("%c ", item);
         printf("}\n");
     }
 }
+
 
 int main(int argc, char **argv) {
     if (argc < 2) {
@@ -25,7 +24,7 @@ int main(int argc, char **argv) {
 
     Grammar grammar(argv[1]);
     grammar.parse();
-    mapset results = grammar.first();
+    std::map<char, std::set<char>> results = grammar.first();
     print_mapset(results);
 
     return 0;

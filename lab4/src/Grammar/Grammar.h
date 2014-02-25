@@ -13,37 +13,38 @@
   TypeName(const TypeName&);               \
   void operator=(const TypeName&)
 
-typedef std::map<char, std::set<char>> mapset;
-
 class Grammar {
  public:
   explicit Grammar(std::string);
   int parse();
 
-  mapset first() const;
-  mapset follow() const;
-
-  void addSetToFirst(char, std::set<char>, bool *);
-  void addCharToFirst(char, char, bool *);
-  bool hasEpsilon(std::set<char>);
+  // Accessor methods for FIRST and FOLLOW
+  std::map<char, std::set<char>> first() const;
+  std::map<char, std::set<char>> follow() const;
 
  private:
+  // Wrapper methods for finding FIRST and FOLLOW
   bool findFirst();
   bool findFollow();
 
-  void firstRuleOne();
-  void firstRuleTwo();
-  void firstRuleThree();
+  // Assistance methods for updating FIRST
+  void addSetToFirst(char, std::set<char>, bool *);
+  void addCharToFirst(char, char, bool *);
 
-  std::string getLHS(std::string);
-  std::string getRHS(std::string);
+  // Assistance methods for finding FIRST
+  void firstForTerminals();
+  void firstForEpsilonProductions();
+  void firstForNonterminals();
 
-  std::set<char> _terminals;
-  std::set<char> _non_terminals;
-  std::set<std::string> _productions;
+  // Checks whether the given set has epsilon
+  bool hasEpsilon(std::set<char>);
 
-  mapset _first;
-  mapset _follow;
+  // Member variables
+  std::set<char>                 _terminals;
+  std::set<char>                 _non_terminals;
+  std::set<std::string>          _productions;
+  std::map<char, std::set<char>> _first;
+  std::map<char, std::set<char>> _follow;
 
   DISALLOW_COPY_AND_ASSIGN(Grammar);
 };
