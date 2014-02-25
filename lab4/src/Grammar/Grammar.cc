@@ -132,3 +132,13 @@ bool Grammar::findFollow() {
   return false;
 }
 
+
+mapset Grammar::first() const {
+  return _first;
+}
+
+
+mapset Grammar::follow() const {
+  return _follow;
+}
+

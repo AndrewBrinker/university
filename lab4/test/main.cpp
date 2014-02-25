@@ -2,7 +2,7 @@
  * Copyright 2014 Andrew Brinker
  */
 
-#include <Grammar/grammar.h>
+#include <Grammar/Grammar.h>
 #include <set>
 #include <iostream>
 #include <vector>
