@@ -79,20 +79,21 @@ void Grammar::firstRuleThree() {
   bool changed;
   do {
     changed = false;
-    for (auto it : _productions) {
-      std::string rhs = it.substr(3);
+    for (auto production : _productions) {
       size_t i = 1;
+      char lhs = production[0];
+      std::string rhs = production.substr(3);
       while (i < rhs.length()) {
         std::set<char> first = _first[rhs[i]];
         if (hasEpsilon(first)) {
           first.erase(first.find(EPSILON_CHAR));
-          addToFirst(first, it, changed);
+          addToFirst(first, production, changed);
           ++i;
         } else {
-          addToFirst(first, it, changed);
+          addToFirst(first, production, changed);
         }
         if (i >= rhs.length()) {
-          auto result = _first[it[0]].insert(EPSILON_CHAR);
+          auto result = _first[lhs].insert(EPSILON_CHAR);
           if (result.second) changed = true;
         }
         ++i;
