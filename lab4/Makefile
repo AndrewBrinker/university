@@ -18,8 +18,8 @@ all: $(TARGET) $(SO_TARGET)
 
 $(TARGET): CPPFLAGS += -fPIC
 $(TARGET): build $(OBJECTS)
-	@ar rcs $@ $(OBJECTS)
-	@ranlib $@
+	ar rcs $@ $(OBJECTS)
+	ranlib $@
 
 $(SO_TARGET): $(TARGET) $(OBJECTS)
 	$(CC) -shared -std=c++11 -stdlib=libc++ -lc++abi -o $@ $(OBJECTS)
