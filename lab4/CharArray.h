@@ -63,4 +63,9 @@ void pop(CharArray data) {
     --data.size;
 }
 
+
+void replace(CharArray data, int position, char value) {
+    data.data[position] = value;
+}
+
 #endif  // CHAR_ARRAY_H
