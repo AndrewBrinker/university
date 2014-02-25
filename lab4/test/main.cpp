@@ -7,20 +7,19 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <cstdio>
 
 void print_mapset(mapset input) {
-    for (auto it = input.begin(); it != input.end(); ++it) {
-        std::cout << it->first << " => {";
-        for (auto it2 = it->second.begin(); it2 != it->second.end(); ++it2) {
-            std::cout << *it2;
-        }
-        std::cout << "}" << std::endl;
+    for (auto pair : input) {
+        printf("%c => { ", pair.first);
+        for (auto item : pair.second) printf("%c ", item);
+        printf("}\n");
     }
 }
 
 int main(int argc, char **argv) {
     if (argc < 2) {
-        std::cout << "Usage: " << argv[0] << " <filename>" << std::endl;
+        printf("Usage: %s <filename>\n", argv[0]);
         return 0;
     }
 

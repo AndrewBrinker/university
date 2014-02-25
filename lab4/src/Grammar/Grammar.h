@@ -24,7 +24,8 @@ class Grammar {
   mapset first() const;
   mapset follow() const;
 
-  void addToFirst(char, std::set<char>, bool &);
+  void addSetToFirst(char, std::set<char>, bool *);
+  void addCharToFirst(char, char, bool *);
   bool hasEpsilon(std::set<char>);
 
  private:

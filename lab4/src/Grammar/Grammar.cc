@@ -8,11 +8,10 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <cstdio>
 
-#define EOI_STR "$"
-#define EOI_CHAR '$'
-#define EPSILON_STR "e"
-#define EPSILON_CHAR 'e'
+#define EOI     "$"
+#define EPSILON "e"
 
 
 /** Print the contents of a set
@@ -21,10 +20,10 @@
  */
 template <class T>
 void print_set(std::set<T> input) {
-  for (auto it = input.begin(); it != input.end(); ++it) {
-    std::cout << *it << " ";
+  for (auto item : input) {
+    printf("%s ", item);
   }
-  std::cout << std::endl;
+  printf("\n");
 }
 
 
@@ -45,7 +44,7 @@ int Grammar::load(std::string file_name) {
   std::ifstream input_file(file_name);
   // The terminals section
   for (std::string line; getline(input_file, line);) {
-    if (line == EOI_STR) break;
+    if (line == EOI) break;
     _terminals.insert(line[0]);
   }
   // The productions section
@@ -97,15 +96,15 @@ void Grammar::firstRuleOne() {
  */
 void Grammar::firstRuleTwo() {
   for (auto it = _productions.begin(); it != _productions.end(); ++it) {
-    if (it->substr(3) == EPSILON_STR) {
-      _first[it->substr(0, 3)[0]].insert(EPSILON_CHAR);
+    if (it->substr(3) == EPSILON) {
+      _first[it->substr(0, 3)[0]].insert(EPSILON[0]);
     }
   }
 }
 
 
 /**
- * Applies the third rule for finding the follow sets
+ * Applies the third rule for finding the follow set
  */
 void Grammar::firstRuleThree() {
   bool changed;
@@ -118,15 +117,14 @@ void Grammar::firstRuleThree() {
       while (i < rhs.length()) {
         std::set<char> first = _first[rhs[i]];
         if (hasEpsilon(first)) {
-          first.erase(first.find(EPSILON_CHAR));
-          addToFirst(lhs, first, changed);
+          first.erase(first.find(EPSILON[0]));
+          addSetToFirst(lhs, first, &changed);
           ++i;
         } else {
-          addToFirst(lhs, first, changed);
+          addSetToFirst(lhs, first, &changed);
         }
         if (i >= rhs.length()) {
-          auto result = _first[lhs].insert(EPSILON_CHAR);
-          if (result.second) changed = true;
+          addCharToFirst(lhs, EPSILON[0], &changed);
         }
         ++i;
       }
@@ -141,7 +139,7 @@ void Grammar::firstRuleThree() {
  * @return       -> The result of the test
  */
 bool Grammar::hasEpsilon(std::set<char> first) {
-  return first.find(EPSILON_CHAR) != first.end();
+  return first.find(EPSILON[0]) != first.end();
 }
 
 
@@ -151,13 +149,25 @@ bool Grammar::hasEpsilon(std::set<char> first) {
  * @param first       -> The symbols being added
  * @param changed     -> A flag to see if anything actually changed
  */
-void Grammar::addToFirst(char nonterminal,
+void Grammar::addSetToFirst(char nonterminal,
                          std::set<char> first,
-                         bool &changed) {
+                         bool *changed) {
   for (auto symbol : first) {
     auto result = _first[nonterminal].insert(symbol);
-    if (result.second) changed = true;
+    if (result.second) *changed = true;
   }
+}
+
+
+/**
+ * Adds the given symbol to the first of the given nonterminal
+ * @param nonterminal -> The symbol whose first is being added to
+ * @param symbol      -> The symbol being added
+ * @param changed     -> A flag to see if anything actually changed
+ */
+void Grammar::addCharToFirst(char nonterminal, char symbol, bool *changed) {
+  auto result = _first[nonterminal].insert(symbol);
+  if (result.second) *changed = true;
 }
 
 
