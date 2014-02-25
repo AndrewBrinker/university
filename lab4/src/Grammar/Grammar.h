@@ -46,9 +46,6 @@ class Grammar {
   mapset _first;
   mapset _follow;
 
-  template <class T>
-  friend void print_set(std::set<T> input);
-
   DISALLOW_COPY_AND_ASSIGN(Grammar);
 };
 

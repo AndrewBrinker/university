@@ -14,19 +14,6 @@
 #define EPSILON "e"
 
 
-/** Print the contents of a set
- *
- * Iterates through a set and prints all the elements on a single line.
- */
-template <class T>
-void print_set(std::set<T> input) {
-  for (auto item : input) {
-    printf("%s ", item);
-  }
-  printf("\n");
-}
-
-
 /** Do nothing
  *
  * Constructors can't return values or throw error, and are therefore a poor
