@@ -15,13 +15,13 @@ typedef struct {
 } Symbol;
 
 
-void firstInsert(Symbol *symbol, char value) {
+void addFirst(Symbol *symbol, char value) {
     if (find(symbol->first, value) == -1) return;
     push(symbol->first, value);
 }
 
 
-void followInsert(Symbol *symbol, char value) {
+void addFollow(Symbol *symbol, char value) {
     if (find(symbol->follow, value) == -1) return;
     push(symbol->follow, value);
 }
