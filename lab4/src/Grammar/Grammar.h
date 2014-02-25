@@ -27,14 +27,14 @@ class Grammar {
   bool findFirst();
   bool findFollow();
 
-  // Assistance methods for updating FIRST
-  void addSetToFirst(char, std::set<char>, bool *);
-  void addCharToFirst(char, char, bool *);
-
   // Assistance methods for finding FIRST
   void firstForTerminals();
   void firstForEpsilonProductions();
   void firstForNonterminals();
+
+  // Assistance methods for updating FIRST
+  void addSetToFirst(char, std::set<char>, bool *);
+  void addCharToFirst(char, char, bool *);
 
   // Checks whether the given set has epsilon
   bool hasEpsilon(std::set<char>);

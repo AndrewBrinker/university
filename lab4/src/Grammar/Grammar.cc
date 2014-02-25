@@ -47,6 +47,24 @@ int Grammar::parse() {
 
 
 /**
+ * Returns the first sets for the grammar
+ * @return the first sets
+ */
+std::map<char, std::set<char>> Grammar::first() const {
+  return _first;
+}
+
+
+/**
+ * Returns the follow sets for the grammar
+ * @return the follow sets
+ */
+std::map<char, std::set<char>> Grammar::follow() const {
+  return _follow;
+}
+
+
+/**
  * Finds the first set for the grammar
  * @return exit code
  */
@@ -54,6 +72,15 @@ bool Grammar::findFirst() {
   firstForTerminals();
   firstForEpsilonProductions();
   firstForNonterminals();
+  return false;
+}
+
+
+/**
+ * Does nothing right now
+ * @return exit code
+ */
+bool Grammar::findFollow() {
   return false;
 }
 
@@ -111,16 +138,6 @@ void Grammar::firstForNonterminals() {
 
 
 /**
- * Checks whether epsilon is present in the given set.
- * @param  first -> The set being checked for epsilon
- * @return       -> The result of the test
- */
-bool Grammar::hasEpsilon(std::set<char> first) {
-  return first.find(EPSILON[0]) != first.end();
-}
-
-
-/**
  * Add the given first set to the first of the given nonterminal
  * @param nonterminal -> The symbol whose first is being added to
  * @param first       -> The symbols being added
@@ -149,28 +166,11 @@ void Grammar::addCharToFirst(char nonterminal, char symbol, bool *changed) {
 
 
 /**
- * Does nothing right now
- * @return exit code
+ * Checks whether epsilon is present in the given set.
+ * @param  first -> The set being checked for epsilon
+ * @return       -> The result of the test
  */
-bool Grammar::findFollow() {
-  return false;
-}
-
-
-/**
- * Returns the first sets for the grammar
- * @return the first sets
- */
-std::map<char, std::set<char>> Grammar::first() const {
-  return _first;
-}
-
-
-/**
- * Returns the follow sets for the grammar
- * @return the follow sets
- */
-std::map<char, std::set<char>> Grammar::follow() const {
-  return _follow;
+bool Grammar::hasEpsilon(std::set<char> first) {
+  return first.find(EPSILON[0]) != first.end();
 }
 
