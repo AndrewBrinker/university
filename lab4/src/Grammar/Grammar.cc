@@ -26,6 +26,7 @@ void print_add(char first, std::set<char> input) {
   printf("\n");
 }
 
+
 /**
  * Print the character being added to the given LHS
  * @param input -> The set to be printed.
@@ -108,7 +109,7 @@ bool Grammar::findFollow() {
 
 
 /**
- * Applies the first rule for finding the follow sets
+ * Applies the first rule for finding the first sets
  */
 void Grammar::firstForTerminals() {
   for (auto terminal : _terminals) {
@@ -118,7 +119,7 @@ void Grammar::firstForTerminals() {
 
 
 /**
- * Applies the second rule for finding the follow sets
+ * Applies the second rule for finding the first sets
  */
 void Grammar::firstForEpsilonProductions() {
   for (auto production : _productions) {
@@ -130,7 +131,7 @@ void Grammar::firstForEpsilonProductions() {
 
 
 /**
- * Applies the third rule for finding the follow set
+ * Applies the third rule for finding the first set
  */
 void Grammar::firstForNonterminals() {
   bool changed;
