@@ -105,7 +105,7 @@ bool Grammar::findFirst() {
 
 
 /**
- * Does nothing right now
+ * Find the follow set for each symbol.
  * @return exit code
  */
 bool Grammar::findFollow() {
@@ -117,7 +117,6 @@ bool Grammar::findFollow() {
       char lhs = production[0];
       std::string rhs = production.substr(3);
       while (i < rhs.length()) {
-        // Looping through each symbol.
         bool is_non_terminal = isNonTerminal(rhs[i]);
         if (is_non_terminal && i < rhs.length() - 1) {
           std::set<char> next_first = _first[rhs[i + 1]];
