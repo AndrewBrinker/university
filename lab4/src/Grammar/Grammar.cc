@@ -122,10 +122,13 @@ void Grammar::firstForNonterminals() {
         std::set<char> first = _first[rhs[i]];
         if (hasEpsilon(first)) {
           first.erase(first.find(EPSILON[0]));
+          print_set(first);
           addSetToFirst(lhs, first, &changed);
           ++i;
         } else {
+          print_set(first);
           addSetToFirst(lhs, first, &changed);
+          break;
         }
         if (i >= rhs.length()) {
           addCharToFirst(lhs, EPSILON[0], &changed);
@@ -144,8 +147,8 @@ void Grammar::firstForNonterminals() {
  * @param changed     -> A flag to see if anything actually changed
  */
 void Grammar::addSetToFirst(char nonterminal,
-                         std::set<char> first,
-                         bool *changed) {
+                            std::set<char> first,
+                            bool *changed) {
   for (auto symbol : first) {
     auto result = _first[nonterminal].insert(symbol);
     if (result.second) *changed = true;
