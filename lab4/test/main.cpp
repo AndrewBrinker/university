@@ -6,6 +6,7 @@
 #include <set>
 #include <cstdio>
 #include <cctype>
+#include <map>
 
 
 void print_mapset(std::map<char, std::set<char>> input) {
