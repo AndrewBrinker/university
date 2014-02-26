@@ -14,6 +14,18 @@
 
 
 /**
+ * Print the elemenets of a set of character
+ * @param input -> The set to be printed.
+ */
+void print_add(char first, std::set<char> input) {
+  for (auto item : input) {
+    printf("%c -> %c\n", first, item);
+  }
+  printf("\n");
+}
+
+
+/**
  * Load the contents of the given grammar into the class.
  * @param  file_name -> name of the file being loaded
  * @return           -> exit code
@@ -122,11 +134,9 @@ void Grammar::firstForNonterminals() {
         std::set<char> first = _first[rhs[i]];
         if (hasEpsilon(first)) {
           first.erase(first.find(EPSILON[0]));
-          print_set(first);
           addSetToFirst(lhs, first, &changed);
           ++i;
         } else {
-          print_set(first);
           addSetToFirst(lhs, first, &changed);
           break;
         }
@@ -149,6 +159,7 @@ void Grammar::firstForNonterminals() {
 void Grammar::addSetToFirst(char nonterminal,
                             std::set<char> first,
                             bool *changed) {
+  print_add(nonterminal, first);
   for (auto symbol : first) {
     auto result = _first[nonterminal].insert(symbol);
     if (result.second) *changed = true;
