@@ -37,7 +37,7 @@ void print_add_char(char first, char input) {
 
 
 /**
- * Load the contents of the given grammar into the class.
+ * Load the contents of the given grammar into the class
  * @param  file_name -> name of the file being loaded
  * @return           -> exit code
  */
@@ -49,6 +49,9 @@ Grammar::Grammar(std::string file_name) {
     _terminals.insert(line[0]);
   }
   // The productions section
+  std::string first_line;
+  getline(input_file, first_line);
+  _follow[first_line[0]].insert(DELIM[0]);
   for (std::string line; getline(input_file, line);) {
     if (line == "$") break;
     _non_terminals.insert(line[0]);
@@ -61,9 +64,9 @@ Grammar::Grammar(std::string file_name) {
  * Finds the first and follow sets for the grammar
  * @return exit code
  */
-int Grammar::parse() {
+bool Grammar::parse() {
   bool failed = findFirst();
-  if (failed) return 1;
+  if (failed) return true;
   failed = findFollow();
   return failed;
 }
@@ -104,6 +107,41 @@ bool Grammar::findFirst() {
  * @return exit code
  */
 bool Grammar::findFollow() {
+  bool changed;
+  do {
+    changed = false;
+    for (auto production : _productions) {
+      size_t i = 0;
+      char lhs = production[0];
+      std::string rhs = production.substr(3);
+      while (i < rhs.length()) {
+        // If the current symbol is a non-terminal
+        std::set<char> follow = _follow[rhs[i]];
+        if (i + 1 >= rhs.length()) {
+          // If there is no next symbol.
+          // Add FOLLOW of LHS to FOLLOW of RHS
+          addSetToFollow(lhs, follow, &changed);
+        } else if (hasEpsilon(_follow[rhs[i + 1]])) {
+          // If the next symbol has epsilon...
+          // add everything from the FIRST of the next symbol (except epsilon)
+          // to FOLLOW of the current, and add everything in FOLLOW of the LHS
+          // to FOLLOW of the current symbol.
+          follow.erase(follow.find(EPSILON[0]));
+          addSetToFollow(lhs, _follow[rhs[i + i]], &changed);
+          addSetToFollow(lhs, follow, &changed);
+        } else {
+          // If the next symbol doesn't have epsilon...
+          // add everything from FIRST of the next symbol to FOLLOW of the
+          // current one.
+          addSetToFollow(lhs, _follow[rhs[i + i]], &changed);
+        }
+        ++i;
+      }
+    }
+  } while(changed);
+
+
+
   return false;
 }
 
@@ -190,11 +228,37 @@ void Grammar::addCharToFirst(char nonterminal, char symbol, bool *changed) {
 
 
 /**
+ * Add the given follow set to the first of the given nonterminal
+ * @param nonterminal -> The symbol whose follow is being added to
+ * @param follow       -> The symbols being added
+ * @param changed     -> A flag to see if anything actually changed
+ */
+void Grammar::addSetToFollow(char nonterminal,
+                            std::set<char> follow,
+                            bool *changed) {
+  for (auto symbol : follow) {
+    auto result = _follow[nonterminal].insert(symbol);
+    if (result.second) *changed = true;
+  }
+}
+
+
+/**
  * Checks whether epsilon is present in the given set.
  * @param  first -> The set being checked for epsilon
  * @return       -> The result of the test
  */
 bool Grammar::hasEpsilon(std::set<char> first) {
   return first.find(EPSILON[0]) != first.end();
+}
+
+
+/**
+ * Checks whether the given symbol is a non_terminal
+ * @param  symbol -> The symbol being checked
+ * @return        TRUE if a terminal, FALSE otherwise
+ */
+bool Grammar::isNonTerminal(char symbol) {
+  return _non_terminals.find(symbol) != _non_terminals.end();
 }
 

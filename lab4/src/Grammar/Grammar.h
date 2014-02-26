@@ -16,7 +16,7 @@
 class Grammar {
  public:
   explicit Grammar(std::string);
-  int parse();
+  bool parse();
 
   // Accessor methods for FIRST and FOLLOW
   std::map<char, std::set<char>> first() const;
@@ -36,8 +36,11 @@ class Grammar {
   void addSetToFirst(char, std::set<char>, bool *);
   void addCharToFirst(char, char, bool *);
 
+  void addSetToFollow(char, std::set<char>, bool*);
+
   // Checks whether the given set has epsilon
   bool hasEpsilon(std::set<char>);
+  bool isNonTerminal(char);
 
   // Member variables
   std::set<char>                 _terminals;

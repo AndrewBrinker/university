@@ -28,8 +28,10 @@ int main(int argc, char **argv) {
 
     Grammar grammar(argv[1]);
     grammar.parse();
-    std::map<char, std::set<char>> results = grammar.first();
-    print_mapset(results);
+    printf("======\nFIRST\n======\n");
+    print_mapset(grammar.first());
+    printf("======\nFOLLOW\n======\n");
+    print_mapset(grammar.follow());
 
     return 0;
 }
