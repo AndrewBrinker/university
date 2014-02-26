@@ -36,7 +36,7 @@ class Grammar {
   void addSetToFirst(char, std::set<char>, bool *);
   void addCharToFirst(char, char, bool *);
 
-  void addSetToFollow(char, std::set<char>, bool*);
+  void addSetToFollow(char, std::set<char>, bool *);
 
   // Checks whether the given set has epsilon
   bool hasEpsilon(std::set<char>);

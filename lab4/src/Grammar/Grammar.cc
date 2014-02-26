@@ -52,6 +52,8 @@ Grammar::Grammar(std::string file_name) {
   std::string first_line;
   getline(input_file, first_line);
   _follow[first_line[0]].insert(DELIM[0]);
+  _non_terminals.insert(first_line[0]);
+  _productions.insert(first_line);
   for (std::string line; getline(input_file, line);) {
     if (line == "$") break;
     _non_terminals.insert(line[0]);
@@ -115,33 +117,22 @@ bool Grammar::findFollow() {
       char lhs = production[0];
       std::string rhs = production.substr(3);
       while (i < rhs.length()) {
-        // If the current symbol is a non-terminal
-        std::set<char> follow = _follow[rhs[i]];
-        if (i + 1 >= rhs.length()) {
-          // If there is no next symbol.
-          // Add FOLLOW of LHS to FOLLOW of RHS
-          addSetToFollow(lhs, follow, &changed);
-        } else if (hasEpsilon(_follow[rhs[i + 1]])) {
-          // If the next symbol has epsilon...
-          // add everything from the FIRST of the next symbol (except epsilon)
-          // to FOLLOW of the current, and add everything in FOLLOW of the LHS
-          // to FOLLOW of the current symbol.
-          follow.erase(follow.find(EPSILON[0]));
-          addSetToFollow(lhs, _follow[rhs[i + i]], &changed);
-          addSetToFollow(lhs, follow, &changed);
-        } else {
-          // If the next symbol doesn't have epsilon...
-          // add everything from FIRST of the next symbol to FOLLOW of the
-          // current one.
-          addSetToFollow(lhs, _follow[rhs[i + i]], &changed);
+        // Looping through each symbol.
+        bool is_non_terminal = isNonTerminal(rhs[i]);
+        if (is_non_terminal && i < rhs.length() - 1) {
+          std::set<char> next_first = _first[rhs[i + 1]];
+          bool has_epsilon = next_first.erase(EPSILON[0]);
+          addSetToFollow(rhs[i], next_first, &changed);
+          if (has_epsilon) {
+            addSetToFollow(rhs[i], _follow[lhs], &changed);
+          }
+        } else if (is_non_terminal && i == rhs.length() - 1) {
+          addSetToFollow(rhs[i], _follow[lhs], &changed);
         }
         ++i;
       }
     }
   } while(changed);
-
-
-
   return false;
 }
 

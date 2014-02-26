@@ -12,9 +12,9 @@
 void print_mapset(std::map<char, std::set<char>> input) {
     for (auto pair : input) {
         if (isupper(pair.first)) {
-            printf("%c => { ", pair.first);
+            printf("    %c => ", pair.first);
             for (auto item : pair.second) printf("%c ", item);
-            printf("}\n");
+            printf("\n");
         }
     }
 }
@@ -28,9 +28,9 @@ int main(int argc, char **argv) {
 
     Grammar grammar(argv[1]);
     grammar.parse();
-    printf("======\nFIRST\n======\n");
+    printf("FIRST:\n");
     print_mapset(grammar.first());
-    printf("======\nFOLLOW\n======\n");
+    printf("FOLLOW:\n");
     print_mapset(grammar.follow());
 
     return 0;

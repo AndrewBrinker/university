@@ -4,7 +4,7 @@ PREFIX   ?= usr/local
 CC        = clang++
 TARGET    = build/libgrammar.a
 
-FILTERS   = -readability/streams,-build/header_guard
+FILTERS   = -readability/streams,-build/header_guard,-readability/function
 
 SOURCES   = $(wildcard src/**/*.cc src/*.cc)
 OBJECTS   = $(patsubst %.cc,%.o,$(SOURCES))
