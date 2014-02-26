@@ -15,13 +15,23 @@
 
 /**
  * Print the elemenets of a set of character
+ * @param first -> The first being added to
  * @param input -> The set to be printed.
  */
 void print_add(char first, std::set<char> input) {
+  printf("%c -> ", first);
   for (auto item : input) {
-    printf("%c -> %c\n", first, item);
+    printf("%c ", item);
   }
   printf("\n");
+}
+
+/**
+ * Print the character being added to the given LHS
+ * @param input -> The set to be printed.
+ */
+void print_add_char(char first, char input) {
+  printf("%c -> %c\n", first, input);
 }
 
 
@@ -127,7 +137,7 @@ void Grammar::firstForNonterminals() {
   do {
     changed = false;
     for (auto production : _productions) {
-      size_t i = 1;
+      size_t i = 0;
       char lhs = production[0];
       std::string rhs = production.substr(3);
       while (i < rhs.length()) {
@@ -159,7 +169,6 @@ void Grammar::firstForNonterminals() {
 void Grammar::addSetToFirst(char nonterminal,
                             std::set<char> first,
                             bool *changed) {
-  print_add(nonterminal, first);
   for (auto symbol : first) {
     auto result = _first[nonterminal].insert(symbol);
     if (result.second) *changed = true;

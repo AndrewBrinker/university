@@ -47,6 +47,7 @@ class Grammar {
   std::map<char, std::set<char>> _follow;
 
   friend void print_add(char, std::set<char>);
+  friend void print_add_char(char, char);
 
   DISALLOW_COPY_AND_ASSIGN(Grammar);
 };

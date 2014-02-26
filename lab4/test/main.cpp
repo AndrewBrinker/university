@@ -5,13 +5,16 @@
 #include <Grammar/Grammar.h>
 #include <set>
 #include <cstdio>
+#include <cctype>
 
 
 void print_mapset(std::map<char, std::set<char>> input) {
     for (auto pair : input) {
-        printf("%c => { ", pair.first);
-        for (auto item : pair.second) printf("%c ", item);
-        printf("}\n");
+        if (isupper(pair.first)) {
+            printf("%c => { ", pair.first);
+            for (auto item : pair.second) printf("%c ", item);
+            printf("}\n");
+        }
     }
 }
 
