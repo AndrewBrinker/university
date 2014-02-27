@@ -47,9 +47,9 @@ class grammar {
   bool isNonTerminal(char);
 
   // Member variables
-  std::set<char>                 _terminals;
-  std::set<char>                 _non_terminals;
-  std::set<std::string>          _productions;
+  std::set<char> _terminals;
+  std::set<char> _non_terminals;
+  std::set<std::string> _productions;
   std::map<char, std::set<char>> _first;
   std::map<char, std::set<char>> _follow;
   bool _condensed;
