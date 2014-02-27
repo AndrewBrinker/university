@@ -7,9 +7,9 @@ i
 $
 E->TX
 X->+E
-X->e
 T->iY
-T->(E)
 Y->*T
+X->e
+T->(E)
 Y->e
 $

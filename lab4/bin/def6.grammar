@@ -1,0 +1,7 @@
+# Copyright 2014 Andrew Brinker
+E -> TD
+D -> +TD | e
+T -> FU
+U -> *FU | e
+F -> (E) | I
+I -> x | y | z

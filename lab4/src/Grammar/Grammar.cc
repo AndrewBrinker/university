@@ -8,11 +8,15 @@
 #include <string>
 #include <fstream>
 #include <cstdio>
+#include <cctype>
+#include <list>
+#include <vector>
 
-#define DELIM       "$"
-#define EPSILON     "e"
-#define COMMENT     "#"
-#define OUTPUT_FILE ".tmpout-05792367"
+#define DELIM   "$"
+#define EPSILON "e"
+#define COMMENT "#"
+#define SPLIT   "|"
+#define TEMP_FILE ".tmpfile"
 
 
 /**
@@ -21,25 +25,27 @@
  * @return           -> exit code
  */
 Grammar::Grammar(std::string file_name) {
-  expandFile(file_name);
-  std::ifstream input_file(file_name);
-  // The terminals section
-  for (std::string line; getline(input_file, line);) {
-    if (line == DELIM) break;
-    _terminals.insert(line[0]);
-  }
-  // The productions section
-  std::string first_line;
-  getline(input_file, first_line);
-  _follow[first_line[0]].insert(DELIM[0]);
-  _non_terminals.insert(first_line[0]);
-  _productions.insert(first_line);
-  for (std::string line; getline(input_file, line);) {
-    if (line == "$") break;
-    _non_terminals.insert(line[0]);
-    _productions.insert(line);
-  }
-  input_file.close();
+    expandFile(file_name);
+    std::string temp_file_name = TEMP_FILE;
+    std::ifstream input_file(temp_file_name);
+    // The terminals section
+    for (std::string line; getline(input_file, line);) {
+      if (line == DELIM) break;
+      _terminals.insert(line[0]);
+    }
+    // The productions section
+    std::string first_line;
+    getline(input_file, first_line);
+    _follow[first_line[0]].insert(DELIM[0]);
+    _non_terminals.insert(first_line[0]);
+    _productions.insert(first_line);
+    for (std::string line; getline(input_file, line);) {
+      if (line == DELIM) break;
+      _non_terminals.insert(line[0]);
+      _productions.insert(line);
+    }
+    input_file.close();
+    remove(temp_file_name.c_str());
 }
 
 
@@ -78,24 +84,51 @@ std::map<char, std::set<char>> Grammar::follow() const {
  * @param file_name -> The name of the file being expanded
  */
 void Grammar::expandFile(std::string file_name) {
-  // 1) Copy file to temp file (done)
+  // 1) Ignore blank lines (done)
   // 2) Ignore comments (done)
   // 3) Remove whitespace (done)
-  // 4) Split across OR
+  // 4) Split across OR (done)
   // 5) Populate list of terminals
-  // 6) Insert section delimiters
+  // 6) Insert section delimiters (done)
   std::ifstream input_file(file_name);
-  std::fstream temp_file(OUTPUT_FILE,
-                         std::ios::in | std::ios::out | std::ios::trunc);
+  std::list<std::string> intermediary;
+  std::set<std::string> terminals;
   for (std::string line; getline(input_file, line);) {
     if (line[0] == COMMENT[0]) continue;
+    if (line == "\n") continue;
     line.erase(std::remove(line.begin(), line.end(), ' '), line.end());
-    temp_file << line << "\n";
+    intermediary.push_back(line + "\n");
   }
   input_file.close();
-  // DO MORE STUFF
-  temp_file.close();
+  for (auto it = intermediary.begin(); it != intermediary.end(); ++it) {
+    size_t i = 0;
+    std::string lhs = it->substr(0,1);
+    std::string rhs = it->substr(3);
+    while (i < rhs.length()) {
+      if (rhs[i] == SPLIT[0]) {
+        std::string rest = rhs.substr(i+1);
+        *it = it->substr(0, i + 3) + "\n";
+        intermediary.push_back(lhs + "->" + rest);
+      } else if (!isupper(rhs[i]) && rhs[i] != '\n') {
+        terminals.insert(rhs.substr(i, 1));
+      }
+      ++i;
+    }
+  }
+  std::string delim_line = DELIM;
+  delim_line += "\n";
+  intermediary.push_front(delim_line);
+  for (auto symbol : terminals) {
+    intermediary.push_front(symbol + "\n");
+  }
+  intermediary.push_back(delim_line);
+  std::ofstream output_file(TEMP_FILE);
+  for (auto line : intermediary) {
+    output_file << line;
+  }
+  output_file.close();
 }
+
 
 /**
  * Finds the first set for the grammar
@@ -225,7 +258,7 @@ void Grammar::addCharToFirst(char nonterminal, char symbol, bool *changed) {
 /**
  * Add the given follow set to the first of the given nonterminal
  * @param nonterminal -> The symbol whose follow is being added to
- * @param follow       -> The symbols being added
+ * @param follow      -> The symbols being added
  * @param changed     -> A flag to see if anything actually changed
  */
 void Grammar::addSetToFollow(char nonterminal,
