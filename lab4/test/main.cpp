@@ -8,8 +8,6 @@
 #include <cctype>
 #include <map>
 
-using namespace gram;
-
 void print_mapset(std::map<char, std::set<char>> input) {
     for (auto pair : input) {
         if (isupper(pair.first)) {
@@ -27,7 +25,7 @@ int main(int argc, char **argv) {
         return 0;
     }
 
-    grammar g(argv[1]);
+    gram::grammar g(argv[1]);
     g.parse();
     printf("FIRST:\n");
     print_mapset(g.first());
