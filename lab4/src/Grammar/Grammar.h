@@ -13,6 +13,8 @@
   TypeName(const TypeName&);               \
   void operator=(const TypeName&)
 
+namespace grammar {
+
 class Grammar {
  public:
   explicit Grammar(std::string);
@@ -54,5 +56,7 @@ class Grammar {
 
   DISALLOW_COPY_AND_ASSIGN(Grammar);
 };
+
+}
 
 #endif  // GRAMMAR_H

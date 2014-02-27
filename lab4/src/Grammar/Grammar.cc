@@ -18,6 +18,7 @@
 #define SPLIT   "|"
 #define TEMP_FILE ".tmpfile"
 
+namespace grammar {
 
 /**
  * Load the contents of the given grammar into the class
@@ -296,3 +297,4 @@ bool Grammar::isNonTerminal(char symbol) {
   return _non_terminals.find(symbol) != _non_terminals.end();
 }
 
+}  // End namespace `grammar`
