@@ -50,6 +50,7 @@ class Grammar {
   std::set<std::string>          _productions;
   std::map<char, std::set<char>> _first;
   std::map<char, std::set<char>> _follow;
+  bool _condensed;
 
   DISALLOW_COPY_AND_ASSIGN(Grammar);
 };

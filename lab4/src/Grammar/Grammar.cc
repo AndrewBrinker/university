@@ -24,10 +24,10 @@
  * @param  file_name -> name of the file being loaded
  * @return           -> exit code
  */
-Grammar::Grammar(std::string file_name) {
+Grammar::Grammar(std::string file_name) : _condensed(true) {
     expandFile(file_name);
-    std::string temp_file_name = TEMP_FILE;
-    std::ifstream input_file(temp_file_name);
+    if (_condensed) file_name = TEMP_FILE;
+    std::ifstream input_file(file_name);
     // The terminals section
     for (std::string line; getline(input_file, line);) {
       if (line == DELIM) break;
@@ -45,7 +45,7 @@ Grammar::Grammar(std::string file_name) {
       _productions.insert(line);
     }
     input_file.close();
-    remove(temp_file_name.c_str());
+    if (_condensed) remove(file_name.c_str());
 }
 
 
@@ -101,6 +101,10 @@ void Grammar::expandFile(std::string file_name) {
   }
   input_file.close();
   for (auto it = intermediary.begin(); it != intermediary.end(); ++it) {
+    if (it->size() <= 3) {
+      _condensed = false;
+      break;
+    }
     size_t i = 0;
     std::string lhs = it->substr(0,1);
     std::string rhs = it->substr(3);
@@ -108,6 +112,7 @@ void Grammar::expandFile(std::string file_name) {
       if (rhs[i] == SPLIT[0]) {
         std::string rest = rhs.substr(i+1);
         *it = it->substr(0, i + 3) + "\n";
+        std::string new_line = lhs + "->" + rest;
         intermediary.push_back(lhs + "->" + rest);
       } else if (!isupper(rhs[i]) && rhs[i] != '\n') {
         terminals.insert(rhs.substr(i, 1));
@@ -115,18 +120,20 @@ void Grammar::expandFile(std::string file_name) {
       ++i;
     }
   }
-  std::string delim_line = DELIM;
-  delim_line += "\n";
-  intermediary.push_front(delim_line);
-  for (auto symbol : terminals) {
-    intermediary.push_front(symbol + "\n");
+  if (_condensed) {
+    std::string delim_line = DELIM;
+    delim_line += "\n";
+    intermediary.push_front(delim_line);
+    for (auto symbol : terminals) {
+      intermediary.push_front(symbol + "\n");
+    }
+    intermediary.push_back(delim_line);
+    std::ofstream output_file(TEMP_FILE);
+    for (auto line : intermediary) {
+      output_file << line;
+    }
+    output_file.close();
   }
-  intermediary.push_back(delim_line);
-  std::ofstream output_file(TEMP_FILE);
-  for (auto line : intermediary) {
-    output_file << line;
-  }
-  output_file.close();
 }
 
 
