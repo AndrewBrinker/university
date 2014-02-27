@@ -2,7 +2,7 @@
  * Copyright 2014 Andrew Brinker
  */
 
-#include "./Grammar.h"
+#include "./grammar.h"
 #include <set>
 #include <map>
 #include <string>
@@ -12,20 +12,20 @@
 #include <list>
 #include <vector>
 
-#define DELIM   "$"
-#define EPSILON "e"
-#define COMMENT "#"
-#define SPLIT   "|"
+#define DELIM     "$"
+#define EPSILON   "e"
+#define COMMENT   "#"
+#define SPLIT     "|"
 #define TEMP_FILE ".tmpfile"
 
-namespace grammar {
+namespace gram {
 
 /**
  * Load the contents of the given grammar into the class
  * @param  file_name -> name of the file being loaded
  * @return           -> exit code
  */
-Grammar::Grammar(std::string file_name) : _condensed(true) {
+grammar::grammar(std::string file_name) : _condensed(true) {
     expandFile(file_name);
     if (_condensed) file_name = TEMP_FILE;
     std::ifstream input_file(file_name);
@@ -54,7 +54,7 @@ Grammar::Grammar(std::string file_name) : _condensed(true) {
  * Finds the first and follow sets for the grammar
  * @return exit code
  */
-bool Grammar::parse() {
+bool grammar::parse() {
   bool failed = findFirst();
   if (failed) return true;
   failed = findFollow();
@@ -66,7 +66,7 @@ bool Grammar::parse() {
  * Returns the first sets for the grammar
  * @return the first sets
  */
-std::map<char, std::set<char>> Grammar::first() const {
+std::map<char, std::set<char>> grammar::first() const {
   return _first;
 }
 
@@ -75,7 +75,7 @@ std::map<char, std::set<char>> Grammar::first() const {
  * Returns the follow sets for the grammar
  * @return the follow sets
  */
-std::map<char, std::set<char>> Grammar::follow() const {
+std::map<char, std::set<char>> grammar::follow() const {
   return _follow;
 }
 
@@ -84,7 +84,7 @@ std::map<char, std::set<char>> Grammar::follow() const {
  * Converts the file from the compressed grammar syntax to the expanded syntax.
  * @param file_name -> The name of the file being expanded
  */
-void Grammar::expandFile(std::string file_name) {
+void grammar::expandFile(std::string file_name) {
   // 1) Ignore blank lines (done)
   // 2) Ignore comments (done)
   // 3) Remove whitespace (done)
@@ -141,7 +141,7 @@ void Grammar::expandFile(std::string file_name) {
  * Finds the first set for the grammar
  * @return exit code
  */
-bool Grammar::findFirst() {
+bool grammar::findFirst() {
   firstForTerminals();
   firstForEpsilonProductions();
   firstForNonterminals();
@@ -153,7 +153,7 @@ bool Grammar::findFirst() {
  * Find the follow set for each symbol.
  * @return exit code
  */
-bool Grammar::findFollow() {
+bool grammar::findFollow() {
   bool changed;
   do {
     changed = false;
@@ -184,7 +184,7 @@ bool Grammar::findFollow() {
 /**
  * Applies the first rule for finding the first sets
  */
-void Grammar::firstForTerminals() {
+void grammar::firstForTerminals() {
   for (auto terminal : _terminals) {
     _first[terminal].insert(terminal);
   }
@@ -194,7 +194,7 @@ void Grammar::firstForTerminals() {
 /**
  * Applies the second rule for finding the first sets
  */
-void Grammar::firstForEpsilonProductions() {
+void grammar::firstForEpsilonProductions() {
   for (auto production : _productions) {
     if (production.substr(3) == EPSILON) {
       _first[production[0]].insert(EPSILON[0]);
@@ -206,7 +206,7 @@ void Grammar::firstForEpsilonProductions() {
 /**
  * Applies the third rule for finding the first set
  */
-void Grammar::firstForNonterminals() {
+void grammar::firstForNonterminals() {
   bool changed;
   do {
     changed = false;
@@ -240,7 +240,7 @@ void Grammar::firstForNonterminals() {
  * @param first       -> The symbols being added
  * @param changed     -> A flag to see if anything actually changed
  */
-void Grammar::addSetToFirst(char nonterminal,
+void grammar::addSetToFirst(char nonterminal,
                             std::set<char> first,
                             bool *changed) {
   for (auto symbol : first) {
@@ -256,7 +256,7 @@ void Grammar::addSetToFirst(char nonterminal,
  * @param symbol      -> The symbol being added
  * @param changed     -> A flag to see if anything actually changed
  */
-void Grammar::addCharToFirst(char nonterminal, char symbol, bool *changed) {
+void grammar::addCharToFirst(char nonterminal, char symbol, bool *changed) {
   auto result = _first[nonterminal].insert(symbol);
   if (result.second) *changed = true;
 }
@@ -268,7 +268,7 @@ void Grammar::addCharToFirst(char nonterminal, char symbol, bool *changed) {
  * @param follow      -> The symbols being added
  * @param changed     -> A flag to see if anything actually changed
  */
-void Grammar::addSetToFollow(char nonterminal,
+void grammar::addSetToFollow(char nonterminal,
                             std::set<char> follow,
                             bool *changed) {
   for (auto symbol : follow) {
@@ -283,7 +283,7 @@ void Grammar::addSetToFollow(char nonterminal,
  * @param  first -> The set being checked for epsilon
  * @return       -> The result of the test
  */
-bool Grammar::hasEpsilon(std::set<char> first) {
+bool grammar::hasEpsilon(std::set<char> first) {
   return first.find(EPSILON[0]) != first.end();
 }
 
@@ -293,7 +293,7 @@ bool Grammar::hasEpsilon(std::set<char> first) {
  * @param  symbol -> The symbol being checked
  * @return        TRUE if a terminal, FALSE otherwise
  */
-bool Grammar::isNonTerminal(char symbol) {
+bool grammar::isNonTerminal(char symbol) {
   return _non_terminals.find(symbol) != _non_terminals.end();
 }
 

@@ -13,11 +13,11 @@
   TypeName(const TypeName&);               \
   void operator=(const TypeName&)
 
-namespace grammar {
+namespace gram {
 
-class Grammar {
+class grammar {
  public:
-  explicit Grammar(std::string);
+  explicit grammar(std::string);
   bool parse();
 
   // Accessor methods for FIRST and FOLLOW
@@ -54,7 +54,7 @@ class Grammar {
   std::map<char, std::set<char>> _follow;
   bool _condensed;
 
-  DISALLOW_COPY_AND_ASSIGN(Grammar);
+  DISALLOW_COPY_AND_ASSIGN(grammar);
 };
 
 }

@@ -2,11 +2,13 @@
  * Copyright 2014 Andrew Brinker
  */
 
-#include <Grammar/Grammar.h>
+#include <gram/grammar.h>
 #include <set>
 #include <cstdio>
 #include <cctype>
 #include <map>
+
+using namespace gram;
 
 void print_mapset(std::map<char, std::set<char>> input) {
     for (auto pair : input) {
@@ -25,12 +27,12 @@ int main(int argc, char **argv) {
         return 0;
     }
 
-    grammar::Grammar grammar(argv[1]);
-    grammar.parse();
+    grammar g(argv[1]);
+    g.parse();
     printf("FIRST:\n");
-    print_mapset(grammar.first());
+    print_mapset(g.first());
     printf("FOLLOW:\n");
-    print_mapset(grammar.follow());
+    print_mapset(g.follow());
 
     return 0;
 }

@@ -11,14 +11,14 @@
   TypeName(const TypeName&);               \
   void operator=(const TypeName&)
 
-namespace grammar {
+namespace gram {
 
-class Preprocessor {
+class preprocessor {
  public:
-  explicit Preprocessor(std::string);
+  explicit preprocessor(std::string);
 
  private:
-  DISALLOW_COPY_AND_ASSIGN(Preprocessor);
+  DISALLOW_COPY_AND_ASSIGN(preprocessor);
 };
 
 }
