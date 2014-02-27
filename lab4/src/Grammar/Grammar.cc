@@ -9,31 +9,10 @@
 #include <fstream>
 #include <cstdio>
 
-#define DELIM   "$"
-#define EPSILON "e"
-
-
-/**
- * Print the elemenets of a set of character
- * @param first -> The first being added to
- * @param input -> The set to be printed.
- */
-void print_add(char first, std::set<char> input) {
-  printf("%c -> ", first);
-  for (auto item : input) {
-    printf("%c ", item);
-  }
-  printf("\n");
-}
-
-
-/**
- * Print the character being added to the given LHS
- * @param input -> The set to be printed.
- */
-void print_add_char(char first, char input) {
-  printf("%c -> %c\n", first, input);
-}
+#define DELIM       "$"
+#define EPSILON     "e"
+#define COMMENT     "#"
+#define OUTPUT_FILE ".tmpout-05792367"
 
 
 /**
@@ -42,6 +21,7 @@ void print_add_char(char first, char input) {
  * @return           -> exit code
  */
 Grammar::Grammar(std::string file_name) {
+  expandFile(file_name);
   std::ifstream input_file(file_name);
   // The terminals section
   for (std::string line; getline(input_file, line);) {
@@ -59,6 +39,7 @@ Grammar::Grammar(std::string file_name) {
     _non_terminals.insert(line[0]);
     _productions.insert(line);
   }
+  input_file.close();
 }
 
 
@@ -91,6 +72,30 @@ std::map<char, std::set<char>> Grammar::follow() const {
   return _follow;
 }
 
+
+/**
+ * Converts the file from the compressed grammar syntax to the expanded syntax.
+ * @param file_name -> The name of the file being expanded
+ */
+void Grammar::expandFile(std::string file_name) {
+  // 1) Copy file to temp file (done)
+  // 2) Ignore comments (done)
+  // 3) Remove whitespace (done)
+  // 4) Split across OR
+  // 5) Populate list of terminals
+  // 6) Insert section delimiters
+  std::ifstream input_file(file_name);
+  std::fstream temp_file(OUTPUT_FILE,
+                         std::ios::in | std::ios::out | std::ios::trunc);
+  for (std::string line; getline(input_file, line);) {
+    if (line[0] == COMMENT[0]) continue;
+    line.erase(std::remove(line.begin(), line.end(), ' '), line.end());
+    temp_file << line << "\n";
+  }
+  input_file.close();
+  // DO MORE STUFF
+  temp_file.close();
+}
 
 /**
  * Finds the first set for the grammar

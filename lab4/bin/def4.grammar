@@ -1,0 +1,6 @@
+# Copyright 2014 Andrew Brinker
+E -> TX
+X -> +TX | e
+T -> FY
+Y -> *FY | e
+F -> (E) | i
