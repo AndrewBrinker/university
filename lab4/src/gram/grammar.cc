@@ -107,7 +107,7 @@ void grammar::expandFile(std::string file_name) {
       break;
     }
     size_t i = 0;
-    std::string lhs = it->substr(0,1);
+    std::string lhs = it->substr(0, 1);
     std::string rhs = it->substr(3);
     while (i < rhs.length()) {
       if (rhs[i] == SPLIT[0]) {
@@ -176,7 +176,7 @@ bool grammar::findFollow() {
         ++i;
       }
     }
-  } while(changed);
+  } while (changed);
   return false;
 }
 
@@ -297,4 +297,4 @@ bool grammar::isNonTerminal(char symbol) {
   return _non_terminals.find(symbol) != _non_terminals.end();
 }
 
-}  // End namespace `grammar`
+}  // namespace gram

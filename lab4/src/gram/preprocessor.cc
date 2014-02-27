@@ -12,4 +12,4 @@ preprocessor::preprocessor(std::string file_name) {
     printf("%s", file_name.c_str());
 }
 
-}
+}  // namespace gram

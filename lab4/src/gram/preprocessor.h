@@ -21,6 +21,6 @@ class preprocessor {
   DISALLOW_COPY_AND_ASSIGN(preprocessor);
 };
 
-}
+}  // namespace gram
 
 #endif  // PREPROCESSOR_H

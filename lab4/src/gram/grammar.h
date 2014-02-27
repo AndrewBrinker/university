@@ -57,6 +57,6 @@ class grammar {
   DISALLOW_COPY_AND_ASSIGN(grammar);
 };
 
-}
+}  // namespace gram
 
 #endif  // GRAMMAR_H
