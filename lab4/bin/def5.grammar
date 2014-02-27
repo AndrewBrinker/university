@@ -1,4 +1,7 @@
-# Copyright 2014 Andrew Brinker
+# This is an example of the condensed syntax for grammar definitions. I decided
+# to use this syntax because the other one is pretty verbose. The program
+# automatically detects which format is being used, and handles the file
+# appropriately.
 E -> TX
 X -> +E | e
 T -> iY | (E)
