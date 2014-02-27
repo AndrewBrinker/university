@@ -110,10 +110,9 @@ void Grammar::expandFile(std::string file_name) {
     std::string rhs = it->substr(3);
     while (i < rhs.length()) {
       if (rhs[i] == SPLIT[0]) {
-        std::string rest = rhs.substr(i+1);
         *it = it->substr(0, i + 3) + "\n";
-        std::string new_line = lhs + "->" + rest;
-        intermediary.push_back(lhs + "->" + rest);
+        intermediary.push_back(lhs + "->" + rhs.substr(i+1));
+        break;
       } else if (!isupper(rhs[i]) && rhs[i] != '\n') {
         terminals.insert(rhs.substr(i, 1));
       }
