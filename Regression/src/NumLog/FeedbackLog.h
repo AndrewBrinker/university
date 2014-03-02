@@ -2,7 +2,6 @@
  * Name:       Andrew Brinker
  * Class:      CSE 455, Software Engineering (Winter 2014)
  * School:     California State University, San Bernardino
- * Assignment: 3B
  *
  * Copyright 2014 Andrew Brinker
  */
