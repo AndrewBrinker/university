@@ -20,6 +20,13 @@ class preprocessor {
   grammarfile run();
 
  private:
+  grammarfile load();
+  grammarfile expand();
+
+  std::string name;
+  grammarfile file;
+  bool _is_expanded;
+
   DISALLOW_COPY_AND_ASSIGN(preprocessor);
 };
 

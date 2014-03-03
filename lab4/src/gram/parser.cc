@@ -16,9 +16,6 @@
 
 #define DELIM     "$"
 #define EPSILON   "e"
-#define COMMENT   "#"
-#define SPLIT     "|"
-#define TEMP_FILE ".tmpfile"
 
 namespace gram {
 

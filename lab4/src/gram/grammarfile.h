@@ -13,6 +13,7 @@ namespace gram {
 class grammarfile {
  public:
   grammarfile();
+  explicit grammarfile(std::list<std::string>);
   grammarfile(const grammarfile &);
 
   // Assignment operator

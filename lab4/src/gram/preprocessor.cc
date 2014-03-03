@@ -4,18 +4,49 @@
 
 #include "./preprocessor.h"
 #include <string>
+#include <fstream>
 #include <cstdio>
 #include "./grammarfile.h"
 
+#define COMMENT   "#"
+#define SPLIT     "|"
+#define SEP       "->"
+
 namespace gram {
 
-preprocessor::preprocessor(std::string file_name) {
-    printf("%s", file_name.c_str());
+preprocessor::preprocessor(std::string file_name) :
+                           name(file_name),
+                           _is_expanded(false) {
+    file = load();
 }
 
 grammarfile preprocessor::run() {
-    grammarfile g;
+    if (_is_expanded) return file;
+    return expand();
+}
+
+grammarfile preprocessor::load() {
+    // Strip out whitespace
+    // Strip out comments
+    // If the first line is a terminal, set _is_expanded to true
+    // Return the stripped grammarfile
+    std::ifstream input_file(name);
+    std::list<std::string> intermediary;
+    for (std::string line; getline(input_file, line);) {
+        if (line[0] == COMMENT[0]) continue;
+        if (line == "\n") continue;
+        line.erase(std::remove(line.begin(), line.end(), ' '), line.end());
+        intermediary.push_back(line + "\n");
+    }
+    input_file.close();
+    std::string first_line = *(intermediary.begin());
+    if (!(first_line.find(SEP) != std::string::npos)) _is_expanded = true;
+    grammarfile g(intermediary);
     return g;
+}
+
+grammarfile preprocessor::expand() {
+    return file;
 }
 
 /*

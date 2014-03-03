@@ -11,6 +11,10 @@ namespace gram {
 
 grammarfile::grammarfile() : contents(0), _is_clear(true) {}
 
+grammarfile::grammarfile(std::list<std::string> intermediary) {
+    contents = intermediary;
+}
+
 grammarfile::grammarfile(const grammarfile &other) {
     contents = other.contents;
 }
