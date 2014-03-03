@@ -16,17 +16,32 @@
 
 namespace gram {
 
+
+/**
+ * Set internal variables and load the file
+ * @param  file_name  -> The name of the file to be loaded
+ */
 preprocessor::preprocessor(std::string file_name)
                          : name(file_name),
                            _is_expanded(false) {
     file = load();
 }
 
+
+/**
+ * Run the preprocessing and return the grammarfile
+ * @return the loaded grammarfile
+ */
 grammarfile preprocessor::run() {
     if (_is_expanded) return file;
     return expand();
 }
 
+
+/**
+ * Load the file into a grammarfile, and set internal variables appropriately
+ * @return the loaded grammarfile
+ */
 grammarfile preprocessor::load() {
     // Strip out whitespace
     // Strip out comments
@@ -47,6 +62,11 @@ grammarfile preprocessor::load() {
     return g;
 }
 
+
+/**
+ * Expand the given grammarfile for reading by the parser
+ * @return the expanded grammarfile
+ */
 grammarfile preprocessor::expand() {
   std::set<std::string> terminals;
   for (auto it = file.contents.begin(); it != file.contents.end(); ++it) {

@@ -74,7 +74,7 @@ std::map<char, std::set<char>> parser::follow() const {
 /**
  * Run the preprocessor
  * @param  file_name -> The name of the file to be processed
- * @return           The grammarfile created
+ * @return the grammarfile created
  */
 grammarfile parser::process(std::string file_name) {
   preprocessor p(file_name);
@@ -226,7 +226,7 @@ void parser::addSetToFollow(char nonterminal,
 /**
  * Checks whether epsilon is present in the given set.
  * @param  first -> The set being checked for epsilon
- * @return       -> The result of the test
+ * @return the result of the test
  */
 bool parser::hasEpsilon(std::set<char> first) {
   return first.find(EPSILON[0]) != first.end();
@@ -236,7 +236,7 @@ bool parser::hasEpsilon(std::set<char> first) {
 /**
  * Checks whether the given symbol is a non_terminal
  * @param  symbol -> The symbol being checked
- * @return        TRUE if a terminal, FALSE otherwise
+ * @return TRUE if a terminal, FALSE otherwise
  */
 bool parser::isNonTerminal(char symbol) {
   return _non_terminals.find(symbol) != _non_terminals.end();
