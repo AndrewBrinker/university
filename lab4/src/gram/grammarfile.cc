@@ -2,7 +2,7 @@
  * Copyright 2014 Andrew Brinker
  */
 
-#include "./grammarfile.h"
+#include "./GrammarFile.h"
 #include <string>
 #include <list>
 #include <cstdio>
@@ -13,13 +13,13 @@ namespace gram {
 /**
  * Set internal variables appropriately
  */
-grammarfile::grammarfile() : contents(0), _is_clear(true) {}
+GrammarFile::GrammarFile() : contents(0), _is_clear(true) {}
 
 
 /**
- * Initialize the grammarfile with a list of strings.
+ * Initialize the GrammarFile with a list of strings.
  */
-grammarfile::grammarfile(std::list<std::string> intermediary) {
+GrammarFile::GrammarFile(std::list<std::string> intermediary) {
     contents = intermediary;
 }
 
@@ -27,7 +27,7 @@ grammarfile::grammarfile(std::list<std::string> intermediary) {
 /**
  * Copy constructor. Works as expected.
  */
-grammarfile::grammarfile(const grammarfile &other) {
+GrammarFile::GrammarFile(const GrammarFile &other) {
     contents = other.contents;
 }
 
@@ -35,7 +35,7 @@ grammarfile::grammarfile(const grammarfile &other) {
 /**
  * Assignment operator. Works as expected.
  */
-grammarfile& grammarfile::operator=(const grammarfile &other) {
+GrammarFile& GrammarFile::operator=(const GrammarFile &other) {
     contents = other.contents;
     return *this;
 }
@@ -44,7 +44,7 @@ grammarfile& grammarfile::operator=(const grammarfile &other) {
 /*
  * Get each line in succession from internal contents.
  */
-bool grammarfile::getline(std::string *line) {
+bool GrammarFile::getline(std::string *line) {
     if (_is_clear) sentry = contents.begin();
     else if (sentry == contents.end()) return -1;
     *line = *sentry;
@@ -56,7 +56,7 @@ bool grammarfile::getline(std::string *line) {
 /**
  * Reset internal variables.
  */
-void grammarfile::clear() {
+void GrammarFile::clear() {
     _is_clear = true;
 }
 

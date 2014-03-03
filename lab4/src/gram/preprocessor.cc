@@ -2,12 +2,12 @@
  * Copyright 2014 Andrew Brinker
  */
 
-#include "./preprocessor.h"
+#include "./Preprocessor.h"
 #include <string>
 #include <set>
 #include <fstream>
 #include <cstdio>
-#include "./grammarfile.h"
+#include "./GrammarFile.h"
 
 #define COMMENT   "#"
 #define SPLIT     "|"
@@ -21,7 +21,7 @@ namespace gram {
  * Set internal variables and load the file
  * @param  file_name  -> The name of the file to be loaded
  */
-preprocessor::preprocessor(std::string file_name)
+Preprocessor::Preprocessor(std::string file_name)
                          : name(file_name),
                            _is_expanded(false) {
     file = load();
@@ -29,24 +29,24 @@ preprocessor::preprocessor(std::string file_name)
 
 
 /**
- * Run the preprocessing and return the grammarfile
- * @return the loaded grammarfile
+ * Run the preprocessing and return the GrammarFile
+ * @return the loaded GrammarFile
  */
-grammarfile preprocessor::run() {
+GrammarFile Preprocessor::run() {
     if (_is_expanded) return file;
     return expand();
 }
 
 
 /**
- * Load the file into a grammarfile, and set internal variables appropriately
- * @return the loaded grammarfile
+ * Load the file into a GrammarFile, and set internal variables appropriately
+ * @return the loaded GrammarFile
  */
-grammarfile preprocessor::load() {
+GrammarFile Preprocessor::load() {
     // Strip out whitespace
     // Strip out comments
     // If the first line is a terminal, set _is_expanded to true
-    // Return the stripped grammarfile
+    // Return the stripped GrammarFile
     std::ifstream input_file(name);
     std::list<std::string> intermediary;
     for (std::string line; getline(input_file, line);) {
@@ -58,16 +58,16 @@ grammarfile preprocessor::load() {
     input_file.close();
     std::string first_line = *(intermediary.begin());
     if (!(first_line.find(SEP) != std::string::npos)) _is_expanded = true;
-    grammarfile g(intermediary);
+    GrammarFile g(intermediary);
     return g;
 }
 
 
 /**
- * Expand the given grammarfile for reading by the parser
- * @return the expanded grammarfile
+ * Expand the given GrammarFile for reading by the parser
+ * @return the expanded GrammarFile
  */
-grammarfile preprocessor::expand() {
+GrammarFile Preprocessor::expand() {
   std::set<std::string> terminals;
   for (auto it = file.contents.begin(); it != file.contents.end(); ++it) {
     size_t i = 0;

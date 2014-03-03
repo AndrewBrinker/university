@@ -10,14 +10,14 @@
 
 namespace gram {
 
-class grammarfile {
+class GrammarFile {
  public:
-  grammarfile();
-  explicit grammarfile(std::list<std::string>);
-  grammarfile(const grammarfile &);
+  GrammarFile();
+  explicit GrammarFile(std::list<std::string>);
+  GrammarFile(const GrammarFile &);
 
   // Assignment operator
-  grammarfile& operator=(const grammarfile &);
+  GrammarFile& operator=(const GrammarFile &);
 
   // Get the next line and increment the sentry.
   bool getline(std::string *);

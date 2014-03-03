@@ -2,7 +2,7 @@
  * Copyright 2014 Andrew Brinker
  */
 
-#include "./parser.h"
+#include "./Parser.h"
 #include <cstdio>
 #include <cctype>
 #include <set>
@@ -11,8 +11,8 @@
 #include <fstream>
 #include <list>
 #include <vector>
-#include "./preprocessor.h"
-#include "./grammarfile.h"
+#include "./Preprocessor.h"
+#include "./GrammarFile.h"
 
 #define DELIM     "$"
 #define EPSILON   "e"
@@ -20,11 +20,11 @@
 namespace gram {
 
 /**
- * Load the contents of the given parser into the class
+ * Load the contents of the given Parser into the class
  * @param  file_name -> name of the file being loaded
  */
-parser::parser(std::string file_name) {
-    grammarfile file = process(file_name);
+Parser::Parser(std::string file_name) {
+    GrammarFile file = process(file_name);
     std::string line = "";
     bool first_production = true;
     while (file.getline(&line)) {
@@ -44,49 +44,49 @@ parser::parser(std::string file_name) {
 
 
 /**
- * Finds the first and follow sets for the parser
+ * Finds the first and follow sets for the Parser
  * @return exit code
  */
-bool parser::parse() {
+bool Parser::parse() {
   if (!findFirst()) return -1;
   return findFollow();
 }
 
 
 /**
- * Returns the first sets for the parser
+ * Returns the first sets for the Parser
  * @return the first sets
  */
-std::map<char, std::set<char>> parser::first() const {
+std::map<char, std::set<char>> Parser::first() const {
   return _first;
 }
 
 
 /**
- * Returns the follow sets for the parser
+ * Returns the follow sets for the Parser
  * @return the follow sets
  */
-std::map<char, std::set<char>> parser::follow() const {
+std::map<char, std::set<char>> Parser::follow() const {
   return _follow;
 }
 
 
 /**
- * Run the preprocessor
+ * Run the Preprocessor
  * @param  file_name -> The name of the file to be processed
- * @return the grammarfile created
+ * @return the GrammarFile created
  */
-grammarfile parser::process(std::string file_name) {
-  preprocessor p(file_name);
+GrammarFile Parser::process(std::string file_name) {
+  Preprocessor p(file_name);
   return p.run();
 }
 
 
 /**
- * Finds the first set for the parser
+ * Finds the first set for the Parser
  * @return exit code
  */
-bool parser::findFirst() {
+bool Parser::findFirst() {
   firstForTerminals();
   firstForEpsilonProductions();
   firstForNonterminals();
@@ -98,7 +98,7 @@ bool parser::findFirst() {
  * Find the follow set for each symbol.
  * @return exit code
  */
-bool parser::findFollow() {
+bool Parser::findFollow() {
   bool changed;
   do {
     changed = false;
@@ -129,7 +129,7 @@ bool parser::findFollow() {
 /**
  * Applies the first rule for finding the first sets
  */
-void parser::firstForTerminals() {
+void Parser::firstForTerminals() {
   for (auto terminal : _terminals) {
     _first[terminal].insert(terminal);
   }
@@ -139,7 +139,7 @@ void parser::firstForTerminals() {
 /**
  * Applies the second rule for finding the first sets
  */
-void parser::firstForEpsilonProductions() {
+void Parser::firstForEpsilonProductions() {
   for (auto production : _productions) {
     if (production.substr(3) == EPSILON) {
       _first[production[0]].insert(EPSILON[0]);
@@ -151,7 +151,7 @@ void parser::firstForEpsilonProductions() {
 /**
  * Applies the third rule for finding the first set
  */
-void parser::firstForNonterminals() {
+void Parser::firstForNonterminals() {
   bool changed;
   do {
     changed = false;
@@ -185,7 +185,7 @@ void parser::firstForNonterminals() {
  * @param first       -> The symbols being added
  * @param changed     -> A flag to see if anything actually changed
  */
-void parser::addSetToFirst(char nonterminal,
+void Parser::addSetToFirst(char nonterminal,
                            std::set<char> first,
                            bool *changed) {
   for (auto symbol : first) {
@@ -201,7 +201,7 @@ void parser::addSetToFirst(char nonterminal,
  * @param symbol      -> The symbol being added
  * @param changed     -> A flag to see if anything actually changed
  */
-void parser::addCharToFirst(char nonterminal, char symbol, bool *changed) {
+void Parser::addCharToFirst(char nonterminal, char symbol, bool *changed) {
   auto result = _first[nonterminal].insert(symbol);
   if (result.second) *changed = true;
 }
@@ -213,7 +213,7 @@ void parser::addCharToFirst(char nonterminal, char symbol, bool *changed) {
  * @param follow      -> The symbols being added
  * @param changed     -> A flag to see if anything actually changed
  */
-void parser::addSetToFollow(char nonterminal,
+void Parser::addSetToFollow(char nonterminal,
                             std::set<char> follow,
                             bool *changed) {
   for (auto symbol : follow) {
@@ -228,7 +228,7 @@ void parser::addSetToFollow(char nonterminal,
  * @param  first -> The set being checked for epsilon
  * @return the result of the test
  */
-bool parser::hasEpsilon(std::set<char> first) {
+bool Parser::hasEpsilon(std::set<char> first) {
   return first.find(EPSILON[0]) != first.end();
 }
 
@@ -238,7 +238,7 @@ bool parser::hasEpsilon(std::set<char> first) {
  * @param  symbol -> The symbol being checked
  * @return TRUE if a terminal, FALSE otherwise
  */
-bool parser::isNonTerminal(char symbol) {
+bool Parser::isNonTerminal(char symbol) {
   return _non_terminals.find(symbol) != _non_terminals.end();
 }
 

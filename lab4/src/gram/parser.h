@@ -5,7 +5,7 @@
 #include <string>
 #include <set>
 #include <map>
-#include "./grammarfile.h"
+#include "./GrammarFile.h"
 
 #ifndef PARSER_H
 #define PARSER_H
@@ -16,9 +16,9 @@
 
 namespace gram {
 
-class parser {
+class Parser {
  public:
-  explicit parser(std::string);
+  explicit Parser(std::string);
   bool parse();
 
   // Accessor methods for FIRST and FOLLOW
@@ -26,7 +26,7 @@ class parser {
   std::map<char, std::set<char>> follow() const;
 
  private:
-  grammarfile process(std::string);
+  GrammarFile process(std::string);
 
   // Wrapper methods for finding FIRST and FOLLOW
   bool findFirst();
@@ -54,7 +54,7 @@ class parser {
   std::map<char, std::set<char>> _first;
   std::map<char, std::set<char>> _follow;
 
-  DISALLOW_COPY_AND_ASSIGN(parser);
+  DISALLOW_COPY_AND_ASSIGN(Parser);
 };
 
 }  // namespace gram
