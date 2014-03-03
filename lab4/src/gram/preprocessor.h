@@ -3,6 +3,7 @@
  */
 
 #include <string>
+#include "./grammarfile.h"
 
 #ifndef PREPROCESSOR_H
 #define PREPROCESSOR_H
@@ -16,6 +17,7 @@ namespace gram {
 class preprocessor {
  public:
   explicit preprocessor(std::string);
+  grammarfile run();
 
  private:
   DISALLOW_COPY_AND_ASSIGN(preprocessor);

@@ -2,15 +2,17 @@
  * Copyright 2014 Andrew Brinker
  */
 
-#include "./grammar.h"
+#include "./parser.h"
+#include <cstdio>
+#include <cctype>
 #include <set>
 #include <map>
 #include <string>
 #include <fstream>
-#include <cstdio>
-#include <cctype>
 #include <list>
 #include <vector>
+#include "./preprocessor.h"
+#include "./grammarfile.h"
 
 #define DELIM     "$"
 #define EPSILON   "e"
@@ -21,40 +23,34 @@
 namespace gram {
 
 /**
- * Load the contents of the given grammar into the class
+ * Load the contents of the given parser into the class
  * @param  file_name -> name of the file being loaded
- * @return           -> exit code
  */
-grammar::grammar(std::string file_name) : _condensed(true) {
-    expandFile(file_name);
-    if (_condensed) file_name = TEMP_FILE;
-    std::ifstream input_file(file_name);
-    // The terminals section
-    for (std::string line; getline(input_file, line);) {
+parser::parser(std::string file_name) {
+    grammarfile file = process(file_name);
+    std::string line = "";
+    bool first_production = true;
+    while (file.getline(&line)) {
       if (line == DELIM) break;
       _terminals.insert(line[0]);
     }
-    // The productions section
-    std::string first_line;
-    getline(input_file, first_line);
-    _follow[first_line[0]].insert(DELIM[0]);
-    _non_terminals.insert(first_line[0]);
-    _productions.insert(first_line);
-    for (std::string line; getline(input_file, line);) {
+    while (file.getline(&line)) {
       if (line == DELIM) break;
+      if (first_production) {
+        _follow[line[0]].insert(DELIM[0]);
+        first_production = false;
+      }
       _non_terminals.insert(line[0]);
       _productions.insert(line);
     }
-    input_file.close();
-    if (_condensed) remove(file_name.c_str());
 }
 
 
 /**
- * Finds the first and follow sets for the grammar
+ * Finds the first and follow sets for the parser
  * @return exit code
  */
-bool grammar::parse() {
+bool parser::parse() {
   bool failed = findFirst();
   if (failed) return true;
   failed = findFollow();
@@ -63,85 +59,39 @@ bool grammar::parse() {
 
 
 /**
- * Returns the first sets for the grammar
+ * Returns the first sets for the parser
  * @return the first sets
  */
-std::map<char, std::set<char>> grammar::first() const {
+std::map<char, std::set<char>> parser::first() const {
   return _first;
 }
 
 
 /**
- * Returns the follow sets for the grammar
+ * Returns the follow sets for the parser
  * @return the follow sets
  */
-std::map<char, std::set<char>> grammar::follow() const {
+std::map<char, std::set<char>> parser::follow() const {
   return _follow;
 }
 
 
 /**
- * Converts the file from the compressed grammar syntax to the expanded syntax.
- * @param file_name -> The name of the file being expanded
+ * Run the preprocessor
+ * @param  file_name -> The name of the file to be processed
+ * @return           The grammarfile created
  */
-void grammar::expandFile(std::string file_name) {
-  // 1) Ignore blank lines (done)
-  // 2) Ignore comments (done)
-  // 3) Remove whitespace (done)
-  // 4) Split across OR (done)
-  // 5) Populate list of terminals
-  // 6) Insert section delimiters (done)
-  std::ifstream input_file(file_name);
-  std::list<std::string> intermediary;
-  std::set<std::string> terminals;
-  for (std::string line; getline(input_file, line);) {
-    if (line[0] == COMMENT[0]) continue;
-    if (line == "\n") continue;
-    line.erase(std::remove(line.begin(), line.end(), ' '), line.end());
-    intermediary.push_back(line + "\n");
-  }
-  input_file.close();
-  for (auto it = intermediary.begin(); it != intermediary.end(); ++it) {
-    if (it->size() <= 3) {
-      _condensed = false;
-      break;
-    }
-    size_t i = 0;
-    std::string lhs = it->substr(0, 1);
-    std::string rhs = it->substr(3);
-    while (i < rhs.length()) {
-      if (rhs[i] == SPLIT[0]) {
-        *it = it->substr(0, i + 3) + "\n";
-        intermediary.push_back(lhs + "->" + rhs.substr(i+1));
-        break;
-      } else if (!isupper(rhs[i]) && rhs[i] != '\n') {
-        terminals.insert(rhs.substr(i, 1));
-      }
-      ++i;
-    }
-  }
-  if (_condensed) {
-    std::string delim_line = DELIM;
-    delim_line += "\n";
-    intermediary.push_front(delim_line);
-    for (auto symbol : terminals) {
-      intermediary.push_front(symbol + "\n");
-    }
-    intermediary.push_back(delim_line);
-    std::ofstream output_file(TEMP_FILE);
-    for (auto line : intermediary) {
-      output_file << line;
-    }
-    output_file.close();
-  }
+grammarfile parser::process(std::string file_name) {
+  preprocessor p(file_name);
+  return p.run();
 }
 
 
 /**
- * Finds the first set for the grammar
+ * Finds the first set for the parser
  * @return exit code
  */
-bool grammar::findFirst() {
+bool parser::findFirst() {
   firstForTerminals();
   firstForEpsilonProductions();
   firstForNonterminals();
@@ -153,7 +103,7 @@ bool grammar::findFirst() {
  * Find the follow set for each symbol.
  * @return exit code
  */
-bool grammar::findFollow() {
+bool parser::findFollow() {
   bool changed;
   do {
     changed = false;
@@ -184,7 +134,7 @@ bool grammar::findFollow() {
 /**
  * Applies the first rule for finding the first sets
  */
-void grammar::firstForTerminals() {
+void parser::firstForTerminals() {
   for (auto terminal : _terminals) {
     _first[terminal].insert(terminal);
   }
@@ -194,7 +144,7 @@ void grammar::firstForTerminals() {
 /**
  * Applies the second rule for finding the first sets
  */
-void grammar::firstForEpsilonProductions() {
+void parser::firstForEpsilonProductions() {
   for (auto production : _productions) {
     if (production.substr(3) == EPSILON) {
       _first[production[0]].insert(EPSILON[0]);
@@ -206,7 +156,7 @@ void grammar::firstForEpsilonProductions() {
 /**
  * Applies the third rule for finding the first set
  */
-void grammar::firstForNonterminals() {
+void parser::firstForNonterminals() {
   bool changed;
   do {
     changed = false;
@@ -240,7 +190,7 @@ void grammar::firstForNonterminals() {
  * @param first       -> The symbols being added
  * @param changed     -> A flag to see if anything actually changed
  */
-void grammar::addSetToFirst(char nonterminal,
+void parser::addSetToFirst(char nonterminal,
                             std::set<char> first,
                             bool *changed) {
   for (auto symbol : first) {
@@ -256,7 +206,7 @@ void grammar::addSetToFirst(char nonterminal,
  * @param symbol      -> The symbol being added
  * @param changed     -> A flag to see if anything actually changed
  */
-void grammar::addCharToFirst(char nonterminal, char symbol, bool *changed) {
+void parser::addCharToFirst(char nonterminal, char symbol, bool *changed) {
   auto result = _first[nonterminal].insert(symbol);
   if (result.second) *changed = true;
 }
@@ -268,7 +218,7 @@ void grammar::addCharToFirst(char nonterminal, char symbol, bool *changed) {
  * @param follow      -> The symbols being added
  * @param changed     -> A flag to see if anything actually changed
  */
-void grammar::addSetToFollow(char nonterminal,
+void parser::addSetToFollow(char nonterminal,
                             std::set<char> follow,
                             bool *changed) {
   for (auto symbol : follow) {
@@ -283,7 +233,7 @@ void grammar::addSetToFollow(char nonterminal,
  * @param  first -> The set being checked for epsilon
  * @return       -> The result of the test
  */
-bool grammar::hasEpsilon(std::set<char> first) {
+bool parser::hasEpsilon(std::set<char> first) {
   return first.find(EPSILON[0]) != first.end();
 }
 
@@ -293,7 +243,7 @@ bool grammar::hasEpsilon(std::set<char> first) {
  * @param  symbol -> The symbol being checked
  * @return        TRUE if a terminal, FALSE otherwise
  */
-bool grammar::isNonTerminal(char symbol) {
+bool parser::isNonTerminal(char symbol) {
   return _non_terminals.find(symbol) != _non_terminals.end();
 }
 

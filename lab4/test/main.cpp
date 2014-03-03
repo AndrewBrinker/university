@@ -25,12 +25,15 @@ int main(int argc, char **argv) {
         return 0;
     }
 
-    gram::grammar g(argv[1]);
-    g.parse();
+    gram::parser p;
+    p.init(argv[1]);
+    p.parse();
+
     printf("FIRST:\n");
-    print_mapset(g.first());
+    print_mapset(p.first());
+
     printf("FOLLOW:\n");
-    print_mapset(g.follow());
+    print_mapset(p.follow());
 
     return 0;
 }

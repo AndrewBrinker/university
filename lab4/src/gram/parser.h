@@ -5,9 +5,10 @@
 #include <string>
 #include <set>
 #include <map>
+#include "./grammarfile.h"
 
-#ifndef GRAMMAR_H
-#define GRAMMAR_H
+#ifndef PARSER_H
+#define PARSER_H
 
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \
   TypeName(const TypeName&);               \
@@ -15,9 +16,9 @@
 
 namespace gram {
 
-class grammar {
+class parser {
  public:
-  explicit grammar(std::string);
+  explicit parser(std::string);
   bool parse();
 
   // Accessor methods for FIRST and FOLLOW
@@ -25,7 +26,7 @@ class grammar {
   std::map<char, std::set<char>> follow() const;
 
  private:
-  void expandFile(std::string);
+  grammarfile process(std::string);
 
   // Wrapper methods for finding FIRST and FOLLOW
   bool findFirst();
@@ -52,11 +53,10 @@ class grammar {
   std::set<std::string> _productions;
   std::map<char, std::set<char>> _first;
   std::map<char, std::set<char>> _follow;
-  bool _condensed;
 
-  DISALLOW_COPY_AND_ASSIGN(grammar);
+  DISALLOW_COPY_AND_ASSIGN(parser);
 };
 
 }  // namespace gram
 
-#endif  // GRAMMAR_H
+#endif  // PARSER_H
