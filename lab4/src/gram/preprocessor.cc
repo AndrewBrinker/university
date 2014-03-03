@@ -56,7 +56,7 @@ grammarfile preprocessor::expand() {
     while (i < rhs.length()) {
       if (rhs[i] == SPLIT[0]) {
         *it = it->substr(0, i + 3) + "\n";
-        file.contents.push_back(lhs + "->" + rhs.substr(i+1));
+        file.contents.push_back(lhs + SEP + rhs.substr(i+1));
         break;
       } else if (!isupper(rhs[i]) && rhs[i] != '\n') {
         terminals.insert(rhs.substr(i, 1));
@@ -64,12 +64,9 @@ grammarfile preprocessor::expand() {
       ++i;
     }
   }
-  std::string delim_line = DELIM;
-  delim_line += "\n";
+  std::string delim_line = std::string(DELIM) + "\n";
   file.contents.push_front(delim_line);
-  for (auto symbol : terminals) {
-    file.contents.push_front(symbol + "\n");
-  }
+  for (auto symbol : terminals) file.contents.push_front(symbol + "\n");
   file.contents.push_back(delim_line);
   return file;
 }
