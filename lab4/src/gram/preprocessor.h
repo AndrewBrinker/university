@@ -3,28 +3,28 @@
  */
 
 #include <string>
-#include "./GrammarFile.h"
+#include "./Grammar.h"
 
 #ifndef PREPROCESSOR_H
 #define PREPROCESSOR_H
 
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \
   TypeName(const TypeName&);               \
-  void operator=(const TypeName&)
+  void operator=(const TypeName&);
 
 namespace gram {
 
 class Preprocessor {
  public:
   explicit Preprocessor(std::string);
-  GrammarFile run();
+  Grammar run();
 
  private:
-  GrammarFile load();
-  GrammarFile expand();
+  Grammar load();
+  Grammar expand();
 
   std::string name;
-  GrammarFile file;
+  Grammar file;
   bool _is_expanded;
 
   DISALLOW_COPY_AND_ASSIGN(Preprocessor);

@@ -11,8 +11,9 @@
 #include <fstream>
 #include <list>
 #include <vector>
+#include <iostream>
 #include "./Preprocessor.h"
-#include "./GrammarFile.h"
+#include "./Grammar.h"
 
 #define DELIM     "$"
 #define EPSILON   "e"
@@ -24,7 +25,7 @@ namespace gram {
  * @param  file_name -> name of the file being loaded
  */
 Parser::Parser(std::string file_name) {
-    GrammarFile file = process(file_name);
+    Grammar file = process(file_name);
     std::string line = "";
     bool first_production = true;
     while (file.getline(&line)) {
@@ -74,9 +75,9 @@ std::map<char, std::set<char>> Parser::follow() const {
 /**
  * Run the Preprocessor
  * @param  file_name -> The name of the file to be processed
- * @return the GrammarFile created
+ * @return the Grammar created
  */
-GrammarFile Parser::process(std::string file_name) {
+Grammar Parser::process(std::string file_name) {
   Preprocessor p(file_name);
   return p.run();
 }

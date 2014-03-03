@@ -5,14 +5,14 @@
 #include <string>
 #include <set>
 #include <map>
-#include "./GrammarFile.h"
+#include "./Grammar.h"
 
 #ifndef PARSER_H
 #define PARSER_H
 
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \
   TypeName(const TypeName&);               \
-  void operator=(const TypeName&)
+  void operator=(const TypeName&);
 
 namespace gram {
 
@@ -26,7 +26,7 @@ class Parser {
   std::map<char, std::set<char>> follow() const;
 
  private:
-  GrammarFile process(std::string);
+  Grammar process(std::string);
 
   // Wrapper methods for finding FIRST and FOLLOW
   bool findFirst();

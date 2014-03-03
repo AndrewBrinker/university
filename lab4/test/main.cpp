@@ -7,6 +7,7 @@
 #include <cstdio>
 #include <cctype>
 #include <map>
+#include <iostream>
 
 void print_mapset(std::map<char, std::set<char>> input) {
     for (auto pair : input) {
