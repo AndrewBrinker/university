@@ -48,10 +48,8 @@ parser::parser(std::string file_name) {
  * @return exit code
  */
 bool parser::parse() {
-  bool failed = findFirst();
-  if (failed) return true;
-  failed = findFollow();
-  return failed;
+  if (!findFirst()) return -1;
+  return findFollow();
 }
 
 

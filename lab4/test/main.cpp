@@ -2,7 +2,7 @@
  * Copyright 2014 Andrew Brinker
  */
 
-#include <gram/grammar.h>
+#include <gram/parser.h>
 #include <set>
 #include <cstdio>
 #include <cctype>
@@ -25,8 +25,7 @@ int main(int argc, char **argv) {
         return 0;
     }
 
-    gram::parser p;
-    p.init(argv[1]);
+    gram::parser p(argv[1]);
     p.parse();
 
     printf("FIRST:\n");
