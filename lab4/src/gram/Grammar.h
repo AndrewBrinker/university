@@ -21,9 +21,6 @@ class Grammar {
 
   // Variables
   std::list<std::string> contents;
-
- private:
-  bool _is_clear;
 };
 
 }  // namespace gram

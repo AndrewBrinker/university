@@ -26,20 +26,33 @@ namespace gram {
  */
 Parser::Parser(std::string file_name) {
     Grammar file = process(file_name);
-    std::string line = "";
+    std::list<std::string>::iterator line = file.contents.begin();
     bool first_production = true;
-    while (file.getline(&line)) {
-      if (line == DELIM) break;
-      _terminals.insert(line[0]);
+    while (true) {
+      std::string current = *line;
+      current.erase(
+        std::remove(current.begin(), current.end(), '\n'),
+        current.end()
+      );
+      if (current == DELIM) break;
+      _terminals.insert(current[0]);
+      ++line;
     }
-    while (file.getline(&line)) {
-      if (line == DELIM) break;
+    ++line;
+    while (true) {
+      std::string current = *line;
+      current.erase(
+        std::remove(current.begin(), current.end(), '\n'),
+        current.end()
+      );
+      if (current == DELIM) break;
       if (first_production) {
-        _follow[line[0]].insert(DELIM[0]);
+        _follow[current[0]].insert(DELIM[0]);
         first_production = false;
       }
-      _non_terminals.insert(line[0]);
-      _productions.insert(line);
+      _non_terminals.insert(current[0]);
+      _productions.insert(current + "\n");
+      ++line;
     }
 }
 
