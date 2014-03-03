@@ -16,8 +16,8 @@
 
 namespace gram {
 
-preprocessor::preprocessor(std::string file_name) :
-                           name(file_name),
+preprocessor::preprocessor(std::string file_name)
+                         : name(file_name),
                            _is_expanded(false) {
     file = load();
 }

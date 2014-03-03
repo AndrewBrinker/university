@@ -90,7 +90,7 @@ bool parser::findFirst() {
   firstForTerminals();
   firstForEpsilonProductions();
   firstForNonterminals();
-  return false;
+  return 0;
 }
 
 
@@ -122,7 +122,7 @@ bool parser::findFollow() {
       }
     }
   } while (changed);
-  return false;
+  return 0;
 }
 
 
@@ -186,8 +186,8 @@ void parser::firstForNonterminals() {
  * @param changed     -> A flag to see if anything actually changed
  */
 void parser::addSetToFirst(char nonterminal,
-                            std::set<char> first,
-                            bool *changed) {
+                           std::set<char> first,
+                           bool *changed) {
   for (auto symbol : first) {
     auto result = _first[nonterminal].insert(symbol);
     if (result.second) *changed = true;
