@@ -23,52 +23,33 @@
  * @param  file_name -> name of the file being loaded
  */
 Parser::Parser(const std::string file_name) {
-  // Load the grammar
   Grammar file = process(file_name);
-  // Get an iterator to the file contents.
   std::list<std::string>::iterator line = file.contents.begin();
   bool first_production = true;
-  // Iterate
   do {
-    // Get current line
     std::string curr = *line;
-    // Removed newline
     curr.erase(std::remove(curr.begin(), curr.end(), '\n'), curr.end());
-    // If delimiter, done reading terminals. Break.
     if (curr == DELIM) break;
-    // Otherwise, add symbol to set of terminals
     _terminals.insert(curr[0]);
-    // Increment iterator
     ++line;
   } while (true);
   do {
-    // Icrement iterator (put here to make sure DELIM line is skipped)
     ++line;
-    // Get current line
     std::string curr = *line;
-    // Remove newline
     curr.erase(std::remove(curr.begin(), curr.end(), '\n'), curr.end());
-    // If delimiter, done reading productions. Break.
     if (curr == DELIM) break;
-    // If it's the first one, add delimiter to first of LHS
     if (first_production) {
       _follow[curr[0]].insert(DELIM[0]);
       first_production = false;
     }
-    // Add LHS to set of non-terminals
     _non_terminals.insert(curr[0]);
-    // Add whole line to set of productions
-    _productions.insert(*line);
+    _productions.insert(curr);
   } while (true);
-  for (auto item : _terminals)     std::cout << item << std::endl;
-  for (auto item : _non_terminals) std::cout << item << std::endl;
-  for (auto item : _productions)   std::cout << item;
 }
 
 
 /**
  * Finds the first and follow sets for the Parser
- * @return exit code
  */
 void Parser::parse() {
   findFirst();
@@ -107,7 +88,6 @@ Grammar Parser::process(const std::string file_name) {
 
 /**
  * Finds the first set for the Parser
- * @return exit code
  */
 void Parser::findFirst() {
   bool changed;
@@ -147,7 +127,6 @@ void Parser::findFirst() {
 
 /**
  * Find the follow set for each symbol.
- * @return exit code
  */
 void Parser::findFollow() {
   bool changed;
