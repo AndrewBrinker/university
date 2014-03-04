@@ -26,7 +26,7 @@ int main(int argc, char **argv) {
         return 0;
     }
 
-    gram::Parser p(argv[1]);
+    Parser p(argv[1]);
     p.parse();
 
     printf("FIRST:\n");

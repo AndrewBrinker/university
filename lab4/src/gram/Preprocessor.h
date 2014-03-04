@@ -12,7 +12,6 @@
   TypeName(const TypeName&);               \
   void operator=(const TypeName&);
 
-namespace gram {
 
 class Preprocessor {
  public:
@@ -29,7 +28,5 @@ class Preprocessor {
 
   DISALLOW_COPY_AND_ASSIGN(Preprocessor);
 };
-
-}  // namespace gram
 
 #endif  // PREPROCESSOR_H

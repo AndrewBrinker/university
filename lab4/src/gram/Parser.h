@@ -14,35 +14,23 @@
   TypeName(const TypeName&);               \
   void operator=(const TypeName&);
 
-namespace gram {
-
 class Parser {
  public:
   explicit Parser(std::string);
   void parse();
-
-  // Accessor methods for FIRST and FOLLOW
   std::map<char, std::set<char>> first() const;
   std::map<char, std::set<char>> follow() const;
 
  private:
   Grammar process(std::string);
-
-  // Wrapper methods for finding FIRST and FOLLOW
   void findFirst();
   void findFollow();
-
-  // Assistance methods for updating FIRST
   void addSetToFirst(char, std::set<char>, bool *);
   void addCharToFirst(char, char, bool *);
-
   void addSetToFollow(char, std::set<char>, bool *);
-
-  // Checks whether the given set has epsilon
   bool hasEpsilon(std::set<char>);
   bool isNonTerminal(char);
 
-  // Member variables
   std::set<char> _terminals;
   std::set<char> _non_terminals;
   std::set<std::string> _productions;
@@ -51,7 +39,5 @@ class Parser {
 
   DISALLOW_COPY_AND_ASSIGN(Parser);
 };
-
-}  // namespace gram
 
 #endif  // PARSER_H

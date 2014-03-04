@@ -18,8 +18,6 @@
 #define DELIM     "$"
 #define EPSILON   "e"
 
-namespace gram {
-
 /**
  * Load the contents of the given Parser into the class
  * @param  file_name -> name of the file being loaded
@@ -34,7 +32,7 @@ Parser::Parser(std::string file_name) {
       if (curr == DELIM) break;
       _terminals.insert(curr[0]);
       ++line;
-    } while(true);
+    } while (true);
     do {
       ++line;
       std::string curr = *line;
@@ -46,7 +44,7 @@ Parser::Parser(std::string file_name) {
       }
       _non_terminals.insert(curr[0]);
       _productions.insert(*line);
-    } while(true);
+    } while (true);
 }
 
 
@@ -222,5 +220,3 @@ bool Parser::hasEpsilon(std::set<char> first) {
 bool Parser::isNonTerminal(char symbol) {
   return _non_terminals.find(symbol) != _non_terminals.end();
 }
-
-}  // namespace gram

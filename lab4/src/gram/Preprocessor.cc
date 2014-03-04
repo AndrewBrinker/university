@@ -15,8 +15,6 @@
 #define SEP       "->"
 #define DELIM     "$"
 
-namespace gram {
-
 
 /**
  * Set internal variables and load the file
@@ -87,5 +85,3 @@ Grammar Preprocessor::expand() {
   file.contents.push_back(delim_line);
   return file;
 }
-
-}  // namespace gram

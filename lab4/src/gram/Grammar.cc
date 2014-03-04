@@ -7,8 +7,6 @@
 #include <list>
 #include <cstdio>
 
-namespace gram {
-
 
 /**
  * Set internal variables appropriately
@@ -39,6 +37,3 @@ Grammar& Grammar::operator=(const Grammar &other) {
     contents = other.contents;
     return *this;
 }
-
-
-}  // namespace gram
