@@ -28,35 +28,25 @@ Parser::Parser(std::string file_name) {
     Grammar file = process(file_name);
     std::list<std::string>::iterator line = file.contents.begin();
     bool first_production = true;
-    while (true) {
-      std::string current = *line;
-      current.erase(
-        std::remove(current.begin(), current.end(), '\n'),
-        current.end());
-      if (current == DELIM) break;
-      _terminals.insert(current[0]);
+    do {
+      std::string curr = *line;
+      curr.erase(std::remove(curr.begin(), curr.end(), '\n'), curr.end());
+      if (curr == DELIM) break;
+      _terminals.insert(curr[0]);
       ++line;
-    }
-    ++line;
-    while (true) {
-      std::string current = *line;
-      current.erase(
-        std::remove(current.begin(), current.end(), '\n'),
-        current.end());
-      if (current == DELIM) break;
+    } while(true);
+    do {
+      ++line;
+      std::string curr = *line;
+      curr.erase(std::remove(curr.begin(), curr.end(), '\n'), curr.end());
+      if (curr == DELIM) break;
       if (first_production) {
-        _follow[current[0]].insert(DELIM[0]);
+        _follow[curr[0]].insert(DELIM[0]);
         first_production = false;
       }
-      _non_terminals.insert(current[0]);
-      _productions.insert(current + "\n");
-      ++line;
-    }
-    /*
-    for (auto item : _terminals)     std::cout << item << std::endl;
-    for (auto item : _non_terminals) std::cout << item << std::endl;
-    for (auto item : _productions)   std::cout << item;
-    */
+      _non_terminals.insert(curr[0]);
+      _productions.insert(*line);
+    } while(true);
 }
 
 
@@ -104,9 +94,38 @@ Grammar Parser::process(std::string file_name) {
  * @return exit code
  */
 void Parser::findFirst() {
-  firstForTerminals();
-  firstForEpsilonProductions();
-  firstForNonterminals();
+  for (auto terminal : _terminals) {
+    _first[terminal].insert(terminal);
+  }
+  for (auto production : _productions) {
+    if (production.substr(3) == EPSILON) {
+      _first[production[0]].insert(EPSILON[0]);
+    }
+  }
+  bool changed;
+  do {
+    changed = false;
+    for (auto production : _productions) {
+      size_t i = 0;
+      char lhs = production[0];
+      std::string rhs = production.substr(3);
+      while (i < rhs.length()) {
+        std::set<char> first = _first[rhs[i]];
+        if (hasEpsilon(first)) {
+          first.erase(first.find(EPSILON[0]));
+          addSetToFirst(lhs, first, &changed);
+          ++i;
+        } else {
+          addSetToFirst(lhs, first, &changed);
+          break;
+        }
+        if (i >= rhs.length()) {
+          addCharToFirst(lhs, EPSILON[0], &changed);
+        }
+        ++i;
+      }
+    }
+  } while (changed);
 }
 
 
@@ -133,59 +152,6 @@ void Parser::findFollow() {
           }
         } else if (is_non_terminal && i == rhs.length() - 1) {
           addSetToFollow(rhs[i], _follow[lhs], &changed);
-        }
-        ++i;
-      }
-    }
-  } while (changed);
-}
-
-
-/**
- * Applies the first rule for finding the first sets
- */
-void Parser::firstForTerminals() {
-  for (auto terminal : _terminals) {
-    _first[terminal].insert(terminal);
-  }
-}
-
-
-/**
- * Applies the second rule for finding the first sets
- */
-void Parser::firstForEpsilonProductions() {
-  for (auto production : _productions) {
-    if (production.substr(3) == EPSILON) {
-      _first[production[0]].insert(EPSILON[0]);
-    }
-  }
-}
-
-
-/**
- * Applies the third rule for finding the first set
- */
-void Parser::firstForNonterminals() {
-  bool changed;
-  do {
-    changed = false;
-    for (auto production : _productions) {
-      size_t i = 0;
-      char lhs = production[0];
-      std::string rhs = production.substr(3);
-      while (i < rhs.length()) {
-        std::set<char> first = _first[rhs[i]];
-        if (hasEpsilon(first)) {
-          first.erase(first.find(EPSILON[0]));
-          addSetToFirst(lhs, first, &changed);
-          ++i;
-        } else {
-          addSetToFirst(lhs, first, &changed);
-          break;
-        }
-        if (i >= rhs.length()) {
-          addCharToFirst(lhs, EPSILON[0], &changed);
         }
         ++i;
       }

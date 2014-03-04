@@ -32,11 +32,6 @@ class Parser {
   void findFirst();
   void findFollow();
 
-  // Assistance methods for finding FIRST
-  void firstForTerminals();
-  void firstForEpsilonProductions();
-  void firstForNonterminals();
-
   // Assistance methods for updating FIRST
   void addSetToFirst(char, std::set<char>, bool *);
   void addCharToFirst(char, char, bool *);
