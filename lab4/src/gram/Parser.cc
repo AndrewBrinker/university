@@ -54,6 +54,9 @@ Parser::Parser(std::string file_name) {
       _productions.insert(current + "\n");
       ++line;
     }
+    for (auto item : _terminals)     std::cout << item << std::endl;
+    for (auto item : _non_terminals) std::cout << item << std::endl;
+    for (auto item : _productions)   std::cout << item;
 }
 
 
@@ -61,9 +64,9 @@ Parser::Parser(std::string file_name) {
  * Finds the first and follow sets for the Parser
  * @return exit code
  */
-bool Parser::parse() {
-  if (!findFirst()) return -1;
-  return findFollow();
+void Parser::parse() {
+  findFirst();
+  findFollow();
 }
 
 
@@ -100,11 +103,10 @@ Grammar Parser::process(std::string file_name) {
  * Finds the first set for the Parser
  * @return exit code
  */
-bool Parser::findFirst() {
+void Parser::findFirst() {
   firstForTerminals();
   firstForEpsilonProductions();
   firstForNonterminals();
-  return 0;
 }
 
 
@@ -112,7 +114,7 @@ bool Parser::findFirst() {
  * Find the follow set for each symbol.
  * @return exit code
  */
-bool Parser::findFollow() {
+void Parser::findFollow() {
   bool changed;
   do {
     changed = false;
@@ -136,7 +138,6 @@ bool Parser::findFollow() {
       }
     }
   } while (changed);
-  return 0;
 }
 
 

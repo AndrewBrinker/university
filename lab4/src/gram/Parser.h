@@ -19,7 +19,7 @@ namespace gram {
 class Parser {
  public:
   explicit Parser(std::string);
-  bool parse();
+  void parse();
 
   // Accessor methods for FIRST and FOLLOW
   std::map<char, std::set<char>> first() const;
@@ -29,8 +29,8 @@ class Parser {
   Grammar process(std::string);
 
   // Wrapper methods for finding FIRST and FOLLOW
-  bool findFirst();
-  bool findFollow();
+  void findFirst();
+  void findFollow();
 
   // Assistance methods for finding FIRST
   void firstForTerminals();
