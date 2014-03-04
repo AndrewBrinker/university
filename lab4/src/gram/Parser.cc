@@ -52,9 +52,11 @@ Parser::Parser(std::string file_name) {
       _productions.insert(current + "\n");
       ++line;
     }
+    /*
     for (auto item : _terminals)     std::cout << item << std::endl;
     for (auto item : _non_terminals) std::cout << item << std::endl;
     for (auto item : _productions)   std::cout << item;
+    */
 }
 
 
