@@ -32,8 +32,7 @@ Parser::Parser(std::string file_name) {
       std::string current = *line;
       current.erase(
         std::remove(current.begin(), current.end(), '\n'),
-        current.end()
-      );
+        current.end());
       if (current == DELIM) break;
       _terminals.insert(current[0]);
       ++line;
@@ -43,8 +42,7 @@ Parser::Parser(std::string file_name) {
       std::string current = *line;
       current.erase(
         std::remove(current.begin(), current.end(), '\n'),
-        current.end()
-      );
+        current.end());
       if (current == DELIM) break;
       if (first_production) {
         _follow[current[0]].insert(DELIM[0]);
