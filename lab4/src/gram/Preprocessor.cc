@@ -7,7 +7,6 @@
 #include <set>
 #include <fstream>
 #include <cstdio>
-#include <iostream>
 #include "./Grammar.h"
 
 #define COMMENT   "#"
