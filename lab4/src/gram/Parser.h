@@ -16,20 +16,20 @@
 
 class Parser {
  public:
-  explicit Parser(std::string);
+  explicit Parser(const std::string);
   void parse();
   std::map<char, std::set<char>> first() const;
   std::map<char, std::set<char>> follow() const;
 
  private:
-  Grammar process(std::string);
+  Grammar process(const std::string);
   void findFirst();
   void findFollow();
-  void addSetToFirst(char, std::set<char>, bool *);
-  void addCharToFirst(char, char, bool *);
-  void addSetToFollow(char, std::set<char>, bool *);
-  bool hasEpsilon(std::set<char>);
-  bool isNonTerminal(char);
+  void addSetToFirst(const char, const std::set<char>, bool *);
+  void addCharToFirst(const char, const char, bool *);
+  void addSetToFollow(const char, const std::set<char>, bool *);
+  bool hasEpsilon(const std::set<char>);
+  bool isNonTerminal(const char);
 
   std::set<char> _terminals;
   std::set<char> _non_terminals;

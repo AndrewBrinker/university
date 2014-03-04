@@ -22,29 +22,47 @@
  * Load the contents of the given Parser into the class
  * @param  file_name -> name of the file being loaded
  */
-Parser::Parser(std::string file_name) {
-    Grammar file = process(file_name);
-    std::list<std::string>::iterator line = file.contents.begin();
-    bool first_production = true;
-    do {
-      std::string curr = *line;
-      curr.erase(std::remove(curr.begin(), curr.end(), '\n'), curr.end());
-      if (curr == DELIM) break;
-      _terminals.insert(curr[0]);
-      ++line;
-    } while (true);
-    do {
-      ++line;
-      std::string curr = *line;
-      curr.erase(std::remove(curr.begin(), curr.end(), '\n'), curr.end());
-      if (curr == DELIM) break;
-      if (first_production) {
-        _follow[curr[0]].insert(DELIM[0]);
-        first_production = false;
-      }
-      _non_terminals.insert(curr[0]);
-      _productions.insert(*line);
-    } while (true);
+Parser::Parser(const std::string file_name) {
+  // Load the grammar
+  Grammar file = process(file_name);
+  // Get an iterator to the file contents.
+  std::list<std::string>::iterator line = file.contents.begin();
+  bool first_production = true;
+  // Iterate
+  do {
+    // Get current line
+    std::string curr = *line;
+    // Removed newline
+    curr.erase(std::remove(curr.begin(), curr.end(), '\n'), curr.end());
+    // If delimiter, done reading terminals. Break.
+    if (curr == DELIM) break;
+    // Otherwise, add symbol to set of terminals
+    _terminals.insert(curr[0]);
+    // Increment iterator
+    ++line;
+  } while (true);
+  do {
+    // Icrement iterator (put here to make sure DELIM line is skipped)
+    ++line;
+    // Get current line
+    std::string curr = *line;
+    // Remove newline
+    curr.erase(std::remove(curr.begin(), curr.end(), '\n'), curr.end());
+    // If delimiter, done reading productions. Break.
+    if (curr == DELIM) break;
+    // If it's the first one, add delimiter to first of LHS
+    if (first_production) {
+      _follow[curr[0]].insert(DELIM[0]);
+      first_production = false;
+    }
+    // Add LHS to set of non-terminals
+    _non_terminals.insert(curr[0]);
+    // Add whole line to set of productions
+    _productions.insert(*line);
+  } while (true);
+  for (auto item : _terminals)     std::cout << item << std::endl;
+  for (auto item : _non_terminals) std::cout << item << std::endl;
+  for (auto item : _productions)   std::cout << item;
 }
 
 
@@ -81,7 +99,7 @@ std::map<char, std::set<char>> Parser::follow() const {
  * @param  file_name -> The name of the file to be processed
  * @return the Grammar created
  */
-Grammar Parser::process(std::string file_name) {
+Grammar Parser::process(const std::string file_name) {
   Preprocessor p(file_name);
   return p.run();
 }
@@ -92,6 +110,7 @@ Grammar Parser::process(std::string file_name) {
  * @return exit code
  */
 void Parser::findFirst() {
+  bool changed;
   for (auto terminal : _terminals) {
     _first[terminal].insert(terminal);
   }
@@ -100,7 +119,6 @@ void Parser::findFirst() {
       _first[production[0]].insert(EPSILON[0]);
     }
   }
-  bool changed;
   do {
     changed = false;
     for (auto production : _productions) {
@@ -164,8 +182,8 @@ void Parser::findFollow() {
  * @param first       -> The symbols being added
  * @param changed     -> A flag to see if anything actually changed
  */
-void Parser::addSetToFirst(char nonterminal,
-                           std::set<char> first,
+void Parser::addSetToFirst(const char nonterminal,
+                           const std::set<char> first,
                            bool *changed) {
   for (auto symbol : first) {
     auto result = _first[nonterminal].insert(symbol);
@@ -180,7 +198,9 @@ void Parser::addSetToFirst(char nonterminal,
  * @param symbol      -> The symbol being added
  * @param changed     -> A flag to see if anything actually changed
  */
-void Parser::addCharToFirst(char nonterminal, char symbol, bool *changed) {
+void Parser::addCharToFirst(const char nonterminal,
+                            const char symbol,
+                            bool *changed) {
   auto result = _first[nonterminal].insert(symbol);
   if (result.second) *changed = true;
 }
@@ -192,8 +212,8 @@ void Parser::addCharToFirst(char nonterminal, char symbol, bool *changed) {
  * @param follow      -> The symbols being added
  * @param changed     -> A flag to see if anything actually changed
  */
-void Parser::addSetToFollow(char nonterminal,
-                            std::set<char> follow,
+void Parser::addSetToFollow(const char nonterminal,
+                            const std::set<char> follow,
                             bool *changed) {
   for (auto symbol : follow) {
     auto result = _follow[nonterminal].insert(symbol);
@@ -207,7 +227,7 @@ void Parser::addSetToFollow(char nonterminal,
  * @param  first -> The set being checked for epsilon
  * @return the result of the test
  */
-bool Parser::hasEpsilon(std::set<char> first) {
+bool Parser::hasEpsilon(const std::set<char> first) {
   return first.find(EPSILON[0]) != first.end();
 }
 
@@ -217,6 +237,6 @@ bool Parser::hasEpsilon(std::set<char> first) {
  * @param  symbol -> The symbol being checked
  * @return TRUE if a terminal, FALSE otherwise
  */
-bool Parser::isNonTerminal(char symbol) {
+bool Parser::isNonTerminal(const char symbol) {
   return _non_terminals.find(symbol) != _non_terminals.end();
 }
