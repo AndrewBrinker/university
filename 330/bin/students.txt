@@ -1,0 +1,12 @@
+Smith,Amy ART101
+Smith,Amy MATH412
+Jones,Randy HIST213
+Cobb,Kevin MATH412
+Mo,Jo CSCI330
+Smith,Kathy CSCI330
+Jones,Randy CSCI330
+Smith,Kathy MATH412
+Smith,Kathy ART101
+Cobb,Kevin CSCI330
+No,No CSCI330
+No,No MATH412
