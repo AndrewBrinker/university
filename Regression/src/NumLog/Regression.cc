@@ -8,24 +8,25 @@
 
 #include "./Regression.h"
 #include <string>
+#include <utility>
 #include "./NumberLog.h"
 
 Regression::Regression(std::string x_file_name, std::string y_file_name) {
     NumberLog x_log(x_file_name);
     NumberLog y_log(y_file_name);
-    for (auto item : x_log.getData()) x.push_back(item);
-    for (auto item : y_log.getData()) y.push_back(item);
+    auto x_data = x_log.getData();
+    auto y_data = y_log.getData();
+    auto x_it   = x_data.begin();
+    auto y_it   = y_data.begin();
+    for (; x_it != x_data.end() && y_it != y_data.end(); ++x_it, ++y_it) {
+        data.push_back(std::pair<double, double>(*x_it, *y_it));
+    }
     calculate();
 }
 
 
 void Regression::calculate() {
-    if (x.size() != y.size()) {
-        printf("Data sets are different sizes. Calculations failed.\n");
-        return;
-    }
-
-    int    n         = x.size();
+    int    n         = data.size();
     double num_sum   = 0.0;
     double denom_sum = 0.0;
     double x_avg     = 0.0;
@@ -33,11 +34,11 @@ void Regression::calculate() {
     double num       = 0.0;
     double denom     = 0.0;
 
-    for (int i = 0; i < n; ++i) {
-        num_sum   += x[i] * y[i];
-        denom_sum += x[i] * x[i];
-        x_avg     += x[i];
-        y_avg     += y[i];
+    for (auto pair : data) {
+        num_sum   += pair.first * pair.second;
+        denom_sum += pair.first * pair.first;
+        x_avg     += pair.first;
+        y_avg     += pair.second;
     }
 
     x_avg   /= n;

@@ -7,7 +7,8 @@
  */
 
 #include <string>
-#include <vector>
+#include <list>
+#include <utility>
 
 #ifndef REGRESSION_H
 #define REGRESSION_H
@@ -18,8 +19,7 @@ class Regression {
   void calculate();
 
  private:
-    std::vector<double> x;
-    std::vector<double> y;
+    std::list<std::pair<float, float>> data;
     double _beta_0;
     double _beta_1;
 };
