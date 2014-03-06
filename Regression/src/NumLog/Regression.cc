@@ -24,13 +24,15 @@ void Regression::calculate() {
         printf("Data sets are different sizes. Calculations failed.\n");
         return;
     }
-    auto  x_it          = x.begin();
-    auto  y_it          = y.begin();
-    float numerator_sum = 0.0;
-    float x_squared_sum = 0.0;
-    float x_avg         = 0.0;
-    float y_avg         = 0.0;
-    int   n             = x.size();
+    auto  x_it           = x.begin();
+    auto  y_it           = y.begin();
+    float numerator_sum  = 0.0;
+    float x_squared_sum  = 0.0;
+    float x_avg          = 0.0;
+    float y_avg          = 0.0;
+    float b1_numerator   = 0.0;
+    float b1_denominator = 0.0;
+    int   n              = x.size();
     for (; x_it != x.end() && y_it != y.end(); ++x_it, ++y_it) {
         numerator_sum += (*x_it + *y_it);
         x_squared_sum += (*x_it * *x_it);
@@ -39,7 +41,9 @@ void Regression::calculate() {
     }
     x_avg /= n;
     y_avg /= n;
-    _beta_1 = (numerator_sum - (n * x_avg * y_avg)) / (x_squared_sum - (n * (x_avg * x_avg)));
+    b1_numerator = (numerator_sum - (n * x_avg * y_avg));
+    b1_denominator = (x_squared_sum - (n * (x_avg * x_avg)));
+    _beta_1 = b1_numerator / b1_denominator;
     _beta_0 = y_avg - (_beta_1 * x_avg);
     printf("Beta 1: %f\n", _beta_1);
     printf("Beta 0: %f\n", _beta_0);
