@@ -9,23 +9,20 @@
 #include <string>
 #include <list>
 
-#ifndef FEEDBACKLOG_H
-#define FEEDBACKLOG_H
+#ifndef NUMBERLOG_H
+#define NUMBERLOG_H
 
-class FeedbackLog {
+class NumberLog {
  public:
-  explicit FeedbackLog(std::string);
+  explicit NumberLog(std::string);
+  inline std::list<float> getData() { return data; }
 
  private:
   void input();
-  void output();
-  void process();
-  void message(const unsigned) const;
-
   bool fileExists(std::string);
 
   std::string file_name;
   std::list<float> data;
 };
 
-#endif  // FEEDBACKLOG_H
+#endif  // NUMBERLOG_H

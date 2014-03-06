@@ -8,8 +8,15 @@
 
 #include "./Regression.h"
 #include <string>
+#include "./NumberLog.h"
 
 Regression::Regression(std::string file_name) {
-    std::string name = file_name;
-    return;
+    NumberLog n(file_name);
+    data = n.getData();
+    calculate();
+}
+
+
+void Regression::calculate() {
+    // Do calculations
 }

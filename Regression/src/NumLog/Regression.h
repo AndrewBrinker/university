@@ -7,6 +7,7 @@
  */
 
 #include <string>
+#include <list>
 
 #ifndef REGRESSION_H
 #define REGRESSION_H
@@ -14,8 +15,10 @@
 class Regression {
  public:
   explicit Regression(std::string);
+  void calculate();
 
  private:
+    std::list<float> data;
     int _beta_0;
     int _beta_1;
 };
