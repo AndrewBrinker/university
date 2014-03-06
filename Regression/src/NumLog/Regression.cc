@@ -13,8 +13,8 @@
 Regression::Regression(std::string x_file_name, std::string y_file_name) {
     NumberLog x_log(x_file_name);
     NumberLog y_log(y_file_name);
-    x = x_log.getData();
-    y = y_log.getData();
+    for (auto item : x_log.getData()) x.push_back(item);
+    for (auto item : y_log.getData()) y.push_back(item);
     calculate();
 }
 
@@ -25,30 +25,29 @@ void Regression::calculate() {
         return;
     }
 
-    auto  x_it            = x.begin();
-    auto  y_it            = y.begin();
-    int   n               = x.size();
+    int    n         = x.size();
+    double num_sum   = 0.0;
+    double denom_sum = 0.0;
+    double x_avg     = 0.0;
+    double y_avg     = 0.0;
+    double num       = 0.0;
+    double denom     = 0.0;
 
-    float numerator_sum   = 0.0;
-    float denominator_sum = 0.0;
-    float x_avg           = 0.0;
-    float y_avg           = 0.0;
-    float numerator       = 0.0;
-    float denominator     = 0.0;
-
-    for (; x_it != x.end() && y_it != y.end(); ++x_it, ++y_it) {
-        numerator_sum += (*x_it) + (*y_it);
-        denominator_sum += (*x_it) * (*x_it);
-        x_avg         += *x_it;
-        y_avg         += *y_it;
+    for (int i = 0; i < n; ++i) {
+        num_sum   += x[i] * y[i];
+        denom_sum += x[i] * x[i];
+        x_avg     += x[i];
+        y_avg     += y[i];
     }
 
-    x_avg       = x_avg / n;
-    y_avg       = y_avg / n;
-    numerator   = (numerator_sum - (n * x_avg * y_avg));
-    denominator = (denominator_sum - (n * (x_avg * x_avg)));
-    _beta_1     = numerator / denominator;
-    _beta_0     = y_avg - (_beta_1 * x_avg);
+    x_avg   /= n;
+    y_avg   /= n;
+
+    num     = (num_sum - (n * x_avg * y_avg));
+    denom   = (denom_sum - (n * (x_avg * x_avg)));
+
+    _beta_1 = num / denom;
+    _beta_0 = y_avg - (_beta_1 * x_avg);
 
     printf("Beta 1: %f\n", _beta_1);
     printf("Beta 0: %f\n", _beta_0);

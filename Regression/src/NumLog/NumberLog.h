@@ -15,14 +15,14 @@
 class NumberLog {
  public:
   explicit NumberLog(std::string);
-  inline std::list<float> getData() { return data; }
+  inline std::list<double> getData() { return data; }
 
  private:
   void input();
   bool fileExists(std::string);
 
   std::string file_name;
-  std::list<float> data;
+  std::list<double> data;
 };
 
 #endif  // NUMBERLOG_H
