@@ -1,6 +1,6 @@
 /**
- * Copyright 2014 Andrew Brinker
- */
+* Copyright 2014 Andrew Brinker
+*/
 
 #include "./Student.h"
 #include <list>
@@ -10,25 +10,25 @@
 Student::Student(std::string new_name) : name(new_name) {}
 
 std::string Student::getName() {
-    return name;
+  return name;
 }
 
 std::list<Course *> Student::getCourses() {
-    return courses;
+  return courses;
 }
 
 void Student::addCourse(Course *c) {
-    courses.push_back(c);
+  courses.push_back(c);
 }
 
 void Student::removeCourse(std::list<Course *>::iterator &c) {
-    courses.erase(c);
+  courses.erase(c);
 }
 
 std::list<Course *>::iterator Student::firstCourse() {
-    return courses.begin();
+  return courses.begin();
 }
 
 std::list<Course *>::iterator Student::lastCourse() {
-    return courses.end();
+  return courses.end();
 }

@@ -22,7 +22,6 @@ class Course {
   std::string name;
   unsigned max_enrollment;
   std::list<Student *> students;
-  std::list<Student *> wait_list;
 };
 
 #endif  // COURSE_H
