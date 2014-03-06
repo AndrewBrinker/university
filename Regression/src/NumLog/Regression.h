@@ -14,13 +14,14 @@
 
 class Regression {
  public:
-  explicit Regression(std::string);
+  explicit Regression(std::string, std::string);
   void calculate();
 
  private:
-    std::list<float> data;
-    int _beta_0;
-    int _beta_1;
+    std::list<float> x;
+    std::list<float> y;
+    float _beta_0;
+    float _beta_1;
 };
 
 #endif  // REGRESSION_H
