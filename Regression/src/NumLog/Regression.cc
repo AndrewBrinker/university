@@ -19,7 +19,7 @@ Regression::Regression(std::string x_file_name, std::string y_file_name) {
     auto x_it   = x_data.begin();
     auto y_it   = y_data.begin();
     for (; x_it != x_data.end() && y_it != y_data.end(); ++x_it, ++y_it) {
-        data.push_back(std::pair<double, double>(*x_it, *y_it));
+        data.push_back({*x_it, *y_it});
     }
     calculate();
 }
