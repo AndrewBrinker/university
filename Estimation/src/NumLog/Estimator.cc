@@ -8,6 +8,7 @@
 
 #include "./Estimator.h"
 #include <string>
+#include <cmath>
 #include "./NumberLog.h"
 
 
@@ -19,6 +20,7 @@ Estimator::Estimator(std::string x_file_name, std::string y_file_name) {
 
 void Estimator::calculateEstimate() {
     getRegressionCoefficients();
+    getStandardDeviation();
 }
 
 
@@ -26,6 +28,7 @@ void Estimator::printResults() {
     printf("Beta 0:\n\t%f\n", _beta_0);
     printf("Beta 1:\n\t%f\n", _beta_1);
     printf("Regression Line:\n\ty = %f + (%f * x)\n", _beta_0, _beta_1);
+    printf("Standard Deviation:\n\t%f\n", _std_dev);
 }
 
 
@@ -67,3 +70,20 @@ void Estimator::getRegressionCoefficients() {
     _beta_1 = num / denom;
     _beta_0 = y_avg - (_beta_1 * x_avg);
 }
+
+
+void Estimator::getStandardDeviation() {
+    int n = data.size();
+    double sum = 0.0;
+    double placeholder = 0.0;
+
+    for (auto pair : data) {
+        placeholder = pair.second - _beta_0 - (_beta_1 * pair.first);
+        sum += (placeholder * placeholder);
+    }
+
+    sum /= (n - 2);
+
+    _std_dev = sqrt(sum);
+}
+

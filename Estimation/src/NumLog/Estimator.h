@@ -22,11 +22,14 @@ class Estimator {
  private:
   void loadData(std::string, std::string);
   void getRegressionCoefficients();
+  void getStandardDeviation();
 
   std::list<std::pair<float, float>> data;
 
   double _beta_0;
   double _beta_1;
+
+  double _std_dev;
 };
 
 #endif  // ESTIMATOR_H
