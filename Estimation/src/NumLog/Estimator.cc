@@ -12,7 +12,7 @@
 
 
 Estimator::Estimator(std::string x_file_name, std::string y_file_name) {
-    loadData();
+    loadData(x_file_name, y_file_name);
     calculateEstimate();
 }
 
@@ -22,7 +22,7 @@ void Estimator::calculateEstimate() {
 }
 
 
-void loadData(std::string x_file_name, std::string y_file_name) {
+void Estimator::loadData(std::string x_file_name, std::string y_file_name) {
     NumberLog x_log(x_file_name);
     NumberLog y_log(y_file_name);
     auto x_data = x_log.getData();
