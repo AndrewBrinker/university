@@ -16,19 +16,17 @@
 #define T_TABLE_SIZE 13
 
 static double t_table[PERCENTILE_COUNT][T_TABLE_SIZE] =
-{
-    {   1.963, 1.386, 1.250, 1.190, 1.156, 1.134, 1.119,
+{   {   1.963, 1.386, 1.250, 1.190, 1.156, 1.134, 1.119,
         1.108, 1.100, 1.093, 1.074, 1.064, 1.055    },
     {   6.314, 2.920, 2.353, 2.132, 2.015, 1.943, 1.895,
-        1.860, 1.833, 1.812, 1.753, 1.725, 1.697    }
-};
+        1.860, 1.833, 1.812, 1.753, 1.725, 1.697    }   };
 
-static int t_dof[T_TABLE_SIZE] = {
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 30
-};
+static int t_dof[T_TABLE_SIZE] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 30};
 
 
-Estimator::Estimator(double estimate, std::string x_file_name, std::string y_file_name) {
+Estimator::Estimator(double estimate,
+                     std::string x_file_name,
+                     std::string y_file_name) {
     _xk = estimate;
     loadData(x_file_name, y_file_name);
     calculateEstimate();
