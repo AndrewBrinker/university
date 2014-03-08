@@ -15,7 +15,7 @@
 
 class Estimator {
  public:
-  explicit Estimator(std::string, std::string);
+  explicit Estimator(int, std::string, std::string);
   void calculateEstimate();
   void printResults();
 
@@ -24,15 +24,21 @@ class Estimator {
   void getRegressionCoefficients();
   void getStandardDeviation();
   void getTValue();
+  void getRange();
 
   std::list<std::pair<float, float>> data;
 
+  int    _n;
+  int    _xk;
+  double _x_avg;
+  double _y_avg;
   double _beta_0;
   double _beta_1;
-
   double _std_dev;
-
-  double _t;
+  double _t_seventy;
+  double _t_ninety;
+  double _range_seventy;
+  double _range_ninety;
 };
 
 #endif  // ESTIMATOR_H
