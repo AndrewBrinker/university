@@ -16,5 +16,6 @@ int main(int argc, char **argv) {
     return 0;
   }
   Estimator e(argv[1], argv[2]);
+  e.printResults();
   return 0;
 }

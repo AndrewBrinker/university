@@ -17,12 +17,14 @@ class Estimator {
  public:
   explicit Estimator(std::string, std::string);
   void calculateEstimate();
+  void printResults();
 
  private:
   void loadData(std::string, std::string);
   void getRegressionCoefficients();
 
   std::list<std::pair<float, float>> data;
+
   double _beta_0;
   double _beta_1;
 };

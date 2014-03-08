@@ -22,6 +22,13 @@ void Estimator::calculateEstimate() {
 }
 
 
+void Estimator::printResults() {
+    printf("Beta 0:\n\t%f\n", _beta_0);
+    printf("Beta 1:\n\t%f\n", _beta_1);
+    printf("Regression Line:\n\ty = %f + (%f * x)\n", _beta_0, _beta_1);
+}
+
+
 void Estimator::loadData(std::string x_file_name, std::string y_file_name) {
     NumberLog x_log(x_file_name);
     NumberLog y_log(y_file_name);
