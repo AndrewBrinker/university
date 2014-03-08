@@ -15,7 +15,7 @@
 
 class Estimator {
  public:
-  explicit Estimator(int, std::string, std::string);
+  explicit Estimator(double, std::string, std::string);
   void calculateEstimate();
   void printResults();
 
@@ -25,11 +25,13 @@ class Estimator {
   void getStandardDeviation();
   void getTValue();
   void getRange();
+  void getPredictionIntervals();
 
   std::list<std::pair<float, float>> data;
 
   int    _n;
-  int    _xk;
+  double _xk;
+  double _yk;
   double _x_avg;
   double _y_avg;
   double _beta_0;
@@ -39,6 +41,10 @@ class Estimator {
   double _t_ninety;
   double _range_seventy;
   double _range_ninety;
+  double _upi_seventy;
+  double _upi_ninety;
+  double _lpi_seventy;
+  double _lpi_ninety;
 };
 
 #endif  // ESTIMATOR_H

@@ -28,7 +28,7 @@ static int t_dof[T_TABLE_SIZE] = {
 };
 
 
-Estimator::Estimator(int estimate, std::string x_file_name, std::string y_file_name) {
+Estimator::Estimator(double estimate, std::string x_file_name, std::string y_file_name) {
     _xk = estimate;
     loadData(x_file_name, y_file_name);
     calculateEstimate();
@@ -40,18 +40,21 @@ void Estimator::calculateEstimate() {
     getStandardDeviation();
     getTValue();
     getRange();
+    getPredictionIntervals();
 }
 
 
 void Estimator::printResults() {
-    printf("Beta 0:\n\t%f\n", _beta_0);
-    printf("Beta 1:\n\t%f\n", _beta_1);
-    printf("Regression Line:\n\ty = %f + (%f * x)\n", _beta_0, _beta_1);
-    printf("Standard Deviation:\n\t%f\n", _std_dev);
-    printf("T-Value (70%%):\n\t%f\n", _t_seventy);
-    printf("T-Value (90%%):\n\t%f\n", _t_ninety);
-    printf("Range (70%%):\n\t%f\n", _range_seventy);
-    printf("Range (90%%):\n\t%f\n", _range_ninety);
+    printf("70%%\n");
+    printf("  T-Value: %f\n", _t_seventy);
+    printf("  Range:   %f\n", _range_seventy);
+    printf("  UPI:     %f\n", _upi_seventy);
+    printf("  LPI:     %f\n", _lpi_seventy);
+    printf("90%%\n");
+    printf("  T-Value: %f\n", _t_ninety);
+    printf("  Range:   %f\n", _range_ninety);
+    printf("  UPI:     %f\n", _upi_ninety);
+    printf("  LPI:     %f\n", _lpi_ninety);
 }
 
 
@@ -88,6 +91,7 @@ void Estimator::getRegressionCoefficients() {
     denom   = (denom_sum - (_n * (_x_avg * _x_avg)));
     _beta_1 = num / denom;
     _beta_0 = _y_avg - (_beta_1 * _x_avg);
+    _yk = _beta_0 + (_beta_1 * _xk);
 }
 
 
@@ -134,3 +138,11 @@ void Estimator::getRange() {
     return;
 }
 
+
+void Estimator::getPredictionIntervals() {
+    _upi_seventy = _yk + _range_seventy;
+    _upi_ninety  = _yk + _range_ninety;
+    _lpi_seventy = _yk - _range_seventy;
+    _lpi_ninety  = _yk - _range_ninety;
+    return;
+}
