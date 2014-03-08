@@ -23,6 +23,7 @@ class Estimator {
   void loadData(std::string, std::string);
   void getRegressionCoefficients();
   void getStandardDeviation();
+  void getTValue();
 
   std::list<std::pair<float, float>> data;
 
@@ -30,6 +31,8 @@ class Estimator {
   double _beta_1;
 
   double _std_dev;
+
+  double _t;
 };
 
 #endif  // ESTIMATOR_H

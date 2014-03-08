@@ -21,6 +21,8 @@ Estimator::Estimator(std::string x_file_name, std::string y_file_name) {
 void Estimator::calculateEstimate() {
     getRegressionCoefficients();
     getStandardDeviation();
+    getTValue();
+    getRange();
 }
 
 
@@ -53,20 +55,16 @@ void Estimator::getRegressionCoefficients() {
     double y_avg     = 0.0;
     double num       = 0.0;
     double denom     = 0.0;
-
     for (auto pair : data) {
         num_sum   += pair.first * pair.second;
         denom_sum += pair.first * pair.first;
         x_avg     += pair.first;
         y_avg     += pair.second;
     }
-
     x_avg   /= n;
     y_avg   /= n;
-
     num     = (num_sum - (n * x_avg * y_avg));
     denom   = (denom_sum - (n * (x_avg * x_avg)));
-
     _beta_1 = num / denom;
     _beta_0 = y_avg - (_beta_1 * x_avg);
 }
@@ -76,14 +74,21 @@ void Estimator::getStandardDeviation() {
     int n = data.size();
     double sum = 0.0;
     double placeholder = 0.0;
-
     for (auto pair : data) {
         placeholder = pair.second - _beta_0 - (_beta_1 * pair.first);
         sum += (placeholder * placeholder);
     }
-
     sum /= (n - 2);
-
     _std_dev = sqrt(sum);
+}
+
+
+void Estimator::getTValue() {
+    return;
+}
+
+
+void Estimator::getRange() {
+    return;
 }
 
