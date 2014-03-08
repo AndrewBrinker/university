@@ -10,7 +10,19 @@
 #include <string>
 #include "./NumberLog.h"
 
+
 Estimator::Estimator(std::string x_file_name, std::string y_file_name) {
+    loadData();
+    calculateEstimate();
+}
+
+
+void Estimator::calculateEstimate() {
+    getRegressionCoefficients();
+}
+
+
+void loadData(std::string x_file_name, std::string y_file_name) {
     NumberLog x_log(x_file_name);
     NumberLog y_log(y_file_name);
     auto x_data = x_log.getData();
@@ -20,11 +32,10 @@ Estimator::Estimator(std::string x_file_name, std::string y_file_name) {
     for (; x_it != x_data.end() && y_it != y_data.end(); ++x_it, ++y_it) {
         data.push_back({*x_it, *y_it});
     }
-    calculate();
 }
 
 
-void Estimator::calculate() {
+void Estimator::getRegressionCoefficients() {
     int    n         = data.size();
     double num_sum   = 0.0;
     double denom_sum = 0.0;
@@ -48,8 +59,4 @@ void Estimator::calculate() {
 
     _beta_1 = num / denom;
     _beta_0 = y_avg - (_beta_1 * x_avg);
-
-    printf("Beta 1: %f\n", _beta_1);
-    printf("Beta 0: %f\n", _beta_0);
-    printf("Regression line: y = %f + (%f * x)\n", _beta_0, _beta_1);
 }

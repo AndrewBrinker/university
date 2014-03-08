@@ -16,12 +16,15 @@
 class Estimator {
  public:
   explicit Estimator(std::string, std::string);
-  void calculate();
+  void calculateEstimate();
 
  private:
-    std::list<std::pair<float, float>> data;
-    double _beta_0;
-    double _beta_1;
+  void loadData(std::string, std::string);
+  void getRegressionCoefficients();
+
+  std::list<std::pair<float, float>> data;
+  double _beta_0;
+  double _beta_1;
 };
 
 #endif  // ESTIMATOR_H
