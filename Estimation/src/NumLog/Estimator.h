@@ -52,6 +52,7 @@ class Estimator {
   double _lpi_ninety;
 
   friend double safe_sqrt(double value);
+  friend double square(double value);
 };
 
 #endif  // ESTIMATOR_H

@@ -36,6 +36,16 @@ double safe_sqrt(double value) {
 
 
 /**
+ * Square the given number.
+ * @param  value -> The number to be squared.
+ * @return the square of the given number.
+ */
+double square(double value) {
+    return pow(value, 2.0);
+}
+
+
+/**
  * Initialize the estimator.
  * @param  estimate -> The x_k value
  * @param  x_file_name -> The file containing the x-axis data.
@@ -66,16 +76,23 @@ void Estimator::calculateEstimate() {
  * Print the results of the calculations.
  */
 void Estimator::printResults() {
-    printf("70%%\n");
-    printf("  T-Value: %f\n", _t_seventy);
-    printf("  Range:   %f\n", _range_seventy);
-    printf("  UPI:     %f\n", _upi_seventy);
-    printf("  LPI:     %f\n", _lpi_seventy);
-    printf("90%%\n");
-    printf("  T-Value: %f\n", _t_ninety);
-    printf("  Range:   %f\n", _range_ninety);
-    printf("  UPI:     %f\n", _upi_ninety);
-    printf("  LPI:     %f\n", _lpi_ninety);
+    printf("Beta 0:         %f\n", _beta_0);
+    printf("Beta 1:         %f\n", _beta_1);
+    printf("\n");
+    printf("Std. Deviation: %f\n", _std_dev);
+    printf("Projection:     %f\n", _yk);
+    printf("\n");
+    printf("70%% T-Value:    %f\n", _t_seventy);
+    printf("90%% T-Value:    %f\n", _t_ninety);
+    printf("\n");
+    printf("70%% Range:      %f\n", _range_seventy);
+    printf("90%% Range:      %f\n", _range_ninety);
+    printf("\n");
+    printf("70%% UPI:        %f\n", _upi_seventy);
+    printf("90%% UPI:        %f\n", _upi_ninety);
+    printf("\n");
+    printf("70%% LPI:        %f\n", _lpi_seventy);
+    printf("90%% LPI:        %f\n", _lpi_ninety);
 }
 
 
@@ -110,14 +127,14 @@ void Estimator::getRegressionCoefficients() {
     double denom     = 0.0;
     for (auto pair : data) {
         num_sum   += pair.first * pair.second;
-        denom_sum += pair.first * pair.first;
+        denom_sum += square(pair.first);
         _x_avg    += pair.first;
         _y_avg    += pair.second;
     }
     _x_avg /= _n;
     _y_avg /= _n;
     num     = (num_sum - (_n * _x_avg * _y_avg));
-    denom   = (denom_sum - (_n * (_x_avg * _x_avg)));
+    denom   = (denom_sum - (_n * square(_x_avg)));
     _beta_1 = num / denom;
     _beta_0 = _y_avg - (_beta_1 * _x_avg);
     _yk     = _beta_0 + (_beta_1 * _xk);
@@ -145,7 +162,7 @@ void Estimator::getStandardDeviation() {
 void Estimator::getTValue() {
     int dof   = _n - 2;
     int index = -1;
-    for (int i = 0; i < PERCENTILE_COUNT; ++i) {
+    for (int i = 0; i < T_TABLE_SIZE; ++i) {
         if (dof == t_dof[i]) {
             index = i;
         }
@@ -157,7 +174,6 @@ void Estimator::getTValue() {
     }
     _t_seventy = t_table[0][index];
     _t_ninety  = t_table[1][index];
-    return;
 }
 
 
@@ -165,15 +181,14 @@ void Estimator::getTValue() {
  * Get the estimation range for y_k.
  */
 void Estimator::getRange() {
-    double num = (_xk - _x_avg) * (_xk - _x_avg);
+    double num = square(_xk - _x_avg);
     double denom = 0.0;
     for (auto pair : data) {
-        denom += (pair.first - _x_avg) * (pair.first - _x_avg);
+        denom += square(pair.first - _x_avg);
     }
     double square_root = safe_sqrt(1 + (1 / _n) + (num / denom));
     _range_seventy = _t_seventy * _std_dev * square_root;
     _range_ninety = _t_ninety * _std_dev * square_root;
-    return;
 }
 
 
@@ -185,5 +200,4 @@ void Estimator::getPredictionIntervals() {
     _upi_ninety  = _yk + _range_ninety;
     _lpi_seventy = _yk - _range_seventy;
     _lpi_ninety  = _yk - _range_ninety;
-    return;
 }
