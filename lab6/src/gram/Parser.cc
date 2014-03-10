@@ -155,6 +155,26 @@ void Parser::findFollow() {
 
 
 /**
+ * Find the closure of the given set of productions.
+ */
+std::set<std::string> closure(std::set<std::string> items) {
+  /*
+  bool changed;
+  do {
+    changed = false;
+    for (auto item : items) {
+      bool next_char = item[findCurrentPos(item) + 1];
+      if (isNonTerminal(next_char) && isLHS(next_char)) {
+        // Update closure.
+      }
+    }
+  } while (changed);
+  */
+  return items;
+}
+
+
+/**
  * Add the given first set to the first of the given nonterminal
  * @param nonterminal -> The symbol whose first is being added to
  * @param first       -> The symbols being added

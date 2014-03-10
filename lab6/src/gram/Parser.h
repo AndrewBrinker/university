@@ -25,9 +25,13 @@ class Parser {
   Grammar process(const std::string);
   void findFirst();
   void findFollow();
+
+  std::set<std::string> closure(std::set<std::string>);
+
   void addSetToFirst(const char, const std::set<char>, bool *);
   void addCharToFirst(const char, const char, bool *);
   void addSetToFollow(const char, const std::set<char>, bool *);
+
   bool hasEpsilon(const std::set<char>);
   bool isNonTerminal(const char);
 
