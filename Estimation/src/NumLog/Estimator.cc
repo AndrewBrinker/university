@@ -9,6 +9,7 @@
 #include "./Estimator.h"
 #include <string>
 #include <cmath>
+#include <numeric>
 #include <cstdlib>
 #include "./NumberLog.h"
 
@@ -191,14 +192,14 @@ void Estimator::getTValue() {
  * Get the estimation range for y_k.
  */
 void Estimator::getRange() {
-    double num = square(_xk - _x_avg);
+    double num   = square(_xk - _x_avg);
     double denom = 0.0;
     for (auto pair : data) {
         denom += square(pair.first - _x_avg);
     }
-    double square_root = safe_sqrt(1 + (1 / _n) + (num / denom));
-    _range_seventy = _t_seventy * _std_dev * square_root;
-    _range_ninety = _t_ninety * _std_dev * square_root;
+    double square_root = safe_sqrt(1.0 + (1.0 / _n) + (num / denom));
+    _range_seventy     = _t_seventy * _std_dev * square_root;
+    _range_ninety      = _t_ninety  * _std_dev * square_root;
 }
 
 
