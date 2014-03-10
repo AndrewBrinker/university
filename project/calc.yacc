@@ -2,11 +2,18 @@
 #include <stdio.h>
 int regs[26];
 int base;
+int yylex();
+int yyerror(char *s);
+int yywrap();
 %}
 
 %start list
-%union { int a; }
-%type <a> expr number
+%union {
+  int a;
+  char c;
+}
+%type <a> expr number DIGIT
+%type <c> LETTER
 %token DIGIT LETTER
 %left '|'
 %left '&'
@@ -75,10 +82,11 @@ int main() {
   return yyparse();
 }
 
-yyerror(char *s) {
-  fprintf(stderr, "%s\n",s);
+int yyerror(char *s) {
+  fprintf(stderr, "%s\n", s);
+  return 1;
 }
 
-yywrap() {
+int yywrap() {
   return 1;
 }
