@@ -26,6 +26,7 @@ class Parser {
   Grammar process(const std::string);
   void findFirst();
   void findFollow();
+  void findCanonicalSet();
 
   std::set<Item> findClosure(std::set<Item>);
   std::set<Item> findGoto(std::set<Item>, char);
@@ -37,6 +38,7 @@ class Parser {
   bool hasEpsilon(const std::set<char>);
   bool isNonTerminal(const char);
   bool isTerminal(const char);
+  bool isSubset(std::set<Item>, std::set<Item>);
 
   std::set<char> _terminals;
   std::set<char> _non_terminals;

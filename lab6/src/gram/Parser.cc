@@ -156,6 +156,26 @@ void Parser::findFollow() {
 
 
 /**
+ * Find the Canonical set for the grammar.
+ */
+void Parser::findCanonicalSet() {
+  std::set<Item> c;
+  bool changed;
+  do {
+    changed = false;
+    for (auto item : c) {
+      for (auto symbol : item.production) {
+        auto g = findGoto(c, symbol);
+        if (!g.empty() && !isSubset(g, c)) {
+          // Add each item of g to c
+        }
+      }
+    }
+  } while(changed);
+}
+
+
+/**
  * Find the closure of the given set of productions.
  * @param  items -> The set of Items to be checked
  * @return the updated set of Items
@@ -278,3 +298,14 @@ bool Parser::isNonTerminal(const char symbol) {
 bool Parser::isTerminal(const char symbol) {
   return _terminals.find(symbol) != _terminals.end();
 }
+
+
+bool Parser::isSubset(std::set<Item> s1, std::set<Item> s2) {
+  for (auto item : s1) {
+    if (s2.find(item) == s2.end()) {
+      return false;
+    }
+  }
+  return true;
+}
+
