@@ -27,6 +27,7 @@ class Parser {
   void findFollow();
 
   std::set<std::string> closure(std::set<std::string>);
+  std::set<std::string> _goto(std::set<std::stirng>, const char);
 
   void addSetToFirst(const char, const std::set<char>, bool *);
   void addCharToFirst(const char, const char, bool *);
@@ -35,11 +36,15 @@ class Parser {
   bool hasEpsilon(const std::set<char>);
   bool isNonTerminal(const char);
 
+  bool inLHS(const char);
+
   std::set<char> _terminals;
   std::set<char> _non_terminals;
   std::set<std::string> _productions;
   std::map<char, std::set<char>> _first;
   std::map<char, std::set<char>> _follow;
+
+  std::set<char> _lhs;
 
   DISALLOW_COPY_AND_ASSIGN(Parser);
 };

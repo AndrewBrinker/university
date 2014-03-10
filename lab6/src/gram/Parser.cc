@@ -157,8 +157,9 @@ void Parser::findFollow() {
 /**
  * Find the closure of the given set of productions.
  */
-std::set<std::string> closure(std::set<std::string> items) {
+std::set<std::string> Parser::closure(std::set<std::string> items) {
   /*
+  
   bool changed;
   do {
     changed = false;
@@ -166,11 +167,16 @@ std::set<std::string> closure(std::set<std::string> items) {
       bool next_char = item[findCurrentPos(item) + 1];
       if (isNonTerminal(next_char) && isLHS(next_char)) {
         // Update closure.
+        // items += item;
+        // changed = true;
       }
     }
   } while (changed);
   */
   return items;
+}
+
+std::set<std::string> Parser::_goto(std::set<std::string> items, const char symbol){
 }
 
 
@@ -237,4 +243,21 @@ bool Parser::hasEpsilon(const std::set<char> first) {
  */
 bool Parser::isNonTerminal(const char symbol) {
   return _non_terminals.find(symbol) != _non_terminals.end();
+}
+
+
+/**
+ * Checks whether the given symbol is on the left hand side of any production in the grammer.
+ * Populates the _lhs set if it's the first time calling it
+ * Assumes single characters on left hand side of productions
+ * @param  symbol -> The symbol being checked
+ * @return TRUE if on the lhs of a production, FALSE otherwise
+ */
+bool Parset::isLHS(const char symbol){
+  if (_lhs.empty()){
+    for (auto production : _productions){
+      _lhs.push_back(production[0]);
+    }
+  }
+  return _lhs.find(symbol) != _lhs.end();
 }
