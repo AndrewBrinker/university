@@ -4,10 +4,10 @@ from os import system
 from sys import argv
 
 def build():
-    system("yacc -d calc.yacc")
-    system("lex calc.lex")
+    system("yacc -d tiny.yacc")
+    system("lex tiny.lex")
     system("cc y.tab.c lex.yy.c")
-    system("mv a.out calc")
+    system("mv a.out tiny")
 
 def clean():
     system("rm lex.yy.c y.tab.c y.tab.h");
