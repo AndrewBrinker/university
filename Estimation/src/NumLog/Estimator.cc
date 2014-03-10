@@ -9,6 +9,7 @@
 #include "./Estimator.h"
 #include <string>
 #include <cmath>
+#include <cstdlib>
 #include "./NumberLog.h"
 
 #define PERCENTILE_COUNT 2
@@ -23,12 +24,23 @@ static double t_table[PERCENTILE_COUNT][T_TABLE_SIZE] =
 static int t_dof[T_TABLE_SIZE] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 30};
 
 
+/**
+ * Get the square root of a number, and quit loudly if the number is negative.
+ * @param  value -> The value being square-rooted.
+ * @return the square root of the value.
+ */
 double safe_sqrt(double value) {
-    if (value < 0.0) return 0.0;
+    if (value < 0.0) exit(EXIT_FAILURE);
     return sqrt(value);
 }
 
 
+/**
+ * Initialize the estimator.
+ * @param  estimate -> The x_k value
+ * @param  x_file_name -> The file containing the x-axis data.
+ * @param  y_file_name -> The file containing the y-axis data.
+ */
 Estimator::Estimator(double estimate,
                      std::string x_file_name,
                      std::string y_file_name) {
@@ -38,6 +50,9 @@ Estimator::Estimator(double estimate,
 }
 
 
+/**
+ * Run all the necessary estimation functions.
+ */
 void Estimator::calculateEstimate() {
     getRegressionCoefficients();
     getStandardDeviation();
@@ -47,6 +62,9 @@ void Estimator::calculateEstimate() {
 }
 
 
+/**
+ * Print the results of the calculations.
+ */
 void Estimator::printResults() {
     printf("70%%\n");
     printf("  T-Value: %f\n", _t_seventy);
@@ -61,6 +79,11 @@ void Estimator::printResults() {
 }
 
 
+/**
+ * Load the appropriate data from the relevant files.
+ * @param x_file_name -> The name of the file containing the x-axis data.
+ * @param y_file_name -> The name of the file containing the y-axis data.
+ */
 void Estimator::loadData(std::string x_file_name, std::string y_file_name) {
     NumberLog x_log(x_file_name);
     NumberLog y_log(y_file_name);
@@ -75,6 +98,9 @@ void Estimator::loadData(std::string x_file_name, std::string y_file_name) {
 }
 
 
+/**
+ * Calculate B_0 and B_1.
+ */
 void Estimator::getRegressionCoefficients() {
     _x_avg = 0.0;
     _y_avg = 0.0;
@@ -98,6 +124,9 @@ void Estimator::getRegressionCoefficients() {
 }
 
 
+/**
+ * Calculate the standard deviation.
+ */
 void Estimator::getStandardDeviation() {
     double sum = 0.0;
     double acc = 0.0;
@@ -110,6 +139,9 @@ void Estimator::getStandardDeviation() {
 }
 
 
+/**
+ * Get the T-value from the table.
+ */
 void Estimator::getTValue() {
     int dof   = _n - 2;
     int index = -1;
@@ -129,6 +161,9 @@ void Estimator::getTValue() {
 }
 
 
+/**
+ * Get the estimation range for y_k.
+ */
 void Estimator::getRange() {
     double num = (_xk - _x_avg) * (_xk - _x_avg);
     double denom = 0.0;
@@ -142,6 +177,9 @@ void Estimator::getRange() {
 }
 
 
+/**
+ * Get the prediction intervals for y_k.
+ */
 void Estimator::getPredictionIntervals() {
     _upi_seventy = _yk + _range_seventy;
     _upi_ninety  = _yk + _range_ninety;
