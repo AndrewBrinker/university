@@ -159,14 +159,12 @@ void Estimator::getRegressionCoefficients() {
  * Calculate the standard deviation.
  */
 void Estimator::getStandardDeviation() {
-    double sum = 0.0;
-    double acc = 0.0;
+    double variance = 0.0;
     for (auto pair : data) {
-        acc = pair.second - _beta_0 - (_beta_1 * pair.first);
-        sum += (acc * acc);
+        variance += square(pair.second - _beta_0 - (_beta_1 * pair.first));
     }
-    sum /= (_n - 2);
-    _std_dev = safe_sqrt(sum);
+    variance /= (_n - 2);
+    _std_dev = safe_sqrt(variance);
 }
 
 
