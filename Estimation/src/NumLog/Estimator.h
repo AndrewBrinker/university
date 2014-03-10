@@ -50,6 +50,8 @@ class Estimator {
   double _range_ninety;
   double _upi_ninety;
   double _lpi_ninety;
+
+  friend double safe_sqrt(double);
 };
 
 #endif  // ESTIMATOR_H

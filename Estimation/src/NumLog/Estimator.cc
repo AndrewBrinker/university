@@ -11,7 +11,6 @@
 #include <cmath>
 #include "./NumberLog.h"
 
-
 #define PERCENTILE_COUNT 2
 #define T_TABLE_SIZE 13
 
@@ -22,6 +21,12 @@ static double t_table[PERCENTILE_COUNT][T_TABLE_SIZE] =
         1.860, 1.833, 1.812, 1.753, 1.725, 1.697    }   };
 
 static int t_dof[T_TABLE_SIZE] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 30};
+
+
+double safe_sqrt(double value) {
+    if (value < 0.0) return 0.0;
+    return sqrt(value);
+}
 
 
 Estimator::Estimator(double estimate,
@@ -66,11 +71,11 @@ void Estimator::loadData(std::string x_file_name, std::string y_file_name) {
     for (; x_it != x_data.end() && y_it != y_data.end(); ++x_it, ++y_it) {
         data.push_back({*x_it, *y_it});
     }
+    _n = data.size();
 }
 
 
 void Estimator::getRegressionCoefficients() {
-    _n     = data.size();
     _x_avg = 0.0;
     _y_avg = 0.0;
     double num_sum   = 0.0;
@@ -80,28 +85,28 @@ void Estimator::getRegressionCoefficients() {
     for (auto pair : data) {
         num_sum   += pair.first * pair.second;
         denom_sum += pair.first * pair.first;
-        _x_avg     += pair.first;
-        _y_avg     += pair.second;
+        _x_avg    += pair.first;
+        _y_avg    += pair.second;
     }
-    _x_avg   /= _n;
-    _y_avg   /= _n;
+    _x_avg /= _n;
+    _y_avg /= _n;
     num     = (num_sum - (_n * _x_avg * _y_avg));
     denom   = (denom_sum - (_n * (_x_avg * _x_avg)));
     _beta_1 = num / denom;
     _beta_0 = _y_avg - (_beta_1 * _x_avg);
-    _yk = _beta_0 + (_beta_1 * _xk);
+    _yk     = _beta_0 + (_beta_1 * _xk);
 }
 
 
 void Estimator::getStandardDeviation() {
     double sum = 0.0;
-    double placeholder = 0.0;
+    double acc = 0.0;
     for (auto pair : data) {
-        placeholder = pair.second - _beta_0 - (_beta_1 * pair.first);
-        sum += (placeholder * placeholder);
+        acc = pair.second - _beta_0 - (_beta_1 * pair.first);
+        sum += (acc * acc);
     }
     sum /= (_n - 2);
-    _std_dev = sqrt(sum);
+    _std_dev = safe_sqrt(sum);
 }
 
 
@@ -130,7 +135,7 @@ void Estimator::getRange() {
     for (auto pair : data) {
         denom += (pair.first - _x_avg) * (pair.first - _x_avg);
     }
-    double square_root = sqrt(1 + (1 / _n) + (num / denom));
+    double square_root = safe_sqrt(1 + (1 / _n) + (num / denom));
     _range_seventy = _t_seventy * _std_dev * square_root;
     _range_ninety = _t_ninety * _std_dev * square_root;
     return;
