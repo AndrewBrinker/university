@@ -1,0 +1,7 @@
+#!/usr/local/bin/python
+
+from os import system
+
+system("yacc -d calc.yacc")
+system("lex calc.lex")
+system("cc y.tab.c lex.yy.c")
