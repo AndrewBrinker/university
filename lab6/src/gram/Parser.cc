@@ -13,6 +13,7 @@
 #include <vector>
 #include "./Preprocessor.h"
 #include "./Grammar.h"
+#include "./Item.h"
 
 #define DELIM     "$"
 #define EPSILON   "e"
@@ -156,27 +157,50 @@ void Parser::findFollow() {
 
 /**
  * Find the closure of the given set of productions.
+ * @param  items -> The set of Items to be checked
+ * @return the updated set of Items
  */
-std::set<std::string> Parser::closure(std::set<std::string> items) {
-  /*
-  
+std::set<Item> Parser::findClosure(std::set<Item> items) {
+  std::set<Item> closure;
+  for (auto item : items) {
+    closure.insert(item);
+  }
   bool changed;
   do {
     changed = false;
-    for (auto item : items) {
-      bool next_char = item[findCurrentPos(item) + 1];
-      if (isNonTerminal(next_char) && isLHS(next_char)) {
-        // Update closure.
-        // items += item;
-        // changed = true;
+    for (Item item : closure) {
+      char next_char = item.production[item.dot];
+      if (isNonTerminal(next_char)) {
+        for (auto production : _productions) {
+          if (production[0] == next_char) {
+            Item new_item = {item.production, 0};
+            auto result = closure.insert(new_item);
+            if (result.second) changed = true;
+          }
+        }
       }
     }
   } while (changed);
-  */
-  return items;
+  return closure;
 }
 
-std::set<std::string> Parser::_goto(std::set<std::string> items, const char symbol){
+
+/**
+ * Finds the goto of the given set of items and given character
+ * @param  items -> The set of Items whose goto is being found
+ * @param  c     -> The transition character being checked
+ * @return the updated set of Items
+ */
+std::set<Item> Parser::findGoto(std::set<Item> items, char c) {
+  std::set<Item> g;
+  for (auto item : items) {
+    char next_char = item.production[item.dot];
+    if (next_char == c) {
+      Item next_item = {item.production, item.dot + 1};
+      g.insert(next_item);
+    }
+  }
+  return findClosure(g);
 }
 
 
@@ -237,9 +261,9 @@ bool Parser::hasEpsilon(const std::set<char> first) {
 
 
 /**
- * Checks whether the given symbol is a non_terminal
+ * Checks whether the given symbol is a non-terminal
  * @param  symbol -> The symbol being checked
- * @return TRUE if a terminal, FALSE otherwise
+ * @return TRUE if a non-terminal, FALSE otherwise
  */
 bool Parser::isNonTerminal(const char symbol) {
   return _non_terminals.find(symbol) != _non_terminals.end();
@@ -247,17 +271,10 @@ bool Parser::isNonTerminal(const char symbol) {
 
 
 /**
- * Checks whether the given symbol is on the left hand side of any production in the grammer.
- * Populates the _lhs set if it's the first time calling it
- * Assumes single characters on left hand side of productions
+ * Checks whether the given symbol is a terminal
  * @param  symbol -> The symbol being checked
- * @return TRUE if on the lhs of a production, FALSE otherwise
+ * @return TRUE if a terminal, FALSE otherwise
  */
-bool Parset::isLHS(const char symbol){
-  if (_lhs.empty()){
-    for (auto production : _productions){
-      _lhs.push_back(production[0]);
-    }
-  }
-  return _lhs.find(symbol) != _lhs.end();
+bool Parser::isTerminal(const char symbol) {
+  return _terminals.find(symbol) != _terminals.end();
 }
