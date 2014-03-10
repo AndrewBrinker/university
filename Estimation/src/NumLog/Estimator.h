@@ -51,6 +51,7 @@ class Estimator {
   double _upi_ninety;
   double _lpi_ninety;
 
+  friend void exit_with_error(int code, std::string msg);
   friend double safe_sqrt(double value);
   friend double square(double value);
 };

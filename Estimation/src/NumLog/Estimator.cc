@@ -25,12 +25,26 @@ static int t_dof[T_TABLE_SIZE] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 30};
 
 
 /**
+ * Exit with a short exit message.
+ * @param code -> The exit code, passed directly to exit()
+ * @param msg  -> The message to be printed for the user.
+ */
+void exit_with_error(int code, std::string msg) {
+    printf("%s", msg.c_str());
+    exit(code);
+}
+
+
+/**
  * Get the square root of a number, and quit loudly if the number is negative.
  * @param  value -> The value being square-rooted.
  * @return the square root of the value.
  */
 double safe_sqrt(double value) {
-    if (value < 0.0) exit(EXIT_FAILURE);
+    if (value < 0.0) {
+        exit_with_error(EXIT_FAILURE,
+                        "Can't square root a negative number. Exiting...\n");
+    }
     return sqrt(value);
 }
 
@@ -168,9 +182,7 @@ void Estimator::getTValue() {
         }
     }
     if (index == -1) {
-        _t_seventy = nan(" ");
-        _t_ninety  = nan(" ");
-        return;
+        exit_with_error(EXIT_FAILURE, "Invalid T-values. Exiting...");
     }
     _t_seventy = t_table[0][index];
     _t_ninety  = t_table[1][index];
