@@ -1,7 +1,22 @@
 #!/usr/local/bin/python
 
 from os import system
+from sys import argv
 
-system("yacc -d calc.yacc")
-system("lex calc.lex")
-system("cc y.tab.c lex.yy.c")
+def build():
+    system("yacc -d calc.yacc")
+    system("lex calc.lex")
+    system("cc y.tab.c lex.yy.c")
+    system("mv a.out calc")
+
+def clean():
+    system("rm lex.yy.c y.tab.c y.tab.h");
+
+if __name__ == "__main__":
+    if not (1 <= len(argv) <= 2):
+        print "Usage: ./build [clean]"
+    if len(argv) == 2:
+        if argv[1] == "clean":
+            clean()
+    else:
+        build()
