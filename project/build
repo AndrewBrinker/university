@@ -3,20 +3,20 @@
 from os import system
 from sys import argv
 
-def build():
-    system("yacc -d tiny.yacc")
-    system("lex tiny.lex")
+def build(yacc_file, lex_file):
+    system("yacc -d {}".format(yacc_file))
+    system("lex {}".format(lex_file))
     system("cc y.tab.c lex.yy.c")
     system("mv a.out tiny")
 
 def clean():
-    system("rm lex.yy.c y.tab.c y.tab.h tiny");
+    system("rm lex.yy.c y.tab.c y.tab.h tiny")
 
 if __name__ == "__main__":
-    if not (1 <= len(argv) <= 2):
-        print "Usage: ./build [clean]"
     if len(argv) == 2:
         if argv[1] == "clean":
             clean()
+    elif len(argv) == 3:
+        build(argv[1], argv[2])
     else:
-        build()
+        print "Usage: ./build <yacc file> <lex file> | clean"
