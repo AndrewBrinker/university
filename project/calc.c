@@ -76,7 +76,7 @@ sym_tbl_record *getsym(const char *sym_name) {
 
 
 /**
- * Initialize the symbol table with symbols for the appropriate functions.
+ * Initialize the symbol table with symbols for the built-in functions.
  */
 void init_table() {
     for (int i = 0; arithmetic_functions[i].fname != 0; ++i) {
