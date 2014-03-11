@@ -8,22 +8,21 @@ extern YYSTYPE yylval;
 
 %%
 
-" ";
-
+" " ;
 
 [a-z] {
   c = yytext[0];
   yylval.a = c - 'a';
-  return(LETTER);
+  return LETTER;
 }
 
 [0-9] {
   c = yytext[0];
   yylval.a = c - '0';
-  return(DIGIT);
+  return DIGIT;
 }
 
 [^a-z0-9\b] {
   c = yytext[0];
-  return(c);
+  return c;
 }

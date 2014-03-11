@@ -79,6 +79,8 @@ number: DIGIT {
 %%
 
 int main() {
+  printf("Welcome to the calculator!\n");
+  printf("Perform whatever arithmetic you want. Type ^C when you're done.\n");
   return yyparse();
 }
 
