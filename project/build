@@ -10,7 +10,7 @@ def build():
     system("mv a.out tiny")
 
 def clean():
-    system("rm lex.yy.c y.tab.c y.tab.h");
+    system("rm lex.yy.c y.tab.c y.tab.h tiny");
 
 if __name__ == "__main__":
     if not (1 <= len(argv) <= 2):
