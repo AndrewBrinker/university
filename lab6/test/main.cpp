@@ -24,13 +24,14 @@ void print_mapset(const std::map<char, std::set<char>> input) {
 void print_lrsets(const std::set<LRSet> input) {
     for (auto lrset : input) {
         auto data = lrset.data;
-        printf("    Identifier:        %d\n", lrset.identifier);
-        printf("    Transition Code:   %c\n", lrset.transition_code);
+        printf("    ID: %d\n", lrset.identifier);
+        printf("    Transition: %c\n", lrset.transition_code);
         printf("    Productions:\n");
         for (auto item : data) {
-            printf("        Production:      %s\n", item.production.c_str());
-            printf("        Dot Position:    %d\n", item.dot);
+            printf("        Production: %s\n", item.production.c_str());
+            printf("        Dot: %d\n", item.dot);
         }
+        printf("\n");
     }
 }
 
@@ -50,7 +51,7 @@ int main(int argc, char **argv) {
     printf("\nFOLLOW:\n");
     print_mapset(p.follow());
 
-    printf("\nCanonical LR(0) Sets:\n");
+    printf("\nCanonical LR(0) Sets:\n\n");
     print_lrsets(p.canon());
 
     return 0;

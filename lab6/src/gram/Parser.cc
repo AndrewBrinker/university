@@ -11,6 +11,7 @@
 #include <fstream>
 #include <list>
 #include <vector>
+#include <iostream>
 #include "./Preprocessor.h"
 #include "./Grammar.h"
 #include "./Item.h"
@@ -182,23 +183,28 @@ void Parser::findFollow() {
  * Find the Canonical set for the grammar.
  */
 void Parser::findCanonicalSet() {
+  // std::cout << "Entered findCanonicalSet()" << std::endl;
   std::set<char> symbols;
-  auto current_item = Item(getStartProduction(), 0);
+  auto current_item = Item(getStartProduction(), 3);
   auto current_closure = findClosure({current_item});
 
-  _canon.insert(LRSet(current_closure, 0, '\0'));
+  _canon.insert(LRSet(current_closure, 3, '\0'));
   symbols = setUnion(_terminals, _non_terminals);
-
+  // std::cout << "Starting change loop..." << std::endl;
   int counter = 1;
   bool changed;
   do {
     changed = false;
     for (auto item : _canon) {
+      // std::cout << "Item found!" << std::endl;
       for (auto symbol : symbols) {
+        // std::cout << "Symbol found!" << std::endl;
         auto new_set = findGoto(item.data, symbol);
         if (!new_set.empty()) {
+          // std::cout << "New set is not empty!" << std::endl;
           auto result = _canon.insert({new_set, counter, symbol});
           if (result.second) {
+            // std::cout << "New data inserted!" << std::endl;
             changed = true;
             ++counter;
           }
@@ -227,7 +233,7 @@ std::set<Item> Parser::findClosure(std::set<Item> items) {
       if (isNonTerminal(next_char)) {
         for (auto production : _productions) {
           if (production[0] == next_char) {
-            Item new_item = {item.production, 0};
+            Item new_item = {item.production, 3};
             auto result = closure.insert(new_item);
             if (result.second) changed = true;
           }
