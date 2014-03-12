@@ -9,6 +9,7 @@
 #include <cstdio>
 #include <cctype>
 #include <map>
+#include <string>
 
 void print_mapset(const std::map<char, std::set<char>> input) {
     for (auto pair : input) {
@@ -27,7 +28,8 @@ void print_lrsets(const std::set<LRSet> input) {
         printf("    ID: %d\n", lrset.identifier);
         printf("    Transition: %c\n", lrset.transition_code);
         for (auto item : data) {
-            printf("        Production: [%d] %s\n", item.dot, item.production.c_str());
+            printf("        Production: [%d] %s\n", item.dot,
+                                                    item.production.c_str());
         }
         printf("\n");
     }
