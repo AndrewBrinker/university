@@ -14,6 +14,7 @@
 #include "./Preprocessor.h"
 #include "./Grammar.h"
 #include "./Item.h"
+#include "./LRSet.h"
 
 #define DELIM     "$"
 #define EPSILON   "e"
@@ -39,7 +40,9 @@ Parser::Parser(const std::string file_name) {
     curr.erase(std::remove(curr.begin(), curr.end(), '\n'), curr.end());
     if (curr == DELIM) break;
     if (first_production) {
-      _follow[curr[0]].insert(DELIM[0]);
+      std::string start = "S->" + curr.substr(0, 1);
+      _productions.insert(start);
+      _follow[start[0]].insert(DELIM[0]);
       first_production = false;
     }
     _non_terminals.insert(curr[0]);
@@ -159,16 +162,17 @@ void Parser::findFollow() {
  * Find the Canonical set for the grammar.
  */
 void Parser::findCanonicalSet() {
-  std::set<Item> c;
+  std::set<char> symbols;
+  _canon.insert(LRSet(getClosure(Item(getStartProduction(), 0)), 0, '\0'));
+  symbols = union(_terminals, _non_terminals);
+
   bool changed;
   do {
     changed = false;
-    for (auto item : c) {
-      for (auto symbol : item.production) {
-        auto g = findGoto(c, symbol);
-        if (!g.empty() && !isSubset(g, c)) {
-          // Add each item of g to c
-        }
+    for (auto item : _canon) {
+      for (auto symbol : symbols) {
+        // If goto(item, symbol) is not empty, and not in _canon
+        // Add it to _canon.
       }
     }
   } while(changed);
