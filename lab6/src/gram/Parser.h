@@ -40,6 +40,7 @@ class Parser {
   bool isNonTerminal(const char);
   bool isTerminal(const char);
   bool isSubset(std::set<Item>, std::set<Item>);
+  std::string getStartProduction();
 
   std::set<char> _terminals;
   std::set<char> _non_terminals;
@@ -47,6 +48,8 @@ class Parser {
   std::map<char, std::set<char>> _first;
   std::map<char, std::set<char>> _follow;
   std::set<LRSet> _canon;
+
+  friend std::set<char> setUnion(std::set<char> s1, std::set<char> s2);
 
   DISALLOW_COPY_AND_ASSIGN(Parser);
 };

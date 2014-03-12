@@ -18,6 +18,14 @@
 
 #define DELIM     "$"
 #define EPSILON   "e"
+#define START     "S"
+
+std::set<char> setUnion(std::set<char> s1, std::set<char> s2) {
+  std::set<char> result;
+  for (auto item : s1) result.insert(item);
+  for (auto item : s2) result.insert(item);
+  return result;
+}
 
 /**
  * Load the contents of the given Parser into the class
@@ -163,8 +171,11 @@ void Parser::findFollow() {
  */
 void Parser::findCanonicalSet() {
   std::set<char> symbols;
-  _canon.insert(LRSet(getClosure(Item(getStartProduction(), 0)), 0, '\0'));
-  symbols = union(_terminals, _non_terminals);
+  auto current_item = Item(getStartProduction(), 0);
+  auto current_closure = findClosure({current_item});
+
+  _canon.insert(LRSet(current_closure, 0, '\0'));
+  symbols = setUnion(_terminals, _non_terminals);
 
   bool changed;
   do {
@@ -311,5 +322,14 @@ bool Parser::isSubset(std::set<Item> s1, std::set<Item> s2) {
     }
   }
   return true;
+}
+
+std::string Parser::getStartProduction() {
+  for (auto production : _productions) {
+    if (production[0] == START[0]) {
+      return production;
+    }
+  }
+  return " ";
 }
 

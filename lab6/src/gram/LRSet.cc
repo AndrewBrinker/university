@@ -3,13 +3,13 @@
  */
 
 #include "./LRSet.h"
-#include <string>
 #include <set>
+#include "./Item.h"
 
 /**
  * Initialize an LRSet
  */
-LRSet::LRSet(std::set<std::string> d, int i, char t) {
+LRSet::LRSet(std::set<Item> d, int i, char t) {
     data = d;
     identifier = i;
     transition_code = t;
@@ -38,4 +38,13 @@ LRSet& LRSet::operator=(const LRSet &other) {
     identifier = other.identifier;
     transition_code = other.transition_code;
     return *this;
+}
+
+
+/**
+ * Compare two LRSets
+ * @return which one is smaller
+ */
+bool LRSet::operator<(const LRSet &other) const {
+    return identifier < other.identifier;
 }
