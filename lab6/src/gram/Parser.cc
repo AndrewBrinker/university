@@ -67,6 +67,7 @@ Parser::Parser(const std::string file_name) {
 void Parser::parse() {
   findFirst();
   findFollow();
+  findCanonicalSet();
 }
 
 
@@ -85,6 +86,15 @@ std::map<char, std::set<char>> Parser::first() const {
  */
 std::map<char, std::set<char>> Parser::follow() const {
   return _follow;
+}
+
+
+/**
+ * Returns the canon set for the Parser.
+ * @return the canon set.
+ */
+std::set<LRSet> Parser::canon() const {
+  return _canon;
 }
 
 
@@ -179,13 +189,20 @@ void Parser::findCanonicalSet() {
   _canon.insert(LRSet(current_closure, 0, '\0'));
   symbols = setUnion(_terminals, _non_terminals);
 
+  int counter = 1;
   bool changed;
   do {
     changed = false;
     for (auto item : _canon) {
       for (auto symbol : symbols) {
-        // If goto(item, symbol) is not empty, and not in _canon
-        // Add it to _canon.
+        auto new_set = findGoto(item.data, symbol);
+        if (!new_set.empty()) {
+          auto result = _canon.insert({new_set, counter, symbol});
+          if (result.second) {
+            changed = true;
+            ++counter;
+          }
+        }
       }
     }
   } while (changed);
