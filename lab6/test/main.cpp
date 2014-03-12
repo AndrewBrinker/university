@@ -26,7 +26,6 @@ void print_lrsets(const std::set<LRSet> input) {
         auto data = lrset.data;
         printf("    ID: %d\n", lrset.identifier);
         printf("    Transition: %c\n", lrset.transition_code);
-        printf("    Productions:\n");
         for (auto item : data) {
             printf("        Production: %s\n", item.production.c_str());
             printf("        Dot: %d\n", item.dot);

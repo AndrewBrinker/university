@@ -20,6 +20,7 @@
 #define DELIM     "$"
 #define EPSILON   "e"
 #define START     "S"
+#define START_POS  3
 
 
 std::set<char> setUnion(std::set<char> s1, std::set<char> s2) {
@@ -119,7 +120,7 @@ void Parser::findFirst() {
     _first[terminal].insert(terminal);
   }
   for (auto production : _productions) {
-    if (production.substr(3) == EPSILON) {
+    if (production.substr(START_POS) == EPSILON) {
       _first[production[0]].insert(EPSILON[0]);
     }
   }
@@ -128,7 +129,7 @@ void Parser::findFirst() {
     for (auto production : _productions) {
       size_t i = 0;
       char lhs = production[0];
-      std::string rhs = production.substr(3);
+      std::string rhs = production.substr(START_POS);
       while (i < rhs.length()) {
         std::set<char> first = _first[rhs[i]];
         if (hasEpsilon(first)) {
@@ -159,7 +160,7 @@ void Parser::findFollow() {
     for (auto production : _productions) {
       size_t i = 0;
       char lhs = production[0];
-      std::string rhs = production.substr(3);
+      std::string rhs = production.substr(START_POS);
       while (i < rhs.length()) {
         bool is_non_terminal = isNonTerminal(rhs[i]);
         if (is_non_terminal && i < rhs.length() - 1) {
@@ -183,31 +184,22 @@ void Parser::findFollow() {
  * Find the Canonical set for the grammar.
  */
 void Parser::findCanonicalSet() {
-  // std::cout << "Entered findCanonicalSet()" << std::endl;
   std::set<char> symbols;
-  auto current_item = Item(getStartProduction(), 3);
+  auto current_item = Item(getStartProduction(), START_POS);
   auto current_closure = findClosure({current_item});
-
-  _canon.insert(LRSet(current_closure, 3, '\0'));
+  _canon.insert(LRSet(current_closure, 0, '\0'));
   symbols = setUnion(_terminals, _non_terminals);
-  // std::cout << "Starting change loop..." << std::endl;
   int counter = 1;
   bool changed;
   do {
     changed = false;
     for (auto item : _canon) {
-      // std::cout << "Item found!" << std::endl;
       for (auto symbol : symbols) {
-        // std::cout << "Symbol found!" << std::endl;
         auto new_set = findGoto(item.data, symbol);
-        if (!new_set.empty()) {
-          // std::cout << "New set is not empty!" << std::endl;
-          auto result = _canon.insert({new_set, counter, symbol});
-          if (result.second) {
-            // std::cout << "New data inserted!" << std::endl;
-            changed = true;
-            ++counter;
-          }
+        if (!new_set.empty() && !isIn(_canon, new_set)) {
+          _canon.insert({new_set, counter, symbol});
+          changed = true;
+          ++counter;
         }
       }
     }
@@ -233,9 +225,11 @@ std::set<Item> Parser::findClosure(std::set<Item> items) {
       if (isNonTerminal(next_char)) {
         for (auto production : _productions) {
           if (production[0] == next_char) {
-            Item new_item = {item.production, 3};
+            Item new_item = {production, START_POS};
             auto result = closure.insert(new_item);
-            if (result.second) changed = true;
+            if (result.second) {
+              changed = true;
+            }
           }
         }
       }
@@ -340,6 +334,12 @@ bool Parser::isTerminal(const char symbol) {
 }
 
 
+/**
+ * Checks whether the given set is a subset of the other
+ * @param  s1 -> The 'containing' set
+ * @param  s2 -> The 'contained' set
+ * @return true if a subset, false otherwise
+ */
 bool Parser::isSubset(std::set<Item> s1, std::set<Item> s2) {
   for (auto item : s1) {
     if (s2.find(item) == s2.end()) {
@@ -349,6 +349,25 @@ bool Parser::isSubset(std::set<Item> s1, std::set<Item> s2) {
   return true;
 }
 
+
+/**
+ * Checks whether the given set of items is in the given set of LRSets
+ * @param  container -> The set of LRSets
+ * @param  item      -> The set of items
+ * @return true if present, false otherwise
+ */
+bool Parser::isIn(std::set<LRSet> container, std::set<Item> item) {
+  for (auto current : container) {
+    if (current.data == item) return true;
+  }
+  return false;
+}
+
+
+/**
+ * Returns the start production of the grammar
+ * @return the start production
+ */
 std::string Parser::getStartProduction() {
   for (auto production : _productions) {
     if (production[0] == START[0]) {

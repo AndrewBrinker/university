@@ -36,10 +36,19 @@ Item& Item::operator=(const Item &other) {
     return *this;
 }
 
+
+/**
+ * Compare two Items
+ * @return whether they are equal
+ */
+bool Item::operator==(const Item &other) const {
+    return production == other.production;
+}
+
 /**
  * Compare two Items
  * @return which one is smaller
  */
-bool Item::operator<(const Item& other) const {
+bool Item::operator<(const Item &other) const {
     return production < other.production;
 }

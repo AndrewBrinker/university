@@ -41,6 +41,7 @@ class Parser {
   bool isNonTerminal(const char);
   bool isTerminal(const char);
   bool isSubset(std::set<Item>, std::set<Item>);
+  bool isIn(std::set<LRSet> container, std::set<Item> item);
   std::string getStartProduction();
 
   std::set<char> _terminals;

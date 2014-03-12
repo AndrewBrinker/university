@@ -12,6 +12,7 @@ class Item {
   Item(std::string, int);
   Item(const Item &);
   Item& operator=(const Item &);
+  bool operator==(const Item&) const;
   bool operator<(const Item&) const;
   std::string production;
   int dot;
