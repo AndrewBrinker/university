@@ -20,12 +20,14 @@
 #define EPSILON   "e"
 #define START     "S"
 
+
 std::set<char> setUnion(std::set<char> s1, std::set<char> s2) {
   std::set<char> result;
   for (auto item : s1) result.insert(item);
   for (auto item : s2) result.insert(item);
   return result;
 }
+
 
 /**
  * Load the contents of the given Parser into the class
@@ -186,7 +188,7 @@ void Parser::findCanonicalSet() {
         // Add it to _canon.
       }
     }
-  } while(changed);
+  } while (changed);
 }
 
 
