@@ -27,10 +27,16 @@ void print_lrsets(const std::set<LRSet> input) {
         printf("    ID: %d\n", lrset.identifier);
         printf("    Transition: %c\n", lrset.transition_code);
         for (auto item : data) {
-            printf("        Production: %s\n", item.production.c_str());
-            printf("        Dot: %d\n", item.dot);
+            printf("        Production: [%d] %s\n", item.dot, item.production.c_str());
         }
         printf("\n");
+    }
+}
+
+
+void print_productions(const std::set<std::string> input) {
+    for (auto production : input) {
+        printf("    %s\n", production.c_str());
     }
 }
 
@@ -44,11 +50,8 @@ int main(int argc, char **argv) {
     Parser p(argv[1]);
     p.parse();
 
-    printf("\nFIRST:\n");
-    print_mapset(p.first());
-
-    printf("\nFOLLOW:\n");
-    print_mapset(p.follow());
+    printf("\nProductions:\n");
+    print_productions(p.productions());
 
     printf("\nCanonical LR(0) Sets:\n\n");
     print_lrsets(p.canon());

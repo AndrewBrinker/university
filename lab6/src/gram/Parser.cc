@@ -101,6 +101,15 @@ std::set<LRSet> Parser::canon() const {
 
 
 /**
+ * Returns the set of productions for the grammar
+ * @return the productions
+ */
+std::set<std::string> Parser::productions() {
+  return _productions;
+}
+
+
+/**
  * Run the Preprocessor
  * @param  file_name -> The name of the file to be processed
  * @return the Grammar created

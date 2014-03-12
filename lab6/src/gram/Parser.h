@@ -23,6 +23,7 @@ class Parser {
   std::map<char, std::set<char>> first() const;
   std::map<char, std::set<char>> follow() const;
   std::set<LRSet> canon() const;
+  std::set<std::string> productions();
 
  private:
   Grammar process(const std::string);
