@@ -31,7 +31,7 @@ build:
 # target: tests     Compile test code
 tests: CPPFLAGS += $(TARGET)
 tests: $(TESTS)
-	@mv test/main bin/test
+	@mv test/main bin/gram
 
 # target: clean     Remove compiled files
 clean:
