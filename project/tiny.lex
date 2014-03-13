@@ -1,8 +1,7 @@
 %{
-#include <stdio.h>
+#include <stdlib.h>
 #include "y.tab.h"
 
-int c;
 extern YYSTYPE yylval;
 %}
 
@@ -10,19 +9,17 @@ extern YYSTYPE yylval;
 
 " " ;
 
-[a-z] {
-  c = yytext[0];
-  yylval.a = c - 'a';
-  return LETTER;
+[A-Z] {
+    yylval.c = yytext[0];
+    return LETTER;
 }
 
-[0-9] {
-  c = yytext[0];
-  yylval.a = c - '0';
-  return DIGIT;
+[0-9]+\.[0-9]+ {
+    yylval.f = atof(yytext);
+    return DECIMAL;
 }
 
-[^a-z0-9\b] {
-  c = yytext[0];
-  return c;
+[0-9]+ {
+    yylval.i = atoi(yytext);
+    return INTEGER;
 }

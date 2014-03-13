@@ -7,95 +7,134 @@ int yyerror(char *s);
 int yywrap();
 %}
 
+%option noyywrap
 %start list
 %union {
-  int a;
-  char c;
+    int i;
+    char c;
+    float f;
 }
-%type <a> expr number DIGIT
-%type <c> LETTER
-%token DIGIT LETTER
-%left '|'
-%left '&'
-%left '+' '-'
-%left '*' '/' '%'
-%left UMINUS
+%type
+%token
 
 %%
 
-list:
-    /* empty */ |
-    list stat '\n' |
-    list error '\n' {
-        yyerrok;
-    };
+
+program:    block {
+                // Do something
+            };
 
 
-stat:
-    expr {
-        printf("%d\n", $1);
-    } |
-    LETTER '=' expr {
-        regs[$1] = $3;
-    };
+block:      block line {
+                // Do something
+            } |
+            line {
+                // Do something
+            };
 
 
-expr:
-    '(' expr ')'  {
-        $$ = $2;
-    } |
-    expr '*' expr {
-        $$ = $1 * $3;
-    } |
-    expr '/' expr {
-        $$ = $1 / $3;
-    } |
-    expr '%' expr {
-        $$ = $1 % $3;
-    } |
-    expr '+' expr {
-        $$ = $1 + $3;
-    } |
-    expr '-' expr {
-        $$ = $1 - $3;
-    } |
-    expr '&' expr {
-        $$ = $1 & $3;
-    } |
-    expr '|' expr {
-        $$ = $1 | $3;
-    } |
-    '-' expr %prec UMINUS {
-        $$ = -$2;
-    } |
-    LETTER {
-        $$ = regs[$1];
-    } |
-    number;
+line:       INTEGER statement CR {
+                // Do something
+            } |
+            statement CR {
+                // Do something
+            };
 
 
-number:
-    DIGIT {
-        $$ = $1;
-        base = ($1 == 0) ? 8 : 10;
-    } |
-    number DIGIT {
-        $$ = base * $1 + $2;
-    };
+statement:  PRINT expr-list {
+                // Do something
+            } |
+            IF expression relop expression THEN statement {
+                // Do something
+            } |
+            GOTO expression {
+                // Do something
+            } |
+            INPUT var-list {
+                // Do something
+            } |
+            LET var = expression {
+                // Do something
+            } |
+            GOTO expression {
+                // Do something
+            } |
+            END {
+                // Do something
+            };
+
+
+expr-list:  expr-list , expression {
+                // Do something
+            } |
+            expression {
+                // Do something
+            };
+
+
+var-list:   var-list , var {
+                // Do something
+            } |
+            var {
+                // Do something
+            };
+
+
+expression: expression + term {
+                // Do something
+            } |
+            expression - term {
+                // Do something
+            } |
+            term {
+                // Do something
+            };
+
+
+term:       term * factor {
+                // Do something
+            } |
+            term / factor {
+                // Do something
+            } |
+            factor {
+                // Do something
+            };
+
+
+factor:     var {
+                // Do something
+            } |
+            number {
+                // Do something
+            } |
+            ( expression ) {
+                // Do something
+            };
+
+
+number:     INTEGER {
+                // Do something
+            } |
+            DECIMAL {
+                // Do something
+            };
+
+
+var:        LETTER {
+                // Do something.
+            };
+
+
+relop:      "<" | "<=" | ">" | ">=" | "==" | "!=";
 
 %%
 
 int main() {
-  printf("Welcome to the calculator!\n");
-  printf("Perform whatever arithmetic you want. Type ^C when you're done.\n");
   return yyparse();
 }
 
 int yyerror(char *s) {
   fprintf(stderr, "%s\n", s);
-  return 1;
-}
-
-int yywrap() {
   return 1;
 }

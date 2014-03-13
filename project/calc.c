@@ -1,9 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef double (*function_t) (double);
 typedef struct sym_tbl_record sym_tbl_record;
-typedef struct function_map function_map;
 
 struct sym_tbl_record {
     char *name;
@@ -13,21 +11,6 @@ struct sym_tbl_record {
         function_t function_ptr;
     } value;
     struct sym_tbl_record *next;
-};
-
-struct function_map {
-    const char *fname;
-    double (*function) (double);
-};
-
-const function_map arithmetic_functions[] = {
-    { "atan" , atan },
-    { "cos"  , cos  },
-    { "exp"  , exp  },
-    { "ln"   , log  },
-    { "sin"  , sin  },
-    { "sqrt" , sqrt },
-    { 0      , 0    },
 };
 
 sym_tbl_record *symbol_table = 0;
@@ -72,15 +55,4 @@ sym_tbl_record *getsym(const char *sym_name) {
         }
     }
     return 0;
-}
-
-
-/**
- * Initialize the symbol table with symbols for the built-in functions.
- */
-void init_table() {
-    for (int i = 0; arithmetic_functions[i].fname != 0; ++i) {
-        sym_tbl_record *ptr = putsym(arithmetic_functions[i].fname, FNCT);
-        ptr->value.function_ptr = arithmetic_functions[i].function;
-    }
 }

@@ -235,9 +235,7 @@ std::set<Item> Parser::findClosure(std::set<Item> items) {
           if (production[0] == next_char) {
             Item new_item = {production, START_POS};
             auto result = closure.insert(new_item);
-            if (result.second) {
-              changed = true;
-            }
+            if (result.second) changed = true;
           }
         }
       }
