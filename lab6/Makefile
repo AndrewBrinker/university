@@ -1,4 +1,4 @@
-CPPFLAGS  = -std=c++11 -O2 -Wall -Wextra -Isrc -DNDEBUG $(OPTFLAGS)
+CPPFLAGS  = -std=c++11 -O2 -Wall -Wextra -pedantic -Isrc -DNDEBUG $(OPTFLAGS)
 LIBS      = -ldl $(OPTLIBS)
 PREFIX   ?= usr/local
 CC        = clang++
