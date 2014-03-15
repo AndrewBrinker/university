@@ -1,34 +1,26 @@
-CCFLAGS  = -c -d -O2 -Wall -Wextra -Isrc -DNDEBUG $(OPTFLAGS)
-YCFLAGS  = -d -y
-
-CC       = clang
+CC       = gcc
+CC_FLAGS = -c -d -Wall -Wextra -pedantic
 LX       = flex
-YC       = bison
+YC       = bison -d -y
+TARGET   = tiny
+SRC_DIR  = src
+LEX      = ${SRC_DIR}/tiny.lex
+YACC     = ${SRC_DIR}/tiny.yacc
+SOURCE   = src/lex.yy.c src/y.tab.c
 
-LEX_SRC  = src/tiny.lex
-YACC_SRC = src/tiny.yacc
+all: lex.yy.c y.tab.c ${TARGET}
 
-LEX      = lex.yy.c
-YACC     = y.tab.c
+${TARGET}: ${SOURCE}
+	${CC} ${SOURCE} -o $@
 
-SRC      = $(LEX) $(YACC)
-SOURCES  = $(patsubst %,src/%,$(SRC))
-TARGET   = $(patsubst %.yacc,%,$(YACC))
+lex.yy.c: ${LEX}
+	${LX} ${LEX}
+	@mv lex.yy.c ${SRC_DIR}/lex.yy.c
 
-# target: all       Compile ./tiny
-all: $(SOURCES) $(TARGET)
-
-$(TARGET): $(SOURCES)
-	$(CC) $(SOURCES) -o $@
-
-$(LEX): $(LEX_SRC)
-	$(LX) $(LEX_SRC)
-	@mv lex.yy.c src/lex.yy.c
-
-$(YACC): $(YACC_SRC)
-	$(YC) $(YCFLAGS) $(YACC_SRC)
-	@mv y.tab.c src/y.tab.c
-	@mv y.tab.h src/y.tab.h
+y.tab.c: ${YACC}
+	${YC} ${YACC}
+	@mv y.tab.c ${SRC_DIR}/y.tab.c
+	@mv y.tab.h ${SRC_DIR}/y.tab.h
 
 clean:
-	@rm src/lex.yy.c src/y.tab.c src/y.tab.h
+	@rm src/lex.yy.c src/y.tab.c src/y.tab.h ${TARGET}
