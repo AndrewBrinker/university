@@ -3,10 +3,8 @@
 #include <stdlib.h>
 #include "../lib/filename.c"
 
-FILE *output_file;
-FILE *input_file;
+extern FILE *yyin;
 
-// Forward declarations
 int yylex();
 int yyerror(char *s);
 int yywrap();
@@ -21,8 +19,8 @@ int yywrap();
 }
 %type <s> program block line statement exprlist varlist expression term
 factor number
-%token INTEGER LETTER DECIMAL
-%left "<" "<=" ">" ">=" "==" "!="
+%token INTEGER LETTER DECIMAL NL GOTO IF THEN LET PRINT END INPUT
+%left LT LE GT GE EQ NQ
 %left '+' '-'
 %left '*' '/'
 %left UMINUS
@@ -34,35 +32,33 @@ program:    block;
 
 
 block:      block line |
-            line {
-                fprintf(output_file, "%s", $1);
+            line;
+
+
+line:       INTEGER statement NL {
+                // Do something
+            } |
+            statement NL {
+                // Do something
             };
 
 
-line:       INTEGER statement "\n" {
+statement:  PRINT exprlist {
                 // Do something
             } |
-            statement "\n" {
-                // Do something
-            };
-
-
-statement:  "PRINT" exprlist {
+            IF expression relop expression THEN statement {
                 // Do something
             } |
-            "IF" expression relop expression "THEN" statement {
+            GOTO expression {
                 // Do something
             } |
-            "GOTO" expression {
+            INPUT varlist {
                 // Do something
             } |
-            "INPUT" varlist {
+            LET var '=' expression {
                 // Do something
             } |
-            "LET" var '=' expression {
-                // Do something
-            } |
-            "END" {
+            END {
                 // Do something
             };
 
@@ -127,7 +123,7 @@ var:        LETTER {
             };
 
 
-relop:      "<" | "<=" | ">" | ">=" | "==" | "!=";
+relop:      LT | LE | GT | GE | EQ | NQ;
 
 %%
 
@@ -141,18 +137,19 @@ int main(int argc, char **argv) {
     char *output_file_name = convert_file_name(input_file_name);
     free(output_file_name);
 
-    input_file = fopen(input_file_name, "r");
+    FILE *input_file = fopen(input_file_name, "r");
     if (!input_file) {
         printf("%s can't be opened. Exiting...\n", input_file_name);
         exit(EXIT_FAILURE);
     }
 
-    output_file = fopen(output_file_name, "w");
+    FILE *output_file = fopen(output_file_name, "w");
     if (!output_file) {
         printf("%s can't be created. Exiting...\n", output_file_name);
         exit(EXIT_FAILURE);
     }
 
+    yyin = input_file;
     return yyparse();
 }
 
