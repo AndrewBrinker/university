@@ -12,6 +12,7 @@ all: lex.yy.c y.tab.c ${TARGET}
 
 ${TARGET}: ${SOURCE}
 	${CC} ${SOURCE} -o $@
+	@mv tiny bin/tiny
 
 lex.yy.c: ${LEX}
 	${LX} ${LEX}
