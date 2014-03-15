@@ -4,6 +4,7 @@
 #include "../lib/filename.c"
 
 extern FILE *yyin;
+extern int line_number;
 
 int yylex();
 int yyerror(char *s);
@@ -11,117 +12,69 @@ int yywrap();
 %}
 
 %start program
+
 %union {
     int i;
     char c;
-    float f;
+    double d;
     char *s;
 }
-%type <s> program block line statement exprlist varlist expression term
-factor number
-%token INTEGER LETTER DECIMAL NL GOTO IF THEN LET PRINT END INPUT
+
+%type <i> INTEGER
+%type <d> DECIMAL
+%type <c> LETTER
+%token INTEGER LETTER DECIMAL GOTO IF THEN LET PRINT END INPUT NEWLINE
+%left '=' ','
 %left LT LE GT GE EQ NQ
 %left '+' '-'
 %left '*' '/'
-%left UMINUS
 
 %%
 
 
 program:    block;
 
-
 block:      block line |
             line;
 
+line:       INTEGER statement NEWLINE |
+            statement NEWLINE;
 
-line:       INTEGER statement NL {
-                // Do something
-            } |
-            statement NL {
-                // Do something
-            };
+statement:  PRINT exprlist |
+            IF expression relop expression THEN statement |
+            GOTO expression |
+            INPUT varlist |
+            LET var '=' expression |
+            END;
 
+exprlist:   exprlist ',' expression |
+            expression;
 
-statement:  PRINT exprlist {
-                // Do something
-            } |
-            IF expression relop expression THEN statement {
-                // Do something
-            } |
-            GOTO expression {
-                // Do something
-            } |
-            INPUT varlist {
-                // Do something
-            } |
-            LET var '=' expression {
-                // Do something
-            } |
-            END {
-                // Do something
-            };
+varlist:    varlist ',' var |
+            var;
 
-
-exprlist:  exprlist ',' expression {
-                // Do something
-            } |
-            expression {
-                // Do something
-            };
-
-
-varlist:   varlist ',' var {
-                // Do something
-            } |
-            var {
-                // Do something
-            };
-
-
-expression: expression '+' term {
-                // Do something
-            } |
-            expression '-' term {
-                // Do something
-            } |
+expression: expression '+' term |
+            expression '-' term |
             term;
 
+term:       term '*' factor |
+            term '/' factor |
+            factor;
 
-term:       term '*' factor {
-                // Do something
-            } |
-            term '/' factor {
-                // Do something
-            } |
-            factor {
-                // Do something
-            };
-
-
-factor:     var {
-                // Do something
-            } |
-            number {
-                // Do something
-            } |
-            '(' expression ')' {
-                // Do something
-            };
-
+factor:     var |
+            number |
+            '(' expression ')';
 
 number:     INTEGER {
-                // Do something
+                printf("Integer: %d\n", $1);
             } |
             DECIMAL {
-                // Do something
+                printf("Decimal: %f\n", $1);
             };
-
 
 var:        LETTER {
-                // Do something
+                printf("Letter: %c\n", $1);
             };
-
 
 relop:      LT | LE | GT | GE | EQ | NQ;
 
@@ -154,7 +107,7 @@ int main(int argc, char **argv) {
 }
 
 int yyerror(char *s) {
-    fprintf(stderr, "%s\n", s);
+    printf("[%d] %s\n", line_number, s);
     return 1;
 }
 
