@@ -26,6 +26,8 @@ class Estimator {
   void getTValue();
   void getRange();
   void getPredictionIntervals();
+  void getCorrelation();
+  void getSignificance();
 
   std::list<std::pair<float, float>> data;
 
@@ -33,6 +35,9 @@ class Estimator {
 
   double _xk;
   double _yk;
+
+  double _r;
+  double _s;
 
   double _x_avg;
   double _y_avg;

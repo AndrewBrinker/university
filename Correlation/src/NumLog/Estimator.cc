@@ -84,6 +84,8 @@ void Estimator::calculateEstimate() {
     getTValue();
     getRange();
     getPredictionIntervals();
+    getCorrelation();
+    getSignificance();
 }
 
 
@@ -91,23 +93,8 @@ void Estimator::calculateEstimate() {
  * Print the results of the calculations.
  */
 void Estimator::printResults() {
-    printf("Beta 0:         %f\n", _beta_0);
-    printf("Beta 1:         %f\n", _beta_1);
-    printf("\n");
-    printf("Std. Deviation: %f\n", _std_dev);
-    printf("Projection:     %f\n", _yk);
-    printf("\n");
-    printf("70%% T-Value:    %f\n", _t_seventy);
-    printf("90%% T-Value:    %f\n", _t_ninety);
-    printf("\n");
-    printf("70%% Range:      %f\n", _range_seventy);
-    printf("90%% Range:      %f\n", _range_ninety);
-    printf("\n");
-    printf("70%% UPI:        %f\n", _upi_seventy);
-    printf("90%% UPI:        %f\n", _upi_ninety);
-    printf("\n");
-    printf("70%% LPI:        %f\n", _lpi_seventy);
-    printf("90%% LPI:        %f\n", _lpi_ninety);
+    printf("Correlation:    %f\n", _r);
+    printf("Significance:   %f\n", _s);
 }
 
 
@@ -211,4 +198,40 @@ void Estimator::getPredictionIntervals() {
     _upi_ninety  = _yk + _range_ninety;
     _lpi_seventy = _yk - _range_seventy;
     _lpi_ninety  = _yk - _range_ninety;
+}
+
+
+/**
+ * Get the correlation coefficient of the two data sets.
+ */
+void Estimator::getCorrelation() {
+    double pair_sum     = 0.0;
+    double x_sum        = 0.0;
+    double y_sum        = 0.0;
+    double x_square_sum = 0.0;
+    double y_square_sum = 0.0;
+    double num          = 0.0;
+    double denom        = 0.0;
+    double denom_x      = 0.0;
+    double denom_y      = 0.0;
+    for (auto pair : data) {
+        pair_sum     += pair.first * pair.second;
+        x_sum        += pair.first;
+        y_sum        += pair.second;
+        x_square_sum += square(pair.first);
+        y_square_sum += square(pair.second);
+    }
+    num     = (_n * pair_sum) - (x_sum * y_sum);
+    denom_x = ((_n * x_square_sum) - square(x_sum));
+    denom_y = ((_n * y_square_sum) - square(y_sum));
+    denom   = safe_sqrt(denom_x * denom_y);
+    _r      = num / denom;
+}
+
+
+/**
+ * Get the significance of the given correlation coefficient
+ */
+void Estimator::getSignificance() {
+    _s = (_r) / (safe_sqrt((1.0 - square(_r)) / ((_n - 2))));
 }
