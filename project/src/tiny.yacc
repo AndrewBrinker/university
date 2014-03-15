@@ -1,8 +1,10 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
-#include "lib/symbol.c"
-#include "lib/filename.c"
+#include "../lib/filename.c"
+
+FILE *output_file;
+FILE *input_file;
 
 // Forward declarations
 int yylex();
@@ -10,41 +12,42 @@ int yyerror(char *s);
 int yywrap();
 %}
 
-%option noyywrap
-%start list
+%start program
 %union {
     int i;
     char c;
     float f;
+    char *s;
 }
-%type
-%token
+%type <s> program block line statement exprlist varlist expression term
+factor number
+%token INTEGER LETTER DECIMAL
+%left "<" "<=" ">" ">=" "==" "!="
+%left '+' '-'
+%left '*' '/'
+%left UMINUS
 
 %%
 
 
-program:    block {
-                // Do something
-            };
+program:    block;
 
 
-block:      block line {
-                // Do something
-            } |
+block:      block line |
             line {
-                // Do something
+                fprintf(output_file, "%s", $1);
             };
 
 
-line:       INTEGER statement "CR" {
+line:       INTEGER statement "\n" {
                 // Do something
             } |
-            statement "CR" {
+            statement "\n" {
                 // Do something
             };
 
 
-statement:  "PRINT" expr-list {
+statement:  "PRINT" exprlist {
                 // Do something
             } |
             "IF" expression relop expression "THEN" statement {
@@ -53,13 +56,10 @@ statement:  "PRINT" expr-list {
             "GOTO" expression {
                 // Do something
             } |
-            "INPUT" var-list {
+            "INPUT" varlist {
                 // Do something
             } |
             "LET" var '=' expression {
-                // Do something
-            } |
-            "GOTO" expression {
                 // Do something
             } |
             "END" {
@@ -67,7 +67,7 @@ statement:  "PRINT" expr-list {
             };
 
 
-expr-list:  expr-list ',' expression {
+exprlist:  exprlist ',' expression {
                 // Do something
             } |
             expression {
@@ -75,7 +75,7 @@ expr-list:  expr-list ',' expression {
             };
 
 
-var-list:   var-list ',' var {
+varlist:   varlist ',' var {
                 // Do something
             } |
             var {
@@ -89,9 +89,7 @@ expression: expression '+' term {
             expression '-' term {
                 // Do something
             } |
-            term {
-                // Do something
-            };
+            term;
 
 
 term:       term '*' factor {
@@ -125,7 +123,7 @@ number:     INTEGER {
 
 
 var:        LETTER {
-                // Do something.
+                // Do something
             };
 
 
@@ -143,24 +141,26 @@ int main(int argc, char **argv) {
     char *output_file_name = convert_file_name(input_file_name);
     free(output_file_name);
 
-    FILE *input_file = fopen(input_file_name, "r");
+    input_file = fopen(input_file_name, "r");
     if (!input_file) {
         printf("%s can't be opened. Exiting...\n", input_file_name);
         exit(EXIT_FAILURE);
     }
 
-    FILE *output_file = fopen(output_file_name, "w");
+    output_file = fopen(output_file_name, "w");
     if (!output_file) {
         printf("%s can't be created. Exiting...\n", output_file_name);
         exit(EXIT_FAILURE);
     }
 
-    yyin  = input_file;
-    yyout = output_file;
     return yyparse();
 }
 
 int yyerror(char *s) {
     fprintf(stderr, "%s\n", s);
+    return 1;
+}
+
+int yywrap() {
     return 1;
 }

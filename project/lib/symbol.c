@@ -6,7 +6,6 @@ typedef struct sym_tbl_record {
     int type;
     union {
         double var;
-        function_t function_ptr;
     } value;
     struct sym_tbl_record *next;
 } sym_tbl_record;
