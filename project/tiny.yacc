@@ -1,10 +1,20 @@
 %{
 #include <stdio.h>
-int regs[26];
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_VARIABLE 1024
+
+#define DOT '.'
+#define SEP '/'
+#define EXT ".c"
+
+int regs[MAX_VARIABLE];
 int base;
 int yylex();
 int yyerror(char *s);
 int yywrap();
+char *convert_file_name(const char* input);
 %}
 
 %option noyywrap
@@ -33,7 +43,7 @@ block:      block line {
             };
 
 
-line:       INTEGER statement CR {
+line:       INTEGER statement "CR" {
                 // Do something
             } |
             statement CR {
@@ -41,30 +51,30 @@ line:       INTEGER statement CR {
             };
 
 
-statement:  PRINT expr-list {
+statement:  "PRINT" expr-list {
                 // Do something
             } |
-            IF expression relop expression THEN statement {
+            "IF" expression relop expression "THEN" statement {
                 // Do something
             } |
-            GOTO expression {
+            "GOTO" expression {
                 // Do something
             } |
-            INPUT var-list {
+            "INPUT" var-list {
                 // Do something
             } |
-            LET var = expression {
+            "LET" var '=' expression {
                 // Do something
             } |
-            GOTO expression {
+            "GOTO" expression {
                 // Do something
             } |
-            END {
+            "END" {
                 // Do something
             };
 
 
-expr-list:  expr-list , expression {
+expr-list:  expr-list ',' expression {
                 // Do something
             } |
             expression {
@@ -72,7 +82,7 @@ expr-list:  expr-list , expression {
             };
 
 
-var-list:   var-list , var {
+var-list:   var-list ',' var {
                 // Do something
             } |
             var {
@@ -80,10 +90,10 @@ var-list:   var-list , var {
             };
 
 
-expression: expression + term {
+expression: expression '+' term {
                 // Do something
             } |
-            expression - term {
+            expression '-' term {
                 // Do something
             } |
             term {
@@ -91,10 +101,10 @@ expression: expression + term {
             };
 
 
-term:       term * factor {
+term:       term '*' factor {
                 // Do something
             } |
-            term / factor {
+            term '/' factor {
                 // Do something
             } |
             factor {
@@ -108,7 +118,7 @@ factor:     var {
             number {
                 // Do something
             } |
-            ( expression ) {
+            '(' expression ')' {
                 // Do something
             };
 
@@ -130,11 +140,60 @@ relop:      "<" | "<=" | ">" | ">=" | "==" | "!=";
 
 %%
 
-int main() {
-  return yyparse();
+char *convert_file_name(const char* input) {
+    char *stripped;
+    char *last_dot;
+    char *last_sep;
+    if (input == NULL) return NULL;
+    if ((stripped = malloc(strlen(input) + 1)) == NULL) return NULL;
+    strcpy(stripped, input);
+    last_dot = strrchr(stripped, DOT);
+    last_sep = (SEP == 0) ? NULL : strrchr(stripped, SEP);
+    if (last_dot != NULL) {
+        if (last_sep != NULL) {
+            if (last_sep < last_dot) {
+                *last_dot = '\0';
+            }
+        } else {
+            *last_dot = '\0';
+        }
+    }
+    size_t length = strlen(input) + strlen(EXT);
+    char *ret = (char*) malloc(length * sizeof(char) + 1);
+    *ret = '\0';
+    char *combined = strcat(strcat(stripped, input), EXT);
+    free(stripped);
+    return combined;
+}
+
+int main(int argc, char **argv) {
+    if (argc != 2) {
+        printf("Usage: %s <filename>\n", argv[0]);
+        exit(EXIT_FAILURE);
+    }
+
+    char *input_file_name  = argv[1];
+    char *output_file_name = convert_file_name(input_file_name);
+    free(output_file_name);
+
+    FILE *input_file = fopen(input_file_name, "r");
+    if (!input_file) {
+        printf("%s can't be opened. Exiting...\n", input_file_name);
+        exit(EXIT_FAILURE);
+    }
+
+    FILE *output_file = fopen(output_file_name, "w");
+    if (!output_file) {
+        printf("%s can't be created. Exiting...\n", output_file_name);
+        exit(EXIT_FAILURE);
+    }
+
+    yyin  = input_file;
+    yyout = output_file;
+    return yyparse();
 }
 
 int yyerror(char *s) {
-  fprintf(stderr, "%s\n", s);
-  return 1;
+    fprintf(stderr, "%s\n", s);
+    return 1;
 }

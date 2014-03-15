@@ -21,6 +21,7 @@ class Preprocessor {
  private:
   Grammar load();
   Grammar expand();
+  void sanityCheck();
 
   std::string name;
   Grammar file;

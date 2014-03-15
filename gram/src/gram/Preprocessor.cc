@@ -82,5 +82,19 @@ Grammar Preprocessor::expand() {
   file.contents.push_front(delim_line);
   for (auto symbol : terminals) file.contents.push_front(symbol + "\n");
   file.contents.push_back(delim_line);
+  sanityCheck();
   return file;
+}
+
+
+/**
+ * Verify that the file is a valid grammar file
+ */
+void sanityCheck() {
+  /*
+   * 1) No uppercase in non-terminals
+   * 2) Two section delimiters
+   * 3) Each production line has an arrow
+   * 4) No whitespace
+   */
 }
