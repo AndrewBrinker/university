@@ -6,6 +6,8 @@
 extern FILE *yyin;
 extern int line_number;
 
+FILE *yyout;
+
 int yylex();
 int yyerror(char *s);
 int yywrap();
@@ -70,14 +72,14 @@ endl:       endl NEWLINE |
             NEWLINE;
 
 number:     INTEGER {
-                printf("Integer: %d\n", $1);
+                $<i>$ = $1;
             } |
             DECIMAL {
-                printf("Decimal: %f\n", $1);
+                $<d>$ = $1;
             };
 
 var:        LETTER {
-                printf("Letter: %c\n", $1);
+                $<c>$ = $1;
             };
 
 relop:      LT | LE | GT | GE | EQ | NQ;
@@ -107,6 +109,7 @@ int main(int argc, char **argv) {
     }
 
     yyin = input_file;
+    yyout = output_file;
     return yyparse();
 }
 

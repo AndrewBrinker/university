@@ -3,7 +3,7 @@
 
 #define DOT '.'
 #define SEP '/'
-#define EXT ".c"
+#define EXT ".cpp"
 
 
 /**
