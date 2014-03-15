@@ -24,6 +24,7 @@ int yywrap();
 %type <d> DECIMAL
 %type <c> LETTER
 %token INTEGER LETTER DECIMAL GOTO IF THEN LET PRINT END INPUT NEWLINE
+%token ASSIGN COMMA PLUS MINUS TIMES DIVIDED_BY LEFT_PAREN RIGHT_PAREN
 %left '=' ','
 %left LT LE GT GE EQ NQ
 %left '+' '-'
@@ -37,33 +38,36 @@ program:    block;
 block:      block line |
             line;
 
-line:       INTEGER statement NEWLINE |
-            statement NEWLINE;
+line:       INTEGER statement endl |
+            statement endl;
 
 statement:  PRINT exprlist |
             IF expression relop expression THEN statement |
             GOTO expression |
             INPUT varlist |
-            LET var '=' expression |
+            LET var ASSIGN expression |
             END;
 
-exprlist:   exprlist ',' expression |
+exprlist:   exprlist COMMA expression |
             expression;
 
-varlist:    varlist ',' var |
+varlist:    varlist COMMA var |
             var;
 
-expression: expression '+' term |
-            expression '-' term |
+expression: expression PLUS term |
+            expression MINUS term |
             term;
 
-term:       term '*' factor |
-            term '/' factor |
+term:       term TIMES factor |
+            term DIVIDED_BY factor |
             factor;
 
 factor:     var |
             number |
-            '(' expression ')';
+            LEFT_PAREN expression RIGHT_PAREN;
+
+endl:       endl NEWLINE |
+            NEWLINE;
 
 number:     INTEGER {
                 printf("Integer: %d\n", $1);

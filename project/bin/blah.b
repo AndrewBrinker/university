@@ -1,1 +1,2 @@
-LET N = 0
+LET N = 1
+LET A = 0
