@@ -1,20 +1,13 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include "lib/symbol.c"
+#include "lib/filename.c"
 
-#define MAX_VARIABLE 1024
-
-#define DOT '.'
-#define SEP '/'
-#define EXT ".c"
-
-int regs[MAX_VARIABLE];
-int base;
+// Forward declarations
 int yylex();
 int yyerror(char *s);
 int yywrap();
-char *convert_file_name(const char* input);
 %}
 
 %option noyywrap
@@ -46,7 +39,7 @@ block:      block line {
 line:       INTEGER statement "CR" {
                 // Do something
             } |
-            statement CR {
+            statement "CR" {
                 // Do something
             };
 
@@ -139,32 +132,6 @@ var:        LETTER {
 relop:      "<" | "<=" | ">" | ">=" | "==" | "!=";
 
 %%
-
-char *convert_file_name(const char* input) {
-    char *stripped;
-    char *last_dot;
-    char *last_sep;
-    if (input == NULL) return NULL;
-    if ((stripped = malloc(strlen(input) + 1)) == NULL) return NULL;
-    strcpy(stripped, input);
-    last_dot = strrchr(stripped, DOT);
-    last_sep = (SEP == 0) ? NULL : strrchr(stripped, SEP);
-    if (last_dot != NULL) {
-        if (last_sep != NULL) {
-            if (last_sep < last_dot) {
-                *last_dot = '\0';
-            }
-        } else {
-            *last_dot = '\0';
-        }
-    }
-    size_t length = strlen(input) + strlen(EXT);
-    char *ret = (char*) malloc(length * sizeof(char) + 1);
-    *ret = '\0';
-    char *combined = strcat(strcat(stripped, input), EXT);
-    free(stripped);
-    return combined;
-}
 
 int main(int argc, char **argv) {
     if (argc != 2) {

@@ -1,9 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct sym_tbl_record sym_tbl_record;
-
-struct sym_tbl_record {
+typedef struct sym_tbl_record {
     char *name;
     int type;
     union {
@@ -11,7 +9,7 @@ struct sym_tbl_record {
         function_t function_ptr;
     } value;
     struct sym_tbl_record *next;
-};
+} sym_tbl_record;
 
 sym_tbl_record *symbol_table = 0;
 
