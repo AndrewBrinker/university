@@ -1,56 +1,27 @@
-CPPFLAGS  = -std=c++11 -O2 -Wall -Wextra -Isrc -DNDEBUG $(OPTFLAGS)
-LIBS      = -ldl $(OPTLIBS)
-PREFIX   ?= usr/local
-CC        = clang++
-TARGET    = build/libgrammar.a
+CC       = gcc
+CC_FLAGS = -c -d -Wall -Wextra -pedantic
+LX       = flex
+YC       = bison -d -y
+TARGET   = tiny
+SRC_DIR  = src
+LEX      = ${SRC_DIR}/tiny.lex
+YACC     = ${SRC_DIR}/tiny.yacc
+SOURCE   = src/lex.yy.c src/y.tab.c
 
-FILTERS   = -readability/streams,-build/header_guard
+all: lex.yy.c y.tab.c ${TARGET}
 
-SOURCES   = $(wildcard src/**/*.cc src/*.cc)
-OBJECTS   = $(patsubst %.cc,%.o,$(SOURCES))
-HEADERS   = $(patsubst %.cc,%.h,$(SOURCES))
-TEST_SRC  = $(wildcard test/**.*.cpp test/*.cpp)
-TESTS     = $(patsubst %.cpp,%,$(TEST_SRC))
-SO_TARGET = $(patsubst %.a,%.so,$(TARGET))
+${TARGET}: ${SOURCE}
+	${CC} ${SOURCE} -o $@
+	@mv tiny bin/tiny
 
-# target: all       Compile libgrammar.a
-all: $(TARGET) $(SO_TARGET)
+lex.yy.c: ${LEX}
+	${LX} ${LEX}
+	@mv lex.yy.c ${SRC_DIR}/lex.yy.c
 
-$(TARGET): CPPFLAGS += -fPIC
-$(TARGET): build $(OBJECTS)
-	ar rcs $@ $(OBJECTS)
-	ranlib $@
+y.tab.c: ${YACC}
+	${YC} ${YACC}
+	@mv y.tab.c ${SRC_DIR}/y.tab.c
+	@mv y.tab.h ${SRC_DIR}/y.tab.h
 
-$(SO_TARGET): $(TARGET) $(OBJECTS)
-	$(CC) -shared -std=c++11 -stdlib=libc++ -lc++abi -o $@ $(OBJECTS)
-
-build:
-	@mkdir -p build
-	@mkdir -p bin
-
-# target: tests     Compile test code
-tests: CPPFLAGS += $(TARGET)
-tests: $(TESTS)
-	@mv test/main bin/test
-
-# target: clean     Remove compiled files
 clean:
-	@rm -rf build $(OBJECTS) $(TESTS)
-	@find . -name "*.gc*" -exec rm {} \;
-	@rm -rf `find . -name "*.dSYM" -print`
-
-# target: install   Install libgrammar.a to the system
-install: all
-	@install -d $(DESTDIR)/$(PREFIX)/lib/
-	@install $(TARGET) $(DESTDIR)/$(PREFIX)/lib/
-	@echo Installed to $(DESTDIR)/$(PREFIX)/lib
-
-#target: lint       Check source files with bin/cpplint.py
-lint:
-	@python lint/cpplint.py --filter=$(FILTERS) $(SOURCES) $(HEADERS) $(TEST_SRC)
-
-# target: help      List available targets
-help:
-	@egrep "^# target:" [Mm]akefile
-
-.PHONY: tests clean install lint check
+	@rm src/lex.yy.c src/y.tab.c src/y.tab.h ${TARGET}
