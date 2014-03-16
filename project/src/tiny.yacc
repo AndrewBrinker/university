@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "../lib/filename.c"
+#include "../lib/chomp.c"
 
 extern FILE *yyin;
 extern int line_number;
@@ -9,8 +10,6 @@ extern int line_number;
 FILE *yyout;
 
 int yylex();
-void chomp(char *str, size_t n);
-char *string_combine(const char *str1, const char *str2, const char *str3);
 int yyerror(char *s);
 int yywrap();
 %}
@@ -22,7 +21,7 @@ int yywrap();
 }
 
 %type <s> INTEGER DECIMAL LETTER
-%type <s> expression term factor number var relop exprlist varlist statement
+%type <s> expression term factor number var relop exprlist varlist
 
 %token INTEGER LETTER DECIMAL
 %token GOTO IF THEN LET PRINT END INPUT
@@ -46,15 +45,7 @@ line:       INTEGER statement endl |
             statement endl;
 
 statement:  PRINT exprlist |
-            IF expression relop expression THEN statement {
-                char *combined1 = string_combine("if (", $2, $3);
-                char *combined2 = string_combine(combined1, $4, ") {\n");
-                char *combined3 = string_combine(combined2, $6, "\n}");
-                $$ = combined3;
-                free(combined1);
-                free(combined2);
-                free(combined3);
-            } |
+            IF expression relop expression THEN statement |
             GOTO expression |
             INPUT varlist |
             LET var ASSIGN expression {
@@ -147,7 +138,6 @@ int main(int argc, char **argv) {
 
     char *input_file_name  = argv[1];
     char *output_file_name = convert_file_name(input_file_name);
-    free(output_file_name);
 
     FILE *input_file = fopen(input_file_name, "r");
     if (!input_file) {
@@ -163,22 +153,9 @@ int main(int argc, char **argv) {
 
     yyin = input_file;
     yyout = output_file;
+
+    free(output_file_name);
     return yyparse();
-}
-
-void chomp(char *str, size_t n) {
-    if (str[n-1] == '\n') str[n-1] = '\0';
-}
-
-char *string_combine(const char *str1, const char *str2, const char *str3) {
-    size_t size = strlen(str1) + strlen(str2) + strlen(str3) + 1;
-    char *new_string = malloc(size * sizeof(char));
-    size_t i = 0;
-    for (; i < strlen(str1); ++i) new_string[i] = str1[i];
-    for (; i < strlen(str2); ++i) new_string[i] = str2[i];
-    for (; i < strlen(str3); ++i) new_string[i] = str3[i];
-    new_string[size - 1] = '\0';
-    return new_string;
 }
 
 int yyerror(char *s) {
