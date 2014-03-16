@@ -10,6 +10,7 @@ FILE *yyout;
 
 int yylex();
 void chomp(char *str, size_t n);
+char *string_combine(const char *str1, const char *str2, const char *str3);
 int yyerror(char *s);
 int yywrap();
 %}
@@ -21,7 +22,7 @@ int yywrap();
 }
 
 %type <s> INTEGER DECIMAL LETTER
-%type <s> expression term factor number var
+%type <s> expression term factor number var relop exprlist varlist statement
 
 %token INTEGER LETTER DECIMAL
 %token GOTO IF THEN LET PRINT END INPUT
@@ -45,7 +46,12 @@ line:       INTEGER statement endl |
             statement endl;
 
 statement:  PRINT exprlist |
-            IF expression relop expression THEN statement |
+            IF expression relop expression THEN statement {
+                chomp($2, strlen($2));
+                chomp($4, strlen($4));
+                chomp($6, strlen($6));
+                fprintf(yyout, "if (%s %s %s) {\n\t%s\n}", $2, $3, $4, $6);
+            } |
             GOTO expression |
             INPUT varlist |
             LET var ASSIGN expression {
@@ -54,24 +60,50 @@ statement:  PRINT exprlist |
             } |
             END;
 
-exprlist:   exprlist COMMA expression |
+exprlist:   exprlist COMMA expression {
+                char *combined = string_combine($1, ", " , $3);
+                $$ = combined;
+                free(combined);
+            } |
             expression;
 
-varlist:    varlist COMMA var |
+varlist:    varlist COMMA var {
+                char *combined = string_combine($1, ", " , $3);
+                $$ = combined;
+                free(combined);
+            } |
             var;
 
-expression: expression PLUS term |
-            expression MINUS term |
+expression: expression PLUS term {
+                char *combined = string_combine($1, " + " , $3);
+                $$ = combined;
+                free(combined);
+            } |
+            expression MINUS term {
+                char *combined = string_combine($1, " - " , $3);
+                $$ = combined;
+                free(combined);
+            } |
             term;
 
-term:       term TIMES factor |
-            term DIVIDED_BY factor |
+term:       term TIMES factor {
+                char *combined = string_combine($1, " * " , $3);
+                $$ = combined;
+                free(combined);
+            } |
+            term DIVIDED_BY factor {
+                char *combined = string_combine($1, " / " , $3);
+                $$ = combined;
+                free(combined);
+            } |
             factor;
 
 factor:     var |
             number |
             LEFT_PAREN expression RIGHT_PAREN {
-                $$ = $2;
+                char *combined = string_combine("(", $2 , ")");
+                $$ = combined;
+                free(combined);
             };
 
 number:     INTEGER {
@@ -85,7 +117,19 @@ var:        LETTER {
                 $$ = $1;
             };
 
-relop:      LT | LE | GT | GE | EQ | NQ;
+relop:      LT {
+                $$ = "<";
+            } | LE {
+                $$ = "<=";
+            } | GT {
+                $$ = ">";
+            } | GE {
+                $$ = ">=";
+            } | EQ {
+                $$ = "==";
+            } | NQ {
+                $$ = "!=";
+            };
 
 endl:       endl NEWLINE |
             NEWLINE;
@@ -121,6 +165,17 @@ int main(int argc, char **argv) {
 
 void chomp(char *str, size_t n) {
     if (str[n-1] == '\n') str[n-1] = '\0';
+}
+
+char *string_combine(const char *str1, const char *str2, const char *str3) {
+    size_t size = strlen(str1) + strlen(str2) + strlen(str3) + 1;
+    char *new_string = malloc(size * sizeof(char));
+    size_t i = 0;
+    for (; i < strlen(str1); ++i) new_string[i] = str1[i];
+    for (; i < strlen(str2); ++i) new_string[i] = str2[i];
+    for (; i < strlen(str3); ++i) new_string[i] = str3[i];
+    new_string[size - 1] = '\0';
+    return new_string;
 }
 
 int yyerror(char *s) {
