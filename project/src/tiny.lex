@@ -1,5 +1,6 @@
 %{
 #include <stdlib.h>
+#include <string.h>
 #include "y.tab.h"
 extern YYSTYPE yylval;
 int line_number = 1;
@@ -32,17 +33,17 @@ int line_number = 1;
 "END"   { return END;           }
 
 [A-Z] {
-    yylval.c = yytext[0];
+    yylval.s = yytext;
     return LETTER;
 }
 
 [0-9]+\.[0-9]+ {
-    yylval.d = atof(yytext);
+    yylval.s = yytext;
     return DECIMAL;
 }
 
 [0-9]+ {
-    yylval.i = atoi(yytext);
+    yylval.s = yytext;
     return INTEGER;
 }
 

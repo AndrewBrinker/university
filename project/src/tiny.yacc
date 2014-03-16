@@ -9,6 +9,7 @@ extern int line_number;
 FILE *yyout;
 
 int yylex();
+void chomp(char *str, size_t n);
 int yyerror(char *s);
 int yywrap();
 %}
@@ -16,15 +17,11 @@ int yywrap();
 %start program
 
 %union {
-    int i;
-    char c;
-    double d;
     char *s;
 }
 
-%type <i> INTEGER
-%type <d> DECIMAL
-%type <c> LETTER
+%type <s> INTEGER DECIMAL LETTER
+%type <s> expression term factor number var
 
 %token INTEGER LETTER DECIMAL
 %token GOTO IF THEN LET PRINT END INPUT
@@ -51,7 +48,10 @@ statement:  PRINT exprlist |
             IF expression relop expression THEN statement |
             GOTO expression |
             INPUT varlist |
-            LET var ASSIGN expression |
+            LET var ASSIGN expression {
+                chomp($4, strlen($4));
+                fprintf(yyout, "auto %c = %s;\n", $2[0], $4);
+            } |
             END;
 
 exprlist:   exprlist COMMA expression |
@@ -70,23 +70,25 @@ term:       term TIMES factor |
 
 factor:     var |
             number |
-            LEFT_PAREN expression RIGHT_PAREN;
-
-endl:       endl NEWLINE |
-            NEWLINE;
+            LEFT_PAREN expression RIGHT_PAREN {
+                $$ = $2;
+            };
 
 number:     INTEGER {
-                $<i>$ = $1;
+                $$ = $1;
             } |
             DECIMAL {
-                $<d>$ = $1;
+                $$ = $1;
             };
 
 var:        LETTER {
-                $<c>$ = $1;
+                $$ = $1;
             };
 
 relop:      LT | LE | GT | GE | EQ | NQ;
+
+endl:       endl NEWLINE |
+            NEWLINE;
 
 %%
 
@@ -115,6 +117,10 @@ int main(int argc, char **argv) {
     yyin = input_file;
     yyout = output_file;
     return yyparse();
+}
+
+void chomp(char *str, size_t n) {
+    if (str[n-1] == '\n') str[n-1] = '\0';
 }
 
 int yyerror(char *s) {
