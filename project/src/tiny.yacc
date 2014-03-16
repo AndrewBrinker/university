@@ -47,10 +47,13 @@ line:       INTEGER statement endl |
 
 statement:  PRINT exprlist |
             IF expression relop expression THEN statement {
-                chomp($2, strlen($2));
-                chomp($4, strlen($4));
-                chomp($6, strlen($6));
-                fprintf(yyout, "if (%s %s %s) {\n\t%s\n}", $2, $3, $4, $6);
+                char *combined1 = string_combine("if (", $2, $3);
+                char *combined2 = string_combine(combined1, $4, ") {\n");
+                char *combined3 = string_combine(combined2, $6, "\n}");
+                $$ = combined3;
+                free(combined1);
+                free(combined2);
+                free(combined3);
             } |
             GOTO expression |
             INPUT varlist |
