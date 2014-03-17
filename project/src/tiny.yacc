@@ -170,7 +170,10 @@ int main(int argc, char **argv) {
     yyout = output_file;
 
     free(output_file_name);
-    return yyparse();
+    fprintf(yyout, "int main() {\n");
+    int result = yyparse();
+    fprintf(yyout, "}\n");
+    return result;
 }
 
 int yyerror(char *s) {
