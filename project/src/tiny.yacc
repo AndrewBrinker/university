@@ -50,7 +50,9 @@ line:       INTEGER {
             } statement endl |
             statement endl;
 
-statement:  PRINT exprlist |
+statement:  PRINT exprlist {
+                // Do something
+            } |
             IF expression relop expression {
                 size_t length = strlen($2);
                 size_t diff = strlen("THEN");
@@ -66,12 +68,22 @@ statement:  PRINT exprlist |
             INPUT varlist {
                 chomp($2);
                 fprintf(yyout, "std::string %s;\n", $2);
+                token *root = tokenize($2, " ,");
+                fprintf(yyout, "std::cin");
+                while (root) {
+                    fprintf(yyout, " >> %s", root->value);
+                    root = root->next;
+                }
+                fprintf(yyout, ";\n");
+                delete_tokens(root);
             } |
             LET var ASSIGN expression {
                 chomp($4);
                 fprintf(yyout, "auto %c = %s;\n", $2[0], $4);
             } |
-            END;
+            END {
+                fprintf(yyout, "return 0;\n");
+            };
 
 exprlist:   exprlist COMMA expression           { $$ = $1;   } |
             expression                          { $$ = $1;   } ;
@@ -126,9 +138,9 @@ int main(int argc, char **argv) {
     yyout = output_file;
 
     free(output_file_name);
-    fprintf(yyout, "int main() {\n");
+    fprintf(yyout, "#include <iostream>\n\nint main() {\n");
     int result = yyparse();
-    fprintf(yyout, "}\n");
+    fprintf(yyout, "return 0;\n}\n\n");
     return result;
 }
 

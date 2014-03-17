@@ -4,7 +4,7 @@
 #include <ctype.h>
 
 typedef struct token {
-    char value;
+    char *value;
     struct token *next;
 } token;
 
@@ -22,6 +22,7 @@ token *reverse_tokens(token *root) {
     new_root    = root;
     root        = next;
   }
+  new_root = new_root->next;
   return new_root;
 }
 
@@ -53,7 +54,7 @@ token *tokenize(char *str, char *delim) {
     char *token_string = strtok(buffer, delim);
     while (token_string != NULL) {
         token *new_token = (token *) malloc(sizeof(token));
-        new_token->value = token_string[0];
+        new_token->value = token_string;
         new_token->next  = token_list;
         token_list       = new_token;
         token_string     = strtok(NULL, delim);
@@ -68,9 +69,7 @@ token *tokenize(char *str, char *delim) {
  */
 void print_tokens(token *root) {
     while (root) {
-        if (isalpha(root->value)) {
-            printf("%c\n", root->value);
-        }
+        printf("%s\n", root->value);
         root = root->next;
     }
 }
