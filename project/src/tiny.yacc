@@ -50,12 +50,13 @@ line:       INTEGER {
             statement endl;
 
 statement:  PRINT exprlist |
-            IF expression relop expression THEN {
+            IF expression relop expression {
                 printf("%s\n", $2);
-                printf("%s\n", $3);
-                printf("%s\n", $4);
-                fprintf(yyout, "if (%s %s %s) {\n", $2, $3, $4);
-            } statement {
+                size_t length = strlen($2);
+                size_t diff = strlen("THEN");
+                $2[length - 1 - diff] = '\0';
+                fprintf(yyout, "if (%s) {\n", $2);
+            } THEN statement {
                 fprintf(yyout, "}\n");
             } |
             GOTO expression {
@@ -74,14 +75,18 @@ exprlist:   exprlist COMMA expression {
                 $$ = combined;
                 free(combined);
             } |
-            expression;
+            expression {
+                $$ = $1;
+            };
 
 varlist:    varlist COMMA var {
                 char *combined = string_combine($1, ", " , $3);
                 $$ = combined;
                 free(combined);
             } |
-            var;
+            var {
+                $$ = $1;
+            };
 
 expression: expression PLUS term {
                 char *combined = string_combine($1, " + " , $3);
@@ -93,7 +98,9 @@ expression: expression PLUS term {
                 $$ = combined;
                 free(combined);
             } |
-            term;
+            term {
+                $$ = $1;
+            };
 
 term:       term TIMES factor {
                 char *combined = string_combine($1, " * " , $3);
@@ -105,10 +112,16 @@ term:       term TIMES factor {
                 $$ = combined;
                 free(combined);
             } |
-            factor;
+            factor {
+                $$ = $1;
+            };
 
-factor:     var |
-            number |
+factor:     var {
+                $$ = $1;
+            } |
+            number {
+                $$ = $1;
+            } |
             LEFT_PAREN expression RIGHT_PAREN {
                 char *combined = string_combine("(", $2 , ")");
                 $$ = combined;
