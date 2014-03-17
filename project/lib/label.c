@@ -12,14 +12,11 @@ typedef struct label {
 
 label *label_list = 0;
 
-char labels[7][6] = {
-    "wumbo",
-    "fargo",
-    "green",
-    "happy",
-    "chirp",
-    "boots",
-    "splat"
+char labels[32][6] = {
+    "aaaaa", "aaaab", "aaaba", "aaabb", "aabaa", "aabab", "aabba", "aabbb",
+    "abaaa", "abaab", "ababa", "ababb", "abbaa", "abbab", "abbba", "abbbb",
+    "baaaa", "baaab", "baaba", "baabb", "babaa", "babab", "babba", "babbb",
+    "bbaaa", "bbaab", "bbaba", "bbabb", "bbbaa", "bbbab", "bbbba", "bbbbb",
 };
 
 label *putlabel(const int identifier) {

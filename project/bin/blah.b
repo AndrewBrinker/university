@@ -1,2 +1,4 @@
 50 LET N = 1.5406 + 2 * (4 / 2)
 92 LET X = 3
+GOTO 25 + 25
+IF 55 > 32 THEN GOTO 92
