@@ -33,16 +33,19 @@ int line_number = 1;
 "END"   { return END;           }
 
 [A-Z] {
+    // printf("(Lex)  CHAR:  %s\n", yytext);
     yylval.s = yytext;
     return LETTER;
 }
 
 [0-9]+\.[0-9]+ {
+    // printf("(Lex)  FLOAT: %s\n", yytext);
     yylval.s = yytext;
     return DECIMAL;
 }
 
 [0-9]+ {
+    // printf("(Lex)  INT:   %s\n", yytext);
     yylval.s = yytext;
     return INTEGER;
 }

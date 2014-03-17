@@ -4,6 +4,7 @@
 #include <string.h>
 #include "../lib/filename.c"
 #include "../lib/chomp.c"
+#include "../lib/label.c"
 
 extern FILE *yyin;
 extern int line_number;
@@ -42,24 +43,17 @@ program:    block;
 block:      block line |
             line;
 
-line:       INTEGER statement endl |
+line:       INTEGER {
+                char *label = get_label();
+                fprintf(yyout, "%s: ", label);
+            } statement endl |
             statement endl;
 
-statement:  PRINT exprlist {
-                char *values;
-                values = strtok(values, ", ");
-                fprintf(yyout, "std::cout ");
-                while (values != NULL) {
-                    fprintf (yyout, "<< %s ", values);
-                    values = strtok(NULL, " ,");
-                }
-                fprintf(yyout, "<< std::endl;\n");
-            } |
+statement:  PRINT exprlist |
             IF expression relop expression THEN statement |
             GOTO expression |
             INPUT varlist |
             LET var ASSIGN expression {
-                printf("ASSIGNMENT statement");
                 chomp($4, strlen($4));
                 fprintf(yyout, "auto %c = %s;\n", $2[0], $4);
             } |
@@ -67,6 +61,7 @@ statement:  PRINT exprlist {
 
 exprlist:   exprlist COMMA expression {
                 char *combined = string_combine($1, ", " , $3);
+                // printf("(Yacc) EXPRLIST: %s\n", combined);
                 $$ = combined;
                 free(combined);
             } |
@@ -74,6 +69,7 @@ exprlist:   exprlist COMMA expression {
 
 varlist:    varlist COMMA var {
                 char *combined = string_combine($1, ", " , $3);
+                // printf("(Yacc) VARLIST: %s\n", combined);
                 $$ = combined;
                 free(combined);
             } |
@@ -81,11 +77,13 @@ varlist:    varlist COMMA var {
 
 expression: expression PLUS term {
                 char *combined = string_combine($1, " + " , $3);
+                // printf("(Yacc) PLUS: %s\n", combined);
                 $$ = combined;
                 free(combined);
             } |
             expression MINUS term {
                 char *combined = string_combine($1, " - " , $3);
+                // printf("(Yacc) MINUS: %s\n", combined);
                 $$ = combined;
                 free(combined);
             } |
@@ -93,11 +91,13 @@ expression: expression PLUS term {
 
 term:       term TIMES factor {
                 char *combined = string_combine($1, " * " , $3);
+                // printf("(Yacc) TIMES: %s\n", combined);
                 $$ = combined;
                 free(combined);
             } |
             term DIVIDED_BY factor {
                 char *combined = string_combine($1, " / " , $3);
+                // printf("(Yacc) DIVIDED_BY: %s\n", combined);
                 $$ = combined;
                 free(combined);
             } |
@@ -106,19 +106,23 @@ term:       term TIMES factor {
 factor:     var |
             number |
             LEFT_PAREN expression RIGHT_PAREN {
+                // printf("(Yacc) %s\n", $2);
                 char *combined = string_combine("(", $2 , ")");
                 $$ = combined;
                 free(combined);
             };
 
 number:     INTEGER {
+                // printf("(Yacc) INT:   %s\n", $1);
                 $$ = $1;
             } |
             DECIMAL {
+                // printf("(Yacc) FLOAT: %s\n", $1);
                 $$ = $1;
             };
 
 var:        LETTER {
+                // printf("(Yacc) CHAR:  %s\n", $1);
                 $$ = $1;
             };
 
