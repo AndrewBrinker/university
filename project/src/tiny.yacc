@@ -51,7 +51,6 @@ line:       INTEGER {
 
 statement:  PRINT exprlist |
             IF expression relop expression {
-                printf("%s\n", $2);
                 size_t length = strlen($2);
                 size_t diff = strlen("THEN");
                 $2[length - 1 - diff] = '\0';
@@ -63,95 +62,38 @@ statement:  PRINT exprlist |
                 chomp($2, strlen($2));
                 fprintf(yyout, "goto %s;\n", $2);
             } |
-            INPUT varlist |
+            INPUT varlist {
+                chomp($2, strlen($2));
+                fprintf(yyout, "std::string %s;\n", $2);
+            } |
             LET var ASSIGN expression {
                 chomp($4, strlen($4));
                 fprintf(yyout, "auto %c = %s;\n", $2[0], $4);
             } |
             END;
 
-exprlist:   exprlist COMMA expression {
-                char *combined = string_combine($1, ", " , $3);
-                $$ = combined;
-                free(combined);
-            } |
-            expression {
-                $$ = $1;
-            };
-
-varlist:    varlist COMMA var {
-                char *combined = string_combine($1, ", " , $3);
-                $$ = combined;
-                free(combined);
-            } |
-            var {
-                $$ = $1;
-            };
-
-expression: expression PLUS term {
-                char *combined = string_combine($1, " + " , $3);
-                $$ = combined;
-                free(combined);
-            } |
-            expression MINUS term {
-                char *combined = string_combine($1, " - " , $3);
-                $$ = combined;
-                free(combined);
-            } |
-            term {
-                $$ = $1;
-            };
-
-term:       term TIMES factor {
-                char *combined = string_combine($1, " * " , $3);
-                $$ = combined;
-                free(combined);
-            } |
-            term DIVIDED_BY factor {
-                char *combined = string_combine($1, " / " , $3);
-                $$ = combined;
-                free(combined);
-            } |
-            factor {
-                $$ = $1;
-            };
-
-factor:     var {
-                $$ = $1;
-            } |
-            number {
-                $$ = $1;
-            } |
-            LEFT_PAREN expression RIGHT_PAREN {
-                char *combined = string_combine("(", $2 , ")");
-                $$ = combined;
-                free(combined);
-            };
-
-number:     INTEGER {
-                $$ = $1;
-            } |
-            DECIMAL {
-                $$ = $1;
-            };
-
-var:        LETTER {
-                $$ = $1;
-            };
-
-relop:      LT {
-                $$ = "<";
-            } | LE {
-                $$ = "<=";
-            } | GT {
-                $$ = ">";
-            } | GE {
-                $$ = ">=";
-            } | EQ {
-                $$ = "==";
-            } | NQ {
-                $$ = "!=";
-            };
+exprlist:   exprlist COMMA expression           { $$ = $1;   } |
+            expression                          { $$ = $1;   } ;
+varlist:    varlist COMMA var                   { $$ = $1;   } |
+            var                                 { $$ = $1;   } ;
+expression: expression PLUS term                { $$ = $1;   } |
+            expression MINUS term               { $$ = $1;   } |
+            term                                { $$ = $1;   } ;
+term:       term TIMES factor                   { $$ = $1;   } |
+            term DIVIDED_BY factor              { $$ = $1;   } |
+            factor                              { $$ = $1;   } ;
+factor:     var                                 { $$ = $1;   } |
+            number                              { $$ = $1;   } |
+            LEFT_PAREN expression RIGHT_PAREN   { $$ = $2;   } ;
+number:     INTEGER                             { $$ = $1;   } |
+            DECIMAL                             { $$ = $1;   } ;
+var:        LETTER                              { $$ = $1;   } ;
+relop:      LT                                  { $$ = "<";  } |
+            LE                                  { $$ = "<="; } |
+            GT                                  { $$ = ">";  } |
+            GE                                  { $$ = ">="; } |
+            EQ                                  { $$ = "=="; } |
+            NQ                                  { $$ = "!="; } ;
 
 endl:       endl NEWLINE |
             NEWLINE;

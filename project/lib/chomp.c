@@ -12,5 +12,9 @@ char *string_combine(const char *str1, const char *str2, const char *str3) {
     for (; i < strlen(str2); ++i) new_string[i] = str2[i];
     for (; i < strlen(str3); ++i) new_string[i] = str3[i];
     new_string[size - 1] = '\0';
+    printf("\nOriginal 1:\n\t%s\n", str1);
+    printf("Original 2:\n\t%s\n", str2);
+    printf("Original 3:\n\t%s\n", str3);
+    printf("Combined:\n\t%s\n\n", new_string);
     return new_string;
 }

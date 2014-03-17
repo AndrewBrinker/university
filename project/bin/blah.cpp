@@ -5,4 +5,5 @@ goto 25 + 25;
 if (55 > 32) {
 goto 92;
 }
+std::string A, B, C;
 }
