@@ -44,8 +44,8 @@ block:      block line |
             line;
 
 line:       INTEGER {
-                char *label = get_label();
-                fprintf(yyout, "%s: ", label);
+                label *label = putlabel(atoi($1));
+                fprintf(yyout, "%s: ", label->name);
             } statement endl |
             statement endl;
 
