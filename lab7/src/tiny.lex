@@ -21,4 +21,7 @@ extern YYSTYPE yylval;
     return EPSILON;
 }
 
+"\n" ;
+. ;
+
 %%

@@ -1,6 +1,7 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "../lib/filename.c"
 #include "../lib/chomp.c"
 
@@ -44,11 +45,21 @@ block:      block line |
 line:       INTEGER statement endl |
             statement endl;
 
-statement:  PRINT exprlist |
+statement:  PRINT exprlist {
+                char *values;
+                values = strtok(values, ", ");
+                fprintf(yyout, "std::cout ");
+                while (values != NULL) {
+                    fprintf (yyout, "<< %s ", values);
+                    values = strtok(NULL, " ,");
+                }
+                fprintf(yyout, "<< std::endl;\n");
+            } |
             IF expression relop expression THEN statement |
             GOTO expression |
             INPUT varlist |
             LET var ASSIGN expression {
+                printf("ASSIGNMENT statement");
                 chomp($4, strlen($4));
                 fprintf(yyout, "auto %c = %s;\n", $2[0], $4);
             } |

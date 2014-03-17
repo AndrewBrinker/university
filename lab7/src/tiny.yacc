@@ -7,28 +7,12 @@ int yyerror(char *s);
 int yywrap();
 %}
 
-%start start
+%start x
 %token ONE ZERO EPSILON
 
 %%
 
-start:  a |
-        b;
-
-a:      t ZERO a |
-        t ZERO t;
-
-t:      ZERO t ONE |
-        ONE t ZERO |
-        EPSILON;
-
-b:      u ONE b |
-        u ONE u;
-
-u:      ZERO u ONE |
-        ONE u ZERO |
-        u u |
-        EPSILON;
+x: ZERO x ZERO | ONE x ONE | EPSILON;
 
 %%
 

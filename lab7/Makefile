@@ -1,7 +1,7 @@
 CC       = gcc
 CC_FLAGS = -c -d -Wall -Wextra -pedantic
 LX       = flex
-YC       = bison -d -y
+YC       = bison -d -y -v
 TARGET   = tiny
 SRC_DIR  = src
 LEX      = ${SRC_DIR}/tiny.lex
