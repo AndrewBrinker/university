@@ -51,7 +51,16 @@ line:       INTEGER {
             statement endl;
 
 statement:  PRINT exprlist {
-                // Do something
+                chomp($2);
+                printf("");
+                token *root = tokenize($2, ",");
+                while (root) {
+                    fprintf(yyout,
+                            "std::cout << %s << std::endl;\n",
+                            root->value);
+                    root = root->next;
+                }
+                delete_tokens(root);
             } |
             IF expression relop expression {
                 size_t length = strlen($2);
