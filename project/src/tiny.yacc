@@ -5,6 +5,7 @@
 #include "../lib/filename.c"
 #include "../lib/chomp.c"
 #include "../lib/label.c"
+#include "../lib/token.c"
 
 extern FILE *yyin;
 extern int line_number;
@@ -59,15 +60,15 @@ statement:  PRINT exprlist |
                 fprintf(yyout, "}\n");
             } |
             GOTO expression {
-                chomp($2, strlen($2));
+                chomp($2);
                 fprintf(yyout, "goto %s;\n", $2);
             } |
             INPUT varlist {
-                chomp($2, strlen($2));
+                chomp($2);
                 fprintf(yyout, "std::string %s;\n", $2);
             } |
             LET var ASSIGN expression {
-                chomp($4, strlen($4));
+                chomp($4);
                 fprintf(yyout, "auto %c = %s;\n", $2[0], $4);
             } |
             END;
