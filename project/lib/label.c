@@ -19,6 +19,12 @@ char labels[32][6] = {
     "bbaaa", "bbaab", "bbaba", "bbabb", "bbbaa", "bbbab", "bbbba", "bbbbb",
 };
 
+
+/**
+ * Add a new label to the list of labels.
+ * @param  identifier -> The identifier being used
+ * @return a pointer to the added label
+ */
 label *putlabel(const int identifier) {
     label *new_label = (label *) malloc(sizeof(label));
     if (!new_label) return 0;
@@ -30,14 +36,20 @@ label *putlabel(const int identifier) {
     return new_label;
 }
 
+
+/**
+ * Get the label associated with the given integer.
+ * @param  identifier -> The integer identifier
+ * @return a pointer to the label, or NULL
+ */
 label *getlabel(const int identifier) {
     label *ptr;
     for (ptr = label_list;
-        ptr != 0;
+        ptr != NULL;
         ptr  = ptr->next) {
         if (ptr->id == identifier) {
             return ptr;
         }
     }
-    return 0;
+    return NULL;
 }

@@ -75,7 +75,12 @@ statement:  PRINT exprlist {
                 chomp($2);
                 char *postfix = infix_to_postfix($2);
                 int result = eval(postfix);
-                fprintf(yyout, "goto %s;\n", getlabel(result)->name);
+                label *new_label = getlabel(result);
+                if (!new_label) {
+                    printf("No matching label. Exiting...\n");
+                    exit(EXIT_FAILURE);
+                }
+                fprintf(yyout, "goto %s;\n", new_label->name);
             } |
             INPUT varlist {
                 chomp($2);
