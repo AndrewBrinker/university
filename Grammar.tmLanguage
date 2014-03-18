@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>fileTypes</key>
+	<array>
+		<string>grammar</string>
+	</array>
+	<key>name</key>
+	<string>Grammar</string>
+	<key>patterns</key>
+	<array>
+		<dict>
+			<key>match</key>
+			<string>(#).*$
+?</string>
+			<key>name</key>
+			<string>comment.line.number-sign</string>
+		</dict>
+		<dict>
+			<key>match</key>
+			<string>-&gt;</string>
+			<key>name</key>
+			<string>keyword.control</string>
+		</dict>
+		<dict>
+			<key>match</key>
+			<string>[$|]</string>
+			<key>name</key>
+			<string>constant.character</string>
+		</dict>
+		<dict>
+			<key>match</key>
+			<string>[a-z+*(){}_'"]</string>
+			<key>name</key>
+			<string>entity.name</string>
+		</dict>
+		<dict>
+			<key>match</key>
+			<string>[A-Z]</string>
+			<key>name</key>
+			<string>entity.name.function</string>
+		</dict>
+	</array>
+	<key>scopeName</key>
+	<string>source.grammar</string>
+	<key>uuid</key>
+	<string>add9d173-274b-4b22-abe1-3ab498a763ba</string>
+</dict>
+</plist>
