@@ -6,6 +6,8 @@ aaaab: auto X = 3;
 if (55 > 32) {
 std::cout << 5 << std::endl;
 }
+goto aaaaa;
+return 0;
 std::string A, B, C;
 std::cin >> A >> B >> C;
 std::cout << 3 / 4 << std::endl;

@@ -6,6 +6,7 @@
 #include "../lib/chomp.c"
 #include "../lib/label.c"
 #include "../lib/token.c"
+#include "../lib/convert.c"
 
 extern FILE *yyin;
 extern int line_number;
@@ -72,7 +73,9 @@ statement:  PRINT exprlist {
             } |
             GOTO expression {
                 chomp($2);
-                fprintf(yyout, "goto %s;\n", $2);
+                char *postfix = infix_to_postfix($2);
+                int result = eval(postfix);
+                fprintf(yyout, "goto %s;\n", getlabel(result)->name);
             } |
             INPUT varlist {
                 chomp($2);
