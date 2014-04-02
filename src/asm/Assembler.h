@@ -3,6 +3,7 @@
  */
 
 #include <vector>
+#include <string>
 
 #ifndef ASSEMBLER_H
 #define ASSEMBLER_H

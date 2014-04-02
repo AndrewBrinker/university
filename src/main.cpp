@@ -5,8 +5,18 @@
 #include <vm/VirtualMachine.h>
 #include <asm/Assembler.h>
 #include <cstdio>
+#include <cstdlib>
 
-int main() {
-  printf("It works!\n");
+int main(int argc, char **argv) {
+  if (argc != 2) {
+    printf("Usage: %s <assembly file name>", argv[0]);
+    exit(EXIT_FAILURE);
+  }
+  /*
+  Assembler a;
+  VirtualMachine vm;
+  auto result = a.parse(argv[1]);
+  vm.execute(result);
+  */
   return 0;
 }
