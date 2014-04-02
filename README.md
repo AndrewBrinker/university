@@ -7,3 +7,7 @@ San Bernardino.
 
 - Andrew Brinker
 - Anthony Sterrett
+
+## Compilation
+
+Use `make` to compile. For verbose compilation, use `make V=true`.
