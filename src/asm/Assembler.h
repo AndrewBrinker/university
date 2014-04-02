@@ -2,15 +2,14 @@
  * Copyright 2014 Andrew Brinker, Anthony Sterrett
  */
 
+#include <vector>
+
 #ifndef ASSEMBLER_H
 #define ASSEMBLER_H
 
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \
   TypeName(const TypeName&);               \
   void operator=(const TypeName&);
-
-#define OP_COUNT 10
-
 
 typedef void (*func)(int, int);
 
@@ -27,7 +26,7 @@ class Assembler {
  private:
   DISALLOW_COPY_AND_ASSIGN(Assembler);
 
-  const instruction ops[OP_COUNT];
+  const std::vector<instruction> ops;
 };
 
 
