@@ -1,3 +1,5 @@
 lint/
 build/
 ./gram
+bin/release/
+bin/debug/
