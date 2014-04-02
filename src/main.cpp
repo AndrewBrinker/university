@@ -6,6 +6,7 @@
 #include <asm/Assembler.h>
 #include <cstdio>
 #include <cstdlib>
+#include <cstdint>
 
 int main(int argc, char **argv) {
   if (argc != 2) {
@@ -15,8 +16,8 @@ int main(int argc, char **argv) {
   /*
   Assembler a;
   VirtualMachine vm;
-  auto result = a.parse(argv[1]);
-  vm.execute(result);
+  std::list<uint16_t> result = a.parse(argv[1]);
+  vm.run(result);
   */
   return 0;
 }
