@@ -3,6 +3,7 @@
  */
 
 #include <vm/VirtualMachine.h>
+#include <asm/Assembler.h>
 #include <cstdio>
 
 int main() {
