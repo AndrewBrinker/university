@@ -1,4 +1,5 @@
 build/
+lint/
 skagOS
 bin/release/
 bin/debug/
