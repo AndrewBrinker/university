@@ -1,5 +1,5 @@
 lint/
 build/
-./gram
+gram
 bin/release/
 bin/debug/
