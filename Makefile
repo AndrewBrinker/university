@@ -146,7 +146,7 @@ uninstall:
 .PHONY: lint
 lint:
 	@echo "Linting sources files against lint/cpplint.py"
-	@python lint/cpplint.py --filter=$(FILTERS) $(SOURCES)
+	@cpplint --filter=$(FILTERS) $(SOURCES)
 
 # target: clean       Removes all build files
 .PHONY: clean
