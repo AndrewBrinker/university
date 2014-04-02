@@ -25,6 +25,8 @@ DLINK_FLAGS =
 DESTDIR = /
 # Install path (bin/ is appended automatically)
 INSTALL_PREFIX = usr/local
+# Linting filters
+FILTERS = -readability/streams,-build/header_guard
 #### END PROJECT SETTINGS ####
 
 # Generally should not need to edit below this line
@@ -60,7 +62,7 @@ debug: export BIN_PATH := bin/debug
 install: export BIN_PATH := bin/release
 
 # Find all source files in the source directory
-SOURCES = $(shell find $(SRC_PATH)/ -name '*.$(SRC_EXT)')
+SOURCES = $(shell find $(SRC_PATH) -name '*.$(SRC_EXT)')
 # Set the object file names, with the source directory stripped
 # from the path, and the build path prepended in its place
 OBJECTS = $(SOURCES:$(SRC_PATH)/%.$(SRC_EXT)=$(BUILD_PATH)/%.o)
@@ -93,7 +95,7 @@ override CXXFLAGS := $(CXXFLAGS) \
 	-D VERSION_REVISION=$(VERSION_REVISION) \
 	-D VERSION_HASH=\"$(VERSION_HASH)\"
 
-# Standard, non-optimized release build
+# target: release     Standard, non-optimized release build
 .PHONY: release
 release: dirs
 	@echo "Beginning release build v$(VERSION_STRING)"
@@ -102,7 +104,7 @@ release: dirs
 	@echo -n "Total build time: "
 	@$(END_TIME)
 
-# Debug build for gdb debugging
+# target: debug       Debug build for gdb debugging
 .PHONY: debug
 debug: dirs
 	@echo "Beginning debug build v$(VERSION_STRING)"
@@ -111,26 +113,32 @@ debug: dirs
 	@echo -n "Total build time: "
 	@$(END_TIME)
 
-# Create the directories used in the build
+# target: dirs        Create the directories used in the build
 .PHONY: dirs
 dirs:
 	@echo "Creating directories"
 	@mkdir -p $(dir $(OBJECTS))
 	@mkdir -p $(BIN_PATH)
 
-# Installs to the set path
+# target: install     Installs to the set path
 .PHONY: install
 install:
 	@echo "Installing to $(DESTDIR)$(INSTALL_PREFIX)/bin"
 	@$(INSTALL_PROGRAM) $(BIN_PATH)/$(BIN_NAME) $(DESTDIR)$(INSTALL_PREFIX)/bin
 
-# Uninstalls the program
+# target: uninstall   Uninstalls the program
 .PHONY: uninstall
 uninstall:
 	@echo "Removing $(DESTDIR)$(INSTALL_PREFIX)/bin/$(BIN_NAME)"
 	@$(RM) $(DESTDIR)$(INSTALL_PREFIX)/bin/$(BIN_NAME)
 
-# Removes all build files
+# target: lint        Checks files against cpplint
+.PHONY: lint
+lint:
+	@echo "Linting sources files against lint/cpplint.py"
+	@python lint/cpplint.py --filter=$(FILTERS) $(SOURCES)
+
+# target: clean       Removes all build files
 .PHONY: clean
 clean:
 	@echo "Deleting $(BIN_NAME) symlink"
@@ -138,6 +146,11 @@ clean:
 	@echo "Deleting directories"
 	@$(RM) -r build
 	@$(RM) -r bin
+
+# target: help        List available targets
+.PHONY: help
+help:
+	@egrep "^# target:" [Mm]akefile
 
 # Main rule, checks the executable and symlinks to the output
 all: $(BIN_PATH)/$(BIN_NAME)
@@ -165,4 +178,3 @@ $(BUILD_PATH)/%.o: $(SRC_PATH)/%.$(SRC_EXT)
 	$(CMD_PREFIX)$(CXX) $(CXXFLAGS) $(INCLUDES) -MP -MMD -c $< -o $@
 	@echo -en "\t Compile time: "
 	@$(END_TIME)
-
