@@ -7,8 +7,8 @@
 #define REG_FILE_SIZE 4
 #define MEM_SIZE      256
 
-VirtualMachine::VirtualMachine() :
-  VirtualMachine(REG_FILE_SIZE, MEM_SIZE) {}
+VirtualMachine::VirtualMachine()
+  : VirtualMachine(REG_FILE_SIZE, MEM_SIZE) {}
 
 VirtualMachine::VirtualMachine(unsigned int reg_file_size,
                                unsigned int mem_size) :
