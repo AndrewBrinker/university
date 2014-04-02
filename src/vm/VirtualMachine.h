@@ -22,7 +22,7 @@ class VirtualMachine {
 
   std::vector<int> r;
   std::vector<int> mem;
-  
+
   uint16_t r[4], pc, ir, sr, sp, base, limit, clock;
 };
 

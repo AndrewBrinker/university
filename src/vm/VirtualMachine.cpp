@@ -3,6 +3,7 @@
  */
 
 #include "./VirtualMachine.h"
+#include <cstdint>
 
 #define REG_FILE_SIZE 4
 #define MEM_SIZE      256
@@ -24,7 +25,7 @@ VirtualMachine::VirtualMachine()
  * @param reg_file_size -> The size of the register
  * @param mem_size      -> The size of memory
  */
-VirtualMachine::VirtualMachine(unsigned int reg_file_size,
-                               unsigned int mem_size) :
+VirtualMachine::VirtualMachine(uint16_t reg_file_size,
+                               uint16_t mem_size) :
                                r(reg_file_size),
                                mem(mem_size) {}
