@@ -10,7 +10,7 @@
 
 int main(int argc, char **argv) {
   if (argc != 2) {
-    printf("Usage: %s <assembly file name>", argv[0]);
+    printf("Usage: %s <assembly file name>\n", argv[0]);
     exit(EXIT_FAILURE);
   }
   Assembler a;
