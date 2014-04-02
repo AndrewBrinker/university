@@ -71,11 +71,11 @@ DEPS = $(OBJECTS:.o=.d)
 
 # Macros for timing compilation
 TIME_FILE = $(dir $@).$(notdir $@)_time
-START_TIME = date '+%s' > $(TIME_FILE)
+START_TIME = gdate '+%s' > $(TIME_FILE)
 END_TIME = read st < $(TIME_FILE) ; \
 	$(RM) $(TIME_FILE) ; \
-	st=$$((`date '+%s'` - $$st - 86400)) ; \
-	echo `date -u -d @$$st '+%H:%M:%S'`
+	st=$$((`gdate '+%s'` - $$st - 86400)) ; \
+	echo `gdate -u -d @$$st '+%H:%M:%S'`
 
 # Version macros
 # Comment/remove this section to remove versioning
