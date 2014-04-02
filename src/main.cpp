@@ -13,9 +13,11 @@ int main(int argc, char **argv) {
     printf("Usage: %s <assembly file name>", argv[0]);
     exit(EXIT_FAILURE);
   }
+  /*
   Assembler a;
   VirtualMachine vm;
   std::list<uint16_t> result = a.parse(argv[1]);
   vm.run(result);
+  */
   return 0;
 }
