@@ -7,6 +7,9 @@
 #include <cstdint>
 
 
-std::list<uint16_t> parse(char *) {
-    return std::list<uint16_t>();
+Assembler::Assembler() {}
+
+
+Assembler::ObjectSource Assembler::parse(char *) {
+  return std::list<uint16_t>();
 }

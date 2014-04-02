@@ -12,11 +12,11 @@ VirtualMachine::VirtualMachine()
   : VirtualMachine(REG_FILE_SIZE, MEM_SIZE) {}
 
 
-VirtualMachine::VirtualMachine(uint16_t reg_file_size,
+VirtualMachine::VirtualMachine(uint16_t,
                                uint16_t mem_size) :
                                mem(mem_size) {}
 
 
-void run(std::list<uint16_t>) {
+void VirtualMachine::run(Assembler::ObjectSource) {
     return;
 }
