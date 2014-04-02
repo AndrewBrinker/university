@@ -14,7 +14,7 @@ The assembler for SkagOS works in the following way:
 
 ## Objects
 
-`Assembler`: The core of the assembler. It runs the above-listed procedure
-`Preprocessor`: Reads in a file name and returns a stripped ASMSource
-`ASMSource`: The source code of an assembly file
-`ObjectSource`: The converted object code of an assembly program
+- `Assembler`: The core of the assembler. It runs the above-listed procedure
+- `Preprocessor`: Reads in a file name and returns a stripped ASMSource
+- `ASMSource`: The source code of an assembly file
+- `ObjectSource`: The converted object code of an assembly program
