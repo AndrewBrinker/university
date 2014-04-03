@@ -2,10 +2,10 @@
  * Copyright 2014 Andrew Brinker, Anthony Sterrett
  */
 
+#include <cstdint>
 #include <vector>
 #include <list>
 #include <string>
-#include <cstdint>
 
 #ifndef ASSEMBLER_H
 #define ASSEMBLER_H

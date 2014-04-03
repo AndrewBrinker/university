@@ -3,11 +3,11 @@
  */
 
 #include "./VirtualMachine.h"
-#include <iostream>
+#include <cstdint>
 #include <cstdio>
+#include <iostream>
 #include <string>
 #include <fstream>
-#include <cstdint>
 #include <algorithm>
 #include <iterator>
 
@@ -64,7 +64,8 @@ void VirtualMachine::run(std::string inFilename) {
   limit = inFile.tellg();
   inFile.seekg(0, std::ios::beg);
 
-  if (limit > 256 * 2) { // because size will be in bytes, not in 16-bit words
+  // because size will be in bytes, not in 16-bit words
+  if (limit > 256 * 2) {
     fprintf(stderr, "Program is too large to fit into memory.\n");
     inFile.close();
     return;

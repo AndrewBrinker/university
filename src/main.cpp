@@ -4,9 +4,9 @@
 
 #include <asm/Assembler.h>
 #include <vm/VirtualMachine.h>
+#include <cstdint>
 #include <cstdio>
 #include <cstdlib>
-#include <cstdint>
 #include <string>
 
 int main(int argc, char **argv) {
