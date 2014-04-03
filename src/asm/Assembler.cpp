@@ -3,3 +3,13 @@
  */
 
 #include "./Assembler.h"
+#include <list>
+#include <cstdint>
+
+
+Assembler::Assembler() {}
+
+
+Assembler::ObjectSource Assembler::parse(char *) {
+  return std::list<uint16_t>();
+}

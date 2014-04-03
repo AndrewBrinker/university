@@ -3,7 +3,9 @@
  */
 
 #include <vector>
+#include <list>
 #include <string>
+#include <cstdint>
 
 #ifndef ASSEMBLER_H
 #define ASSEMBLER_H
@@ -12,23 +14,18 @@
   TypeName(const TypeName&);               \
   void operator=(const TypeName&);
 
-typedef void (*func)(int, int);
-
-typedef struct instruction {
-  int id;
-  func op;
-} instruction;
-
 
 class Assembler {
  public:
+  typedef std::list<std::string> ASMSource;
+  typedef std::list<uint16_t> ObjectSource;
+
   Assembler();
+  ObjectSource parse(char *);
 
  private:
   DISALLOW_COPY_AND_ASSIGN(Assembler);
 
-  const std::vector<instruction> ops;
 };
-
 
 #endif  // ASSEMBLER_H
