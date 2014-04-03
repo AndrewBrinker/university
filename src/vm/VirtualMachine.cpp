@@ -419,9 +419,45 @@ void VirtualMachine::op_jumpg(uint8_t addr) {
   if (bt_greater()) pc = addr;
 }
 
-void VirtualMachine::op_call(uint8_t addr) {}
+void VirtualMachine::op_call(uint8_t addr) {
+  if (sp < limit + 6) {
+    fprintf(stderr, "Exceeded max stack depth\n");
+    exit(1);
+  }
 
-void VirtualMachine::op_return() {}
+  mem[sp] = pc;
+  --sp;
+  mem[sp] = r[0];
+  --sp;
+  mem[sp] = r[1];
+  --sp;
+  mem[sp] = r[2];
+  --sp;
+  mem[sp] = r[3];
+  --sp;
+  mem[sp] = sr;
+  --sp;
+
+  pc = addr;
+}
+
+void VirtualMachine::op_return() {
+  if (sp >= 256)
+    exit(0);
+
+  sr = mem[sp];
+  ++sp;
+  r[3] = mem[sp];
+  ++sp;
+  r[2] = mem[sp];
+  ++sp;
+  r[1] = mem[sp];
+  ++sp;
+  r[0] = mem[sp];
+  ++sp;
+  pc = mem[sp];
+  ++sp;
+}
 
 void VirtualMachine::op_read(uint8_t rd) {
   std::ifstream inFile(base_filename + ".in");
