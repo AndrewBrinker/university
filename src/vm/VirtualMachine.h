@@ -6,6 +6,7 @@
 #define VIRTUALMACHINE_H
 
 #include <vector>
+#include <list>
 #include <cstdint>
 
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \
@@ -16,6 +17,8 @@ class VirtualMachine {
  public:
   VirtualMachine();
   VirtualMachine(uint16_t, uint16_t);
+
+  void run(const std::list<uint16_t>&);
 
  private:
   DISALLOW_COPY_AND_ASSIGN(VirtualMachine);
