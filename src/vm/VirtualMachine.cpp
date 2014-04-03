@@ -14,6 +14,10 @@
 #define REG_FILE_SIZE 4
 #define MEM_SIZE      256
 
+#define FOUR 4
+#define ONE 1
+#define TWENTY_EIGHT 28
+
 static inline bool addition_overflow(uint16_t a, uint16_t b) {
   return (a + b < a);
 }
@@ -92,110 +96,110 @@ void VirtualMachine::run(std::string inFilename) {
     switch (op) {
     case 0u:
       if (i) {
-        clock += 4;
+        clock += FOUR;
         op_load(rd, ac.addr);
       } else {
-        ++clock;
+        clock += ONE;
         op_loadi(rd, ac.c);
       }
       break;
     case 1u:
-      clock += 4;
+      clock += FOUR;
       op_store(rd, ac.addr);
       break;
     case 2u:
-      ++clock;
+      clock += ONE;
       i ? op_add(rd, rs) : op_addi(rd, ac.c);
       break;
     case 3u:
-      ++clock;
+      clock += ONE;
       i ? op_addc(rd, rs) : op_addci(rd, ac.c);
       break;
     case 4u:
-      ++clock;
+      clock += ONE;
       i ? op_sub(rd, rs) : op_subi(rd, ac.c);
       break;
     case 5u:
-      ++clock;
+      clock += ONE;
       i ? op_subc(rd, rs) : op_subci(rd, ac.c);
       break;
     case 6u:
-      ++clock;
+      clock += ONE;
       i ? op_and(rd, rs) : op_andi(rd, ac.c);
       break;
     case 7u:
-      ++clock;
+      clock += ONE;
       i ? op_xor(rd, rs) : op_xori(rd, ac.c);
       break;
     case 8u:
-      ++clock;
+      clock += ONE;
       op_compl(rd);
       break;
     case 9u:
-      ++clock;
+      clock += ONE;
       op_shl(rd);
       break;
     case 10u:
-      ++clock;
+      clock += ONE;
       op_shla(rd);
       break;
     case 11u:
-      ++clock;
+      clock += ONE;
       op_shr(rd);
       break;
     case 12u:
-      ++clock;
+      clock += ONE;
       op_shra(rd);
       break;
     case 13u:
-      ++clock;
+      clock += ONE;
       i ? op_compr(rd, rs) : op_compri(rd, ac.c);
       break;
     case 14u:
-      ++clock;
+      clock += ONE;
       op_getstat(rd);
       break;
     case 15u:
-      ++clock;
+      clock += ONE;
       op_putstat(rd);
       break;
     case 16u:
-      ++clock;
+      clock += ONE;
       op_jump(ac.addr);
       break;
     case 17u:
-      ++clock;
+      clock += ONE;
       op_jumpl(ac.addr);
       break;
     case 18u:
-      ++clock;
+      clock += ONE;
       op_jumpe(ac.addr);
       break;
     case 19u:
-      ++clock;
+      clock += ONE;
       op_jumpg(ac.addr);
       break;
     case 20u:
-      clock += 4;
+      clock += FOUR;
       op_call(ac.addr);
     case 21u:
-      clock += 4;
+      clock += FOUR;
       op_return();
       break;
     case 22u:
-      clock += 28;
+      clock += TWENTY_EIGHT;
       op_read(rd);
       break;
     case 23u:
-      clock += 28;
+      clock += TWENTY_EIGHT;
       op_write(rd);
       break;
     case 24:
-      ++clock;
+      clock += ONE;
       return;
       break;
     case 25:
-      ++clock;
+      clock += ONE;
       break;
     }
   }
