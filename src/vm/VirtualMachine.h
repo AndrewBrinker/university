@@ -1,12 +1,13 @@
 /**
  * Copyright 2014 Andrew Brinker, Anthony Sterrett
  */
-#ifndef SRC_VM_VIRTUALMACHINE_H_
-#define SRC_VM_VIRTUALMACHINE_H_
 
 #include <vector>
 #include <cstdint>
 #include <string>
+
+#ifndef VIRTUAL_MACHINE_H
+#define VIRTUAL_MACHINE_H
 
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \
   TypeName(const TypeName&);               \
@@ -81,4 +82,4 @@ class VirtualMachine {
   DISALLOW_COPY_AND_ASSIGN(VirtualMachine);
 };
 
-#endif  // SRC_VM_VIRTUALMACHINE_H_
+#endif  // VIRTUAL_MACHINE_H
