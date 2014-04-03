@@ -4,6 +4,7 @@
 
 #include "./VirtualMachine.h"
 #include <iostream>
+#include <cstdio>
 #include <string>
 #include <fstream>
 #include <cstdint>
@@ -43,7 +44,7 @@ void VirtualMachine::run(std::string inFilename) {
     std::end(inFilename),
     '.');
   if (it_period == std::end(inFilename)) {
-    std::cerr << "Sorry! Object file must end with \".o\"." << std::endl;
+    fprintf(stderr, "Sorry! Object file must end with \".o.\"\n");
     return;
   }
   std::copy(
@@ -57,23 +58,23 @@ void VirtualMachine::run(std::string inFilename) {
   } ac;
   bool i;
 
-  std::basic_ifstream<uint16_t> inFile(inFilename, std::ios::binary);
+  std::ifstream inFile(inFilename, std::ios::binary);
   // Get size of file
   inFile.seekg(0, std::ios::end);
   limit = inFile.tellg();
   inFile.seekg(0, std::ios::beg);
 
-  if (limit > 256) {
-    std::cerr << "Program is too large to fit into memory." << std::endl;
+  if (limit > 256 * 2) { // because size will be in bytes, not in 16-bit words
+    fprintf(stderr, "Program is too large to fit into memory.\n");
     inFile.close();
     return;
   }
 
   // Load file into memory
   std::copy_n(
-    std::istreambuf_iterator<uint16_t>(inFile),
+    std::istreambuf_iterator<char>(inFile),
     limit,
-    std::begin(r));
+    reinterpret_cast<char*>(r.data()));
 
   inFile.close();
 
