@@ -6,8 +6,7 @@
 
 #include <vector>
 #include <cstdint>
-
-#include "../asm/Assembler.h"
+#include <string>
 
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \
   TypeName(const TypeName&);               \
@@ -17,13 +16,14 @@ class VirtualMachine {
  public:
   VirtualMachine();
   VirtualMachine(uint16_t, uint16_t);
-  void run(Assembler::ObjectSource);
+  void run(std::string);
 
  private:
-  std::vector<int> r;
-  std::vector<int> mem;
+  std::vector<uint16_t> r;
+  std::vector<uint16_t> mem;
 
   uint16_t pc, ir, sr, sp, base, limit, clock;
+  std::string base_filename;
 
   bool bt_overflow() const;
   bool btr_overflow();
@@ -77,8 +77,6 @@ class VirtualMachine {
   void op_return();
   void op_read(uint8_t);
   void op_write(uint8_t);
-  void op_halt();
-  void op_noop();
 
   DISALLOW_COPY_AND_ASSIGN(VirtualMachine);
 };
