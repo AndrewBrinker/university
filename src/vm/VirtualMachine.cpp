@@ -124,56 +124,56 @@ void VirtualMachine::op_store(uint8_t rd, uint8_t addr) {
 void VirtualMachine::op_add(uint8_t rd, uint8_t rs) {
   uint8_t temp = r[rd];
   r[rd] += r[rs];
-  if(addition_overflow(temp, r[rs]))
+  if (addition_overflow(temp, r[rs]))
     bts_carry();
 }
 
 void VirtualMachine::op_addi(uint8_t rd, uint8_t c) {
   uint8_t temp = r[rd];
   r[rd] += c;
-  if(addition_overflow(temp, c))
+  if (addition_overflow(temp, c))
     bts_carry();
 }
 
 void VirtualMachine::op_addc(uint8_t rd, uint8_t rs) {
   uint8_t temp = r[rd];
-  r[rd] += r[rs] + ( bt_carry() ? 1 : 0 );
-  if(addition_overflow(temp, r[rs] + ( bt_carry() ? 1 : 0 )))
+  r[rd] += r[rs] + (bt_carry() ? 1 : 0);
+  if (addition_overflow(temp, r[rs] + (bt_carry() ? 1 : 0)))
     bts_carry();
 }
 
 void VirtualMachine::op_addci(uint8_t rd, uint8_t c) {
   uint8_t temp = r[rd];
-  r[rd] += c + ( bt_carry() ? 1 : 0 );
-  if(addition_overflow(temp, c + ( bt_carry() ? 1 : 0 )))
+  r[rd] += c + (bt_carry() ? 1 : 0);
+  if (addition_overflow(temp, c + (bt_carry() ? 1 : 0)))
     bts_carry();
 }
 
 void VirtualMachine::op_sub(uint8_t rd, uint8_t rs) {
   uint8_t temp = r[rd];
   r[rd] -= r[rs];
-  if(subtraction_overflow(temp, r[rs]))
+  if (subtraction_overflow(temp, r[rs]))
     bts_carry();
 }
 
 void VirtualMachine::op_subi(uint8_t rd, uint8_t c) {
   uint8_t temp = r[rd];
   r[rd] -= c;
-  if(subtraction_overflow(temp, c))
+  if (subtraction_overflow(temp, c))
     bts_carry();
 }
 
 void VirtualMachine::op_subc(uint8_t rd, uint8_t rs) {
   uint8_t temp = r[rd];
-  r[rd] -= r[rs] + ( bt_carry() ? 1 : 0 );
-  if(subtraction_overflow(temp, r[rs] + ( bt_carry() ? 1 : 0 )))
+  r[rd] -= r[rs] + (bt_carry() ? 1 : 0);
+  if (subtraction_overflow(temp, r[rs] + (bt_carry() ? 1 : 0)))
     bts_carry();
-};
+}
 
 void VirtualMachine::op_subci(uint8_t rd, uint8_t c) {
   uint8_t temp = r[rd];
-  r[rd] -= c + ( bt_carry() ? 1 : 0 );
-  if(subtraction_overflow(temp, c + ( bt_carry() ? 1 : 0 )))
+  r[rd] -= c + (bt_carry() ? 1 : 0);
+  if (subtraction_overflow(temp, c + (bt_carry() ? 1 : 0)))
     bts_carry();
 }
 
@@ -197,35 +197,27 @@ void VirtualMachine::op_compl(uint8_t rd) {
   r[rd] = ~r[rd];
 }
 
-void VirtualMachine::op_shl(uint8_t rd) {
-  
-}
+void VirtualMachine::op_shl(uint8_t rd) {}
 
-void VirtualMachine::op_shla(uint8_t rd) {
+void VirtualMachine::op_shla(uint8_t rd) {}
 
-}
+void VirtualMachine::op_shr(uint8_t rd) {}
 
-void VirtualMachine::op_shr(uint8_t rd) {
-
-}
-
-void VirtualMachine::op_shra(uint8_t rd) {
-
-}
+void VirtualMachine::op_shra(uint8_t rd) {}
 
 void VirtualMachine::op_compr(uint8_t rd, uint8_t rs) {
-  if(r[rd] < r[rs])
+  if (r[rd] < r[rs])
     bts_less(), btr_equal(), btr_greater();
-  else if(r[rd] == r[rs])
+  else if (r[rd] == r[rs])
     btr_less(), bts_equal(), btr_greater();
   else
     btr_less(), btr_equal(), bts_greater();
 }
 
 void VirtualMachine::op_compri(uint8_t rd, uint8_t c) {
-  if(r[rd] < c)
+  if (r[rd] < c)
     bts_less(), btr_equal(), btr_greater();
-  else if(r[rd] == c)
+  else if (r[rd] == c)
     btr_less(), bts_equal(), btr_greater();
   else
     btr_less(), btr_equal(), bts_greater();
@@ -244,35 +236,25 @@ void VirtualMachine::op_jump(uint8_t addr) {
 }
 
 void VirtualMachine::op_jumpl(uint8_t addr) {
-  if(bt_less()) pc = addr;
+  if (bt_less()) pc = addr;
 }
 
 void VirtualMachine::op_jumpe(uint8_t addr) {
-  if(bt_equal()) pc = addr;
+  if (bt_equal()) pc = addr;
 }
 
 void VirtualMachine::op_jumpg(uint8_t addr) {
-  if(bt_greater()) pc = addr;
+  if (bt_greater()) pc = addr;
 }
 
-void VirtualMachine::op_call(uint8_t addr) {
+void VirtualMachine::op_call(uint8_t addr) {}
 
-}
+void VirtualMachine::op_return() {}
 
-void VirtualMachine::op_return() {
+void VirtualMachine::op_read(uint8_t rd) {}
 
-}
+void VirtualMachine::op_write(uint8_t rd) {}
 
-void VirtualMachine::op_read(uint8_t rd) {
-
-}
-
-void VirtualMachine::op_write(uint8_t rd) {
-
-}
-
-void VirtualMachine::op_halt() {
-
-}
+void VirtualMachine::op_halt() {}
 
 void VirtualMachine::op_noop() {}

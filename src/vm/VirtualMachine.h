@@ -1,13 +1,13 @@
 /**
  * Copyright 2014 Andrew Brinker, Anthony Sterrett
  */
+#ifndef SRC_VM_VIRTUALMACHINE_H_
+#define SRC_VM_VIRTUALMACHINE_H_
 
-#include "../asm/Assembler.h"
 #include <vector>
 #include <cstdint>
 
-#ifndef VIRTUALMACHINE_H
-#define VIRTUALMACHINE_H
+#include "../asm/Assembler.h"
 
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \
   TypeName(const TypeName&);               \
@@ -20,8 +20,6 @@ class VirtualMachine {
   void run(Assembler::ObjectSource);
 
  private:
-  DISALLOW_COPY_AND_ASSIGN(VirtualMachine);
-
   std::vector<int> r;
   std::vector<int> mem;
 
@@ -81,6 +79,8 @@ class VirtualMachine {
   void op_write(uint8_t);
   void op_halt();
   void op_noop();
+
+  DISALLOW_COPY_AND_ASSIGN(VirtualMachine);
 };
 
-#endif  // VIRTUALMACHINE_H
+#endif  // SRC_VM_VIRTUALMACHINE_H_
