@@ -4,5 +4,6 @@ lint/
 skagOS
 os
 test
+test.o
 bin/release/
 bin/debug/
