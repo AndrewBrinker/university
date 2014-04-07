@@ -3,14 +3,14 @@
  */
 
 #include "./Assembler.h"
+#include <err/Error.h>
 #include <cstdint>
 #include <list>
-#include <err/Error.h>
 
 
 Assembler::Assembler() {}
 
 
-Assembler::ObjectSource Assembler::parse(char *) {
+Assembler::ObjectSource Assembler::parse() {
   return std::list<uint16_t>();
 }
