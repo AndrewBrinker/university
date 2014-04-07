@@ -21,11 +21,10 @@ class Assembler {
   typedef std::list<uint16_t> ObjectSource;
 
   Assembler();
-  ObjectSource parse(char *);
+  ObjectSource parse(char *file_name);
 
  private:
   DISALLOW_COPY_AND_ASSIGN(Assembler);
-
 };
 
 #endif  // ASSEMBLER_H

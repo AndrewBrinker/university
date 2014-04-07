@@ -2,8 +2,8 @@
  * Copyright 2014 Andrew Brinker, Anthony Sterrett
  */
 
-#include <vector>
 #include <cstdint>
+#include <vector>
 #include <string>
 
 #ifndef VIRTUAL_MACHINE_H

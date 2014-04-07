@@ -10,6 +10,6 @@
 Assembler::Assembler() {}
 
 
-Assembler::ObjectSource Assembler::parse(char *blah) {
+Assembler::ObjectSource Assembler::parse(char *file_name) {
   return std::list<uint16_t>();
 }
