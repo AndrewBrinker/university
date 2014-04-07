@@ -1,6 +1,8 @@
 #### PROJECT SETTINGS ####
 # The name of the executable to be created
 BIN_NAME := os
+# The name of hte testing executable to be created
+TEST_BIN_NAME := ostest
 # Compiler used
 CXX ?= g++
 # Extension of source files used in the project
@@ -9,6 +11,8 @@ SRC_EXT = cpp
 HEADER_EXT = h
 # Path to the source directory, relative to the makefile
 SRC_PATH = src
+# Path to the test directory, relative to the makefile
+TEST_PATH = test
 # General compiler flags
 COMPILE_FLAGS = -std=c++11 -Wall -Wextra -g
 # Additional release-specific flags
@@ -72,6 +76,16 @@ HEADERS = $(shell find $(SRC_PATH) -name '*.$(HEADER_EXT)')
 OBJECTS = $(SOURCES:$(SRC_PATH)/%.$(SRC_EXT)=$(BUILD_PATH)/%.o)
 # Set the dependency files that will be used to add header dependencies
 DEPS = $(OBJECTS:.o=.d)
+
+# Find all source files in the source directory
+TEST_SOURCES = $(shell find $(TEST_PATH) -name '*.$(SRC_EXT)')
+# Get all header files from source files
+TEST_HEADERS = $(shell find $(TEST_PATH) -name '*.$(HEADER_EXT)')
+# Set the object file names, with the source directory stripped
+# from the path, and the build path prepended in its place
+TEST_OBJECTS = $(TEST_SOURCES:$(TEST_PATH)/%.$(SRC_EXT)=$(BUILD_PATH)/%.o)
+# Set the dependency files that will be used to add header dependencies
+TEST_DEPS = $(TEST_OBJECTS:.o=.d)
 
 # Macros for timing compilation
 UNAME_S := $(shell uname -s)
