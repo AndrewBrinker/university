@@ -20,7 +20,7 @@ class VirtualMachine {
   void run(std::string);
 
  private:
-  std::vector<uint16_t> r;
+  std::vector<int16_t> r;
   std::vector<uint16_t> mem;
 
   uint16_t pc, ir, sr, sp, base, limit, clock;
@@ -47,27 +47,27 @@ class VirtualMachine {
   bool bts_carry();
 
   void op_load(uint8_t, uint8_t);
-  void op_loadi(uint8_t, uint8_t);
+  void op_loadi(uint8_t, int8_t);
   void op_store(uint8_t, uint8_t);
   void op_add(uint8_t, uint8_t);
-  void op_addi(uint8_t, uint8_t);
+  void op_addi(uint8_t, int8_t);
   void op_addc(uint8_t, uint8_t);
-  void op_addci(uint8_t, uint8_t);
+  void op_addci(uint8_t, int8_t);
   void op_sub(uint8_t, uint8_t);
-  void op_subi(uint8_t, uint8_t);
+  void op_subi(uint8_t, int8_t);
   void op_subc(uint8_t, uint8_t);
-  void op_subci(uint8_t, uint8_t);
+  void op_subci(uint8_t, int8_t);
   void op_and(uint8_t, uint8_t);
-  void op_andi(uint8_t, uint8_t);
+  void op_andi(uint8_t, int8_t);
   void op_xor(uint8_t, uint8_t);
-  void op_xori(uint8_t, uint8_t);
+  void op_xori(uint8_t, int8_t);
   void op_compl(uint8_t);
   void op_shl(uint8_t);
   void op_shla(uint8_t);
   void op_shr(uint8_t);
   void op_shra(uint8_t);
   void op_compr(uint8_t, uint8_t);
-  void op_compri(uint8_t, uint8_t);
+  void op_compri(uint8_t, int8_t);
   void op_getstat(uint8_t);
   void op_putstat(uint8_t);
   void op_jump(uint8_t);

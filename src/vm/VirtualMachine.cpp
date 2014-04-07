@@ -75,7 +75,7 @@ void VirtualMachine::run(std::string inFilename) {
   std::copy_n(
     std::istreambuf_iterator<char>(inFile),
     limit,
-    reinterpret_cast<char*>(r.data()));
+    reinterpret_cast<char*>(mem.data()));
 
   inFile.close();
 
@@ -91,7 +91,7 @@ void VirtualMachine::run(std::string inFilename) {
 
     switch (op) {
     case 0u:
-      if (i) {
+      if (i == 0) {
         clock += 4;
         op_load(rd, ac.addr);
       } else {
@@ -105,27 +105,27 @@ void VirtualMachine::run(std::string inFilename) {
       break;
     case 2u:
       clock += 1;
-      i ? op_add(rd, rs) : op_addi(rd, ac.c);
+      i == 0 ? op_add(rd, rs) : op_addi(rd, ac.c);
       break;
     case 3u:
       clock += 1;
-      i ? op_addc(rd, rs) : op_addci(rd, ac.c);
+      i == 0 ? op_addc(rd, rs) : op_addci(rd, ac.c);
       break;
     case 4u:
       clock += 1;
-      i ? op_sub(rd, rs) : op_subi(rd, ac.c);
+      i == 0 ? op_sub(rd, rs) : op_subi(rd, ac.c);
       break;
     case 5u:
       clock += 1;
-      i ? op_subc(rd, rs) : op_subci(rd, ac.c);
+      i == 0 ? op_subc(rd, rs) : op_subci(rd, ac.c);
       break;
     case 6u:
       clock += 1;
-      i ? op_and(rd, rs) : op_andi(rd, ac.c);
+      i == 0 ? op_and(rd, rs) : op_andi(rd, ac.c);
       break;
     case 7u:
       clock += 1;
-      i ? op_xor(rd, rs) : op_xori(rd, ac.c);
+      i == 0 ? op_xor(rd, rs) : op_xori(rd, ac.c);
       break;
     case 8u:
       clock += 1;
@@ -149,7 +149,7 @@ void VirtualMachine::run(std::string inFilename) {
       break;
     case 13u:
       clock += 1;
-      i ? op_compr(rd, rs) : op_compri(rd, ac.c);
+      i == 0 ? op_compr(rd, rs) : op_compri(rd, ac.c);
       break;
     case 14u:
       clock += 1;
@@ -285,7 +285,7 @@ void VirtualMachine::op_load(uint8_t rd, uint8_t addr) {
   r[rd] = mem[addr];
 }
 
-void VirtualMachine::op_loadi(uint8_t rd, uint8_t c) {
+void VirtualMachine::op_loadi(uint8_t rd, int8_t c) {
   r[rd] = c;
 }
 
@@ -300,7 +300,7 @@ void VirtualMachine::op_add(uint8_t rd, uint8_t rs) {
     bts_carry();
 }
 
-void VirtualMachine::op_addi(uint8_t rd, uint8_t c) {
+void VirtualMachine::op_addi(uint8_t rd, int8_t c) {
   uint8_t temp = r[rd];
   r[rd] += c;
   if (addition_overflow(temp, c))
@@ -314,7 +314,7 @@ void VirtualMachine::op_addc(uint8_t rd, uint8_t rs) {
     bts_carry();
 }
 
-void VirtualMachine::op_addci(uint8_t rd, uint8_t c) {
+void VirtualMachine::op_addci(uint8_t rd, int8_t c) {
   uint8_t temp = r[rd];
   r[rd] += c + (bt_carry() ? 1 : 0);
   if (addition_overflow(temp, c + (bt_carry() ? 1 : 0)))
@@ -328,7 +328,7 @@ void VirtualMachine::op_sub(uint8_t rd, uint8_t rs) {
     bts_carry();
 }
 
-void VirtualMachine::op_subi(uint8_t rd, uint8_t c) {
+void VirtualMachine::op_subi(uint8_t rd, int8_t c) {
   uint8_t temp = r[rd];
   r[rd] -= c;
   if (subtraction_overflow(temp, c))
@@ -342,7 +342,7 @@ void VirtualMachine::op_subc(uint8_t rd, uint8_t rs) {
     bts_carry();
 }
 
-void VirtualMachine::op_subci(uint8_t rd, uint8_t c) {
+void VirtualMachine::op_subci(uint8_t rd, int8_t c) {
   uint8_t temp = r[rd];
   r[rd] -= c + (bt_carry() ? 1 : 0);
   if (subtraction_overflow(temp, c + (bt_carry() ? 1 : 0)))
@@ -353,7 +353,7 @@ void VirtualMachine::op_and(uint8_t rd, uint8_t rs) {
   r[rd] &= r[rs];
 }
 
-void VirtualMachine::op_andi(uint8_t rd, uint8_t c) {
+void VirtualMachine::op_andi(uint8_t rd, int8_t c) {
   r[rd] &= c;
 }
 
@@ -361,7 +361,7 @@ void VirtualMachine::op_xor(uint8_t rd, uint8_t rs) {
   r[rd] ^= r[rs];
 }
 
-void VirtualMachine::op_xori(uint8_t rd, uint8_t c) {
+void VirtualMachine::op_xori(uint8_t rd, int8_t c) {
   r[rd] ^= c;
 }
 
@@ -386,7 +386,7 @@ void VirtualMachine::op_compr(uint8_t rd, uint8_t rs) {
     btr_less(), btr_equal(), bts_greater();
 }
 
-void VirtualMachine::op_compri(uint8_t rd, uint8_t c) {
+void VirtualMachine::op_compri(uint8_t rd, int8_t c) {
   if (r[rd] < c)
     bts_less(), btr_equal(), btr_greater();
   else if (r[rd] == c)
