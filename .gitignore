@@ -3,5 +3,6 @@ build/
 lint/
 skagOS
 os
+test
 bin/release/
 bin/debug/
