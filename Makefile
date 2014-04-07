@@ -5,6 +5,8 @@ BIN_NAME := os
 CXX ?= g++
 # Extension of source files used in the project
 SRC_EXT = cpp
+# Extension of header files used in the project
+HEADER_EXT = h
 # Path to the source directory, relative to the makefile
 SRC_PATH = src
 # General compiler flags
@@ -64,7 +66,7 @@ install: export BIN_PATH := bin/release
 # Find all source files in the source directory
 SOURCES = $(shell find $(SRC_PATH) -name '*.$(SRC_EXT)')
 # Get all header files from source files
-HEADERS = $(patsubst %.cpp,%.h,$(SOURCES))
+HEADERS = $(shell find $(SRC_PATH) -name '*.$(HEADER_EXT)')
 # Set the object file names, with the source directory stripped
 # from the path, and the build path prepended in its place
 OBJECTS = $(SOURCES:$(SRC_PATH)/%.$(SRC_EXT)=$(BUILD_PATH)/%.o)
