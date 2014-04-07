@@ -1,4 +1,4 @@
-.release-time
+.release_time
 build/
 lint/
 skagOS
