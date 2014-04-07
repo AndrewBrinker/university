@@ -1,6 +1,10 @@
-#include "../src/vm/VirtualMachine.h"
-#include <cstdio>
+/**
+ * Copyright 2014 Andrew Brinker, Anthony Sterrett
+ */
+
 #include <cstdlib>
+#include <cstdio>
+#include "../src/vm/VirtualMachine.h"
 
 int main(int argc, char **argv) {
   if (argc != 2) {
