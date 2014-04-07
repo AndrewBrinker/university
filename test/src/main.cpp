@@ -2,10 +2,11 @@
  * Copyright 2014 Andrew Brinker, Anthony Sterrett
  */
 
-#include "../../src/vm/VirtualMachine.cpp"
-#include "../lib/catch.h"
 #include <cstdlib>
 #include <cstdio>
+#include "../../src/vm/VirtualMachine.cpp"
+#include "../lib/catch.h"
+
 
 int main(int argc, char **argv) {
   if (argc != 2) {
