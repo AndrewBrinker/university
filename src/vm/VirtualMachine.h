@@ -21,10 +21,13 @@ class VirtualMachine {
 
  private:
   std::vector<int16_t> r;
-  std::vector<uint16_t> mem;
+  std::vector<int16_t> mem;
 
   uint16_t pc, ir, sr, sp, base, limit, clock;
   std::string base_filename;
+
+  std::ifstream dot_in_file;
+  std::ofstream dot_out_file;
 
   bool bt_overflow() const;
   bool btr_overflow();

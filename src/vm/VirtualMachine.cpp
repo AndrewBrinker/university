@@ -36,6 +36,11 @@ VirtualMachine::VirtualMachine(uint16_t reg_file_size,
                               base(0)
 {}
 
+VirtualMachine::~VirtualMachine() {
+  dot_out_file << clock << std::endl;
+  dot_in_file.close();
+  dot_out_file.close();
+}
 
 void VirtualMachine::run(std::string inFilename) {
   // For op_read and op_write, we need to know the base filename.
@@ -78,6 +83,9 @@ void VirtualMachine::run(std::string inFilename) {
     reinterpret_cast<char*>(mem.data()));
 
   inFile.close();
+
+  dot_in_file.open(base_filename + ".in");
+  dot_out_file.open(base_filename + ".out");
 
   while (true) {
     ir = mem[pc];
@@ -369,9 +377,17 @@ void VirtualMachine::op_compl(uint8_t rd) {
   r[rd] = ~r[rd];
 }
 
-void VirtualMachine::op_shl(uint8_t) {}
+void VirtualMachine::op_shl(uint8_t rd) {
+  if (r[rd] & 0x0080)
+    bts_carry();
+  r[rd] <<= 1;
+}
 
-void VirtualMachine::op_shla(uint8_t) {}
+void VirtualMachine::op_shla(uint8_t rd) {
+  if (r[rd] & 0x0080)
+    bts_carry();
+  r[rd] <<= 1;
+}
 
 void VirtualMachine::op_shr(uint8_t) {}
 
@@ -460,13 +476,9 @@ void VirtualMachine::op_return() {
 }
 
 void VirtualMachine::op_read(uint8_t rd) {
-  std::ifstream inFile(base_filename + ".in");
-  inFile >> r[rd];
-  inFile.close();
+  dot_in_file >> r[rd];
 }
 
 void VirtualMachine::op_write(uint8_t rd) {
-  std::ofstream outFile(base_filename + ".out");
-  outFile << r[rd];
-  outFile.close();
+  dot_out_file << r[rd] << std::endl;
 }
