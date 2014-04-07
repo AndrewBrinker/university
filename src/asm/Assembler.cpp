@@ -5,6 +5,7 @@
 #include "./Assembler.h"
 #include <cstdint>
 #include <list>
+#include <err/Error.h>
 
 
 Assembler::Assembler() {}
