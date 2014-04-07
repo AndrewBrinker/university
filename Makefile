@@ -63,6 +63,8 @@ install: export BIN_PATH := bin/release
 
 # Find all source files in the source directory
 SOURCES = $(shell find $(SRC_PATH) -name '*.$(SRC_EXT)')
+# Get all header files from source files
+HEADERS = $(patsubst %.cpp,%.h,$(SOURCES))
 # Set the object file names, with the source directory stripped
 # from the path, and the build path prepended in its place
 OBJECTS = $(SOURCES:$(SRC_PATH)/%.$(SRC_EXT)=$(BUILD_PATH)/%.o)
@@ -146,7 +148,7 @@ uninstall:
 .PHONY: lint
 lint:
 	@echo "Linting sources files against cpplint"
-	@cpplint --filter=$(FILTERS) $(SOURCES)
+	@cpplint --filter=$(FILTERS) $(SOURCES) $(HEADERS)
 
 # target: clean       Removes all build files
 .PHONY: clean
