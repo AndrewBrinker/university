@@ -10,15 +10,15 @@
 #include <string>
 
 int main(int argc, char **argv) {
-/*
   if (argc != 2) {
     printf("Usage: %s <assembly file name>\n", argv[0]);
     exit(EXIT_FAILURE);
   }
+  /*
   Assembler a;
   VirtualMachine vm;
   Assembler::ObjectSource result = a.parse(argv[1]);
   vm.run(result);
-*/
+  */
   return 0;
 }

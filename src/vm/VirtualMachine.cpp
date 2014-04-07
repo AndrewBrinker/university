@@ -369,13 +369,13 @@ void VirtualMachine::op_compl(uint8_t rd) {
   r[rd] = ~r[rd];
 }
 
-void VirtualMachine::op_shl(uint8_t rd) {}
+void VirtualMachine::op_shl(uint8_t) {}
 
-void VirtualMachine::op_shla(uint8_t rd) {}
+void VirtualMachine::op_shla(uint8_t) {}
 
-void VirtualMachine::op_shr(uint8_t rd) {}
+void VirtualMachine::op_shr(uint8_t) {}
 
-void VirtualMachine::op_shra(uint8_t rd) {}
+void VirtualMachine::op_shra(uint8_t) {}
 
 void VirtualMachine::op_compr(uint8_t rd, uint8_t rs) {
   if (r[rd] < r[rs])

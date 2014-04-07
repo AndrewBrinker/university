@@ -11,6 +11,6 @@
 Assembler::Assembler() {}
 
 
-Assembler::ObjectSource Assembler::parse(char *file_name) {
+Assembler::ObjectSource Assembler::parse(char *) {
   return std::list<uint16_t>();
 }
