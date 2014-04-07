@@ -56,6 +56,7 @@ void VirtualMachine::run(std::string inFilename) {
     std::begin(inFilename),
     it_period,
     std::back_inserter(base_filename));
+  
   uint8_t op, rd, rs;
   union {
     uint8_t addr;

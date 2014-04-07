@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <vector>
 #include <string>
+#include <fstream>
 
 #ifndef VIRTUAL_MACHINE_H
 #define VIRTUAL_MACHINE_H
@@ -17,6 +18,8 @@ class VirtualMachine {
  public:
   VirtualMachine();
   VirtualMachine(uint16_t, uint16_t);
+  ~VirtualMachine();
+  
   void run(std::string);
 
  private:
