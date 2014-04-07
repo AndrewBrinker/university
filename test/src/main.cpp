@@ -12,9 +12,7 @@ int main(int argc, char **argv) {
     printf("Usage: %s <object file name>\n", argv[0]);
     exit(EXIT_FAILURE);
   }
-  /*
   VirtualMachine vm;
   vm.run(argv[1]);
-  */
   return 0;
 }
