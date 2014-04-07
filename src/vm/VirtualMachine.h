@@ -19,7 +19,7 @@ class VirtualMachine {
   VirtualMachine();
   VirtualMachine(uint16_t, uint16_t);
   ~VirtualMachine();
-  
+
   void run(std::string);
 
  private:
