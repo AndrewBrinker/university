@@ -37,6 +37,7 @@ VirtualMachine::VirtualMachine(uint16_t reg_file_size,
 {}
 
 VirtualMachine::~VirtualMachine() {
+  dot_out_file << clock << std::endl;
   dot_in_file.close();
   dot_out_file.close();
 }
@@ -376,9 +377,17 @@ void VirtualMachine::op_compl(uint8_t rd) {
   r[rd] = ~r[rd];
 }
 
-void VirtualMachine::op_shl(uint8_t) {}
+void VirtualMachine::op_shl(uint8_t rd) {
+  if (r[rd] & 0x0080)
+    bts_carry();
+  r[rd] <<= 1;
+}
 
-void VirtualMachine::op_shla(uint8_t) {}
+void VirtualMachine::op_shla(uint8_t rd) {
+  if (r[rd] & 0x0080)
+    bts_carry();
+  r[rd] <<= 1;
+}
 
 void VirtualMachine::op_shr(uint8_t) {}
 
