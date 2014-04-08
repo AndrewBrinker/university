@@ -4,8 +4,8 @@
 
 #include "./Bank.h"
 #include <Account/Account.h>
+#include <cstdio>
 #include <string>
-#include <iostream>
 
 #define SAVINGS_ID  "S"
 #define CHECKING_ID "C"
@@ -22,7 +22,7 @@ void Bank::deposit(double amount, std::string id) {
     } else if (id == CHECKING_ID) {
         checking.deposit(amount);
     } else {
-        std::cout << "Invalid account ID." << std::endl;
+        printf("Invalid account ID.\n");
     }
 }
 
@@ -32,7 +32,7 @@ void Bank::withdraw(double amount, std::string id) {
     } else if (id == CHECKING_ID) {
         checking.withdraw(amount);
     } else {
-        std::cout << "Invalid account ID." << std::endl;
+        printf("Invalid account ID.\n");
     }
 }
 
@@ -44,11 +44,11 @@ void Bank::transfer(double amount, std::string id) {
         double value = checking.withdraw(amount);
         savings.deposit(value);
     } else {
-        std::cout << "Invalid account ID." << std::endl;
+        printf("Invalid account ID.\n");
     }
 }
 
 void Bank::printBalances() {
-    std::cout << "Savings balance: " << savings.query() << std::endl;
-    std::cout << "Checking balance: " << checking.query() << std::endl;
+    printf("Savings balance:  %f\n", savings.query());
+    printf("Checking balance: %f\n", checking.query());
 }

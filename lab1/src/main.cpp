@@ -4,7 +4,7 @@
 
 #include <Account/Account.h>
 #include <Bank/Bank.h>
-#include <iostream>
+#include <cstdio>
 
 #define START_VALUE   10000
 #define TARGET_VALUE  (START_VALUE * 2)
@@ -17,19 +17,19 @@ int main() {
 
     Account savings(100);
     savings.deposit(20);
-    std::cout << savings.query() << std::endl;
+    printf("Current funds: %f\n", savings.query());
     if (savings.withdraw(50)) {
-        std::cout << "Successful withdrawal.\n";
+        printf("Successful withdrawal\n");
     } else {
-        std::cout << "Not enough in the account, $5 penalty charged.\n";
+        printf("Insufficient funds. $5 penalty charged\n");
     }
-    std::cout << savings.query() << std::endl;
+    printf("Current funds: %f\n", savings.query());
     if (savings.withdraw(100)) {
-        std::cout << "Successful withdraw.\n";
+        printf("Successful withdrawal\n");
     } else {
-        std::cout << "Not enough in the account, $5 penalty charged.\n";
+        printf("Insufficient funds. $5 penalty charged\n");
     }
-    std::cout << savings.query() << std::endl;
+    printf("Current funds: %f\n", savings.query());
 
     /**
      * Second Account Tests
@@ -41,7 +41,7 @@ int main() {
         savings2.addInterest();
         ++years;
     }
-    std::cout << "It will take " << years << " years." << std::endl;
+    printf("It will take %d years\n", years);
 
     /**
      * Bank Tests
