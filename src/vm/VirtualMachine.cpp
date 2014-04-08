@@ -14,14 +14,6 @@
 #define REG_FILE_SIZE 4
 #define MEM_SIZE      256
 
-static inline bool addition_overflow(uint16_t a, uint16_t b) {
-  return (a + b < a);
-}
-
-static inline bool subtraction_overflow(uint16_t a, uint16_t b) {
-  return (a - b > a);
-}
-
 VirtualMachine::VirtualMachine()
   : VirtualMachine(REG_FILE_SIZE, MEM_SIZE)
 {}
@@ -33,8 +25,308 @@ VirtualMachine::VirtualMachine(uint16_t reg_file_size,
                               mem(mem_size),
                               pc(0),
                               sp(mem_size),
-                              base(0)
-{}
+                              base(0) {
+  Opcode_t value;
+  for (int i = 0; i < 256; ++i) {
+    value.i = i << 8;
+    switch (value.fmt0.op) {
+    case 0:
+      if (value.fmt0.i == 0) {
+        clocks[i] = 4;
+        ops[i] = [&] () {  // load
+          r[ir.fmt1.rd] = mem[ir.fmt1.addr];
+        };
+      } else {
+        clocks[i] = 1;
+        ops[i] = [&] () {  // loadi
+          r[ir.fmt1.rd] = ir.fmt1.constant;
+        };
+      }
+      break;
+    case 1:
+      clocks[i] = 4;
+      ops[i] = [&] () {  // store
+        mem[ir.fmt1.addr] = r[ir.fmt1.rd];
+      };
+      break;
+    case 2:
+      clocks[i] = 1;
+      if (value.fmt0.i == 0) {
+        ops[i] = [&] () {  // add
+          int32_t temp = r[ir.fmt0.rd];
+          temp += r[ir.fmt0.rs];
+          if (temp & 0x00010000) bts_carry();
+          r[ir.fmt0.rd] = temp & 0xffff;
+        };
+      } else {
+        ops[i] = [&] () {  // addi
+          int32_t temp = r[ir.fmt1.rd];
+          temp += ir.fmt1.constant;
+          if (temp & 0x00010000) bts_carry();
+          r[ir.fmt1.rd] = temp & 0xffff;
+        };
+      }
+      break;
+    case 3:
+      clocks[i] = 1;
+      if (value.fmt0.i == 0) {
+        ops[i] = [&] () {  // addc
+          int32_t temp = r[ir.fmt0.rd];
+          temp += r[ir.fmt0.rs];
+          ++temp;
+          if (temp & 0x00010000) bts_carry();
+          r[ir.fmt0.rd] = temp & 0xffff;
+        };
+      } else {
+        ops[i] = [&] () {  // addci
+          int32_t temp = r[ir.fmt1.rd];
+          temp += ir.fmt1.constant;
+          ++temp;
+          if (temp & 0x00010000) bts_carry();
+          r[ir.fmt1.rd] = temp & 0xffff;
+        };
+      }
+      break;
+    case 4:
+      clocks[i] = 1;
+      if (value.fmt0.i == 0) {
+        ops[i] = [&] () {  // sub
+          int32_t temp = r[ir.fmt0.rd];
+          temp -= r[ir.fmt0.rs];
+          if (temp & 0x00010000) bts_carry();
+          r[ir.fmt0.rd] = temp & 0xffff;
+        };
+      } else {
+        ops[i] = [&] () {  // subi
+          int32_t temp = r[ir.fmt1.rd];
+          temp -= ir.fmt1.constant;
+          if (temp & 0x00010000) bts_carry();
+          r[ir.fmt0.rd] = temp & 0xffff;
+        };
+      }
+      break;
+    case 5:
+      clocks[i] = 1;
+      if (value.fmt0.i == 0) {
+        ops[i] = [&] () {  // subc
+          int32_t temp = r[ir.fmt0.rd];
+          temp -= r[ir.fmt0.rs];
+          --temp;
+          if (temp & 0x00010000) bts_carry();
+          r[ir.fmt0.rd] = temp & 0xffff;
+        };
+      } else {
+        ops[i] = [&] () {  // subci
+          int32_t temp = r[ir.fmt1.rd];
+          temp -= ir.fmt1.constant;
+          --temp;
+          if (temp & 0x00010000) bts_carry();
+          r[ir.fmt1.rd] = temp & 0xffff;
+        };
+      }
+      break;
+    case 6:
+      clocks[i] = 1;
+      if (value.fmt0.i == 0) {
+        ops[i] = [&] () {  // and
+          r[ir.fmt0.rd] &= r[ir.fmt0.rs];
+        };
+      } else {
+        ops[i] = [&] () {  // andi
+          r[ir.fmt1.rd] &= ir.fmt1.constant;
+        };
+      }
+      break;
+    case 7:
+      clocks[i] = 1;
+      if (value.fmt0.i == 0) {
+        ops[i] = [&] () {  // xor
+          r[ir.fmt0.rd] ^= r[ir.fmt0.rs];
+        };
+      } else {
+        ops[i] = [&] () {  // xori
+          r[ir.fmt1.rd] ^= ir.fmt1.constant;
+        };
+      }
+      break;
+    case 8:
+      clocks[i] = 1;
+      ops[i] = [&] () {  // compl
+        r[ir.fmt0.rd] = ~r[ir.fmt0.rd];
+      };
+      break;
+    case 9:
+      clocks[i] = 1;
+      ops[i] = [&] () {  // shl
+        if (r[ir.fmt0.rd] & 0x80) bts_carry();
+        r[ir.fmt0.rd] <<= 1;
+      };
+      break;
+    case 10:
+      clocks[i] = 1;
+      ops[i] = [&] () {  // shla
+        if (r[ir.fmt0.rd] & 0x80) bts_carry();
+        r[ir.fmt0.rd] <<= 1;
+      };
+      break;
+    case 11:
+      clocks[i] = 1;
+      ops[i] = [&] () {  // shr
+        if (r[ir.fmt0.rd] & 0x01) bts_carry();
+        r[ir.fmt0.rd] >>= 1;
+      };
+      break;
+    case 12:
+      clocks[i] = 1;
+      ops[i] = [&] () {  // shra
+        if (r[ir.fmt0.rd] & 0x01) bts_carry();
+        r[ir.fmt0.rd] >>= 1;
+      };
+      break;
+    case 13:
+      clocks[i] = 1;
+      if (i == 0) {
+        ops[i] = [&] () {  // compr
+          if (r[ir.fmt0.rd] < r[ir.fmt0.rs]) {
+            bts_less(); btr_equal(); btr_greater();
+          } else if (r[ir.fmt0.rd] == r[ir.fmt0.rs]) {
+            btr_less(); bts_equal(); btr_greater();
+          } else {
+            btr_less(); btr_equal(); bts_greater();
+          }
+        };
+      } else {
+        ops[i] = [&] () {  // compri
+          if (r[ir.fmt1.rd] < ir.fmt1.constant) {
+            bts_less(); btr_equal(); btr_greater();
+          } else if (r[ir.fmt1.rd] == ir.fmt1.constant) {
+            btr_less(); bts_equal(); btr_greater();
+          } else {
+            btr_less(); btr_equal(); bts_greater();
+          }
+        };
+      }
+      break;
+    case 14:
+      clocks[i] = 1;
+      ops[i] = [&] () {  // getstat
+        r[ir.fmt0.rd] = sr;
+      };
+      break;
+    case 15:
+      clocks[i] = 1;
+      ops[i] = [&] () {  // putstat
+        sr = r[ir.fmt0.rd];
+      };
+      break;
+    case 16:
+      clocks[i] = 1;
+      ops[i] = [&] () {  // jump
+        pc = ir.fmt1.addr;
+      };
+      break;
+    case 17:
+      clocks[i] = 1;
+      ops[i] = [&] () {  // jumpl
+        if (bt_less()) pc = ir.fmt1.addr;
+      };
+      break;
+    case 18:
+      clocks[i] = 1;
+      ops[i] = [&] () {  // jumpe
+        if (bt_equal()) pc = ir.fmt1.addr;
+      };
+      break;
+    case 19:
+      clocks[i] = 1;
+      ops[i] = [&] () {  // jumpg
+        if (bt_greater()) pc = ir.fmt1.addr;
+      };
+      break;
+    case 20:
+      clocks[i] = 4;
+      ops[i] = [&] () {  // call
+        if (sp < limit + 6) {
+          fprintf(stderr, "Exceeded max stack depth\n");
+          exit(1);
+        }
+
+        mem[sp] = pc;
+        --sp;
+        mem[sp] = r[0];
+        --sp;
+        mem[sp] = r[1];
+        --sp;
+        mem[sp] = r[2];
+        --sp;
+        mem[sp] = r[3];
+        --sp;
+        mem[sp] = sr;
+        --sp;
+
+        pc = ir.fmt1.addr;
+      };
+      break;
+    case 21:
+      clocks[i] = 4;
+      ops[i] = [&] () {  // return
+        if (sp >= 256)
+          exit(0);
+
+        sr = mem[sp];
+        ++sp;
+        r[3] = mem[sp];
+        ++sp;
+        r[2] = mem[sp];
+        ++sp;
+        r[1] = mem[sp];
+        ++sp;
+        r[0] = mem[sp];
+        ++sp;
+        pc = mem[sp];
+        ++sp;
+      };
+      break;
+    case 22:
+      clocks[i] = 28;
+      ops[i] = [&] () {  // read
+        if (!(dot_in_file.is_open())) {
+          fprintf(stderr, "Could not open .in file\n");
+          exit(1);
+        }
+        if (!(dot_in_file >> r[ir.fmt0.rd])) {
+          fprintf(stderr, "Could not read from .in file\n");
+          exit(1);
+        }
+      };
+      break;
+    case 23:
+      clocks[i] = 28;
+      ops[i] = [&] () {  // write
+        dot_out_file << r[ir.fmt0.rd] << std::endl;
+      };
+      break;
+    case 24:
+      clocks[i] = 1;
+      ops[i] = [&] () {  // halt
+        exit(0);
+      };
+      break;
+    case 25:
+      clocks[i] = 1;
+      ops[i] = [&] () {};  // noop
+      break;
+    default:
+      clocks[i] = 0;
+      /**
+       * std::function has a default construction, so there's no need to assign
+       * an empty lambda here. Attempting to call any undefined operation will
+       * result in std::bad_function_call being thrown.
+       */
+      break;
+    }
+  }
+}
 
 VirtualMachine::~VirtualMachine() {
   dot_out_file << clock << std::endl;
@@ -56,14 +348,14 @@ void VirtualMachine::run(std::string inFilename) {
     std::begin(inFilename),
     it_period,
     std::back_inserter(base_filename));
-
+/*
   uint8_t op, rd, rs;
   union {
     uint8_t addr;
     int8_t c;
   } ac;
   bool i;
-
+*/
   std::ifstream inFile(inFilename, std::ios::binary);
   // Get size of file
   inFile.seekg(0, std::ios::end);
@@ -88,125 +380,11 @@ void VirtualMachine::run(std::string inFilename) {
   dot_in_file.open(base_filename + ".in");
   dot_out_file.open(base_filename + ".out");
 
+  // main loop
   while (true) {
-    ir = mem[pc];
+    ir.i = mem[pc];
     ++pc;
-
-    op = ir >> 11 & 0x001F;
-    rd = ir >> 9 & 0x0003;
-    i = ir & 0x0100;
-    rs = ir >> 6 & 0x0003;
-    ac.addr = ir & 0x00FF;
-
-    switch (op) {
-    case 0u:
-      if (i == 0) {
-        clock += 4;
-        op_load(rd, ac.addr);
-      } else {
-        clock += 1;
-        op_loadi(rd, ac.c);
-      }
-      break;
-    case 1u:
-      clock += 4;
-      op_store(rd, ac.addr);
-      break;
-    case 2u:
-      clock += 1;
-      i == 0 ? op_add(rd, rs) : op_addi(rd, ac.c);
-      break;
-    case 3u:
-      clock += 1;
-      i == 0 ? op_addc(rd, rs) : op_addci(rd, ac.c);
-      break;
-    case 4u:
-      clock += 1;
-      i == 0 ? op_sub(rd, rs) : op_subi(rd, ac.c);
-      break;
-    case 5u:
-      clock += 1;
-      i == 0 ? op_subc(rd, rs) : op_subci(rd, ac.c);
-      break;
-    case 6u:
-      clock += 1;
-      i == 0 ? op_and(rd, rs) : op_andi(rd, ac.c);
-      break;
-    case 7u:
-      clock += 1;
-      i == 0 ? op_xor(rd, rs) : op_xori(rd, ac.c);
-      break;
-    case 8u:
-      clock += 1;
-      op_compl(rd);
-      break;
-    case 9u:
-      clock += 1;
-      op_shl(rd);
-      break;
-    case 10u:
-      clock += 1;
-      op_shla(rd);
-      break;
-    case 11u:
-      clock += 1;
-      op_shr(rd);
-      break;
-    case 12u:
-      clock += 1;
-      op_shra(rd);
-      break;
-    case 13u:
-      clock += 1;
-      i == 0 ? op_compr(rd, rs) : op_compri(rd, ac.c);
-      break;
-    case 14u:
-      clock += 1;
-      op_getstat(rd);
-      break;
-    case 15u:
-      clock += 1;
-      op_putstat(rd);
-      break;
-    case 16u:
-      clock += 1;
-      op_jump(ac.addr);
-      break;
-    case 17u:
-      clock += 1;
-      op_jumpl(ac.addr);
-      break;
-    case 18u:
-      clock += 1;
-      op_jumpe(ac.addr);
-      break;
-    case 19u:
-      clock += 1;
-      op_jumpg(ac.addr);
-      break;
-    case 20u:
-      clock += 4;
-      op_call(ac.addr);
-    case 21u:
-      clock += 4;
-      op_return();
-      break;
-    case 22u:
-      clock += 28;
-      op_read(rd);
-      break;
-    case 23u:
-      clock += 28;
-      op_write(rd);
-      break;
-    case 24:
-      clock += 1;
-      return;
-      break;
-    case 25:
-      clock += 1;
-      break;
-    }
+    ops[ir.i >> 8]();
   }
 }
 
@@ -289,7 +467,7 @@ inline bool VirtualMachine::bts_carry() {
   sr |= 0x0001;
   return s;
 }
-
+/*
 void VirtualMachine::op_load(uint8_t rd, uint8_t addr) {
   r[rd] = mem[addr];
 }
@@ -483,3 +661,4 @@ void VirtualMachine::op_read(uint8_t rd) {
 void VirtualMachine::op_write(uint8_t rd) {
   dot_out_file << r[rd] << std::endl;
 }
+*/

@@ -6,6 +6,7 @@
 #include <vector>
 #include <string>
 #include <fstream>
+#include <functional>
 
 #ifndef VIRTUAL_MACHINE_H
 #define VIRTUAL_MACHINE_H
@@ -26,9 +27,32 @@ class VirtualMachine {
   std::vector<int16_t> r;
   std::vector<int16_t> mem;
 
-  uint16_t pc, ir, sr, sp, base, limit, clock;
-  std::string base_filename;
+  uint16_t pc, sr, sp, base, limit, clock;
 
+  union Opcode_t {
+    uint16_t i;
+    struct {
+      uint8_t unused  : 6;
+      uint8_t rs      : 2;
+      uint8_t i       : 1;
+      uint8_t rd      : 2;
+      uint8_t op      : 5;
+    } fmt0;
+    struct {
+      union {
+        uint8_t addr;
+        int8_t constant;
+      };
+      uint8_t i       : 1;
+      uint8_t rd      : 2;
+      uint8_t op      : 5;
+    } fmt1;
+  } ir;
+
+  std::function<void(void)> ops[256];
+  uint8_t clocks[256];
+
+  std::string base_filename;
   std::ifstream dot_in_file;
   std::ofstream dot_out_file;
 
