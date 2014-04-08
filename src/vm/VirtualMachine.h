@@ -19,7 +19,6 @@ class VirtualMachine {
  public:
   VirtualMachine();
   VirtualMachine(uint16_t, uint16_t);
-  ~VirtualMachine();
 
   void run(std::string);
 
@@ -28,6 +27,7 @@ class VirtualMachine {
   std::vector<int16_t> mem;
 
   uint16_t pc, sr, sp, base, limit, clock;
+  bool halt;
 
   union Opcode_t {
     uint16_t i;

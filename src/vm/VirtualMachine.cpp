@@ -25,7 +25,8 @@ VirtualMachine::VirtualMachine(uint16_t reg_file_size,
                               mem(mem_size),
                               pc(0),
                               sp(mem_size),
-                              base(0) {
+                              base(0),
+                              halt(0) {
   Opcode_t value;
   for (int i = 0; i < 256; ++i) {
     value.i = i << 8;
@@ -248,7 +249,7 @@ VirtualMachine::VirtualMachine(uint16_t reg_file_size,
       ops[i] = [&] () {  // call
         if (sp < limit + 6) {
           fprintf(stderr, "Exceeded max stack depth\n");
-          exit(1);
+          halt = true;
         }
 
         mem[sp] = pc;
@@ -271,7 +272,7 @@ VirtualMachine::VirtualMachine(uint16_t reg_file_size,
       clocks[i] = 4;
       ops[i] = [&] () {  // return
         if (sp >= 256)
-          exit(0);
+          halt = true;
 
         sr = mem[sp];
         ++sp;
@@ -292,11 +293,11 @@ VirtualMachine::VirtualMachine(uint16_t reg_file_size,
       ops[i] = [&] () {  // read
         if (!(dot_in_file.is_open())) {
           fprintf(stderr, "Could not open .in file\n");
-          exit(1);
+          halt = true;
         }
         if (!(dot_in_file >> r[ir.fmt0.rd])) {
           fprintf(stderr, "Could not read from .in file\n");
-          exit(1);
+          halt = true;
         }
       };
       break;
@@ -309,7 +310,7 @@ VirtualMachine::VirtualMachine(uint16_t reg_file_size,
     case 24:
       clocks[i] = 1;
       ops[i] = [&] () {  // halt
-        exit(0);
+        halt = true;
       };
       break;
     case 25:
@@ -326,12 +327,6 @@ VirtualMachine::VirtualMachine(uint16_t reg_file_size,
       break;
     }
   }
-}
-
-VirtualMachine::~VirtualMachine() {
-  dot_out_file << clock << std::endl;
-  dot_in_file.close();
-  dot_out_file.close();
 }
 
 void VirtualMachine::run(std::string inFilename) {
@@ -381,11 +376,16 @@ void VirtualMachine::run(std::string inFilename) {
   dot_out_file.open(base_filename + ".out");
 
   // main loop
-  while (true) {
+  while (!halt) {
     ir.i = mem[pc];
     ++pc;
     ops[ir.i >> 8]();
+    clock += clocks[ir.i >> 8];
   }
+
+  dot_out_file << clock << std::endl;
+  dot_in_file.close();
+  dot_out_file.close();
 }
 
 inline bool VirtualMachine::bt_overflow() const {
