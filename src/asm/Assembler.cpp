@@ -33,28 +33,31 @@ Assembler::Assembler() {}
  * @return the name of the created object file.
  */
 std::string Assembler::parse(std::string file_name) {
+  // Check whether the file name is valid
   try {
     if (!isFileNameValid(file_name)) {
       throw InvalidFileName();
     }
-  } catch(InvalidFileName &e) {
+  } catch(std::exception &e) {
     reportError(e);
   }
 
+  // Check whether the file exists
   try {
     if (!doesFileExist(file_name)) {
       throw FileDoesNotExist();
     }
-  } catch(FileDoesNotExist &e) {
+  } catch(std::exception &e) {
     reportError(e);
   }
 
+  // Check whether the file can be opened
   std::ifstream input_file(file_name);
   try {
     if (!input_file.is_open()) {
       throw CantOpenFile();
     }
-  } catch(CantOpenFile &e) {
+  } catch(std::exception &e) {
     reportError(e);
   }
 
