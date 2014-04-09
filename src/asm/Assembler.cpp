@@ -3,7 +3,7 @@
  */
 
 #include "./Assembler.h"
-#include <err/Error.h>
+#include <err/Errors.h>
 #include <cstdint>
 #include <list>
 #include <string>
@@ -11,6 +11,7 @@
 
 #define EXTENSION_SEPARATOR     "."
 #define ASSEMBLY_FILE_EXTENSION ".s"
+
 
 Assembler::Assembler() {}
 
@@ -31,7 +32,7 @@ void Assembler::checkFileName(std::string file_name) {
     if (extension != ASSEMBLY_FILE_EXTENSION) {
       throw InvalidFileName();
     }
-  } catch (InvalidFileName& e) {
+  } catch (InvalidFileName &e) {
     reportError(e);
   }
 }

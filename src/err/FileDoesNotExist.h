@@ -6,6 +6,6 @@
 
 class FileDoesNotExist : public std::exception {
   const char* what() const noexcept {
-    return "File does not exist.";
+    return "File does not exist";
   }
 };

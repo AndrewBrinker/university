@@ -6,6 +6,6 @@
 
 class CantMakeFile : public std::exception {
   const char* what() const noexcept {
-    return "The file cannot be made.";
+    return "The file cannot be made";
   }
 };

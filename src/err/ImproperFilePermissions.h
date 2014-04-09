@@ -6,6 +6,6 @@
 
 class ImproperFilePermissions : public std::exception {
   const char* what() const noexcept {
-    return "Improper file permissions.";
+    return "Improper file permissions";
   }
 };
