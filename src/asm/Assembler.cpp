@@ -23,7 +23,9 @@
 /**
  * Empty constructor
  */
-Assembler::Assembler() {}
+Assembler::Assembler() {
+  fillOps();
+}
 
 
 /**
@@ -124,6 +126,47 @@ bool Assembler::doesFileExist(std::string file_name) {
 
 
 /**
+ * Populate the operations vector.
+ */
+void Assembler::fillOps() {
+  operations.push_back({"load"   , "00000", "0"});
+  operations.push_back({"loadi"  , "00000", "1"});
+  operations.push_back({"store"  , "00001", "0"});
+  operations.push_back({"add"    , "00010", "0"});
+  operations.push_back({"addi"   , "00010", "1"});
+  operations.push_back({"addc"   , "00011", "0"});
+  operations.push_back({"addci"  , "00011", "1"});
+  operations.push_back({"sub"    , "00100", "0"});
+  operations.push_back({"subi"   , "00100", "1"});
+  operations.push_back({"subc"   , "00101", "0"});
+  operations.push_back({"subci"  , "00101", "1"});
+  operations.push_back({"and"    , "00110", "0"});
+  operations.push_back({"andi"   , "00110", "1"});
+  operations.push_back({"xor"    , "00111", "0"});
+  operations.push_back({"xori"   , "00111", "1"});
+  operations.push_back({"compl"  , "01000", "0"});
+  operations.push_back({"shl"    , "01001", "0"});
+  operations.push_back({"shla"   , "01010", "0"});
+  operations.push_back({"shr"    , "01011", "0"});
+  operations.push_back({"shra"   , "01100", "0"});
+  operations.push_back({"compr"  , "01101", "0"});
+  operations.push_back({"compri" , "01101", "1"});
+  operations.push_back({"getstat", "01110", "0"});
+  operations.push_back({"putstat", "01111", "0"});
+  operations.push_back({"jump"   , "10000", "0"});
+  operations.push_back({"jumpl"  , "10001", "0"});
+  operations.push_back({"jumpe"  , "10010", "0"});
+  operations.push_back({"jumpg"  , "10011", "0"});
+  operations.push_back({"call"   , "10100", "0"});
+  operations.push_back({"return" , "10101", "0"});
+  operations.push_back({"read"   , "10110", "0"});
+  operations.push_back({"write"  , "10111", "0"});
+  operations.push_back({"halt"   , "11000", "0"});
+  operations.push_back({"noop"   , "11001", "0"});
+}
+
+
+/**
  * Report the given error and exit gracefully.
  * @param e -> The error being reported.
  */
@@ -216,8 +259,32 @@ Assembler::ASMSource Assembler::readASMSource(std::ifstream &input_file) {
  * @return the object code created.
  */
 std::string Assembler::convertToObjectCode(std::string line) {
+  std::string object_line = "";
   std::vector<std::string> parts = split(line);
-  return line;
+  op current_op = findOperation(parts[0]);
+  object_line += current_op.op_code;
+  object_line += current_op.i;
+  return object_line;
+}
+
+
+/**
+ * Get the operation identified by the given name
+ * @param  name -> The name of the operation being searched for.
+ * @return the associated operation.
+ */
+Assembler::op Assembler::findOperation(std::string name) {
+  for (auto current_op : operations) {
+    if (current_op.name == name) {
+      return current_op;
+    }
+  }
+  try {
+    throw InvalidOperation();
+  } catch(std::exception &e) {
+    reportError(e);
+  }
+  return {"","",""};
 }
 
 

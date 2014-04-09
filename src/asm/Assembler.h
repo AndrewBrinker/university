@@ -23,9 +23,18 @@ class Assembler {
   std::string parse(std::string);
 
  private:
+  typedef struct op {
+    std::string name;
+    std::string op_code;
+    std::string i;
+  } op;
+
+  std::vector<op> operations;
+
   bool isFileNameValid(std::string);
   bool doesFileExist(std::string);
 
+  void fillOps();
   void reportError(std::exception &);
   std::string stripExtension(std::string);
   std::string stripComments(std::string);
@@ -33,6 +42,7 @@ class Assembler {
   std::vector<std::string> split(std::string);
   ASMSource readASMSource(std::ifstream &);
   std::string convertToObjectCode(std::string);
+  op findOperation(std::string);
 
   DISALLOW_COPY_AND_ASSIGN(Assembler);
 };

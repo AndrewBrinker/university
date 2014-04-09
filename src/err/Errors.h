@@ -7,3 +7,4 @@
 #include "./CantOpenFile.h"
 #include "./InvalidFileName.h"
 #include "./UnknownError.h"
+#include "./InvalidOperation.h"
