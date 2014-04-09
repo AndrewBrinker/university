@@ -29,6 +29,8 @@ class Assembler {
   void reportError(std::exception &);
   std::string stripExtension(std::string);
   std::string stripComments(std::string);
+  std::string stripEndingWhitespace(std::string);
+  std::vector<std::string> split(std::string);
   ASMSource readASMSource(std::ifstream &);
 
   DISALLOW_COPY_AND_ASSIGN(Assembler);

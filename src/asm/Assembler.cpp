@@ -7,10 +7,13 @@
 #include <sys/stat.h>
 #include <cstdint>
 #include <cstdlib>
+#include <cctype>
 #include <list>
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <sstream>
+#include <vector>
 
 #define EXTENSION_SEPARATOR     "."
 #define COMMENT_SEPARATOR       "!"
@@ -78,9 +81,21 @@ std::string Assembler::parse(std::string file_name) {
   // Get the assembly file source
   ASMSource source = readASMSource(input_file);
 
-  // Begin actual parsing
+  /*
   for (auto line : source) {
     printf("%s\n", line.c_str());
+  }
+  */
+
+  // Go line by line
+  // Split each line into a vector of components
+  // Create a string for the output line
+  for (auto line : source) {
+    std::vector<std::string> parts = split(line);
+    for (auto item : parts) {
+      printf("%s ", item.c_str());
+    }
+    printf("\n");
   }
 
   return std::string();
@@ -155,6 +170,36 @@ std::string Assembler::stripComments(std::string line) {
 }
 
 
+std::string Assembler::stripEndingWhitespace(std::string line) {
+  int i = line.length();
+  do {
+    --i;
+  } while (isspace(line[i]));
+  return line.substr(0, i + 1);
+}
+
+
+/**
+ * Split the given string into a vector of its space-delimited parts
+ * @param line -> The line to be split.
+ * @return the split line.
+ */
+std::vector<std::string> Assembler::split(std::string line) {
+  std::vector<std::string> result;
+  size_t j = 0;
+  size_t i = 0;
+  while (i < line.length()) {
+    if (isspace(line[i])) {
+      result.push_back(line.substr(j, i - j));
+      j = i + 1;
+    }
+    ++i;
+  }
+  result.push_back(line.substr(j, i));
+  return result;
+}
+
+
 /**
  * Convert the input file stream into ASMSource
  * @param  input_file -> The stream to the assembly file being read
@@ -164,6 +209,7 @@ Assembler::ASMSource Assembler::readASMSource(std::ifstream &input_file) {
   ASMSource source;
   for (std::string line; getline(input_file, line);) {
       line = stripComments(line);
+      line = stripEndingWhitespace(line);
       if (line == "\n") continue;
       source.push_back(line);
   }
