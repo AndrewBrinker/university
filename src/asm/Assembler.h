@@ -25,8 +25,12 @@ class Assembler {
 
  private:
   void checkFileName(std::string);
+  void checkFileExists(std::string);
 
   void reportError(std::exception &);
+
+  bool isFileNameValid(std::string);
+  bool doesFileExist(std::string);
 
   DISALLOW_COPY_AND_ASSIGN(Assembler);
 };
