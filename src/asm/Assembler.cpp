@@ -14,6 +14,7 @@
 
 #define EXTENSION_SEPARATOR     "."
 #define ASSEMBLY_FILE_EXTENSION ".s"
+#define OBJECT_FILE_EXTENSION   ".o"
 
 
 /**
@@ -56,6 +57,18 @@ std::string Assembler::parse(std::string file_name) {
   try {
     if (!input_file.is_open()) {
       throw CantOpenFile();
+    }
+  } catch(std::exception &e) {
+    reportError(e);
+  }
+
+  // Check whether the output file can be made.
+  std::string object_file_name = stripExtension(file_name);
+  object_file_name += OBJECT_FILE_EXTENSION;
+  std::ofstream output_file(object_file_name);
+  try {
+    if (!output_file.is_open()) {
+      throw CantMakeFile();
     }
   } catch(std::exception &e) {
     reportError(e);
