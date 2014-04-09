@@ -15,41 +15,50 @@
 #define ASSEMBLY_FILE_EXTENSION ".s"
 
 
+/**
+ * Empty constructor
+ */
 Assembler::Assembler() {}
 
 
+/**
+ * Parse the given file, reporting errors as necessary.
+ *
+ * This function first gets the file against a battery of tests. If it passes,
+ * it will proceed to parse the file, otherwise it will report the error and
+ * exit.
+ *
+ * @param  file_name -> The name of the file to be compiled.
+ * @return the name of the created object file.
+ */
 std::string Assembler::parse(std::string file_name) {
-  checkFileName(file_name);
-  checkFileExists(file_name);
-  return std::string();
-}
-
-
-void Assembler::checkFileName(std::string file_name) {
-  bool valid = isFileNameValid(file_name);
   try {
-    if (!valid) {
+    if (!isFileNameValid(file_name)) {
       throw InvalidFileName();
     }
   } catch (InvalidFileName &e) {
     reportError(e);
   }
-}
-
-
-void Assembler::checkFileExists(std::string file_name) {
-  bool exists = doesFileExist(file_name);
   try {
-    if (!exists) {
+    if (!doesFileExist(file_name)) {
       throw FileDoesNotExist();
     }
   } catch (FileDoesNotExist &e) {
     reportError(e);
   }
+  return std::string();
 }
 
 
-
+/**
+ * Check whether the given file name is a valid assembly source file.
+ *
+ * The only standard for validity is that it ends with a ".s" extension. That is
+ * what this function checks for.
+ *
+ * @param  file_name -> The name of the assembly source file being checked.
+ * @return whether the name is valid or not.
+ */
 bool Assembler::isFileNameValid(std::string file_name) {
   size_t pos = file_name.find_last_of(EXTENSION_SEPARATOR);
   std::string extension = "";
@@ -60,12 +69,21 @@ bool Assembler::isFileNameValid(std::string file_name) {
 }
 
 
+/**
+ * Check whether the given file name exists.
+ * @param  file_name -> The name of the file being checked.
+ * @return whether the file exists.
+ */
 bool Assembler::doesFileExist(std::string file_name) {
   struct stat buffer;
   return (stat (file_name.c_str(), &buffer) == 0);
 }
 
 
+/**
+ * Report the given error and exit gracefully.
+ * @param e -> The error being reported.
+ */
 void Assembler::reportError(std::exception &e) {
   printf("Assembler error: %s. Terminating...\n", e.what());
   exit(EXIT_FAILURE);

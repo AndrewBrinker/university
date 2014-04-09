@@ -17,16 +17,10 @@
 
 class Assembler {
  public:
-  typedef std::list<std::string> ASMSource;
-  typedef std::list<uint16_t> ObjectSource;
-
   Assembler();
   std::string parse(std::string);
 
  private:
-  void checkFileName(std::string);
-  void checkFileExists(std::string);
-
   void reportError(std::exception &);
 
   bool isFileNameValid(std::string);
