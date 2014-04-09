@@ -4,9 +4,9 @@
 
 #include "./Assembler.h"
 #include <err/Errors.h>
+#include <sys/stat.h>
 #include <cstdint>
 #include <cstdlib>
-#include <sys/stat.h>
 #include <list>
 #include <string>
 #include <iostream>
@@ -36,14 +36,14 @@ std::string Assembler::parse(std::string file_name) {
     if (!isFileNameValid(file_name)) {
       throw InvalidFileName();
     }
-  } catch (InvalidFileName &e) {
+  } catch(InvalidFileName &e) {
     reportError(e);
   }
   try {
     if (!doesFileExist(file_name)) {
       throw FileDoesNotExist();
     }
-  } catch (FileDoesNotExist &e) {
+  } catch(FileDoesNotExist &e) {
     reportError(e);
   }
   return std::string();
