@@ -5,6 +5,7 @@
 #include "./Assembler.h"
 #include <err/Errors.h>
 #include <cstdint>
+#include <cstdlib>
 #include <sys/stat.h>
 #include <list>
 #include <string>
@@ -48,6 +49,7 @@ void Assembler::checkFileExists(std::string file_name) {
 }
 
 
+
 bool Assembler::isFileNameValid(std::string file_name) {
   size_t pos = file_name.find_last_of(EXTENSION_SEPARATOR);
   std::string extension = "";
@@ -66,6 +68,7 @@ bool Assembler::doesFileExist(std::string file_name) {
 
 void Assembler::reportError(std::exception &e) {
   printf("Assembler error: %s. Terminating...\n", e.what());
+  exit(EXIT_FAILURE);
 }
 
 
