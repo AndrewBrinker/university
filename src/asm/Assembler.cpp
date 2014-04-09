@@ -276,11 +276,11 @@ std::string Assembler::convertToObjectCode(std::string line) {
       break;
     case ADDR_FORMAT:
       object_line += current_op.i;
-      // object_line += toBinaryString(parts[1]);
-      pad(object_line, ' ', OBJECT_LINE_SIZE);
+      object_line += toBinaryString(atoi(parts[1].c_str()));
+      pad(&object_line, '0', OBJECT_LINE_SIZE);
       break;
     case EMPTY_FORMAT:
-      pad(object_line, ' ', OBJECT_LINE_SIZE);
+      pad(&object_line, '0', OBJECT_LINE_SIZE);
       break;
   }
   return object_line;
@@ -332,13 +332,35 @@ std::string Assembler::getRegisterID(std::string id) {
  * @param fill        -> The filler character to use
  * @param target_size -> The target size
  */
-void Assembler::pad(std::string &line, const char fill, size_t target_size) {
-  size_t length = line.length();
+void Assembler::pad(std::string *line, const char fill, size_t target_size) {
+  size_t length = line->length();
   if (length >= target_size) return;
   while (length < target_size) {
-    line += fill;
+    line->push_back(fill);
     ++length;
   }
+}
+
+
+/**
+ * Convert the given integer to a string of binary digits
+ * @param  value -> the integer being converted.
+ * @return the string binary encoding of that number.
+ */
+std::string Assembler::toBinaryString(const uint16_t value) {
+  std::string output;
+  bool found_first_one = false;
+  for (int current_bit = 15; current_bit >= 0; current_bit--) {
+    if ((value & (1ULL << current_bit)) != 0) {
+      if (!found_first_one) {
+        found_first_one = true;
+      }
+      output += '1';
+    } else if (found_first_one) {
+      output += '0';
+    }
+  }
+  return output;
 }
 
 

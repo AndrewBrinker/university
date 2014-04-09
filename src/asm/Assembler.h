@@ -42,7 +42,8 @@ class Assembler {
   std::string convertToObjectCode(std::string);
   op findOperation(std::string);
   std::string getRegisterID(std::string);
-  void pad(std::string &, const char, size_t);
+  void pad(std::string *, const char, size_t);
+  std::string toBinaryString(const uint16_t value);
 
   DISALLOW_COPY_AND_ASSIGN(Assembler);
 };
