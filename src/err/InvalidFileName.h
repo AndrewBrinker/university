@@ -5,7 +5,8 @@
 #include <exception>
 
 class InvalidFileName : public std::exception {
-  const char* what() const noexcept {
-    return "Invalid file name.";
+ public:
+  const char *what() const throw() {
+    return "Invalid file name";
   }
 };

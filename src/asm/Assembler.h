@@ -24,6 +24,10 @@ class Assembler {
   std::string parse(std::string);
 
  private:
+  void checkFileName(std::string);
+
+  void reportError(std::exception &);
+
   DISALLOW_COPY_AND_ASSIGN(Assembler);
 };
 

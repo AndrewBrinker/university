@@ -22,9 +22,11 @@ int main(int argc, char **argv) {
     printUsage(argv[0]);
     exit(EXIT_FAILURE);
   }
+  /*
   if (strncmp(argv[1], TEST_FLAG, strlen(TEST_FLAG))) {
     return runTests(argv[2]);
   }
+  */
   Assembler a;
   VirtualMachine vm;
   std::string object_file_name = a.parse({argv[1]});
