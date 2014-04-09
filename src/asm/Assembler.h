@@ -4,7 +4,6 @@
 
 #include <cstdint>
 #include <vector>
-#include <list>
 #include <string>
 
 #ifndef ASSEMBLER_H
@@ -17,7 +16,8 @@
 
 class Assembler {
  public:
-  typedef std::list<std::string> ASMSource;
+  typedef std::vector<std::string> ASMSource;
+  typedef std::vector<std::string> ObjectSource;
 
   Assembler();
   std::string parse(std::string);
@@ -32,6 +32,7 @@ class Assembler {
   std::string stripEndingWhitespace(std::string);
   std::vector<std::string> split(std::string);
   ASMSource readASMSource(std::ifstream &);
+  std::string convertToObjectCode(std::string);
 
   DISALLOW_COPY_AND_ASSIGN(Assembler);
 };

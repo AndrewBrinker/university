@@ -8,7 +8,6 @@
 #include <cstdint>
 #include <cstdlib>
 #include <cctype>
-#include <list>
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -81,21 +80,9 @@ std::string Assembler::parse(std::string file_name) {
   // Get the assembly file source
   ASMSource source = readASMSource(input_file);
 
-  /*
+  ObjectSource object_src;
   for (auto line : source) {
-    printf("%s\n", line.c_str());
-  }
-  */
-
-  // Go line by line
-  // Split each line into a vector of components
-  // Create a string for the output line
-  for (auto line : source) {
-    std::vector<std::string> parts = split(line);
-    for (auto item : parts) {
-      printf("%s ", item.c_str());
-    }
-    printf("\n");
+    object_src.push_back(convertToObjectCode(line));
   }
 
   return std::string();
@@ -208,12 +195,23 @@ std::vector<std::string> Assembler::split(std::string line) {
 Assembler::ASMSource Assembler::readASMSource(std::ifstream &input_file) {
   ASMSource source;
   for (std::string line; getline(input_file, line);) {
-      line = stripComments(line);
-      line = stripEndingWhitespace(line);
-      if (line == "\n") continue;
-      source.push_back(line);
+    line = stripComments(line);
+    line = stripEndingWhitespace(line);
+    if (line == "") continue;
+    source.push_back(line);
   }
   return source;
+}
+
+
+/**
+ * Convert a given line of assembly code to object code
+ * @param  line -> The line of assembly code to convert.
+ * @return the object code created.
+ */
+std::string Assembler::convertToObjectCode(std::string line) {
+  std::vector<std::string> parts = split(line);
+  return std::string();
 }
 
 
