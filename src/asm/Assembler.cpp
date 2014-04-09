@@ -13,6 +13,7 @@
 #include <fstream>
 
 #define EXTENSION_SEPARATOR     "."
+#define COMMENT_SEPARATOR       "!"
 #define ASSEMBLY_FILE_EXTENSION ".s"
 #define OBJECT_FILE_EXTENSION   ".o"
 
@@ -133,11 +134,24 @@ void Assembler::reportError(std::exception &e) {
  */
 std::string Assembler::stripExtension(std::string file_name) {
   size_t pos = file_name.find_last_of(EXTENSION_SEPARATOR);
-  std::string extension = "";
   if (pos != std::string::npos) {
     return file_name.substr(0, pos);
   }
   return file_name;
+}
+
+
+/**
+ * Remove any comments from the given line of code
+ * @param  line -> The line to be stripped.
+ * @return the stripped line.
+ */
+std::string Assembler::stripComments(std::string line) {
+  size_t pos = line.find_last_of(COMMENT_SEPARATOR);
+  if (pos != std::string::npos) {
+    return line.substr(0, pos);
+  }
+  return line;
 }
 
 
@@ -149,6 +163,8 @@ std::string Assembler::stripExtension(std::string file_name) {
 Assembler::ASMSource Assembler::readASMSource(std::ifstream &input_file) {
   ASMSource source;
   for (std::string line; getline(input_file, line);) {
+      line = stripComments(line);
+      if (line == "\n") continue;
       source.push_back(line);
   }
   return source;
