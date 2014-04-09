@@ -75,7 +75,7 @@ class VirtualMachine {
   bool bt_carry() const;
   bool btr_carry();
   bool bts_carry();
-
+/*
   void op_load(uint8_t, uint8_t);
   void op_loadi(uint8_t, int8_t);
   void op_store(uint8_t, uint8_t);
@@ -108,7 +108,7 @@ class VirtualMachine {
   void op_return();
   void op_read(uint8_t);
   void op_write(uint8_t);
-
+*/
   DISALLOW_COPY_AND_ASSIGN(VirtualMachine);
 };
 
