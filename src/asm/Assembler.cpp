@@ -80,9 +80,13 @@ std::string Assembler::parse(std::string file_name) {
   // Get the assembly file source
   ASMSource source = readASMSource(input_file);
 
-  ObjectSource object_src;
+  ObjectSource object_source;
   for (auto line : source) {
-    object_src.push_back(convertToObjectCode(line));
+    object_source.push_back(convertToObjectCode(line));
+  }
+
+  for (auto line : object_source) {
+    printf("%s\n", line.c_str());
   }
 
   return std::string();
@@ -197,7 +201,9 @@ Assembler::ASMSource Assembler::readASMSource(std::ifstream &input_file) {
   for (std::string line; getline(input_file, line);) {
     line = stripComments(line);
     line = stripEndingWhitespace(line);
-    if (line == "") continue;
+    if (line == "") {
+      continue;
+    }
     source.push_back(line);
   }
   return source;
@@ -211,7 +217,7 @@ Assembler::ASMSource Assembler::readASMSource(std::ifstream &input_file) {
  */
 std::string Assembler::convertToObjectCode(std::string line) {
   std::vector<std::string> parts = split(line);
-  return std::string();
+  return line;
 }
 
 
