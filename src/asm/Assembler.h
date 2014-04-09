@@ -17,14 +17,18 @@
 
 class Assembler {
  public:
+  typedef std::list<std::string> ASMSource;
+
   Assembler();
   std::string parse(std::string);
 
  private:
-  void reportError(std::exception &);
-
   bool isFileNameValid(std::string);
   bool doesFileExist(std::string);
+
+  void reportError(std::exception &);
+  std::string stripExtension(std::string);
+  ASMSource readASMSource(std::ifstream &);
 
   DISALLOW_COPY_AND_ASSIGN(Assembler);
 };

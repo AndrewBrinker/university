@@ -74,6 +74,14 @@ std::string Assembler::parse(std::string file_name) {
     reportError(e);
   }
 
+  // Get the assembly file source
+  ASMSource source = readASMSource(input_file);
+
+  // Begin actual parsing
+  for (auto line : source) {
+    printf("%s\n", line.c_str());
+  }
+
   return std::string();
 }
 
@@ -115,6 +123,35 @@ bool Assembler::doesFileExist(std::string file_name) {
 void Assembler::reportError(std::exception &e) {
   printf("Assembler error: %s. Terminating...\n", e.what());
   exit(EXIT_FAILURE);
+}
+
+
+/**
+ * Remove the file extension from the given file name
+ * @param  file_name -> The file name being stripped.
+ * @return the stripped file name.
+ */
+std::string Assembler::stripExtension(std::string file_name) {
+  size_t pos = file_name.find_last_of(EXTENSION_SEPARATOR);
+  std::string extension = "";
+  if (pos != std::string::npos) {
+    return file_name.substr(0, pos);
+  }
+  return file_name;
+}
+
+
+/**
+ * Convert the input file stream into ASMSource
+ * @param  input_file -> The stream to the assembly file being read
+ * @return the source of the assembly file
+ */
+Assembler::ASMSource Assembler::readASMSource(std::ifstream &input_file) {
+  ASMSource source;
+  for (std::string line; getline(input_file, line);) {
+      source.push_back(line);
+  }
+  return source;
 }
 
 
