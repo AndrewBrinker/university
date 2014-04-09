@@ -6,11 +6,12 @@
 #include <err/Error.h>
 #include <cstdint>
 #include <list>
+#include <string>
 
 
 Assembler::Assembler() {}
 
 
-Assembler::ObjectSource Assembler::parse() {
-  return std::list<uint16_t>();
+std::string Assembler::parse(std::string file_name) {
+  return std::string();
 }

@@ -28,7 +28,7 @@ DESTDIR = /
 # Install path (bin/ is appended automatically)
 INSTALL_PREFIX = usr/local
 # Linting filters
-FILTERS = -readability/streams,-build/header_guard
+FILTERS = -readability/streams,-build/header_guard,-readability/braces
 #### END PROJECT SETTINGS ####
 
 # Generally should not need to edit below this line

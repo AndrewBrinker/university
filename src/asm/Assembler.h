@@ -21,7 +21,7 @@ class Assembler {
   typedef std::list<uint16_t> ObjectSource;
 
   Assembler();
-  ObjectSource parse();
+  std::string parse(std::string);
 
  private:
   DISALLOW_COPY_AND_ASSIGN(Assembler);

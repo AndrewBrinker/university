@@ -25,5 +25,11 @@ int main(int argc, char **argv) {
   if (strncmp(argv[1], TEST_FLAG, strlen(TEST_FLAG))) {
     return runTests(argv[2]);
   }
+  Assembler a;
+  VirtualMachine vm;
+  std::string object_file_name = a.parse({argv[1]});
+  if (object_file_name != "") {
+    vm.run(object_file_name);
+  }
   return 0;
 }

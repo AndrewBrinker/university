@@ -315,7 +315,7 @@ VirtualMachine::VirtualMachine(uint16_t reg_file_size,
       break;
     case 25:
       clocks[i] = 1;
-      ops[i] = [&] () {};  // noop
+      ops[i] = [&]() {};  // noop
       break;
     default:
       clocks[i] = 0;
