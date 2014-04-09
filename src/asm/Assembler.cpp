@@ -18,14 +18,57 @@
 #define COMMENT_SEPARATOR       "!"
 #define ASSEMBLY_FILE_EXTENSION ".s"
 #define OBJECT_FILE_EXTENSION   ".o"
+#define OBJECT_LINE_SIZE        16
+#define REGS_FORMAT             0
+#define CONST_FORMAT            1
+#define ADDR_FORMAT             2
+#define EMPTY_FORMAT            3
+#define NOT_IMMEDIATE           "0"
+#define IMMEDIATE               "1"
+#define EMPTY_OP                {"","","",-1}
+
+static const Assembler::op operations[] = {
+  {"load"   , "00000", NOT_IMMEDIATE, CONST_FORMAT},
+  {"loadi"  , "00000", IMMEDIATE    , CONST_FORMAT},
+  {"store"  , "00001", NOT_IMMEDIATE, CONST_FORMAT},
+  {"add"    , "00010", NOT_IMMEDIATE, REGS_FORMAT},
+  {"addi"   , "00010", IMMEDIATE    , CONST_FORMAT},
+  {"addc"   , "00011", NOT_IMMEDIATE, REGS_FORMAT},
+  {"addci"  , "00011", IMMEDIATE    , CONST_FORMAT},
+  {"sub"    , "00100", NOT_IMMEDIATE, REGS_FORMAT},
+  {"subi"   , "00100", IMMEDIATE    , CONST_FORMAT},
+  {"subc"   , "00101", NOT_IMMEDIATE, REGS_FORMAT},
+  {"subci"  , "00101", IMMEDIATE    , CONST_FORMAT},
+  {"and"    , "00110", NOT_IMMEDIATE, REGS_FORMAT},
+  {"andi"   , "00110", IMMEDIATE    , CONST_FORMAT},
+  {"xor"    , "00111", NOT_IMMEDIATE, REGS_FORMAT},
+  {"xori"   , "00111", IMMEDIATE    , CONST_FORMAT},
+  {"compl"  , "01000", NOT_IMMEDIATE, CONST_FORMAT},
+  {"shl"    , "01001", NOT_IMMEDIATE, CONST_FORMAT},
+  {"shla"   , "01010", NOT_IMMEDIATE, CONST_FORMAT},
+  {"shr"    , "01011", NOT_IMMEDIATE, CONST_FORMAT},
+  {"shra"   , "01100", NOT_IMMEDIATE, CONST_FORMAT},
+  {"compr"  , "01101", NOT_IMMEDIATE, REGS_FORMAT},
+  {"compri" , "01101", IMMEDIATE    , CONST_FORMAT},
+  {"getstat", "01110", NOT_IMMEDIATE, CONST_FORMAT},
+  {"putstat", "01111", NOT_IMMEDIATE, CONST_FORMAT},
+  {"jump"   , "10000", NOT_IMMEDIATE, ADDR_FORMAT},
+  {"jumpl"  , "10001", NOT_IMMEDIATE, ADDR_FORMAT},
+  {"jumpe"  , "10010", NOT_IMMEDIATE, ADDR_FORMAT},
+  {"jumpg"  , "10011", NOT_IMMEDIATE, ADDR_FORMAT},
+  {"call"   , "10100", NOT_IMMEDIATE, ADDR_FORMAT},
+  {"return" , "10101", NOT_IMMEDIATE, EMPTY_FORMAT},
+  {"read"   , "10110", NOT_IMMEDIATE, CONST_FORMAT},
+  {"write"  , "10111", NOT_IMMEDIATE, CONST_FORMAT},
+  {"halt"   , "11000", NOT_IMMEDIATE, EMPTY_FORMAT},
+  {"noop"   , "11001", NOT_IMMEDIATE, EMPTY_FORMAT}
+};
 
 
 /**
  * Empty constructor
  */
-Assembler::Assembler() {
-  fillOps();
-}
+Assembler::Assembler() {}
 
 
 /**
@@ -126,47 +169,6 @@ bool Assembler::doesFileExist(std::string file_name) {
 
 
 /**
- * Populate the operations vector.
- */
-void Assembler::fillOps() {
-  operations.push_back({"load"   , "00000", "0"});
-  operations.push_back({"loadi"  , "00000", "1"});
-  operations.push_back({"store"  , "00001", "0"});
-  operations.push_back({"add"    , "00010", "0"});
-  operations.push_back({"addi"   , "00010", "1"});
-  operations.push_back({"addc"   , "00011", "0"});
-  operations.push_back({"addci"  , "00011", "1"});
-  operations.push_back({"sub"    , "00100", "0"});
-  operations.push_back({"subi"   , "00100", "1"});
-  operations.push_back({"subc"   , "00101", "0"});
-  operations.push_back({"subci"  , "00101", "1"});
-  operations.push_back({"and"    , "00110", "0"});
-  operations.push_back({"andi"   , "00110", "1"});
-  operations.push_back({"xor"    , "00111", "0"});
-  operations.push_back({"xori"   , "00111", "1"});
-  operations.push_back({"compl"  , "01000", "0"});
-  operations.push_back({"shl"    , "01001", "0"});
-  operations.push_back({"shla"   , "01010", "0"});
-  operations.push_back({"shr"    , "01011", "0"});
-  operations.push_back({"shra"   , "01100", "0"});
-  operations.push_back({"compr"  , "01101", "0"});
-  operations.push_back({"compri" , "01101", "1"});
-  operations.push_back({"getstat", "01110", "0"});
-  operations.push_back({"putstat", "01111", "0"});
-  operations.push_back({"jump"   , "10000", "0"});
-  operations.push_back({"jumpl"  , "10001", "0"});
-  operations.push_back({"jumpe"  , "10010", "0"});
-  operations.push_back({"jumpg"  , "10011", "0"});
-  operations.push_back({"call"   , "10100", "0"});
-  operations.push_back({"return" , "10101", "0"});
-  operations.push_back({"read"   , "10110", "0"});
-  operations.push_back({"write"  , "10111", "0"});
-  operations.push_back({"halt"   , "11000", "0"});
-  operations.push_back({"noop"   , "11001", "0"});
-}
-
-
-/**
  * Report the given error and exit gracefully.
  * @param e -> The error being reported.
  */
@@ -263,7 +265,24 @@ std::string Assembler::convertToObjectCode(std::string line) {
   std::vector<std::string> parts = split(line);
   op current_op = findOperation(parts[0]);
   object_line += current_op.op_code;
-  object_line += current_op.i;
+  switch (current_op.format) {
+    case REGS_FORMAT:
+      object_line += getRegisterID(parts[1]);
+      // Do more stuff
+      break;
+    case CONST_FORMAT:
+      object_line += getRegisterID(parts[1]);
+      // Do more stuff.
+      break;
+    case ADDR_FORMAT:
+      object_line += current_op.i;
+      // object_line += toBinaryString(parts[1]);
+      pad(object_line, ' ', OBJECT_LINE_SIZE);
+      break;
+    case EMPTY_FORMAT:
+      pad(object_line, ' ', OBJECT_LINE_SIZE);
+      break;
+  }
   return object_line;
 }
 
@@ -274,9 +293,9 @@ std::string Assembler::convertToObjectCode(std::string line) {
  * @return the associated operation.
  */
 Assembler::op Assembler::findOperation(std::string name) {
-  for (auto current_op : operations) {
-    if (current_op.name == name) {
-      return current_op;
+  for (int i = 0; i < OP_COUNT; ++i) {
+    if (operations[i].name == name) {
+      return operations[i];
     }
   }
   try {
@@ -284,7 +303,42 @@ Assembler::op Assembler::findOperation(std::string name) {
   } catch(std::exception &e) {
     reportError(e);
   }
-  return {"","",""};
+  return EMPTY_OP;
+}
+
+
+/**
+ * Get the register ID for the given string
+ * @param id -> The ID identifying the register
+ * @return the binary register ID
+ */
+std::string Assembler::getRegisterID(std::string id) {
+  if (id == "0") return "00";
+  if (id == "1") return "01";
+  if (id == "2") return "10";
+  if (id == "3") return "11";
+  try {
+    throw InvalidRegisterID();
+  } catch(std::exception &e) {
+    reportError(e);
+  }
+  return "";
+}
+
+
+/**
+ * Pad the given line with the fill character up to the given size
+ * @param line        -> The line to be padded
+ * @param fill        -> The filler character to use
+ * @param target_size -> The target size
+ */
+void Assembler::pad(std::string &line, const char fill, size_t target_size) {
+  size_t length = line.length();
+  if (length >= target_size) return;
+  while (length < target_size) {
+    line += fill;
+    ++length;
+  }
 }
 
 

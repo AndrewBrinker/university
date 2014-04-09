@@ -13,28 +13,26 @@
   TypeName(const TypeName&);               \
   void operator=(const TypeName&);
 
+#define OP_COUNT 34
 
 class Assembler {
  public:
   typedef std::vector<std::string> ASMSource;
   typedef std::vector<std::string> ObjectSource;
+  typedef struct op {
+    std::string name;
+    std::string op_code;
+    std::string i;
+    int format;
+  } op;
 
   Assembler();
   std::string parse(std::string);
 
  private:
-  typedef struct op {
-    std::string name;
-    std::string op_code;
-    std::string i;
-  } op;
-
-  std::vector<op> operations;
-
   bool isFileNameValid(std::string);
   bool doesFileExist(std::string);
 
-  void fillOps();
   void reportError(std::exception &);
   std::string stripExtension(std::string);
   std::string stripComments(std::string);
@@ -43,6 +41,8 @@ class Assembler {
   ASMSource readASMSource(std::ifstream &);
   std::string convertToObjectCode(std::string);
   op findOperation(std::string);
+  std::string getRegisterID(std::string);
+  void pad(std::string &, const char, size_t);
 
   DISALLOW_COPY_AND_ASSIGN(Assembler);
 };

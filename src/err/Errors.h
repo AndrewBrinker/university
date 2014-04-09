@@ -8,3 +8,4 @@
 #include "./InvalidFileName.h"
 #include "./UnknownError.h"
 #include "./InvalidOperation.h"
+#include "./InvalidRegisterID.h"
