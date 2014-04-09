@@ -10,6 +10,7 @@
 #include <list>
 #include <string>
 #include <iostream>
+#include <fstream>
 
 #define EXTENSION_SEPARATOR     "."
 #define ASSEMBLY_FILE_EXTENSION ".s"
@@ -39,6 +40,7 @@ std::string Assembler::parse(std::string file_name) {
   } catch(InvalidFileName &e) {
     reportError(e);
   }
+
   try {
     if (!doesFileExist(file_name)) {
       throw FileDoesNotExist();
@@ -46,6 +48,16 @@ std::string Assembler::parse(std::string file_name) {
   } catch(FileDoesNotExist &e) {
     reportError(e);
   }
+
+  std::ifstream input_file(file_name);
+  try {
+    if (!input_file.is_open()) {
+      throw CantOpenFile();
+    }
+  } catch(CantOpenFile &e) {
+    reportError(e);
+  }
+
   return std::string();
 }
 

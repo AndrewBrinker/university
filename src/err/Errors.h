@@ -4,5 +4,6 @@
 
 #include "./CantMakeFile.h"
 #include "./FileDoesNotExist.h"
-#include "./ImproperFilePermissions.h"
+#include "./CantOpenFile.h"
 #include "./InvalidFileName.h"
+#include "./UnknownError.h"

@@ -4,8 +4,8 @@
 
 #include <exception>
 
-class ImproperFilePermissions : public std::exception {
+class CantOpenFile : public std::exception {
   const char* what() const noexcept {
-    return "Improper file permissions";
+    return "Can't open file";
   }
 };
