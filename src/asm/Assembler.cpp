@@ -25,7 +25,7 @@
 #define EMPTY_FORMAT            3
 #define NOT_IMMEDIATE           "0"
 #define IMMEDIATE               "1"
-#define EMPTY_OP                {"","","",-1}
+#define EMPTY_OP                {"", "", "", -1}
 
 static const Assembler::op operations[] = {
   {"load"   , "00000", NOT_IMMEDIATE, CONST_FORMAT},
