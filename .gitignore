@@ -3,6 +3,7 @@ build/
 lint/
 *.dSYM/
 *.o
-run_this
+shed
+bin/
 *.sublime-project
 *.sublime-workspace
