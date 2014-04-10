@@ -1,99 +1,88 @@
 #ifndef STACK_H
 #define STACK_H
 
-/*
-#include "Vector.h"
-#include "List.h"
-*/
-#include <vector>
-#include <list>
-#include <cassert>
-using namespace std;
+#include <Vector/Vector.h>
 
-template <typename T, typename Container = vector<T> >
+template <typename T, typename Container = Vector<T>>
 class Stack {
-public:
+ public:
+  Stack();
+  ~Stack();
 
-	// Constructor/destructor.
-	Stack();                    // No-Arg Constructor.
-	// Stack(Stack<T> s1);         // Copy Constructor.
-	~Stack();                   // Destructor.
+  Stack<T> operator=(Stack<T> s1);
 
-	// Operator.
-	Stack<T> operator=(Stack<T> s1); // Assignment operator.
+  void push(const T x);
+  void pop();
+  T& top();
+  unsigned int size() const;
+  bool empty() const;
 
-	// Member functions
-	void push(const T x);       // Adds a value.
-	void pop();                 // Removes a value.
-	T& top();                   // Returns the top value.
-	unsigned int size() const;  // Returns the current size.
-	bool empty() const;         // Tells whether the container is empty.
-
-private:
-	Container c1;               // The container being used.
+ private:
+  Container c1;
 };
 
 
-/*-||-----------------------------+
-   || Stack                       |
- *-||-----------------------------*/
-
-/**************************************
- Constructor & Destructor
+/**
+ * Default constructor
  */
-
-// No-Arg Constructor
 template <typename T, typename Container>
 Stack<T,Container>::Stack() {}
 
-// Destructor
+
+/**
+ * Default destructor
+ */
 template <typename T, typename Container>
 Stack<T,Container>::~Stack() {}
 
-// Copy Constructor.
-// template <typename T, typename Container>
-// Stack<T,Container>::Stack(Stack<T> s1) {
-// 	assert(false);
-// }
 
-// Assignment operator.
-template <typename T, typename Container>
-Stack<T> Stack<T,Container>::operator=(Stack<T> s1) {
-	assert(false);
-}
-
-/**************************************
- Member functions
+/**
+ * Push item onto the stack
+ * @param: x -> The item to be added
  */
-
-// Adds a value.
 template <typename T, typename Container>
 void Stack<T,Container>::push(const T x) {
-	c1.push_back(x);
+  c1.push_back(x);
 }
 
-// Removes a value.
+
+/**
+ * Remove item from the stack
+ */
 template <typename T, typename Container>
 void Stack<T,Container>::pop() {
-	c1.pop_back();
+  c1.pop_back();
 }
 
-// Returns the top value.
+
+/**
+ * Get a reference to the top item.
+ * @return a reference to the top item
+ */
 template <typename T, typename Container>
 T& Stack<T,Container>::top() {
-	return c1.back();
+  return c1.back();
 }
 
-// Returns the size.
+
+/**
+ * Get the size of the stack
+ * @return the size of the stack
+ */
 template <typename T, typename Container>
 unsigned int Stack<T,Container>::size() const {
-	return c1.size();
+  return c1.size();
 }
 
-// Empty
+
+/**
+ * Check whether the stack is empty
+ * @return whether the stack is empty
+ */
 template <typename T, typename Container>
 bool Stack<T,Container>::empty() const {
-	return c1.empty();
+  return c1.empty();
 }
 
-#endif
+
+#endif  // STACK_H
