@@ -246,7 +246,7 @@ void vectorTest() {
   Vector<int> s8;
   assert(s8.empty());
 
-  printf("All tests passed.\n");
+  printf("VectorTest: All tests passed.\n");
 }
 
 #endif  // VECTORTEST_H

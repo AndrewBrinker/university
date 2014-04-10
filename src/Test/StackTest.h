@@ -61,7 +61,7 @@ void stackTest() {
   c4.pop();
   assert(c4.empty());
 
-  printf("All tests passed.\n");
+  printf("StackTest: All tests passed.\n");
 }
 
 #endif  // STACKTEST_H

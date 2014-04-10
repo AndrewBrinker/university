@@ -6,6 +6,7 @@
 #define LIST_H
 
 #include <cassert>
+#include <iostream>
 
 template <typename T>
 class List;
@@ -54,7 +55,6 @@ class List {
 
   List();
   ~List();
-  List(List &c1);
 
   unsigned int size() const;
   void clear();
@@ -132,15 +132,6 @@ List<T>::List() : _size(0), first_link(0), last_link(0) {}
 template <typename T>
 List<T>::~List() {
   clear();
-}
-
-
-template <typename T>
-List<T>::List(List &c1) {
-  iterator it1;
-  for (it1 = c1.begin(); it1 != c1.end(); ++it1) {
-    push_back(*it1);
-  }
 }
 
 

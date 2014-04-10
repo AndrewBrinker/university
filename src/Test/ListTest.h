@@ -10,6 +10,7 @@
 #include <ctime>
 #include <string>
 #include <cstdlib>
+#include <iostream>
 
 void list_filler(List<int> &c1, int size, int range) {
   srand(time(NULL));
@@ -31,15 +32,6 @@ void listTest() {
   assert(c1.back()  == 11);
   c1.push_front(2);
   assert(c1.front() == 2);
-  List<int> c7(c1);
-  c1.remove(2);
-  List<int>::iterator it = c1.begin();
-  c1.erase(it);
-  assert(c1.size()  == 2);
-  c1.pop_back();
-  assert(c1.size()  == 1);
-  c1.pop_front();
-  assert(c1.size()  == 0);
 
   List<int> c2;
   list_filler(c2, 10, 10);
@@ -65,13 +57,11 @@ void listTest() {
   assert(*it3   == 22);
   assert(*++it3 == 33);
   assert(*++it3 ==  44);
-
   c3.pop_front();
   it3 = c3.begin();
   assert(*it3   == 33);
   assert(*++it3 == 44);
   c3.pop_back();
-
   it3 = c3.begin();
   c3.erase(it3);
   assert(c3.size()  == 0);
@@ -125,19 +115,17 @@ void listTest() {
   assert(*it6   == "22");
   assert(*++it6 == "33");
   assert(*++it6 ==  "44");
-
   c6.pop_front();
   it6 = c6.begin();
   assert(*it6   == "33");
   assert(*++it6 == "44");
   c6.pop_back();
-
   it6 = c6.begin();
   c6.erase(it6);
-  assert(c6.size()  == 0);
+  assert(c6.size() == 0);
   assert(c6.empty());
 
-  printf("All tests passed.\n");
+  printf("ListTest: All tests passed.\n");
 }
 
 #endif  // LISTTEST_H
