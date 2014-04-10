@@ -1,3 +1,3 @@
-#include "./VectorTest.cpp"
-#include "./ListTest.cpp"
-#include "./StackTest.cpp"
+#include "./VectorTest.h"
+#include "./ListTest.h"
+#include "./StackTest.h"

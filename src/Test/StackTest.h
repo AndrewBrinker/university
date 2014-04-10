@@ -2,7 +2,11 @@
  * Copyright 2014 Andrew Brinker
  */
 
+#ifndef STACKTEST_H
+#define STACKTEST_H
+
 #include <Stack/Stack.h>
+#include <List/List.h>
 #include <cassert>
 #include <string>
 #include <list>
@@ -59,3 +63,5 @@ void stackTest() {
 
   printf("All tests passed.\n");
 }
+
+#endif  // STACKTEST_H

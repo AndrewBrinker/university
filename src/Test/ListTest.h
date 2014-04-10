@@ -2,6 +2,9 @@
  * Copyright 2014 Andrew Brinker
  */
 
+#ifndef LISTTEST_H
+#define LISTTEST_H
+
 #include <List/List.h>
 #include <cassert>
 #include <ctime>
@@ -136,3 +139,5 @@ void listTest() {
 
   printf("All tests passed.\n");
 }
+
+#endif  // LISTTEST_H

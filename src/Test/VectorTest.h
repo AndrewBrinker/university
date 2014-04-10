@@ -2,12 +2,15 @@
  * Copyright 2014 Andrew Brinker
  */
 
+#ifndef VECTORTEST_H
+#define VECTORTEST_H
+
 #include <Vector/Vector.h>
 #include <cassert>
 #include <string>
 #include <cstdio>
 
-int vectorTest() {
+void vectorTest() {
   Vector<int> v1;
   assert(v1.capacity() >= 0);
   assert(v1.size() == 0);
@@ -245,3 +248,5 @@ int vectorTest() {
 
   printf("All tests passed.\n");
 }
+
+#endif  // VECTORTEST_H
