@@ -394,7 +394,6 @@ void VirtualMachine::op_shl() {
 }
 
 // Arithmetic left shirt; retains sign bit
-// I don't like this implementation, but I haven't found a better one yet.
 void VirtualMachine::op_shla() {
   if (r[ir.fmt0.rd] & 0x80) bts_carry();
   r[ir.fmt0.rd] = r[ir.fmt0.rd] & 0x80 | (r[ir.fmt0.rd] << 1) & 0x7f;
