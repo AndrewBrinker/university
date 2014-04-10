@@ -268,10 +268,13 @@ std::string Assembler::convertToObjectCode(std::string line) {
   switch (current_op.format) {
     case REGS_FORMAT:
       object_line += getRegisterID(parts[1]);
-      // Do more stuff
+      object_line += current_op.i;
+      object_line += getRegisterID(parts[2]);
+      pad(&object_line, '0', OBJECT_LINE_SIZE);
       break;
     case CONST_FORMAT:
       object_line += getRegisterID(parts[1]);
+      object_line += current_op.i;
       // Do more stuff.
       break;
     case ADDR_FORMAT:
