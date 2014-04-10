@@ -16,7 +16,7 @@ class ListIterator;
 template <typename T>
 class ListNode {
  public:
-  ListNode(T x);
+  explicit ListNode(T x);
 
   T x;
   ListNode<T> * prev;
@@ -32,7 +32,7 @@ class ListIterator {
   typedef ListNode<T> node;
 
   ListIterator();
-  ListIterator(node temp);
+  explicit ListIterator(node temp);
 
   T operator*();
   ListIterator operator++();
@@ -71,7 +71,7 @@ class List {
   iterator end();
   iterator erase(iterator position);
 
-private:
+ private:
   unsigned int _size;
   node* first_link;
   node* last_link;
@@ -126,7 +126,7 @@ bool ListIterator<T>::operator!=(const ListIterator it) const {
 
 
 template <typename T>
-List<T>::List():_size(0),first_link(0),last_link(0) {}
+List<T>::List() : _size(0), first_link(0), last_link(0) {}
 
 
 template <typename T>
@@ -195,8 +195,7 @@ void List<T>::push_back(T x) {
   if (_size == 0) {
     first_link = link;
     last_link  = link;
-  }
-  else {
+  } else {
     last_link->next = link;
     link->prev = last_link;
     last_link  = link;
@@ -219,8 +218,7 @@ void List<T>::push_front(T x) {
   if (_size == 0) {
     first_link = link;
     last_link  = link;
-  }
-  else {
+  } else {
     first_link->prev = link;
     link->next = first_link;
     first_link = link;
@@ -232,7 +230,7 @@ void List<T>::push_front(T x) {
 template <typename T>
 void List<T>::remove(const T value) {
   iterator it1 = begin();
-  while(it1 != end()) {
+  while (it1 != end()) {
     ListNode<T> current = *(it1.link);
     if (current.x == value) {
       erase(it1);
@@ -260,7 +258,7 @@ typename List<T>::iterator List<T>::end() {
 
 
 template <typename T>
-typename List<T>::iterator List<T>::erase (iterator position ) {
+typename List<T>::iterator List<T>::erase(iterator position) {
   iterator it1 = position;
 
   node* link = it1.link;

@@ -14,7 +14,7 @@
 void list_filler(List<int> &c1, int size, int range) {
   srand(time(NULL));
   for (int i = 0; i < size; ++i) {
-    c1.push_back(rand() % range);
+    c1.push_back(rand_r() % range);
   }
 }
 

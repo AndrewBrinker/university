@@ -31,7 +31,7 @@ class Vector {
   iterator begin() const;
   iterator end() const;
 
-private:
+ private:
   unsigned int _capacity;
   unsigned int _size;
   T *data;
@@ -92,8 +92,7 @@ template <typename T>
 Vector<T>& Vector<T>::operator=(const Vector &v) {
   if (v.capacity() > _capacity) {
     _capacity = v.capacity();
-  }
-  else if (_capacity < v.size()) {
+  } else if (_capacity < v.size()) {
     _capacity = (v.size() + 1);
   }
   _size = v.size();
