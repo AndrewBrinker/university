@@ -1,3 +1,7 @@
+/*
+ * Copyright 2014 Andrew Brinker
+ */
+
 #ifndef STACK_H
 #define STACK_H
 

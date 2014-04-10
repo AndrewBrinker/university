@@ -1,3 +1,7 @@
+/*
+ * Copyright 2014 Andrew Brinker
+ */
+
 #ifndef VECTOR_H
 #define VECTOR_H
 

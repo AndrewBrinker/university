@@ -1,3 +1,7 @@
+/*
+ * Copyright 2014 Andrew Brinker
+ */
+
 #ifndef LIST_H
 #define LIST_H
 

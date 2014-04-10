@@ -2,21 +2,14 @@
  * Copyright 2014 Andrew Brinker
  */
 
-#include <shed/Stack.h>
-#include <iostream>
+#include <Stack/Stack.h>
 #include <cassert>
 #include <string>
 #include <list>
-#include <vector>
-#include "memory.cpp"
+#include <cstdio>
 
-typedef Stack<int> STACK;
-typedef Stack<string> STACK2;
-typedef Stack<int, list<int> > STACK3;
-typedef Stack<string, list<string> > STACK4;
-
-void test() {
-  STACK c1;
+void stackTest() {
+  Stack<int> c1;
   c1.push(10);
   c1.push(-5);
   c1.push(3);
@@ -28,7 +21,7 @@ void test() {
   c1.pop();
   assert(c1.empty());
 
-  STACK2 c2;
+  Stack<std::string> c2;
   c2.push("10");
   c2.push("-5");
   c2.push("3");
@@ -40,7 +33,7 @@ void test() {
   c2.pop();
   assert(c2.empty());
 
-  STACK3 c3;
+  Stack<int, List<int>> c3;
   c3.push(10);
   c3.push(-5);
   c3.push(3);
@@ -52,7 +45,7 @@ void test() {
   c3.pop();
   assert(c3.empty());
 
-  STACK4 c4;
+  Stack<std::string, List<std::string>> c4;
   c4.push("10");
   c4.push("-5");
   c4.push("3");
@@ -63,15 +56,6 @@ void test() {
   c4.pop();
   c4.pop();
   assert(c4.empty());
-}
 
-int main() {
-  extern unsigned int newCalls;
-  extern unsigned int deleteCalls;
-
-  test();
-  assert(newCalls == deleteCalls);
-
-  std::cout << "All tests passed." << std::endl;
-  return 0;
+  printf("All tests passed.\n");
 }
