@@ -49,7 +49,8 @@ class VirtualMachine {
     } fmt1;
   } ir;
 
-  std::function<void(void)> ops[256];
+  typedef void (VirtualMachine::*MemFuncPtr)();
+  MemFuncPtr ops[256];
   uint8_t clocks[256];
 
   std::string base_filename;
@@ -75,40 +76,44 @@ class VirtualMachine {
   bool bt_carry() const;
   bool btr_carry();
   bool bts_carry();
-/*
-  void op_load(uint8_t, uint8_t);
-  void op_loadi(uint8_t, int8_t);
-  void op_store(uint8_t, uint8_t);
-  void op_add(uint8_t, uint8_t);
-  void op_addi(uint8_t, int8_t);
-  void op_addc(uint8_t, uint8_t);
-  void op_addci(uint8_t, int8_t);
-  void op_sub(uint8_t, uint8_t);
-  void op_subi(uint8_t, int8_t);
-  void op_subc(uint8_t, uint8_t);
-  void op_subci(uint8_t, int8_t);
-  void op_and(uint8_t, uint8_t);
-  void op_andi(uint8_t, int8_t);
-  void op_xor(uint8_t, uint8_t);
-  void op_xori(uint8_t, int8_t);
-  void op_compl(uint8_t);
-  void op_shl(uint8_t);
-  void op_shla(uint8_t);
-  void op_shr(uint8_t);
-  void op_shra(uint8_t);
-  void op_compr(uint8_t, uint8_t);
-  void op_compri(uint8_t, int8_t);
-  void op_getstat(uint8_t);
-  void op_putstat(uint8_t);
-  void op_jump(uint8_t);
-  void op_jumpl(uint8_t);
-  void op_jumpe(uint8_t);
-  void op_jumpg(uint8_t);
-  void op_call(uint8_t);
+
+  void op( const Opcode_t& );
+
+  void op_load();
+  void op_loadi();
+  void op_store();
+  void op_add();
+  void op_addi();
+  void op_addc();
+  void op_addci();
+  void op_sub();
+  void op_subi();
+  void op_subc();
+  void op_subci();
+  void op_and();
+  void op_andi();
+  void op_xor();
+  void op_xori();
+  void op_compl();
+  void op_shl();
+  void op_shla();
+  void op_shr();
+  void op_shra();
+  void op_compr();
+  void op_compri();
+  void op_getstat();
+  void op_putstat();
+  void op_jump();
+  void op_jumpl();
+  void op_jumpe();
+  void op_jumpg();
+  void op_call();
   void op_return();
-  void op_read(uint8_t);
-  void op_write(uint8_t);
-*/
+  void op_read();
+  void op_write();
+  void op_halt();
+  void op_noop();
+
   DISALLOW_COPY_AND_ASSIGN(VirtualMachine);
 };
 
