@@ -31,32 +31,32 @@ static const Assembler::op operations[] = {
   {"load"   , "00000", NOT_IMMEDIATE, CONST_FORMAT},
   {"loadi"  , "00000", IMMEDIATE    , CONST_FORMAT},
   {"store"  , "00001", NOT_IMMEDIATE, CONST_FORMAT},
-  {"add"    , "00010", NOT_IMMEDIATE, REGS_FORMAT},
+  {"add"    , "00010", NOT_IMMEDIATE, REGS_FORMAT },
   {"addi"   , "00010", IMMEDIATE    , CONST_FORMAT},
-  {"addc"   , "00011", NOT_IMMEDIATE, REGS_FORMAT},
+  {"addc"   , "00011", NOT_IMMEDIATE, REGS_FORMAT },
   {"addci"  , "00011", IMMEDIATE    , CONST_FORMAT},
-  {"sub"    , "00100", NOT_IMMEDIATE, REGS_FORMAT},
+  {"sub"    , "00100", NOT_IMMEDIATE, REGS_FORMAT },
   {"subi"   , "00100", IMMEDIATE    , CONST_FORMAT},
-  {"subc"   , "00101", NOT_IMMEDIATE, REGS_FORMAT},
+  {"subc"   , "00101", NOT_IMMEDIATE, REGS_FORMAT },
   {"subci"  , "00101", IMMEDIATE    , CONST_FORMAT},
-  {"and"    , "00110", NOT_IMMEDIATE, REGS_FORMAT},
+  {"and"    , "00110", NOT_IMMEDIATE, REGS_FORMAT },
   {"andi"   , "00110", IMMEDIATE    , CONST_FORMAT},
-  {"xor"    , "00111", NOT_IMMEDIATE, REGS_FORMAT},
+  {"xor"    , "00111", NOT_IMMEDIATE, REGS_FORMAT },
   {"xori"   , "00111", IMMEDIATE    , CONST_FORMAT},
   {"compl"  , "01000", NOT_IMMEDIATE, CONST_FORMAT},
   {"shl"    , "01001", NOT_IMMEDIATE, CONST_FORMAT},
   {"shla"   , "01010", NOT_IMMEDIATE, CONST_FORMAT},
   {"shr"    , "01011", NOT_IMMEDIATE, CONST_FORMAT},
   {"shra"   , "01100", NOT_IMMEDIATE, CONST_FORMAT},
-  {"compr"  , "01101", NOT_IMMEDIATE, REGS_FORMAT},
+  {"compr"  , "01101", NOT_IMMEDIATE, REGS_FORMAT },
   {"compri" , "01101", IMMEDIATE    , CONST_FORMAT},
   {"getstat", "01110", NOT_IMMEDIATE, CONST_FORMAT},
   {"putstat", "01111", NOT_IMMEDIATE, CONST_FORMAT},
-  {"jump"   , "10000", NOT_IMMEDIATE, ADDR_FORMAT},
-  {"jumpl"  , "10001", NOT_IMMEDIATE, ADDR_FORMAT},
-  {"jumpe"  , "10010", NOT_IMMEDIATE, ADDR_FORMAT},
-  {"jumpg"  , "10011", NOT_IMMEDIATE, ADDR_FORMAT},
-  {"call"   , "10100", NOT_IMMEDIATE, ADDR_FORMAT},
+  {"jump"   , "10000", NOT_IMMEDIATE, ADDR_FORMAT },
+  {"jumpl"  , "10001", NOT_IMMEDIATE, ADDR_FORMAT },
+  {"jumpe"  , "10010", NOT_IMMEDIATE, ADDR_FORMAT },
+  {"jumpg"  , "10011", NOT_IMMEDIATE, ADDR_FORMAT },
+  {"call"   , "10100", NOT_IMMEDIATE, ADDR_FORMAT },
   {"return" , "10101", NOT_IMMEDIATE, EMPTY_FORMAT},
   {"read"   , "10110", NOT_IMMEDIATE, CONST_FORMAT},
   {"write"  , "10111", NOT_IMMEDIATE, CONST_FORMAT},
@@ -134,7 +134,7 @@ std::string Assembler::parse(std::string file_name) {
     printf("%s\n", line.c_str());
   }
 
-  return std::string();
+  return "";
 }
 
 
