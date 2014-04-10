@@ -397,9 +397,7 @@ void VirtualMachine::op_shl() {
 // I don't like this implementation, but I haven't found a better one yet.
 void VirtualMachine::op_shla() {
   if (r[ir.fmt0.rd] & 0x80) bts_carry();
-  r[ir.fmt0.rd] =
-    (r[ir.fmt0.rd] << 1) ^ (((r[ir.fmt0.rd] ^ (r[ir.fmt0.rd] << 1)) & 0x80) ? 
-                      0x80 : 0x00);
+  r[ir.fmt0.rd] = r[ir.fmt0.rd] & 0x80 | (r[ir.fmt0.rd] << 1) & 0x7f;
 }
 
 // Logical right bit; does not retain sign bit
