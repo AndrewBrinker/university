@@ -1,6 +1,3 @@
-// The multiplexer picks between the program
-// counter and the jump address, according
-// to the select.
 module mux (
         input [31:0] pc,
         input [31:0] jump,
