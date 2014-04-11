@@ -1,5 +1,3 @@
-`include "src/mux.v"
-
 module muxTest();
     wire [31:0] Y;
     reg  [31:0] A, B;

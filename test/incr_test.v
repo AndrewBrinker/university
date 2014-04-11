@@ -1,5 +1,3 @@
-`include "src/incr.v"
-
 module incrTest();
     wire  [31:0] out;
     reg   [31:0] a;
