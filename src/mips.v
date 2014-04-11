@@ -1,8 +1,11 @@
+`include "mux.v"
+`include "add.v"
+`include "instruction_memory.v"
 
 module mips();
     // Declare the major registers.
-    reg [31:0] IF_ID_IR, IF_ID_NPC, EX_MEM_NPC;
-    reg PC_choose;
+    wire [31:0] IF_ID_IR, IF_ID_NPC, EX_MEM_NPC;
+    wire PC_choose;
 
     // Initialize the things.
     assign IF_ID_IR   = 32'h0;
