@@ -1,9 +1,11 @@
-module test_mux;
-    wire [31:0] Y;
-    reg    [31:0] A, B;
-    reg                 sel;
+`include "../src/mux.v"
 
-    mux mux1 ( A, B, sel, Y );
+module muxTest();
+    wire [31:0] Y;
+    reg  [31:0] A, B;
+    reg  sel;
+
+    mux mux1 (A, B, sel, Y);
 
     initial begin
         A = 32'hAAAAAAAA;
@@ -24,7 +26,9 @@ module test_mux;
         sel = 1'bx;
     end
 
-    always @( A or B or sel )
-        #1 $display( "At t = %0d, sel = %b\tA = %h\tB = %h\tY = %h",
-                     $time, sel, A, B, Y );
+    always @ (A or B or sel)
+        #1 $display(
+            "At t = %0d, sel = %b\tA = %h\tB = %h\tY = %h",
+            $time, sel, A, B, Y
+        );
 endmodule
