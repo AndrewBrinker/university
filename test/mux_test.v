@@ -1,4 +1,4 @@
-`include "../src/mux.v"
+`include "src/mux.v"
 
 module muxTest();
     wire [31:0] Y;

@@ -1,5 +1,5 @@
-`include "incr_test.v"
-`include "mux_test.v"
+`include "test/incr_test.v"
+`include "test/mux_test.v"
 
 module test();
     incrTest i();

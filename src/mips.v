@@ -1,6 +1,6 @@
-`include "mux.v"
-`include "incr.v"
-`include "instruction_memory.v"
+`include "src/mux.v"
+`include "src/incr.v"
+`include "src/instruction_memory.v"
 
 module mips();
     wire [31:0] PC, IF_ID_IR, IF_ID_NPC, EX_MEM_NPC;

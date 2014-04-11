@@ -1,4 +1,4 @@
-`include "../src/incr.v"
+`include "src/incr.v"
 
 module incrTest();
     wire  [31:0] out;
