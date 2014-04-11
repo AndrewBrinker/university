@@ -1,4 +1,4 @@
-`define MEMORY_FILE_NAME "bin/memory.list"
+`define MEMORY_FILE_NAME "etc/memory.list"
 
 module instruction_memory (
         input [31:0] pc,
