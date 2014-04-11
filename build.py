@@ -5,8 +5,6 @@ import re
 import glob
 import argparse
 
-#HELP_STRING = "Usage: python build.py [-t | --make-tests] [-h | --help] [-c | --clean]"
-
 def make_tests():
     print "Building test code..."
     success = True
@@ -48,21 +46,7 @@ def make_clean():
         os.remove( binary )
     os.rmdir( "bin" )
     print "Cleaned successfully"
-
-#if __name__ == '__main__':
-#    if len( argv ) > 2:
-#        print HELP_STRING
-#    elif len( argv ) == 2:
-#        if argv[1] == "-t" or argv[1] == "--make-tests":
-#            make_tests()
-#        if argv[1] == "-h" or argv[1] == "--help":
-#            print HELP_STRING
-#        if argv[1] == "-c" or argv[1] == "--clean":
-#            make_clean()
-#    else:
-#        print "Building mips..."
-#        os.system("iverilog -o mips src/mips.v")
-#        print "Built successfully"
+    
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument( "-c", "--clean", help = "clean binaries",
