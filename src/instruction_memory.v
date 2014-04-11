@@ -10,5 +10,5 @@ module instruction_memory (
     initial begin
         $readmemh(`MEMORY_FILE_NAME, mem);
     end
-    out = mem[pc];
+    assign out = mem[pc[6:0]];
 endmodule
