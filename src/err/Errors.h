@@ -9,3 +9,4 @@
 #include "./UnknownError.h"
 #include "./InvalidOperation.h"
 #include "./InvalidRegisterID.h"
+#include "./InvalidAddress.h"
