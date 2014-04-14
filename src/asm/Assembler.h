@@ -13,12 +13,11 @@
   TypeName(const TypeName&);               \
   void operator=(const TypeName&);
 
-#define OP_COUNT 34
-
 class Assembler {
  public:
   typedef std::vector<std::string> ASMSource;
   typedef std::vector<std::string> ObjectSource;
+
   typedef struct op {
     std::string name;
     std::string op_code;
@@ -43,7 +42,8 @@ class Assembler {
   op findOperation(std::string);
   std::string getRegisterID(std::string);
   void pad(std::string *, const char, size_t);
-  std::string toBinaryString(const uint16_t value);
+  std::string toBinaryString(const uint16_t, const unsigned);
+  std::string toTwosComplementBinaryString(const uint16_t);
 
   DISALLOW_COPY_AND_ASSIGN(Assembler);
 };

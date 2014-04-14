@@ -8,60 +8,78 @@
 #include <cstdint>
 #include <cstdlib>
 #include <cctype>
+#include <cmath>
 #include <string>
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <vector>
 
-#define EXTENSION_SEPARATOR     "."
-#define COMMENT_SEPARATOR       "!"
+#define EXTENSION_SEPARATOR "."
+#define COMMENT_SEPARATOR "!"
 #define ASSEMBLY_FILE_EXTENSION ".s"
-#define OBJECT_FILE_EXTENSION   ".o"
-#define OBJECT_LINE_SIZE        16
-#define REGS_FORMAT             0
-#define CONST_FORMAT            1
-#define ADDR_FORMAT             2
-#define EMPTY_FORMAT            3
-#define NOT_IMMEDIATE           "0"
-#define IMMEDIATE               "1"
-#define EMPTY_OP                {"", "", "", -1}
+#define OBJECT_FILE_EXTENSION ".o"
+#define OBJECT_LINE_SIZE 16
+
+/**
+ * Explanation of formats.
+ *
+ * cmd RD ADDR  -> ADDR_FORMAT
+ * cmd RD CONST -> CONST_FORMAT
+ * cmd RD RS    -> REGS_FORMAT
+ * cmd RD       -> SHORT_REG_FORMAT
+ * cmd ADDR     -> SHORT_ADDR_FORMAT
+ * cmd          -> EMPTY_FORMAT
+ */
+#define ADDR_FORMAT       0
+#define CONST_FORMAT      1
+#define REGS_FORMAT       2
+#define SHORT_REG_FORMAT  3
+#define SHORT_ADDR_FORMAT 4
+#define EMPTY_FORMAT      5
+
+#define NOT_IMMEDIATE     "0"
+#define IMMEDIATE         "1"
+#define EMPTY_OP          {"", "", "", -1}
+#define OP_COUNT          34
+
+#define ADDR_BIT_COUNT    8
 
 static const Assembler::op operations[] = {
-  {"load"   , "00000", NOT_IMMEDIATE, CONST_FORMAT},
-  {"loadi"  , "00000", IMMEDIATE    , CONST_FORMAT},
-  {"store"  , "00001", NOT_IMMEDIATE, CONST_FORMAT},
-  {"add"    , "00010", NOT_IMMEDIATE, REGS_FORMAT },
-  {"addi"   , "00010", IMMEDIATE    , CONST_FORMAT},
-  {"addc"   , "00011", NOT_IMMEDIATE, REGS_FORMAT },
-  {"addci"  , "00011", IMMEDIATE    , CONST_FORMAT},
-  {"sub"    , "00100", NOT_IMMEDIATE, REGS_FORMAT },
-  {"subi"   , "00100", IMMEDIATE    , CONST_FORMAT},
-  {"subc"   , "00101", NOT_IMMEDIATE, REGS_FORMAT },
-  {"subci"  , "00101", IMMEDIATE    , CONST_FORMAT},
-  {"and"    , "00110", NOT_IMMEDIATE, REGS_FORMAT },
-  {"andi"   , "00110", IMMEDIATE    , CONST_FORMAT},
-  {"xor"    , "00111", NOT_IMMEDIATE, REGS_FORMAT },
-  {"xori"   , "00111", IMMEDIATE    , CONST_FORMAT},
-  {"compl"  , "01000", NOT_IMMEDIATE, CONST_FORMAT},
-  {"shl"    , "01001", NOT_IMMEDIATE, CONST_FORMAT},
-  {"shla"   , "01010", NOT_IMMEDIATE, CONST_FORMAT},
-  {"shr"    , "01011", NOT_IMMEDIATE, CONST_FORMAT},
-  {"shra"   , "01100", NOT_IMMEDIATE, CONST_FORMAT},
-  {"compr"  , "01101", NOT_IMMEDIATE, REGS_FORMAT },
-  {"compri" , "01101", IMMEDIATE    , CONST_FORMAT},
-  {"getstat", "01110", NOT_IMMEDIATE, CONST_FORMAT},
-  {"putstat", "01111", NOT_IMMEDIATE, CONST_FORMAT},
-  {"jump"   , "10000", NOT_IMMEDIATE, ADDR_FORMAT },
-  {"jumpl"  , "10001", NOT_IMMEDIATE, ADDR_FORMAT },
-  {"jumpe"  , "10010", NOT_IMMEDIATE, ADDR_FORMAT },
-  {"jumpg"  , "10011", NOT_IMMEDIATE, ADDR_FORMAT },
-  {"call"   , "10100", NOT_IMMEDIATE, ADDR_FORMAT },
-  {"return" , "10101", NOT_IMMEDIATE, EMPTY_FORMAT},
-  {"read"   , "10110", NOT_IMMEDIATE, CONST_FORMAT},
-  {"write"  , "10111", NOT_IMMEDIATE, CONST_FORMAT},
-  {"halt"   , "11000", NOT_IMMEDIATE, EMPTY_FORMAT},
-  {"noop"   , "11001", NOT_IMMEDIATE, EMPTY_FORMAT}
+  {"load"   , "00000", NOT_IMMEDIATE, ADDR_FORMAT      },
+  {"loadi"  , "00000", IMMEDIATE    , CONST_FORMAT     },
+  {"store"  , "00001", NOT_IMMEDIATE, ADDR_FORMAT      },
+  {"add"    , "00010", NOT_IMMEDIATE, REGS_FORMAT      },
+  {"addi"   , "00010", IMMEDIATE    , CONST_FORMAT     },
+  {"addc"   , "00011", NOT_IMMEDIATE, REGS_FORMAT      },
+  {"addci"  , "00011", IMMEDIATE    , CONST_FORMAT     },
+  {"sub"    , "00100", NOT_IMMEDIATE, REGS_FORMAT      },
+  {"subi"   , "00100", IMMEDIATE    , CONST_FORMAT     },
+  {"subc"   , "00101", NOT_IMMEDIATE, REGS_FORMAT      },
+  {"subci"  , "00101", IMMEDIATE    , CONST_FORMAT     },
+  {"and"    , "00110", NOT_IMMEDIATE, REGS_FORMAT      },
+  {"andi"   , "00110", IMMEDIATE    , CONST_FORMAT     },
+  {"xor"    , "00111", NOT_IMMEDIATE, REGS_FORMAT      },
+  {"xori"   , "00111", IMMEDIATE    , CONST_FORMAT     },
+  {"compl"  , "01000", NOT_IMMEDIATE, SHORT_REG_FORMAT     },
+  {"shl"    , "01001", NOT_IMMEDIATE, SHORT_REG_FORMAT     },
+  {"shla"   , "01010", NOT_IMMEDIATE, SHORT_REG_FORMAT     },
+  {"shr"    , "01011", NOT_IMMEDIATE, SHORT_REG_FORMAT     },
+  {"shra"   , "01100", NOT_IMMEDIATE, SHORT_REG_FORMAT     },
+  {"compr"  , "01101", NOT_IMMEDIATE, REGS_FORMAT      },
+  {"compri" , "01101", IMMEDIATE    , CONST_FORMAT     },
+  {"getstat", "01110", NOT_IMMEDIATE, SHORT_REG_FORMAT     },
+  {"putstat", "01111", NOT_IMMEDIATE, SHORT_REG_FORMAT     },
+  {"jump"   , "10000", NOT_IMMEDIATE, SHORT_ADDR_FORMAT},
+  {"jumpl"  , "10001", NOT_IMMEDIATE, SHORT_ADDR_FORMAT},
+  {"jumpe"  , "10010", NOT_IMMEDIATE, SHORT_ADDR_FORMAT},
+  {"jumpg"  , "10011", NOT_IMMEDIATE, SHORT_ADDR_FORMAT},
+  {"call"   , "10100", NOT_IMMEDIATE, SHORT_ADDR_FORMAT},
+  {"return" , "10101", NOT_IMMEDIATE, EMPTY_FORMAT     },
+  {"read"   , "10110", NOT_IMMEDIATE, SHORT_REG_FORMAT     },
+  {"write"  , "10111", NOT_IMMEDIATE, SHORT_REG_FORMAT     },
+  {"halt"   , "11000", NOT_IMMEDIATE, EMPTY_FORMAT     },
+  {"noop"   , "11001", NOT_IMMEDIATE, EMPTY_FORMAT     }
 };
 
 
@@ -279,7 +297,14 @@ std::string Assembler::convertToObjectCode(std::string line) {
       break;
     case ADDR_FORMAT:
       object_line += current_op.i;
-      object_line += toBinaryString(atoi(parts[1].c_str()));
+      object_line += toBinaryString(atoi(parts[1].c_str()), ADDR_BIT_COUNT);
+      try {
+        if (object_line == "") {
+          throw InvalidAddress();
+        }
+      } catch(std::exception &e) {
+        reportError(e);
+      }
       pad(&object_line, '0', OBJECT_LINE_SIZE);
       break;
     case EMPTY_FORMAT:
@@ -350,17 +375,20 @@ void Assembler::pad(std::string *line, const char fill, size_t target_size) {
  * @param  value -> the integer being converted.
  * @return the string binary encoding of that number.
  */
-std::string Assembler::toBinaryString(const uint16_t value) {
-  std::string output;
-  bool found_first_one = false;
-  for (int current_bit = 15; current_bit >= 0; current_bit--) {
-    if ((value & (1ULL << current_bit)) != 0) {
-      if (!found_first_one) {
-        found_first_one = true;
+std::string Assembler::toBinaryString(const uint16_t value,
+                                      const unsigned bit_count) {
+  std::string output = "";
+  if (value >= 0 && value <= pow(2, bit_count)) {
+    bool found_first_one = false;
+    for (int current_bit = 15; current_bit >= 0; current_bit--) {
+      if ((value & (1ULL << current_bit)) != 0) {
+        if (!found_first_one) {
+          found_first_one = true;
+        }
+        output += '1';
+      } else if (found_first_one) {
+        output += '0';
       }
-      output += '1';
-    } else if (found_first_one) {
-      output += '0';
     }
   }
   return output;
