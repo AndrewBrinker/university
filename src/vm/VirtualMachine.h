@@ -57,8 +57,8 @@ class VirtualMachine {
   std::ifstream dot_in_file;
   std::ofstream dot_out_file;
 
-  // These functions test the given bit in the sr field, subject to the specification.
-  // btr_ and bts_ variants reset and set the bit, respectively.
+  // These functions test the given bit in the sr field, subject to the
+  // specification. btr_ and bts_ variants reset and set the bit, respectively.
   // I wish I could write these in assembly, but I guess that's overkill.
   bool bt_overflow() const;
   bool btr_overflow();
@@ -80,7 +80,7 @@ class VirtualMachine {
   bool btr_carry();
   bool bts_carry();
 
-  void op( const Opcode_t& );
+  void op(const Opcode_t&);
 
   // Operators. One function for each opcode.
   void op_load();

@@ -47,27 +47,39 @@ VirtualMachine::VirtualMachine(uint16_t reg_file_size,
       break;
     case 2:
       clocks[i] = 1;
-      ops[i] = (value.fmt0.i == 0) ? &VirtualMachine::op_add : &VirtualMachine::op_addi;
+      ops[i] = (value.fmt0.i == 0)
+                ? &VirtualMachine::op_add
+                : &VirtualMachine::op_addi;
       break;
     case 3:
       clocks[i] = 1;
-      ops[i] = (value.fmt0.i == 0) ? &VirtualMachine::op_addc : &VirtualMachine::op_addci;
+      ops[i] = (value.fmt0.i == 0)
+                ? &VirtualMachine::op_addc
+                : &VirtualMachine::op_addci;
       break;
     case 4:
       clocks[i] = 1;
-      ops[i] = (value.fmt0.i == 0) ? &VirtualMachine::op_sub : &VirtualMachine::op_subi;
+      ops[i] = (value.fmt0.i == 0)
+                ? &VirtualMachine::op_sub
+                : &VirtualMachine::op_subi;
       break;
     case 5:
       clocks[i] = 1;
-      ops[i] = (value.fmt0.i == 0) ? &VirtualMachine::op_subc : &VirtualMachine::op_subci;
+      ops[i] = (value.fmt0.i == 0)
+                ? &VirtualMachine::op_subc
+                : &VirtualMachine::op_subci;
       break;
     case 6:
       clocks[i] = 1;
-      ops[i] = (value.fmt0.i == 0) ? &VirtualMachine::op_and : &VirtualMachine::op_andi;
+      ops[i] = (value.fmt0.i == 0)
+                ? &VirtualMachine::op_and
+                : &VirtualMachine::op_andi;
       break;
     case 7:
       clocks[i] = 1;
-      ops[i] = (value.fmt0.i == 0) ? &VirtualMachine::op_xor : &VirtualMachine::op_xori;
+      ops[i] = (value.fmt0.i == 0)
+                ? &VirtualMachine::op_xor
+                : &VirtualMachine::op_xori;
       break;
     case 8:
       clocks[i] = 1;
@@ -91,7 +103,9 @@ VirtualMachine::VirtualMachine(uint16_t reg_file_size,
       break;
     case 13:
       clocks[i] = 1;
-      ops[i] = (value.fmt0.i == 0) ? &VirtualMachine::op_compr : &VirtualMachine::op_compri;
+      ops[i] = (value.fmt0.i == 0)
+                ? &VirtualMachine::op_compr
+                : &VirtualMachine::op_compri;
       break;
     case 14:
       clocks[i] = 1;
@@ -207,10 +221,10 @@ void VirtualMachine::run(std::string inFilename) {
       (*this.*ops[ir.i >> 8])();
       clock += clocks[ir.i >> 8];
     }
-  } catch (std::bad_function_call&) {
+  } catch(std::bad_function_call&) {
     fprintf(stderr, "Bad operation; must be an assembler bug!\n");
     exit(1);
-  } 
+  }
 
   dot_out_file << clock << std::endl;
   dot_in_file.close();
@@ -402,7 +416,7 @@ void VirtualMachine::op_shl() {
 // Arithmetic left shirt; retains sign bit
 void VirtualMachine::op_shla() {
   if (r[ir.fmt0.rd] & 0x80) bts_carry();
-  r[ir.fmt0.rd] = ( r[ir.fmt0.rd] & 0x80 ) | ( (r[ir.fmt0.rd] << 1) & 0x7f );
+  r[ir.fmt0.rd] = (r[ir.fmt0.rd] & 0x80) | ((r[ir.fmt0.rd] << 1) & 0x7f);
 }
 
 // Logical right bit; does not retain sign bit
@@ -511,6 +525,4 @@ void VirtualMachine::op_halt() {
   halt = true;
 }
 
-void VirtualMachine::op_noop() {
-
-}
+void VirtualMachine::op_noop() {}
