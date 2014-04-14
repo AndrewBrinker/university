@@ -373,7 +373,7 @@ void VirtualMachine::op_subi() {
 void VirtualMachine::op_subc() {
   int32_t temp = r[ir.fmt0.rd];
   temp -= r[ir.fmt0.rs];
-  if (bs_carry()) --temp;
+  if (bts_carry()) --temp;
   if (temp & 0x00010000) bts_carry();
   r[ir.fmt0.rd] = temp & 0xffff;
 }
@@ -382,7 +382,7 @@ void VirtualMachine::op_subci() {
   int32_t temp = r[ir.fmt1.rd];
   temp -= ir.fmt1.constant;
   --temp;
-  if (bs_carry()) --temp;
+  if (bts_carry()) --temp;
   if (temp & 0x00010000) bts_carry();
   r[ir.fmt1.rd] = temp & 0xffff;
 }
