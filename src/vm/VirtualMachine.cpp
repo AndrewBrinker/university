@@ -27,6 +27,7 @@ VirtualMachine::VirtualMachine(uint16_t reg_file_size,
                               sp(mem_size),
                               base(0),
                               halt(0) {
+  // Initialize the map from opcode to operation
   Opcode_t value;
   for (int i = 0; i < 256; ++i) {
     value.i = i << 8;
@@ -194,6 +195,7 @@ void VirtualMachine::run(std::string inFilename) {
 
   inFile.close();
 
+  // For op_read() and op_write() respectively
   dot_in_file.open(base_filename + ".in");
   dot_out_file.open(base_filename + ".out");
 
@@ -307,6 +309,8 @@ void VirtualMachine::op_store() {
   mem[ir.fmt1.addr] = r[ir.fmt1.rd];
 }
 
+// To determine carry, we use a larger-size int than necessary, and check the
+// first bit outside the last two bytes
 void VirtualMachine::op_add() {
   int32_t temp = r[ir.fmt0.rd];
   temp += r[ir.fmt0.rs];
@@ -337,6 +341,7 @@ void VirtualMachine::op_addci() {
   r[ir.fmt1.rd] = temp & 0xffff;
 }
 
+// Not sure how to test for carry when subtracting. These might be correct.
 void VirtualMachine::op_sub() {
   int32_t temp = r[ir.fmt0.rd];
   temp -= r[ir.fmt0.rs];
@@ -354,7 +359,7 @@ void VirtualMachine::op_subi() {
 void VirtualMachine::op_subc() {
   int32_t temp = r[ir.fmt0.rd];
   temp -= r[ir.fmt0.rs];
-  --temp;
+  if (bs_carry()) --temp;
   if (temp & 0x00010000) bts_carry();
   r[ir.fmt0.rd] = temp & 0xffff;
 }
@@ -363,6 +368,7 @@ void VirtualMachine::op_subci() {
   int32_t temp = r[ir.fmt1.rd];
   temp -= ir.fmt1.constant;
   --temp;
+  if (bs_carry()) --temp;
   if (temp & 0x00010000) bts_carry();
   r[ir.fmt1.rd] = temp & 0xffff;
 }
