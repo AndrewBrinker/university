@@ -151,13 +151,15 @@ std::string Assembler::parse(std::string file_name) {
   ASMSource asm_source = readASMSource(input_file);
 
   // Convert it to object file source
-  ObjectSource object_source = "";
+  ObjectSource object_source;
   for (auto line : asm_source) {
-    object_source += binaryToDecimalString(convertToObjectCode(line));
+    object_source.push_back(binaryStringToDecimal(convertToObjectCode(line)));
   }
 
   // Output that source to the file
-  output_file.write(object_source.c_str(), object_source.size());
+  for (int operation : object_source) {
+    output_file.write(reinterpret_cast<const char*>(&operation), sizeof(operation));
+  }
 
   // Close the file streams and return
   input_file.close();
@@ -435,7 +437,7 @@ std::string Assembler::toUnsignedBinaryString(const int original,
  * @param  original -> The string to be converted
  * @return the converted string
  */
-std::string Assembler::binaryToDecimalString(const std::string original) {
+int Assembler::binaryStringToDecimal(const std::string original) {
   int value = 0;
   const int size = original.size();
   for (int i = 0; i < size; ++i) {
@@ -443,7 +445,7 @@ std::string Assembler::binaryToDecimalString(const std::string original) {
       value += pow(2, i);
     }
   }
-  return std::to_string(value);
+  return value;
 }
 
 
