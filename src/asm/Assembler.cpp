@@ -39,7 +39,8 @@
 #define EMPTY_OP       {"", "", "", INVALID_FMT}
 #define OP_COUNT       34
 
-#define ADDR_BIT_COUNT 8
+#define ADDR_BIT_COUNT  8
+#define CONST_BIT_COUNT 8
 
 #define EXT_SEP        "."
 #define COMMENT_SEP    "!"
@@ -289,28 +290,31 @@ std::string Assembler::convertToObjectCode(std::string line) {
   op current_op = findOperation(parts[0]);
   object_line += current_op.op_code;
   switch (current_op.format) {
+    case ADDR_FMT:
+      object_line += getRegisterID(parts[1]);
+      object_line += current_op.i;
+      object_line += toBinaryString(atoi(parts[2].c_str()), ADDR_BIT_COUNT, UNSIGNED_MODE);
+      break;
+    case CONST_FMT:
+      object_line += getRegisterID(parts[1]);
+      object_line += current_op.i;
+      object_line += toBinaryString(atoi(parts[2].c_str()), CONST_BIT_COUNT, SIGNED_MODE);
+      break;
     case REGS_FMT:
       object_line += getRegisterID(parts[1]);
       object_line += current_op.i;
       object_line += getRegisterID(parts[2]);
       pad(&object_line, '0', OBJ_LINE_SIZE);
       break;
-    case CONST_FMT:
+    case SHORT_REG_FMT:
       object_line += getRegisterID(parts[1]);
       object_line += current_op.i;
-      // Do more stuff.
-      break;
-    case ADDR_FMT:
-      object_line += current_op.i;
-      // object_line += toBinaryString(atoi(parts[1].c_str()), ADDR_BIT_COUNT);
-      try {
-        if (object_line == "") {
-          throw InvalidAddress();
-        }
-      } catch(std::exception &e) {
-        reportError(e);
-      }
       pad(&object_line, '0', OBJ_LINE_SIZE);
+      break;
+    case SHORT_ADDR_FMT:
+      object_line += getRegisterID(0);
+      object_line += current_op.i;
+      object_line += toBinaryString(atoi(parts[1].c_str()), ADDR_BIT_COUNT, UNSIGNED_MODE);
       break;
     case EMPTY_FMT:
       pad(&object_line, '0', OBJ_LINE_SIZE);
