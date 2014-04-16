@@ -137,7 +137,7 @@ std::string Assembler::parse(std::string file_name) {
   // Check whether the output file can be made.
   std::string object_file_name = stripExtension(file_name);
   object_file_name += OBJ_FILE_EXT;
-  std::ofstream output_file(object_file_name);
+  std::ofstream output_file(object_file_name, std::ios::binary);
   try {
     if (!output_file.is_open()) {
       throw CantMakeFile();
@@ -155,7 +155,7 @@ std::string Assembler::parse(std::string file_name) {
   }
 
   for (auto line : object_source) {
-    printf("%s\n", line.c_str());
+    output_file << line << "\n";
   }
 
   return "";
@@ -213,50 +213,6 @@ std::string Assembler::stripExtension(std::string file_name) {
     return file_name.substr(0, pos);
   }
   return file_name;
-}
-
-
-/**
- * Remove any comments from the given line of code
- * @param  line -> The line to be stripped.
- * @return the stripped line.
- */
-std::string Assembler::stripComments(std::string line) {
-  size_t pos = line.find_last_of(COMMENT_SEP);
-  if (pos != std::string::npos) {
-    return line.substr(0, pos);
-  }
-  return line;
-}
-
-
-std::string Assembler::stripEndingWhitespace(std::string line) {
-  int i = line.length();
-  do {
-    --i;
-  } while (isspace(line[i]));
-  return line.substr(0, i + 1);
-}
-
-
-/**
- * Split the given string into a vector of its space-delimited parts
- * @param line -> The line to be split.
- * @return the split line.
- */
-std::vector<std::string> Assembler::split(std::string line) {
-  std::vector<std::string> result;
-  size_t j = 0;
-  size_t i = 0;
-  while (i < line.length()) {
-    if (isspace(line[i])) {
-      result.push_back(line.substr(j, i - j));
-      j = i + 1;
-    }
-    ++i;
-  }
-  result.push_back(line.substr(j, i));
-  return result;
 }
 
 
@@ -462,3 +418,44 @@ std::string Assembler::toUnsignedBinaryString(const int original,
 }
 
 
+/**
+ * Remove any comments from the given line of code
+ * @param  line -> The line to be stripped.
+ * @return the stripped line.
+ */
+std::string Assembler::stripComments(std::string line) {
+  size_t pos = line.find_last_of(COMMENT_SEP);
+  if (pos != std::string::npos) {
+    return line.substr(0, pos);
+  }
+  return line;
+}
+
+
+/**
+ * Remove whitespace from the end of a string
+ * @param  line -> The string to be stripped
+ * @return the stripped string
+ */
+std::string Assembler::stripEndingWhitespace(std::string line) {
+  int i = line.length();
+  do {
+    --i;
+  } while (isspace(line[i]));
+  return line.substr(0, i + 1);
+}
+
+
+/**
+ * Split the given string into a vector of its space-delimited parts
+ * @param line -> The line to be split.
+ * @return the split line.
+ */
+std::vector<std::string> Assembler::split(std::string line) {
+  std::vector<std::string> tokens;
+  std::istringstream stream(line);
+  std::copy(std::istream_iterator<std::string>(stream),
+            std::istream_iterator<std::string>(),
+            std::back_inserter<std::vector<std::string>>(tokens));
+  return tokens;
+}
