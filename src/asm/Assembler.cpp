@@ -302,7 +302,7 @@ std::string Assembler::convertToObjectCode(std::string line) {
       break;
     case ADDR_FMT:
       object_line += current_op.i;
-      object_line += toBinaryString(atoi(parts[1].c_str()), ADDR_BIT_COUNT);
+      // object_line += toBinaryString(atoi(parts[1].c_str()), ADDR_BIT_COUNT);
       try {
         if (object_line == "") {
           throw InvalidAddress();
@@ -383,9 +383,9 @@ void Assembler::pad(std::string *line, const char fill, size_t target_size) {
  * @param  mode     -> The conversion mode to use (signed or unsigned)
  * @return the converted string
  */
-std::string toBinaryString(const int original,
-                           const int bits,
-                           const char mode) {
+std::string Assembler::toBinaryString(const int original,
+                                      const int bits,
+                                      const char mode) {
   if (mode != SIGNED_MODE && mode != UNSIGNED_MODE) {
     try {
       throw InvalidIntegerConversionMode();
@@ -419,7 +419,8 @@ std::string toBinaryString(const int original,
  * @param  bits     -> The number of bits to use (including a bit for the sign)
  * @return either the converted string or an empty string
  */
-std::string toSignedBinaryString(const int original, const int bits) {
+std::string Assembler::toSignedBinaryString(const int original,
+                                            const int bits) {
   // Check the sanity of the inputs.
   const float exponent = pow(2, bits - 1);
   if (original < -exponent || exponent - 1 < original || bits > 64) return "";
@@ -449,7 +450,8 @@ std::string toSignedBinaryString(const int original, const int bits) {
  * @param  bits     -> The number of bits to use
  * @return either the converted string, or an empty string
  */
-std::string toUnsignedBinaryString(const int original, const int bits) {
+std::string Assembler::toUnsignedBinaryString(const int original,
+                                              const int bits) {
   std::string s = toSignedBinaryString(original, bits + 1);
   if (s[0] != '0') return "";
   return s.substr(1);
