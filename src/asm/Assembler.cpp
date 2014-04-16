@@ -138,7 +138,7 @@ std::string Assembler::parse(std::string file_name) {
   // Check whether the output file can be made.
   std::string object_file_name = stripExtension(file_name);
   object_file_name += OBJ_FILE_EXT;
-  std::ofstream output_file(object_file_name, std::ios::out | std::ios::binary);
+  std::ofstream output_file(object_file_name);
   try {
     if (!output_file.is_open()) {
       throw CantMakeFile();
@@ -148,17 +148,11 @@ std::string Assembler::parse(std::string file_name) {
   }
 
   // Get the assembly file source
-  ASMSource asm_source = readASMSource(input_file);
+  std::vector<std::string> asm_source = readASMSource(input_file);
 
   // Convert it to object file source
-  ObjectSource object_source;
   for (auto line : asm_source) {
-    object_source.push_back(binaryStringToDecimal(convertToObjectCode(line)));
-  }
-
-  // Output that source to the file
-  for (int operation : object_source) {
-    output_file.write(reinterpret_cast<const char*>(&operation), sizeof(operation));
+    output_file << binaryStringToDecimal(convertToObjectCode(line)) << "\n";
   }
 
   // Close the file streams and return
@@ -229,8 +223,8 @@ std::string Assembler::stripExtension(std::string file_name) {
  * @param  input_file -> The stream to the assembly file being read
  * @return the source of the assembly file
  */
-Assembler::ASMSource Assembler::readASMSource(std::ifstream &input_file) {
-  ASMSource source;
+std::vector<std::string> Assembler::readASMSource(std::ifstream &input_file) {
+  std::vector<std::string> source;
   for (std::string line; getline(input_file, line);) {
     line = stripComments(line);
     line = stripEndingWhitespace(line);

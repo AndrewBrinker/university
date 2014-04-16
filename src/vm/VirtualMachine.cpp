@@ -182,7 +182,7 @@ void VirtualMachine::run(std::string inFilename) {
     it_period,
     std::back_inserter(base_filename));
 
-  std::ifstream inFile(inFilename, std::ios::binary);
+  std::ifstream inFile(inFilename);
 
   if (!inFile.is_open()) {
     fprintf(stderr, "Cannot open file.\n");

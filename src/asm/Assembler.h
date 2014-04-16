@@ -15,9 +15,6 @@
 
 class Assembler {
  public:
-  typedef std::vector<std::string> ASMSource;
-  typedef std::vector<int> ObjectSource;
-
   typedef struct op {
     std::string name;
     std::string op_code;
@@ -37,7 +34,7 @@ class Assembler {
   std::string stripComments(std::string);
   std::string stripEndingWhitespace(std::string);
   std::vector<std::string> split(std::string);
-  ASMSource readASMSource(std::ifstream &);
+  std::vector<std::string> readASMSource(std::ifstream &);
   std::string convertToObjectCode(std::string);
   op findOperation(std::string);
   std::string getRegisterID(std::string);
