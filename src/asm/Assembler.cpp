@@ -148,17 +148,23 @@ std::string Assembler::parse(std::string file_name) {
   }
 
   // Get the assembly file source
-  ASMSource source = readASMSource(input_file);
+  ASMSource asm_source = readASMSource(input_file);
 
+  // Convert it to object file source
   ObjectSource object_source = "";
-  for (auto line : source) {
+  for (auto line : asm_source) {
     object_source += binaryToDecimalString(convertToObjectCode(line));
   }
+
+  // Output that source to the file
   output_file.write(object_source.c_str(), object_source.size());
 
+  // Close the file streams and return
   input_file.close();
   output_file.close();
-  return "";
+
+  // Return the name of the file you output to
+  return object_file_name;
 }
 
 
