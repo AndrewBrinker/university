@@ -255,12 +255,16 @@ std::string Assembler::convertToObjectCode(std::string line) {
     case ADDR_FMT:
       object_line += getRegisterID(parts[1]);
       object_line += current_op.i;
-      object_line += toBinaryString(atoi(parts[2].c_str()), ADDR_BIT_COUNT, UNSIGNED_MODE);
+      object_line += toBinaryString(atoi(parts[2].c_str()),
+                                    ADDR_BIT_COUNT,
+                                    UNSIGNED_MODE);
       break;
     case CONST_FMT:
       object_line += getRegisterID(parts[1]);
       object_line += current_op.i;
-      object_line += toBinaryString(atoi(parts[2].c_str()), CONST_BIT_COUNT, SIGNED_MODE);
+      object_line += toBinaryString(atoi(parts[2].c_str()),
+                                    CONST_BIT_COUNT,
+                                    SIGNED_MODE);
       break;
     case REGS_FMT:
       object_line += getRegisterID(parts[1]);
@@ -276,7 +280,9 @@ std::string Assembler::convertToObjectCode(std::string line) {
     case SHORT_ADDR_FMT:
       object_line += getRegisterID("0");
       object_line += current_op.i;
-      object_line += toBinaryString(atoi(parts[1].c_str()), ADDR_BIT_COUNT, UNSIGNED_MODE);
+      object_line += toBinaryString(atoi(parts[1].c_str()),
+                                    ADDR_BIT_COUNT,
+                                    UNSIGNED_MODE);
       break;
     case EMPTY_FMT:
       pad(&object_line, '0', OBJ_LINE_SIZE);
