@@ -5,7 +5,7 @@
 #include <exception>
 
 class CantMakeFile : public std::exception {
-  const char* what() const noexcept {
+  const char* what() const throw() {
     return "The file cannot be made";
   }
 };

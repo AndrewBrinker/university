@@ -5,7 +5,7 @@
 #include <exception>
 
 class InvalidOperation : public std::exception {
-  const char* what() const noexcept {
+  const char* what() const throw() {
     return "Invalid operation";
   }
 };

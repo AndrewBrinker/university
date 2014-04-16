@@ -3,12 +3,12 @@
  */
 
 #include "./CantMakeFile.h"
-#include "./FileDoesNotExist.h"
 #include "./CantOpenFile.h"
+#include "./FailedIntegerConversion.h"
+#include "./FileDoesNotExist.h"
+#include "./InvalidAddress.h"
 #include "./InvalidFileName.h"
-#include "./UnknownError.h"
+#include "./InvalidIntegerConversionMode.h"
 #include "./InvalidOperation.h"
 #include "./InvalidRegisterID.h"
-#include "./InvalidAddress.h"
-#include "./InvalidIntegerConversionMode.h"
-#include "./FailedIntegerConversion.h"
+#include "./UnknownError.h"

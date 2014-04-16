@@ -16,7 +16,7 @@
 class Assembler {
  public:
   typedef std::vector<std::string> ASMSource;
-  typedef std::vector<std::string> ObjectSource;
+  typedef std::string ObjectSource;
 
   typedef struct op {
     std::string name;
@@ -45,6 +45,7 @@ class Assembler {
   std::string toBinaryString(const int, const int, const char);
   std::string toSignedBinaryString(const int, const int);
   std::string toUnsignedBinaryString(const int, const int);
+  std::string binaryToDecimalString(const std::string);
 
   DISALLOW_COPY_AND_ASSIGN(Assembler);
 };

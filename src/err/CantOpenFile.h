@@ -5,7 +5,7 @@
 #include <exception>
 
 class CantOpenFile : public std::exception {
-  const char* what() const noexcept {
+  const char* what() const throw() {
     return "Can't open file";
   }
 };

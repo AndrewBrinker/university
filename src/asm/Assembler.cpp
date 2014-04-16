@@ -138,7 +138,7 @@ std::string Assembler::parse(std::string file_name) {
   // Check whether the output file can be made.
   std::string object_file_name = stripExtension(file_name);
   object_file_name += OBJ_FILE_EXT;
-  std::ofstream output_file(object_file_name, std::ios::binary);
+  std::ofstream output_file(object_file_name, std::ios::out | std::ios::binary);
   try {
     if (!output_file.is_open()) {
       throw CantMakeFile();
@@ -150,15 +150,14 @@ std::string Assembler::parse(std::string file_name) {
   // Get the assembly file source
   ASMSource source = readASMSource(input_file);
 
-  ObjectSource object_source;
+  ObjectSource object_source = "";
   for (auto line : source) {
-    object_source.push_back(convertToObjectCode(line));
+    object_source += binaryToDecimalString(convertToObjectCode(line));
   }
+  output_file.write(object_source.c_str(), object_source.size());
 
-  for (auto line : object_source) {
-    output_file << line << "\n";
-  }
-
+  input_file.close();
+  output_file.close();
   return "";
 }
 
@@ -416,6 +415,23 @@ std::string Assembler::toUnsignedBinaryString(const int original,
   std::string s = toSignedBinaryString(original, bits + 1);
   if (s[0] != '0') return "";
   return s.substr(1);
+}
+
+
+/**
+ * Convert the given binary string into a decimal string of the same number
+ * @param  original -> The string to be converted
+ * @return the converted string
+ */
+std::string Assembler::binaryToDecimalString(const std::string original) {
+  int value = 0;
+  const int size = original.size();
+  for (int i = 0; i < size; ++i) {
+    if (original[size - 1 - i] == '1') {
+      value += pow(2, i);
+    }
+  }
+  return std::to_string(value);
 }
 
 

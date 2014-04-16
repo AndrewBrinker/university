@@ -5,7 +5,7 @@
 #include <exception>
 
 class FailedIntegerConversion : public std::exception {
-  const char* what() const noexcept {
+  const char* what() const throw() {
     return "Failed integer conversion";
   }
 };
