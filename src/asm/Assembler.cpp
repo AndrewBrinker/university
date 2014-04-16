@@ -312,7 +312,7 @@ std::string Assembler::convertToObjectCode(std::string line) {
       pad(&object_line, '0', OBJ_LINE_SIZE);
       break;
     case SHORT_ADDR_FMT:
-      object_line += getRegisterID(0);
+      object_line += getRegisterID("0");
       object_line += current_op.i;
       object_line += toBinaryString(atoi(parts[1].c_str()), ADDR_BIT_COUNT, UNSIGNED_MODE);
       break;
