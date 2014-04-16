@@ -14,72 +14,74 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
-
-#define EXTENSION_SEPARATOR "."
-#define COMMENT_SEPARATOR "!"
-#define ASSEMBLY_FILE_EXTENSION ".s"
-#define OBJECT_FILE_EXTENSION ".o"
-#define OBJECT_LINE_SIZE 16
+#include <algorithm>
 
 /**
  * Explanation of formats.
  *
- * cmd RD ADDR  -> ADDR_FORMAT
- * cmd RD CONST -> CONST_FORMAT
- * cmd RD RS    -> REGS_FORMAT
- * cmd RD       -> SHORT_REG_FORMAT
- * cmd ADDR     -> SHORT_ADDR_FORMAT
- * cmd          -> EMPTY_FORMAT
+ * cmd RD ADDR  -> ADDR_FMT
+ * cmd RD CONST -> CONST_FMT
+ * cmd RD RS    -> REGS_FMT
+ * cmd RD       -> SHORT_REG_FMT
+ * cmd ADDR     -> SHORT_ADDR_FMT
+ * cmd          -> EMPTY_FMT
  */
-#define ADDR_FORMAT       0
-#define CONST_FORMAT      1
-#define REGS_FORMAT       2
-#define SHORT_REG_FORMAT  3
-#define SHORT_ADDR_FORMAT 4
-#define EMPTY_FORMAT      5
+#define ADDR_FMT       0
+#define CONST_FMT      1
+#define REGS_FMT       2
+#define SHORT_REG_FMT  3
+#define SHORT_ADDR_FMT 4
+#define EMPTY_FMT      5
+#define INVALID_FMT    -1
 
-#define NOT_IMMEDIATE     "0"
-#define IMMEDIATE         "1"
-#define EMPTY_OP          {"", "", "", -1}
-#define OP_COUNT          34
+#define NOT_IMMEDIATE  "0"
+#define IMMEDIATE      "1"
+#define EMPTY_OP       {"", "", "", INVALID_FMT}
+#define OP_COUNT       34
 
-#define ADDR_BIT_COUNT    8
+#define ADDR_BIT_COUNT 8
+
+#define EXT_SEP        "."
+#define COMMENT_SEP    "!"
+#define ASM_FILE_EXT   ".s"
+#define OBJ_FILE_EXT   ".o"
+#define OBJ_LINE_SIZE  16
 
 static const Assembler::op operations[] = {
-  {"load"   , "00000", NOT_IMMEDIATE, ADDR_FORMAT      },
-  {"loadi"  , "00000", IMMEDIATE    , CONST_FORMAT     },
-  {"store"  , "00001", NOT_IMMEDIATE, ADDR_FORMAT      },
-  {"add"    , "00010", NOT_IMMEDIATE, REGS_FORMAT      },
-  {"addi"   , "00010", IMMEDIATE    , CONST_FORMAT     },
-  {"addc"   , "00011", NOT_IMMEDIATE, REGS_FORMAT      },
-  {"addci"  , "00011", IMMEDIATE    , CONST_FORMAT     },
-  {"sub"    , "00100", NOT_IMMEDIATE, REGS_FORMAT      },
-  {"subi"   , "00100", IMMEDIATE    , CONST_FORMAT     },
-  {"subc"   , "00101", NOT_IMMEDIATE, REGS_FORMAT      },
-  {"subci"  , "00101", IMMEDIATE    , CONST_FORMAT     },
-  {"and"    , "00110", NOT_IMMEDIATE, REGS_FORMAT      },
-  {"andi"   , "00110", IMMEDIATE    , CONST_FORMAT     },
-  {"xor"    , "00111", NOT_IMMEDIATE, REGS_FORMAT      },
-  {"xori"   , "00111", IMMEDIATE    , CONST_FORMAT     },
-  {"compl"  , "01000", NOT_IMMEDIATE, SHORT_REG_FORMAT     },
-  {"shl"    , "01001", NOT_IMMEDIATE, SHORT_REG_FORMAT     },
-  {"shla"   , "01010", NOT_IMMEDIATE, SHORT_REG_FORMAT     },
-  {"shr"    , "01011", NOT_IMMEDIATE, SHORT_REG_FORMAT     },
-  {"shra"   , "01100", NOT_IMMEDIATE, SHORT_REG_FORMAT     },
-  {"compr"  , "01101", NOT_IMMEDIATE, REGS_FORMAT      },
-  {"compri" , "01101", IMMEDIATE    , CONST_FORMAT     },
-  {"getstat", "01110", NOT_IMMEDIATE, SHORT_REG_FORMAT     },
-  {"putstat", "01111", NOT_IMMEDIATE, SHORT_REG_FORMAT     },
-  {"jump"   , "10000", NOT_IMMEDIATE, SHORT_ADDR_FORMAT},
-  {"jumpl"  , "10001", NOT_IMMEDIATE, SHORT_ADDR_FORMAT},
-  {"jumpe"  , "10010", NOT_IMMEDIATE, SHORT_ADDR_FORMAT},
-  {"jumpg"  , "10011", NOT_IMMEDIATE, SHORT_ADDR_FORMAT},
-  {"call"   , "10100", NOT_IMMEDIATE, SHORT_ADDR_FORMAT},
-  {"return" , "10101", NOT_IMMEDIATE, EMPTY_FORMAT     },
-  {"read"   , "10110", NOT_IMMEDIATE, SHORT_REG_FORMAT     },
-  {"write"  , "10111", NOT_IMMEDIATE, SHORT_REG_FORMAT     },
-  {"halt"   , "11000", NOT_IMMEDIATE, EMPTY_FORMAT     },
-  {"noop"   , "11001", NOT_IMMEDIATE, EMPTY_FORMAT     }
+  {"load"   , "00000", NOT_IMMEDIATE, ADDR_FMT       },
+  {"loadi"  , "00000", IMMEDIATE    , CONST_FMT      },
+  {"store"  , "00001", NOT_IMMEDIATE, ADDR_FMT       },
+  {"add"    , "00010", NOT_IMMEDIATE, REGS_FMT       },
+  {"addi"   , "00010", IMMEDIATE    , CONST_FMT      },
+  {"addc"   , "00011", NOT_IMMEDIATE, REGS_FMT       },
+  {"addci"  , "00011", IMMEDIATE    , CONST_FMT      },
+  {"sub"    , "00100", NOT_IMMEDIATE, REGS_FMT       },
+  {"subi"   , "00100", IMMEDIATE    , CONST_FMT      },
+  {"subc"   , "00101", NOT_IMMEDIATE, REGS_FMT       },
+  {"subci"  , "00101", IMMEDIATE    , CONST_FMT      },
+  {"and"    , "00110", NOT_IMMEDIATE, REGS_FMT       },
+  {"andi"   , "00110", IMMEDIATE    , CONST_FMT      },
+  {"xor"    , "00111", NOT_IMMEDIATE, REGS_FMT       },
+  {"xori"   , "00111", IMMEDIATE    , CONST_FMT      },
+  {"compl"  , "01000", NOT_IMMEDIATE, SHORT_REG_FMT  },
+  {"shl"    , "01001", NOT_IMMEDIATE, SHORT_REG_FMT  },
+  {"shla"   , "01010", NOT_IMMEDIATE, SHORT_REG_FMT  },
+  {"shr"    , "01011", NOT_IMMEDIATE, SHORT_REG_FMT  },
+  {"shra"   , "01100", NOT_IMMEDIATE, SHORT_REG_FMT  },
+  {"compr"  , "01101", NOT_IMMEDIATE, REGS_FMT       },
+  {"compri" , "01101", IMMEDIATE    , CONST_FMT      },
+  {"getstat", "01110", NOT_IMMEDIATE, SHORT_REG_FMT  },
+  {"putstat", "01111", NOT_IMMEDIATE, SHORT_REG_FMT  },
+  {"jump"   , "10000", NOT_IMMEDIATE, SHORT_ADDR_FMT },
+  {"jumpl"  , "10001", NOT_IMMEDIATE, SHORT_ADDR_FMT },
+  {"jumpe"  , "10010", NOT_IMMEDIATE, SHORT_ADDR_FMT },
+  {"jumpg"  , "10011", NOT_IMMEDIATE, SHORT_ADDR_FMT },
+  {"call"   , "10100", NOT_IMMEDIATE, SHORT_ADDR_FMT },
+  {"return" , "10101", NOT_IMMEDIATE, EMPTY_FMT      },
+  {"read"   , "10110", NOT_IMMEDIATE, SHORT_REG_FMT  },
+  {"write"  , "10111", NOT_IMMEDIATE, SHORT_REG_FMT  },
+  {"halt"   , "11000", NOT_IMMEDIATE, EMPTY_FMT      },
+  {"noop"   , "11001", NOT_IMMEDIATE, EMPTY_FMT      }
 };
 
 
@@ -130,7 +132,7 @@ std::string Assembler::parse(std::string file_name) {
 
   // Check whether the output file can be made.
   std::string object_file_name = stripExtension(file_name);
-  object_file_name += OBJECT_FILE_EXTENSION;
+  object_file_name += OBJ_FILE_EXT;
   std::ofstream output_file(object_file_name);
   try {
     if (!output_file.is_open()) {
@@ -166,12 +168,12 @@ std::string Assembler::parse(std::string file_name) {
  * @return whether the name is valid or not.
  */
 bool Assembler::isFileNameValid(std::string file_name) {
-  size_t pos = file_name.find_last_of(EXTENSION_SEPARATOR);
+  size_t pos = file_name.find_last_of(EXT_SEP);
   std::string extension = "";
   if (pos != std::string::npos) {
     extension = file_name.substr(pos);
   }
-  return extension == ASSEMBLY_FILE_EXTENSION;
+  return extension == ASM_FILE_EXT;
 }
 
 
@@ -202,7 +204,7 @@ void Assembler::reportError(std::exception &e) {
  * @return the stripped file name.
  */
 std::string Assembler::stripExtension(std::string file_name) {
-  size_t pos = file_name.find_last_of(EXTENSION_SEPARATOR);
+  size_t pos = file_name.find_last_of(EXT_SEP);
   if (pos != std::string::npos) {
     return file_name.substr(0, pos);
   }
@@ -216,7 +218,7 @@ std::string Assembler::stripExtension(std::string file_name) {
  * @return the stripped line.
  */
 std::string Assembler::stripComments(std::string line) {
-  size_t pos = line.find_last_of(COMMENT_SEPARATOR);
+  size_t pos = line.find_last_of(COMMENT_SEP);
   if (pos != std::string::npos) {
     return line.substr(0, pos);
   }
@@ -284,18 +286,18 @@ std::string Assembler::convertToObjectCode(std::string line) {
   op current_op = findOperation(parts[0]);
   object_line += current_op.op_code;
   switch (current_op.format) {
-    case REGS_FORMAT:
+    case REGS_FMT:
       object_line += getRegisterID(parts[1]);
       object_line += current_op.i;
       object_line += getRegisterID(parts[2]);
-      pad(&object_line, '0', OBJECT_LINE_SIZE);
+      pad(&object_line, '0', OBJ_LINE_SIZE);
       break;
-    case CONST_FORMAT:
+    case CONST_FMT:
       object_line += getRegisterID(parts[1]);
       object_line += current_op.i;
       // Do more stuff.
       break;
-    case ADDR_FORMAT:
+    case ADDR_FMT:
       object_line += current_op.i;
       object_line += toBinaryString(atoi(parts[1].c_str()), ADDR_BIT_COUNT);
       try {
@@ -305,10 +307,10 @@ std::string Assembler::convertToObjectCode(std::string line) {
       } catch(std::exception &e) {
         reportError(e);
       }
-      pad(&object_line, '0', OBJECT_LINE_SIZE);
+      pad(&object_line, '0', OBJ_LINE_SIZE);
       break;
-    case EMPTY_FORMAT:
-      pad(&object_line, '0', OBJECT_LINE_SIZE);
+    case EMPTY_FMT:
+      pad(&object_line, '0', OBJ_LINE_SIZE);
       break;
   }
   return object_line;
@@ -371,27 +373,45 @@ void Assembler::pad(std::string *line, const char fill, size_t target_size) {
 
 
 /**
- * Convert the given integer to a string of binary digits
- * @param  value -> the integer being converted.
- * @return the string binary encoding of that number.
+ * Convert a given integer into its signed binary string representation
+ * @param  original -> The integer to be converted
+ * @param  bits     -> The number of bits to use (including a bit for the sign)
+ * @return either the converted string or an empty string
  */
-std::string Assembler::toBinaryString(const uint16_t value,
-                                      const unsigned bit_count) {
-  std::string output = "";
-  if (value >= 0 && value <= pow(2, bit_count)) {
-    bool found_first_one = false;
-    for (int current_bit = 15; current_bit >= 0; current_bit--) {
-      if ((value & (1ULL << current_bit)) != 0) {
-        if (!found_first_one) {
-          found_first_one = true;
-        }
-        output += '1';
-      } else if (found_first_one) {
-        output += '0';
-      }
+std::string toSignedBinaryString(const int original, const int bits) {
+  // Check the sanity of the inputs.
+  const float exponent = pow(2, bits - 1);
+  if (original < -exponent || exponent - 1 < original || bits > 64) return "";
+  // Do the conversion.
+  std::string converted = "";
+  bool first = false;
+  for (int i = bits - 1; i >= 0; --i) {
+    if ((original & (1ULL << i)) != 0) {
+      if (!first) first = true;
+      converted += '1';
+    } else if (first) {
+      converted += '0';
     }
   }
-  return output;
+  // Pad the front by appending to the end of the string and then rotating the
+  // string appropriately.
+  const size_t size = converted.size();
+  for (size_t i = 0; i < bits - size; ++i) converted.push_back('0');
+  std::rotate(converted.begin(), converted.begin() + size, converted.end());
+  return converted;
+}
+
+
+/**
+ * Convert a given integer into its unsigned binary string representation.
+ * @param  original -> The integer to be converted
+ * @param  bits     -> The number of bits to use
+ * @return either the converted string, or an empty string
+ */
+std::string toUnsignedBinaryString(const int original, const int bits) {
+  std::string s = toSignedBinaryString(original, bits + 1);
+  if (s[0] != '0') return "";
+  return s.substr(1);
 }
 
 
