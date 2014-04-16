@@ -42,6 +42,7 @@ class Assembler {
   op findOperation(std::string);
   std::string getRegisterID(std::string);
   void pad(std::string *, const char, size_t);
+  std::string toBinaryString(const int, const int, const char);
   std::string toSignedBinaryString(const int, const int);
   std::string toUnsignedBinaryString(const int, const int);
 

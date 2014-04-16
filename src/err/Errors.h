@@ -10,3 +10,5 @@
 #include "./InvalidOperation.h"
 #include "./InvalidRegisterID.h"
 #include "./InvalidAddress.h"
+#include "./InvalidIntegerConversionMode.h"
+#include "./FailedIntegerConversion.h"

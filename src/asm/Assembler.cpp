@@ -47,6 +47,9 @@
 #define OBJ_FILE_EXT   ".o"
 #define OBJ_LINE_SIZE  16
 
+#define SIGNED_MODE    's'
+#define UNSIGNED_MODE  'u'
+
 static const Assembler::op operations[] = {
   {"load"   , "00000", NOT_IMMEDIATE, ADDR_FMT       },
   {"loadi"  , "00000", IMMEDIATE    , CONST_FMT      },
@@ -369,6 +372,44 @@ void Assembler::pad(std::string *line, const char fill, size_t target_size) {
     line->push_back(fill);
     ++length;
   }
+}
+
+
+/**
+ * Convert the given integer into its binary string representation, handling
+ * errors appropriately.
+ * @param  original -> The integer to be converted
+ * @param  bits     -> The number of bits
+ * @param  mode     -> The conversion mode to use (signed or unsigned)
+ * @return the converted string
+ */
+std::string toBinaryString(const int original,
+                           const int bits,
+                           const char mode) {
+  if (mode != SIGNED_MODE && mode != UNSIGNED_MODE) {
+    try {
+      throw InvalidIntegerConversionMode();
+    } catch(std::exception &e) {
+      reportError(e);
+    }
+  }
+  std::string result = "";
+  switch (mode) {
+    case SIGNED_MODE:
+      result = toSignedBinaryString(original, bits);
+      break;
+    case UNSIGNED_MODE:
+      result = toUnsignedBinaryString(original, bits);
+      break;
+  }
+  if (result == "") {
+    try {
+      throw FailedIntegerConversion();
+    } catch(std::exception &e) {
+      reportError(e);
+    }
+  }
+  return result;
 }
 
 
