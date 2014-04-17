@@ -24,6 +24,7 @@ class CLI {
 
   void printHelp();
   void printVersion();
+  void startInteractiveSession();
 
   DISALLOW_COPY_AND_ASSIGN(CLI);
 };
