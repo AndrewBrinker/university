@@ -17,9 +17,9 @@ module i_fetch (
 
     //instantiations
     mux mux1 (.out(npc_mux),
-              .a(EX_MEM_NPC),
-              .b(npc),
-              .sel(EX_MEM_PC_Source));
+              .pc(EX_MEM_NPC),
+              .jump(npc),
+              .select(EX_MEM_PC_Source));
 
     pc_mod pc_mod1 (.PC(PC),
                     .npc(npc_mux));
@@ -36,7 +36,7 @@ module i_fetch (
                               .in(PC));
 
     initial begin
-        $display("Time\t PC\t npc\t data_out of MEM\t IF_ID_instruction\t IF_ID_npc");
+        $display("Time\t PC\t npc\t data of MEM\t IF_ID_instr\t IF_ID_npc");
         $monitor("%0d\t %0d\t %0d\t %h\t %h\t %0d", $time, PC, npc, data_out, IF_ID_instruction, IF_ID_npc);
         #20 $finish;
     end
