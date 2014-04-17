@@ -33,7 +33,7 @@ inline bool isFileNameValid(const std::string file_name, const int mode) {
   size_t pos = file_name.find_last_of(EXT_SEP);
   std::string extension = "";
   if (pos != std::string::npos) {
-   extension = file_name.substr(pos);
+    extension = file_name.substr(pos);
   }
   switch (mode) {
     case ASM_MODE:

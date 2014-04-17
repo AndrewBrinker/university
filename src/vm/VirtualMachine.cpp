@@ -20,6 +20,7 @@
 #define OUT_FILE_EXT ".out"
 #define IN_FILE_EXT  ".in"
 
+
 VirtualMachine::VirtualMachine()
   : VirtualMachine(REG_FILE_SIZE, MEM_SIZE) {}
 
