@@ -86,7 +86,7 @@ void CLI::startInteractiveSession() {
   printf("To exit, type `exit`.\n");
   std::string input = "";
   while (true) {
-    printf("  ~> ");
+    printf(" file > ");
     std::cin >> input;
     if (input == "exit") break;
     Assembler a;
