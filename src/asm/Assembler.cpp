@@ -184,8 +184,7 @@ std::string Assembler::convertToObjectCode(std::string line) {
     case ADDR_FMT:
       object_line += getRegisterID(parts[1]);
       object_line += current_op.i;
-      result = toUnsignedBinaryString(atoi(parts[2].c_str()),
-                                                  ADDR_BIT_COUNT);
+      result = toUnsignedBinaryString(atoi(parts[2].c_str()), ADDR_BIT_COUNT);
       if (result != "") {
         object_line += result;
       } else {
@@ -199,8 +198,7 @@ std::string Assembler::convertToObjectCode(std::string line) {
     case CONST_FMT:
       object_line += getRegisterID(parts[1]);
       object_line += current_op.i;
-      result = toSignedBinaryString(atoi(parts[2].c_str()),
-                                                CONST_BIT_COUNT);
+      result = toSignedBinaryString(atoi(parts[2].c_str()), CONST_BIT_COUNT);
       if (result != "") {
         object_line += result;
       } else {
@@ -225,8 +223,7 @@ std::string Assembler::convertToObjectCode(std::string line) {
     case SHORT_ADDR_FMT:
       object_line += getRegisterID("0");
       object_line += current_op.i;
-      result = toUnsignedBinaryString(atoi(parts[1].c_str()),
-                                                  ADDR_BIT_COUNT);
+      result = toUnsignedBinaryString(atoi(parts[1].c_str()), ADDR_BIT_COUNT);
       if (result != "") {
         object_line += result;
       } else {
