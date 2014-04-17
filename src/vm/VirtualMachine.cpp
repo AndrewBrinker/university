@@ -203,12 +203,12 @@ void VirtualMachine::run(std::string inFilename) {
 
   // because size will be in bytes, not in 16-bit words
   if (limit > mem.size() * 2) {
+    inFile.close();
     try {
       throw CantFitInMemory("Virtual Machine");
     } catch(GenericError &e) {
       e.reportError();
     }
-    inFile.close();
     return;
   }
 
