@@ -4,6 +4,7 @@
 
 #include "./VirtualMachine.h"
 #include <err/Errors.h>
+#include <util/Utilities.h>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
@@ -15,6 +16,9 @@
 
 #define REG_FILE_SIZE 4
 #define MEM_SIZE      256
+
+#define OUT_FILE_EXT ".out"
+#define IN_FILE_EXT  ".in"
 
 VirtualMachine::VirtualMachine()
   : VirtualMachine(REG_FILE_SIZE, MEM_SIZE) {}
@@ -31,33 +35,46 @@ VirtualMachine::VirtualMachine(uint16_t reg_file_size,
   setupOpMap();
 }
 
-void VirtualMachine::run(std::string input_file_name) {
-  // For op_read and op_write, we need to know the base file_name.
-  auto it_period = std::find(
-    std::begin(input_file_name),
-    std::end(input_file_name),
-    '.');
-  if (it_period == std::end(input_file_name)) {
-    try {
+void VirtualMachine::run(std::string file_name) {
+  try {
+    if (!isFileNameValid(file_name, VM_MODE)) {
       throw InvalidFileName("Virtual Machine");
-    } catch(GenericError &e) {
-      e.reportError();
     }
+  } catch(GenericError &e) {
+    e.reportError();
   }
-  std::copy(
-    std::begin(input_file_name),
-    it_period,
-    std::back_inserter(base_file_name));
 
-  std::ifstream input_file(input_file_name);
+  try {
+    if (!doesFileExist(file_name)) {
+      throw FileDoesNotExist("Virtual Machine");
+    }
+  } catch(GenericError &e) {
+    e.reportError();
+  }
 
-  if (!input_file.is_open()) {
-    try {
+  std::ifstream input_file(file_name);
+  try {
+    if (!input_file.is_open()) {
       throw CantOpenFile("Virtual Machine");
-    } catch(GenericError &e) {
-      e.reportError();
     }
+  } catch(GenericError &e) {
+    e.reportError();
   }
+
+  std::string object_file_name = stripExtension(file_name);
+  object_file_name += OUT_FILE_EXT;
+  dot_out_file.open(object_file_name);
+  try {
+    if (!dot_out_file.is_open()) {
+      throw CantMakeFile("Virtual Machine");
+    }
+  } catch(GenericError &e) {
+    e.reportError();
+  }
+
+  object_file_name = stripExtension(file_name);
+  object_file_name += IN_FILE_EXT;
+  dot_in_file.open(object_file_name);
 
   // Get size of file
   input_file.seekg(0, std::ios::end);
@@ -83,10 +100,6 @@ void VirtualMachine::run(std::string input_file_name) {
   }
 
   input_file.close();
-
-  // For op_read() and op_write() respectively
-  dot_in_file.open(base_file_name + ".in");
-  dot_out_file.open(base_file_name + ".out");
 
   try {
     // main loop

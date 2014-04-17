@@ -29,7 +29,7 @@
  * @param  file_name -> The name of the assembly source file being checked.
  * @return whether the name is valid or not.
  */
-bool isFileNameValid(const std::string file_name, const int mode) throw() {
+inline bool isFileNameValid(const std::string file_name, const int mode) {
   size_t pos = file_name.find_last_of(EXT_SEP);
   std::string extension = "";
   if (pos != std::string::npos) {
@@ -51,7 +51,7 @@ bool isFileNameValid(const std::string file_name, const int mode) throw() {
  * @param  file_name -> The name of the file being checked.
  * @return whether the file exists.
  */
-bool doesFileExist(std::string file_name) throw() {
+inline bool doesFileExist(std::string file_name) {
   struct stat buffer;
   return (stat (file_name.c_str(), &buffer) == 0);
 }
@@ -62,7 +62,7 @@ bool doesFileExist(std::string file_name) throw() {
  * @param  file_name -> The file name being stripped.
  * @return the stripped file name.
  */
-std::string stripExtension(std::string file_name) throw() {
+inline std::string stripExtension(std::string file_name) {
   size_t pos = file_name.find_last_of(EXT_SEP);
   if (pos != std::string::npos) {
     return file_name.substr(0, pos);
@@ -77,7 +77,7 @@ std::string stripExtension(std::string file_name) throw() {
  * @param fill        -> The filler character to use
  * @param target_size -> The target size
  */
-void pad(std::string *line, const char fill, size_t target_size) throw() {
+inline void pad(std::string *line, const char fill, size_t target_size) {
   size_t length = line->length();
   if (length >= target_size) return;
   while (length < target_size) {
@@ -93,7 +93,7 @@ void pad(std::string *line, const char fill, size_t target_size) throw() {
  * @param  bits     -> The number of bits to use (including a bit for the sign)
  * @return either the converted string or an empty string
  */
-std::string toSignedBinaryString(const int original, const int bits) throw() {
+inline std::string toSignedBinaryString(const int original, const int bits) {
   // Check the sanity of the inputs.
   const float exponent = pow(2, bits - 1);
   if (original < -exponent || exponent - 1 < original || bits > 64) return "";
@@ -123,7 +123,7 @@ std::string toSignedBinaryString(const int original, const int bits) throw() {
  * @param  bits     -> The number of bits to use
  * @return either the converted string, or an empty string
  */
-std::string toUnsignedBinaryString(const int original, const int bits) throw() {
+inline std::string toUnsignedBinaryString(const int original, const int bits) {
   std::string s = toSignedBinaryString(original, bits + 1);
   if (s[0] != '0') return "";
   return s.substr(1);
@@ -135,7 +135,7 @@ std::string toUnsignedBinaryString(const int original, const int bits) throw() {
  * @param  original -> The string to be converted
  * @return the converted string
  */
-int binaryStringToDecimal(const std::string original) throw() {
+inline int binaryStringToDecimal(const std::string original) {
   int value = 0;
   const int size = original.size();
   for (int i = 0; i < size; ++i) {
@@ -152,7 +152,7 @@ int binaryStringToDecimal(const std::string original) throw() {
  * @param  line -> The line to be stripped.
  * @return the stripped line.
  */
-std::string stripComments(std::string line) throw() {
+inline std::string stripComments(std::string line) {
   size_t pos = line.find_last_of(COMMENT_SEP);
   if (pos != std::string::npos) {
     return line.substr(0, pos);
@@ -166,7 +166,7 @@ std::string stripComments(std::string line) throw() {
  * @param  line -> The string to be stripped
  * @return the stripped string
  */
-std::string stripEndingWhitespace(std::string line) throw() {
+inline std::string stripEndingWhitespace(std::string line) {
   int i = line.length();
   do {
     --i;
@@ -180,7 +180,7 @@ std::string stripEndingWhitespace(std::string line) throw() {
  * @param line -> The line to be split.
  * @return the split line.
  */
-std::vector<std::string> split(std::string line) throw() {
+inline std::vector<std::string> split(std::string line) {
   std::vector<std::string> tokens;
   std::istringstream stream(line);
   std::copy(std::istream_iterator<std::string>(stream),
