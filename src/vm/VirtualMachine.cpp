@@ -93,9 +93,11 @@ void VirtualMachine::run(std::string file_name) {
   }
 
   // Load file into memory
+  int count = 0;
   for (std::string line; getline(input_file, line);) {
     uint16_t value = atoi(line.c_str());
-    mem.push_back(value);
+    mem[count] = value;
+    ++count;
   }
 
   input_file.close();
