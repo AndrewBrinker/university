@@ -24,7 +24,7 @@ VirtualMachine::VirtualMachine(uint16_t reg_file_size,
                               r(reg_file_size),
                               mem(mem_size),
                               pc(0),
-                              sp(mem_size),
+                              sp(mem_size - 1),
                               base(0),
                               halt(0) {
   // Initialize the map from opcode to operation
@@ -203,9 +203,9 @@ void VirtualMachine::run(std::string inFilename) {
 
   // Load file into memory
   std::copy_n(
-    std::istreambuf_iterator<char>(inFile),
+    std::istream_iterator<uint16_t>(inFile),
     limit,
-    reinterpret_cast<char*>(mem.data()));
+    std::begin(mem));
 
   inFile.close();
 
@@ -496,9 +496,12 @@ void VirtualMachine::op_call() {
 }
 
 void VirtualMachine::op_return() {
-  if (sp >= 256)
-    exit(0);
+  if (sp >= 256) {
+    fprintf(stderr, "Stack underflow\n");
+    exit(1);
+  }
 
+  ++sp;
   sr = mem[sp];
   ++sp;
   r[3] = mem[sp];
@@ -510,7 +513,6 @@ void VirtualMachine::op_return() {
   r[0] = mem[sp];
   ++sp;
   pc = mem[sp];
-  ++sp;
 }
 
 void VirtualMachine::op_read() {
