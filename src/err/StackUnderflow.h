@@ -2,21 +2,21 @@
  * Copyright 2014 Andrew Brinker, Anthony Sterrett
  */
 
-#ifndef CANT_MAKE_FILE_H
-#define CANT_MAKE_FILE_H
+#ifndef STACK_UNDERFLOW_H
+#define STACK_UNDERFLOW_H
 
 #include <exception>
 #include <string>
 #include "./GenericError.h"
 
-class CantMakeFile : public GenericError {
+class StackUnderflow : public GenericError {
  public:
-  explicit CantMakeFile(std::string source)
+  explicit StackUnderflow(std::string source)
     : GenericError(source) {}
 
   const char* what() const throw() {
-    return "The file cannot be made";
+    return "Stack underflow";
   }
 };
 
-#endif  // CANT_MAKE_FILE_H
+#endif  // STACK_UNDERFLOW_H

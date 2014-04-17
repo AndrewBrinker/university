@@ -110,29 +110,29 @@ std::string Assembler::parse(std::string file_name) {
   // Check whether the file name is valid
   try {
     if (!isFileNameValid(file_name)) {
-      throw InvalidFileName();
+      throw InvalidFileName("Assembler");
     }
-  } catch(std::exception &e) {
-    reportError(e);
+  } catch(GenericError &e) {
+    e.reportError();
   }
 
   // Check whether the file exists
   try {
     if (!doesFileExist(file_name)) {
-      throw FileDoesNotExist();
+      throw FileDoesNotExist("Assembler");
     }
-  } catch(std::exception &e) {
-    reportError(e);
+  } catch(GenericError &e) {
+    e.reportError();
   }
 
   // Check whether the file can be opened
   std::ifstream input_file(file_name);
   try {
     if (!input_file.is_open()) {
-      throw CantOpenFile();
+      throw CantOpenFile("Assembler");
     }
-  } catch(std::exception &e) {
-    reportError(e);
+  } catch(GenericError &e) {
+    e.reportError();
   }
 
   // Check whether the output file can be made.
@@ -141,10 +141,10 @@ std::string Assembler::parse(std::string file_name) {
   std::ofstream output_file(object_file_name);
   try {
     if (!output_file.is_open()) {
-      throw CantMakeFile();
+      throw CantMakeFile("Assembler");
     }
-  } catch(std::exception &e) {
-    reportError(e);
+  } catch(GenericError &e) {
+    e.reportError();
   }
 
   // Get the assembly file source
@@ -191,16 +191,6 @@ bool Assembler::isFileNameValid(std::string file_name) {
 bool Assembler::doesFileExist(std::string file_name) {
   struct stat buffer;
   return (stat (file_name.c_str(), &buffer) == 0);
-}
-
-
-/**
- * Report the given error and exit gracefully.
- * @param e -> The error being reported.
- */
-void Assembler::reportError(std::exception &e) {
-  printf("Assembler error: %s. Terminating...\n", e.what());
-  exit(EXIT_FAILURE);
 }
 
 
@@ -300,9 +290,9 @@ Assembler::op Assembler::findOperation(std::string name) {
     }
   }
   try {
-    throw InvalidOperation();
-  } catch(std::exception &e) {
-    reportError(e);
+    throw InvalidOperation("Assembler");
+  } catch(GenericError &e) {
+    e.reportError();
   }
   return EMPTY_OP;
 }
@@ -319,9 +309,9 @@ std::string Assembler::getRegisterID(std::string id) {
   if (id == "2") return "10";
   if (id == "3") return "11";
   try {
-    throw InvalidRegisterID();
-  } catch(std::exception &e) {
-    reportError(e);
+    throw InvalidRegisterID("Assembler");
+  } catch(GenericError &e) {
+    e.reportError();
   }
   return "";
 }
@@ -356,9 +346,9 @@ std::string Assembler::toBinaryString(const int original,
                                       const char mode) {
   if (mode != SIGNED_MODE && mode != UNSIGNED_MODE) {
     try {
-      throw InvalidIntegerConversionMode();
-    } catch(std::exception &e) {
-      reportError(e);
+      throw InvalidIntegerConversionMode("Assembler");
+    } catch(GenericError &e) {
+      e.reportError();
     }
   }
   std::string result = "";
@@ -372,9 +362,9 @@ std::string Assembler::toBinaryString(const int original,
   }
   if (result == "") {
     try {
-      throw FailedIntegerConversion();
-    } catch(std::exception &e) {
-      reportError(e);
+      throw FailedIntegerConversion("Assembler");
+    } catch(GenericError &e) {
+      e.reportError();
     }
   }
   return result;

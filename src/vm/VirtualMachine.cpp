@@ -3,6 +3,7 @@
  */
 
 #include "./VirtualMachine.h"
+#include <err/Errors.h>
 #include <cstdint>
 #include <cstdio>
 #include <iostream>
@@ -15,18 +16,17 @@
 #define MEM_SIZE      256
 
 VirtualMachine::VirtualMachine()
-  : VirtualMachine(REG_FILE_SIZE, MEM_SIZE)
-{}
+  : VirtualMachine(REG_FILE_SIZE, MEM_SIZE) {}
 
 
 VirtualMachine::VirtualMachine(uint16_t reg_file_size,
-                               uint16_t mem_size) :
-                              r(reg_file_size),
-                              mem(mem_size),
-                              pc(0),
-                              sp(mem_size - 1),
-                              base(0),
-                              halt(0) {
+                               uint16_t mem_size)
+                             : r(reg_file_size),
+                               mem(mem_size),
+                               pc(0),
+                               sp(mem_size - 1),
+                               base(0),
+                               halt(0) {
   // Initialize the map from opcode to operation
   Opcode_t value;
   for (int i = 0; i < 256; ++i) {
@@ -174,8 +174,11 @@ void VirtualMachine::run(std::string inFilename) {
     std::end(inFilename),
     '.');
   if (it_period == std::end(inFilename)) {
-    fprintf(stderr, "Sorry! Object file must end with \".o.\"\n");
-    return;
+    try {
+      throw InvalidFileName("Virtual Machine");
+    } catch(GenericError &e) {
+      e.reportError();
+    }
   }
   std::copy(
     std::begin(inFilename),
@@ -185,7 +188,11 @@ void VirtualMachine::run(std::string inFilename) {
   std::ifstream inFile(inFilename);
 
   if (!inFile.is_open()) {
-    fprintf(stderr, "Cannot open file.\n");
+    try {
+      throw CantOpenFile("Virtual Machine");
+    } catch(GenericError &e) {
+      e.reportError();
+    }
     exit(1);
   }
 
@@ -196,7 +203,11 @@ void VirtualMachine::run(std::string inFilename) {
 
   // because size will be in bytes, not in 16-bit words
   if (limit > mem.size() * 2) {
-    fprintf(stderr, "Program is too large to fit into memory.\n");
+    try {
+      throw CantFitInMemory("Virtual Machine");
+    } catch(GenericError &e) {
+      e.reportError();
+    }
     inFile.close();
     return;
   }
@@ -222,7 +233,11 @@ void VirtualMachine::run(std::string inFilename) {
       clock += clocks[ir.i >> 8];
     }
   } catch(std::bad_function_call&) {
-    fprintf(stderr, "Bad operation; must be an assembler bug!\n");
+    try {
+      throw InvalidOperation("Virtual Machine");
+    } catch(GenericError &e) {
+      e.reportError();
+    }
     exit(1);
   }
 
@@ -475,8 +490,11 @@ void VirtualMachine::op_jumpg() {
 
 void VirtualMachine::op_call() {
   if (sp < limit + 6) {
-    fprintf(stderr, "Exceeded max stack depth\n");
-    exit(1);
+    try {
+      throw ExceededMaxStackDepth("Virtual Machine");
+    } catch(GenericError &e) {
+      e.reportError();
+    }
   }
 
   mem[sp] = pc;
@@ -497,8 +515,11 @@ void VirtualMachine::op_call() {
 
 void VirtualMachine::op_return() {
   if (sp >= 256) {
-    fprintf(stderr, "Stack underflow\n");
-    exit(1);
+    try {
+      throw StackUnderflow("Virtual Machine");
+    } catch(GenericError &e) {
+      e.reportError();
+    }
   }
 
   ++sp;

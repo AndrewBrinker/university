@@ -28,8 +28,6 @@ class Assembler {
  private:
   bool isFileNameValid(std::string);
   bool doesFileExist(std::string);
-
-  void reportError(std::exception &);
   std::string stripExtension(std::string);
   std::string stripComments(std::string);
   std::string stripEndingWhitespace(std::string);

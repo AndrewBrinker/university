@@ -2,10 +2,21 @@
  * Copyright 2014 Andrew Brinker, Anthony Sterrett
  */
 
-#include <exception>
+#ifndef UNKNOWN_ERROR_H
+#define UNKNOWN_ERROR_H
 
-class UnknownError : public std::exception {
-  const char *what() const throw() {
+#include <exception>
+#include <string>
+#include "./GenericError.h"
+
+class UnknownError : public GenericError {
+ public:
+  explicit UnknownError(std::string source)
+    : GenericError(source) {}
+
+  const char* what() const throw() {
     return "Unknown error";
   }
 };
+
+#endif  // UNKNOWN_ERROR_H
