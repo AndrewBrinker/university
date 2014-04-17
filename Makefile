@@ -160,6 +160,8 @@ clean:
 	@echo "Deleting directories"
 	@$(RM) -r build
 	@$(RM) -r bin
+	@$(RM) test/*.o
+	@$(RM) test/*.out
 
 # target: help        List available targets
 .PHONY: help
