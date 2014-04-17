@@ -96,7 +96,6 @@ void VirtualMachine::run(std::string file_name) {
   for (std::string line; getline(input_file, line);) {
     uint16_t value = atoi(line.c_str());
     mem.push_back(value);
-    printf("%d\n", value);
   }
 
   input_file.close();
