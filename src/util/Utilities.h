@@ -14,9 +14,11 @@
 #include <vector>
 
 #define EXT_SEP        "."
-#define COMMENT_SEP    "!"
-#define ASM_FILE_EXT   ".s"
-#define OBJ_FILE_EXT   ".o"
+#define COMMENT_SEP   "!"
+#define ASM_FILE_EXT  ".s"
+#define OBJ_FILE_EXT  ".o"
+#define ASM_MODE       0
+#define VM_MODE        1
 
 /**
  * Check whether the given file name is a valid assembly source file.
@@ -27,13 +29,20 @@
  * @param  file_name -> The name of the assembly source file being checked.
  * @return whether the name is valid or not.
  */
-bool isFileNameValid(std::string file_name) throw() {
+bool isFileNameValid(const std::string file_name, const int mode) throw() {
   size_t pos = file_name.find_last_of(EXT_SEP);
   std::string extension = "";
   if (pos != std::string::npos) {
-    extension = file_name.substr(pos);
+   extension = file_name.substr(pos);
   }
-  return extension == ASM_FILE_EXT;
+  switch (mode) {
+    case ASM_MODE:
+      return extension == ASM_FILE_EXT;
+    case VM_MODE:
+      return extension == OBJ_FILE_EXT;
+    default:
+      return false;
+  }
 }
 
 

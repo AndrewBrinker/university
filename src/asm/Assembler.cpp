@@ -95,7 +95,7 @@ Assembler::Assembler() {}
 std::string Assembler::parse(std::string file_name) {
   // Check whether the file name is valid
   try {
-    if (!isFileNameValid(file_name)) {
+    if (!isFileNameValid(file_name, ASM_MODE)) {
       throw InvalidFileName("Assembler");
     }
   } catch(GenericError &e) {
