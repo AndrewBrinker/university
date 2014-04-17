@@ -2,6 +2,9 @@
  * Copyright 2014 Andrew Brinker, Anthony Sterrett
  */
 
+#ifndef UTILITIES_H
+#define UTILITIES_H
+
 #include <sys/stat.h>
 #include <cmath>
 #include <sstream>
@@ -176,3 +179,5 @@ std::vector<std::string> split(std::string line) throw() {
             std::back_inserter<std::vector<std::string>>(tokens));
   return tokens;
 }
+
+#endif  // UTILITIES_H
