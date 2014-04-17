@@ -31,7 +31,8 @@ VirtualMachine::VirtualMachine(uint16_t reg_file_size,
                                pc(0),
                                sp(mem_size - 1),
                                base(0),
-                               halt(0) {
+                               halt(0),
+                               clock(0) {
   setupOpMap();
 }
 
