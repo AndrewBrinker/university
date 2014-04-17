@@ -35,7 +35,7 @@ CLI::CLI(const int argc, char **argv) {
 
 
 void CLI::parse() {
-  if (args.count("help") || args.size() == 0) {
+  if (args.count("help") || (args.size() == 0 && files.size() == 0)) {
     printHelp();
     return;
   }

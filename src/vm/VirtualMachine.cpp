@@ -6,6 +6,7 @@
 #include <err/Errors.h>
 #include <cstdint>
 #include <cstdio>
+#include <cstdlib>
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -27,153 +28,16 @@ VirtualMachine::VirtualMachine(uint16_t reg_file_size,
                                sp(mem_size - 1),
                                base(0),
                                halt(0) {
-  // Initialize the map from opcode to operation
-  Opcode_t value;
-  for (int i = 0; i < 256; ++i) {
-    value.i = i << 8;
-    switch (value.fmt0.op) {
-    case 0:
-      if (value.fmt0.i == 0) {
-        clocks[i] = 4;
-        ops[i] = &VirtualMachine::op_load;
-      } else {
-        clocks[i] = 1;
-        ops[i] = &VirtualMachine::op_loadi;
-      }
-      break;
-    case 1:
-      clocks[i] = 4;
-      ops[i] = &VirtualMachine::op_store;
-      break;
-    case 2:
-      clocks[i] = 1;
-      ops[i] = (value.fmt0.i == 0)
-                ? &VirtualMachine::op_add
-                : &VirtualMachine::op_addi;
-      break;
-    case 3:
-      clocks[i] = 1;
-      ops[i] = (value.fmt0.i == 0)
-                ? &VirtualMachine::op_addc
-                : &VirtualMachine::op_addci;
-      break;
-    case 4:
-      clocks[i] = 1;
-      ops[i] = (value.fmt0.i == 0)
-                ? &VirtualMachine::op_sub
-                : &VirtualMachine::op_subi;
-      break;
-    case 5:
-      clocks[i] = 1;
-      ops[i] = (value.fmt0.i == 0)
-                ? &VirtualMachine::op_subc
-                : &VirtualMachine::op_subci;
-      break;
-    case 6:
-      clocks[i] = 1;
-      ops[i] = (value.fmt0.i == 0)
-                ? &VirtualMachine::op_and
-                : &VirtualMachine::op_andi;
-      break;
-    case 7:
-      clocks[i] = 1;
-      ops[i] = (value.fmt0.i == 0)
-                ? &VirtualMachine::op_xor
-                : &VirtualMachine::op_xori;
-      break;
-    case 8:
-      clocks[i] = 1;
-      ops[i] = &VirtualMachine::op_compl;
-      break;
-    case 9:
-      clocks[i] = 1;
-      ops[i] = &VirtualMachine::op_shl;
-      break;
-    case 10:
-      clocks[i] = 1;
-      ops[i] = &VirtualMachine::op_shla;
-      break;
-    case 11:
-      clocks[i] = 1;
-      ops[i] = &VirtualMachine::op_shr;
-      break;
-    case 12:
-      clocks[i] = 1;
-      ops[i] = &VirtualMachine::op_shra;
-      break;
-    case 13:
-      clocks[i] = 1;
-      ops[i] = (value.fmt0.i == 0)
-                ? &VirtualMachine::op_compr
-                : &VirtualMachine::op_compri;
-      break;
-    case 14:
-      clocks[i] = 1;
-      ops[i] = &VirtualMachine::op_getstat;
-      break;
-    case 15:
-      clocks[i] = 1;
-      ops[i] = &VirtualMachine::op_putstat;
-      break;
-    case 16:
-      clocks[i] = 1;
-      ops[i] = &VirtualMachine::op_jump;
-      break;
-    case 17:
-      clocks[i] = 1;
-      ops[i] = &VirtualMachine::op_jumpl;
-      break;
-    case 18:
-      clocks[i] = 1;
-      ops[i] = &VirtualMachine::op_jumpe;
-      break;
-    case 19:
-      clocks[i] = 1;
-      ops[i] = &VirtualMachine::op_jumpg;
-      break;
-    case 20:
-      clocks[i] = 4;
-      ops[i] = &VirtualMachine::op_call;
-      break;
-    case 21:
-      clocks[i] = 4;
-      ops[i] = &VirtualMachine::op_return;
-      break;
-    case 22:
-      clocks[i] = 28;
-      ops[i] = &VirtualMachine::op_read;
-      break;
-    case 23:
-      clocks[i] = 28;
-      ops[i] = &VirtualMachine::op_write;
-      break;
-    case 24:
-      clocks[i] = 1;
-      ops[i] = &VirtualMachine::op_halt;
-      break;
-    case 25:
-      clocks[i] = 1;
-      ops[i] = &VirtualMachine::op_noop;
-      break;
-    default:
-      clocks[i] = 0;
-      /**
-       * std::function has a default construction, so there's no need to assign
-       * an empty lambda here. Attempting to call any undefined operation will
-       * result in std::bad_function_call being thrown.
-       */
-      break;
-    }
-  }
+  setupOpMap();
 }
 
-void VirtualMachine::run(std::string inFilename) {
-  // For op_read and op_write, we need to know the base filename.
+void VirtualMachine::run(std::string input_file_name) {
+  // For op_read and op_write, we need to know the base file_name.
   auto it_period = std::find(
-    std::begin(inFilename),
-    std::end(inFilename),
+    std::begin(input_file_name),
+    std::end(input_file_name),
     '.');
-  if (it_period == std::end(inFilename)) {
+  if (it_period == std::end(input_file_name)) {
     try {
       throw InvalidFileName("Virtual Machine");
     } catch(GenericError &e) {
@@ -181,29 +45,28 @@ void VirtualMachine::run(std::string inFilename) {
     }
   }
   std::copy(
-    std::begin(inFilename),
+    std::begin(input_file_name),
     it_period,
-    std::back_inserter(base_filename));
+    std::back_inserter(base_file_name));
 
-  std::ifstream inFile(inFilename);
+  std::ifstream input_file(input_file_name);
 
-  if (!inFile.is_open()) {
+  if (!input_file.is_open()) {
     try {
       throw CantOpenFile("Virtual Machine");
     } catch(GenericError &e) {
       e.reportError();
     }
-    exit(1);
   }
 
   // Get size of file
-  inFile.seekg(0, std::ios::end);
-  limit = inFile.tellg();
-  inFile.seekg(0, std::ios::beg);
+  input_file.seekg(0, std::ios::end);
+  limit = input_file.tellg();
+  input_file.seekg(0, std::ios::beg);
 
   // because size will be in bytes, not in 16-bit words
   if (limit > mem.size() * 2) {
-    inFile.close();
+    input_file.close();
     try {
       throw CantFitInMemory("Virtual Machine");
     } catch(GenericError &e) {
@@ -213,16 +76,17 @@ void VirtualMachine::run(std::string inFilename) {
   }
 
   // Load file into memory
-  std::copy_n(
-    std::istream_iterator<uint16_t>(inFile),
-    limit,
-    std::begin(mem));
+  for (std::string line; getline(input_file, line);) {
+    uint16_t value = atoi(line.c_str());
+    mem.push_back(value);
+    printf("%d\n", value);
+  }
 
-  inFile.close();
+  input_file.close();
 
   // For op_read() and op_write() respectively
-  dot_in_file.open(base_filename + ".in");
-  dot_out_file.open(base_filename + ".out");
+  dot_in_file.open(base_file_name + ".in");
+  dot_out_file.open(base_file_name + ".out");
 
   try {
     // main loop
@@ -238,7 +102,6 @@ void VirtualMachine::run(std::string inFilename) {
     } catch(GenericError &e) {
       e.reportError();
     }
-    exit(1);
   }
 
   dot_out_file << clock << std::endl;
@@ -447,21 +310,23 @@ void VirtualMachine::op_shra() {
 }
 
 void VirtualMachine::op_compr() {
-  if (r[ir.fmt0.rd] < r[ir.fmt0.rs])
+  if (r[ir.fmt0.rd] < r[ir.fmt0.rs]) {
     bts_less(), btr_equal(), btr_greater();
-  else if (r[ir.fmt0.rd] == r[ir.fmt0.rs])
+  } else if (r[ir.fmt0.rd] == r[ir.fmt0.rs]) {
     btr_less(), bts_equal(), btr_greater();
-  else
+  } else {
     btr_less(), btr_equal(), bts_greater();
+  }
 }
 
 void VirtualMachine::op_compri() {
-  if (r[ir.fmt1.rd] < ir.fmt1.constant)
+  if (r[ir.fmt1.rd] < ir.fmt1.constant) {
     bts_less(), btr_equal(), btr_greater();
-  else if (r[ir.fmt1.rd] == ir.fmt1.constant)
+  } else if (r[ir.fmt1.rd] == ir.fmt1.constant) {
     btr_less(), bts_equal(), btr_greater();
-  else
+  } else {
     btr_less(), btr_equal(), bts_greater();
+  }
 }
 
 void VirtualMachine::op_getstat() {
@@ -496,7 +361,6 @@ void VirtualMachine::op_call() {
       e.reportError();
     }
   }
-
   mem[sp] = pc;
   --sp;
   mem[sp] = r[0];
@@ -509,7 +373,6 @@ void VirtualMachine::op_call() {
   --sp;
   mem[sp] = sr;
   --sp;
-
   pc = ir.fmt1.addr;
 }
 
@@ -521,7 +384,6 @@ void VirtualMachine::op_return() {
       e.reportError();
     }
   }
-
   ++sp;
   sr = mem[sp];
   ++sp;
@@ -549,3 +411,143 @@ void VirtualMachine::op_halt() {
 }
 
 void VirtualMachine::op_noop() {}
+
+void VirtualMachine::setupOpMap() {
+  Opcode_t value;
+  for (int i = 0; i < 256; ++i) {
+    value.i = i << 8;
+    switch (value.fmt0.op) {
+    case 0:
+      if (value.fmt0.i == 0) {
+        clocks[i] = 4;
+        ops[i] = &VirtualMachine::op_load;
+      } else {
+        clocks[i] = 1;
+        ops[i] = &VirtualMachine::op_loadi;
+      }
+      break;
+    case 1:
+      clocks[i] = 4;
+      ops[i] = &VirtualMachine::op_store;
+      break;
+    case 2:
+      clocks[i] = 1;
+      ops[i] = (value.fmt0.i == 0)
+                ? &VirtualMachine::op_add
+                : &VirtualMachine::op_addi;
+      break;
+    case 3:
+      clocks[i] = 1;
+      ops[i] = (value.fmt0.i == 0)
+                ? &VirtualMachine::op_addc
+                : &VirtualMachine::op_addci;
+      break;
+    case 4:
+      clocks[i] = 1;
+      ops[i] = (value.fmt0.i == 0)
+                ? &VirtualMachine::op_sub
+                : &VirtualMachine::op_subi;
+      break;
+    case 5:
+      clocks[i] = 1;
+      ops[i] = (value.fmt0.i == 0)
+                ? &VirtualMachine::op_subc
+                : &VirtualMachine::op_subci;
+      break;
+    case 6:
+      clocks[i] = 1;
+      ops[i] = (value.fmt0.i == 0)
+                ? &VirtualMachine::op_and
+                : &VirtualMachine::op_andi;
+      break;
+    case 7:
+      clocks[i] = 1;
+      ops[i] = (value.fmt0.i == 0)
+                ? &VirtualMachine::op_xor
+                : &VirtualMachine::op_xori;
+      break;
+    case 8:
+      clocks[i] = 1;
+      ops[i] = &VirtualMachine::op_compl;
+      break;
+    case 9:
+      clocks[i] = 1;
+      ops[i] = &VirtualMachine::op_shl;
+      break;
+    case 10:
+      clocks[i] = 1;
+      ops[i] = &VirtualMachine::op_shla;
+      break;
+    case 11:
+      clocks[i] = 1;
+      ops[i] = &VirtualMachine::op_shr;
+      break;
+    case 12:
+      clocks[i] = 1;
+      ops[i] = &VirtualMachine::op_shra;
+      break;
+    case 13:
+      clocks[i] = 1;
+      ops[i] = (value.fmt0.i == 0)
+                ? &VirtualMachine::op_compr
+                : &VirtualMachine::op_compri;
+      break;
+    case 14:
+      clocks[i] = 1;
+      ops[i] = &VirtualMachine::op_getstat;
+      break;
+    case 15:
+      clocks[i] = 1;
+      ops[i] = &VirtualMachine::op_putstat;
+      break;
+    case 16:
+      clocks[i] = 1;
+      ops[i] = &VirtualMachine::op_jump;
+      break;
+    case 17:
+      clocks[i] = 1;
+      ops[i] = &VirtualMachine::op_jumpl;
+      break;
+    case 18:
+      clocks[i] = 1;
+      ops[i] = &VirtualMachine::op_jumpe;
+      break;
+    case 19:
+      clocks[i] = 1;
+      ops[i] = &VirtualMachine::op_jumpg;
+      break;
+    case 20:
+      clocks[i] = 4;
+      ops[i] = &VirtualMachine::op_call;
+      break;
+    case 21:
+      clocks[i] = 4;
+      ops[i] = &VirtualMachine::op_return;
+      break;
+    case 22:
+      clocks[i] = 28;
+      ops[i] = &VirtualMachine::op_read;
+      break;
+    case 23:
+      clocks[i] = 28;
+      ops[i] = &VirtualMachine::op_write;
+      break;
+    case 24:
+      clocks[i] = 1;
+      ops[i] = &VirtualMachine::op_halt;
+      break;
+    case 25:
+      clocks[i] = 1;
+      ops[i] = &VirtualMachine::op_noop;
+      break;
+    default:
+      clocks[i] = 0;
+      /**
+       * std::function has a default construction, so there's no need to assign
+       * an empty lambda here. Attempting to call any undefined operation will
+       * result in std::bad_function_call being thrown.
+       */
+      break;
+    }
+  }
+}

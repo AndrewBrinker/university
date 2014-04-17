@@ -4,15 +4,12 @@
 
 #include "./Assembler.h"
 #include <err/Errors.h>
-#include <sys/stat.h>
+#include <util/Utilities.h>
 #include <cstdint>
 #include <cstdlib>
 #include <cctype>
-#include <cmath>
 #include <string>
-#include <iostream>
 #include <fstream>
-#include <sstream>
 #include <vector>
 #include <algorithm>
 #include <iterator>
@@ -27,32 +24,21 @@
  * cmd ADDR     -> SHORT_ADDR_FMT
  * cmd          -> EMPTY_FMT
  */
-#define ADDR_FMT       0
-#define CONST_FMT      1
-#define REGS_FMT       2
-#define SHORT_REG_FMT  3
-#define SHORT_ADDR_FMT 4
-#define EMPTY_FMT      5
-#define INVALID_FMT    -1
+#define ADDR_FMT        0
+#define CONST_FMT       1
+#define REGS_FMT        2
+#define SHORT_REG_FMT   3
+#define SHORT_ADDR_FMT  4
+#define EMPTY_FMT       5
 
+#define INVALID_FMT    -1
 #define NOT_IMMEDIATE  "0"
 #define IMMEDIATE      "1"
-#define EMPTY_OP       {"", "", "", INVALID_FMT}
-#define OP_COUNT       34
-
 #define ADDR_BIT_COUNT  8
 #define CONST_BIT_COUNT 8
+#define OBJ_LINE_SIZE   16
 
-#define EXT_SEP        "."
-#define COMMENT_SEP    "!"
-#define ASM_FILE_EXT   ".s"
-#define OBJ_FILE_EXT   ".o"
-#define OBJ_LINE_SIZE  16
-
-#define SIGNED_MODE    's'
-#define UNSIGNED_MODE  'u'
-
-static const Assembler::op operations[] = {
+static const Assembler::op_t operations[] = {
   {"load"   , "00000", NOT_IMMEDIATE, ADDR_FMT       },
   {"loadi"  , "00000", IMMEDIATE    , CONST_FMT      },
   {"store"  , "00001", NOT_IMMEDIATE, ADDR_FMT       },
@@ -165,50 +151,6 @@ std::string Assembler::parse(std::string file_name) {
 
 
 /**
- * Check whether the given file name is a valid assembly source file.
- *
- * The only standard for validity is that it ends with a ".s" extension. That is
- * what this function checks for.
- *
- * @param  file_name -> The name of the assembly source file being checked.
- * @return whether the name is valid or not.
- */
-bool Assembler::isFileNameValid(std::string file_name) {
-  size_t pos = file_name.find_last_of(EXT_SEP);
-  std::string extension = "";
-  if (pos != std::string::npos) {
-    extension = file_name.substr(pos);
-  }
-  return extension == ASM_FILE_EXT;
-}
-
-
-/**
- * Check whether the given file name exists.
- * @param  file_name -> The name of the file being checked.
- * @return whether the file exists.
- */
-bool Assembler::doesFileExist(std::string file_name) {
-  struct stat buffer;
-  return (stat (file_name.c_str(), &buffer) == 0);
-}
-
-
-/**
- * Remove the file extension from the given file name
- * @param  file_name -> The file name being stripped.
- * @return the stripped file name.
- */
-std::string Assembler::stripExtension(std::string file_name) {
-  size_t pos = file_name.find_last_of(EXT_SEP);
-  if (pos != std::string::npos) {
-    return file_name.substr(0, pos);
-  }
-  return file_name;
-}
-
-
-/**
  * Convert the input file stream into ASMSource
  * @param  input_file -> The stream to the assembly file being read
  * @return the source of the assembly file
@@ -235,22 +177,39 @@ std::vector<std::string> Assembler::readASMSource(std::ifstream &input_file) {
 std::string Assembler::convertToObjectCode(std::string line) {
   std::string object_line = "";
   std::vector<std::string> parts = split(line);
-  op current_op = findOperation(parts[0]);
+  op_t current_op = findOperation(parts[0]);
   object_line += current_op.op_code;
+  std::string result = "";
   switch (current_op.format) {
     case ADDR_FMT:
       object_line += getRegisterID(parts[1]);
       object_line += current_op.i;
-      object_line += toBinaryString(atoi(parts[2].c_str()),
-                                    ADDR_BIT_COUNT,
-                                    UNSIGNED_MODE);
+      result = toUnsignedBinaryString(atoi(parts[2].c_str()),
+                                                  ADDR_BIT_COUNT);
+      if (result != "") {
+        object_line += result;
+      } else {
+        try {
+          throw FailedIntegerConversion("Assembler");
+        } catch(GenericError &e) {
+          e.reportError();
+        }
+      }
       break;
     case CONST_FMT:
       object_line += getRegisterID(parts[1]);
       object_line += current_op.i;
-      object_line += toBinaryString(atoi(parts[2].c_str()),
-                                    CONST_BIT_COUNT,
-                                    SIGNED_MODE);
+      result = toSignedBinaryString(atoi(parts[2].c_str()),
+                                                CONST_BIT_COUNT);
+      if (result != "") {
+        object_line += result;
+      } else {
+        try {
+          throw FailedIntegerConversion("Assembler");
+        } catch(GenericError &e) {
+          e.reportError();
+        }
+      }
       break;
     case REGS_FMT:
       object_line += getRegisterID(parts[1]);
@@ -266,9 +225,17 @@ std::string Assembler::convertToObjectCode(std::string line) {
     case SHORT_ADDR_FMT:
       object_line += getRegisterID("0");
       object_line += current_op.i;
-      object_line += toBinaryString(atoi(parts[1].c_str()),
-                                    ADDR_BIT_COUNT,
-                                    UNSIGNED_MODE);
+      result = toUnsignedBinaryString(atoi(parts[1].c_str()),
+                                                  ADDR_BIT_COUNT);
+      if (result != "") {
+        object_line += result;
+      } else {
+        try {
+          throw FailedIntegerConversion("Assembler");
+        } catch(GenericError &e) {
+          e.reportError();
+        }
+      }
       break;
     case EMPTY_FMT:
       pad(&object_line, '0', OBJ_LINE_SIZE);
@@ -283,10 +250,10 @@ std::string Assembler::convertToObjectCode(std::string line) {
  * @param  name -> The name of the operation being searched for.
  * @return the associated operation.
  */
-Assembler::op Assembler::findOperation(std::string name) {
-  for (int i = 0; i < OP_COUNT; ++i) {
-    if (operations[i].name == name) {
-      return operations[i];
+Assembler::op_t Assembler::findOperation(std::string name) {
+  for (auto operation : operations) {
+    if (operation.name == name) {
+      return operation;
     }
   }
   try {
@@ -294,7 +261,7 @@ Assembler::op Assembler::findOperation(std::string name) {
   } catch(GenericError &e) {
     e.reportError();
   }
-  return EMPTY_OP;
+  return {"", "", "", INVALID_FMT};
 }
 
 
@@ -316,161 +283,3 @@ std::string Assembler::getRegisterID(std::string id) {
   return "";
 }
 
-
-/**
- * Pad the given line with the fill character up to the given size
- * @param line        -> The line to be padded
- * @param fill        -> The filler character to use
- * @param target_size -> The target size
- */
-void Assembler::pad(std::string *line, const char fill, size_t target_size) {
-  size_t length = line->length();
-  if (length >= target_size) return;
-  while (length < target_size) {
-    line->push_back(fill);
-    ++length;
-  }
-}
-
-
-/**
- * Convert the given integer into its binary string representation, handling
- * errors appropriately.
- * @param  original -> The integer to be converted
- * @param  bits     -> The number of bits
- * @param  mode     -> The conversion mode to use (signed or unsigned)
- * @return the converted string
- */
-std::string Assembler::toBinaryString(const int original,
-                                      const int bits,
-                                      const char mode) {
-  if (mode != SIGNED_MODE && mode != UNSIGNED_MODE) {
-    try {
-      throw InvalidIntegerConversionMode("Assembler");
-    } catch(GenericError &e) {
-      e.reportError();
-    }
-  }
-  std::string result = "";
-  switch (mode) {
-    case SIGNED_MODE:
-      result = toSignedBinaryString(original, bits);
-      break;
-    case UNSIGNED_MODE:
-      result = toUnsignedBinaryString(original, bits);
-      break;
-  }
-  if (result == "") {
-    try {
-      throw FailedIntegerConversion("Assembler");
-    } catch(GenericError &e) {
-      e.reportError();
-    }
-  }
-  return result;
-}
-
-
-/**
- * Convert a given integer into its signed binary string representation
- * @param  original -> The integer to be converted
- * @param  bits     -> The number of bits to use (including a bit for the sign)
- * @return either the converted string or an empty string
- */
-std::string Assembler::toSignedBinaryString(const int original,
-                                            const int bits) {
-  // Check the sanity of the inputs.
-  const float exponent = pow(2, bits - 1);
-  if (original < -exponent || exponent - 1 < original || bits > 64) return "";
-  // Do the conversion.
-  std::string converted = "";
-  bool first = false;
-  for (int i = bits - 1; i >= 0; --i) {
-    if ((original & (1ULL << i)) != 0) {
-      if (!first) first = true;
-      converted += '1';
-    } else if (first) {
-      converted += '0';
-    }
-  }
-  // Pad the front by appending to the end of the string and then rotating the
-  // string appropriately.
-  const size_t size = converted.size();
-  for (size_t i = 0; i < bits - size; ++i) converted.push_back('0');
-  std::rotate(converted.begin(), converted.begin() + size, converted.end());
-  return converted;
-}
-
-
-/**
- * Convert a given integer into its unsigned binary string representation.
- * @param  original -> The integer to be converted
- * @param  bits     -> The number of bits to use
- * @return either the converted string, or an empty string
- */
-std::string Assembler::toUnsignedBinaryString(const int original,
-                                              const int bits) {
-  std::string s = toSignedBinaryString(original, bits + 1);
-  if (s[0] != '0') return "";
-  return s.substr(1);
-}
-
-
-/**
- * Convert the given binary string into a decimal string of the same number
- * @param  original -> The string to be converted
- * @return the converted string
- */
-int Assembler::binaryStringToDecimal(const std::string original) {
-  int value = 0;
-  const int size = original.size();
-  for (int i = 0; i < size; ++i) {
-    if (original[size - 1 - i] == '1') {
-      value += pow(2, i);
-    }
-  }
-  return value;
-}
-
-
-/**
- * Remove any comments from the given line of code
- * @param  line -> The line to be stripped.
- * @return the stripped line.
- */
-std::string Assembler::stripComments(std::string line) {
-  size_t pos = line.find_last_of(COMMENT_SEP);
-  if (pos != std::string::npos) {
-    return line.substr(0, pos);
-  }
-  return line;
-}
-
-
-/**
- * Remove whitespace from the end of a string
- * @param  line -> The string to be stripped
- * @return the stripped string
- */
-std::string Assembler::stripEndingWhitespace(std::string line) {
-  int i = line.length();
-  do {
-    --i;
-  } while (isspace(line[i]));
-  return line.substr(0, i + 1);
-}
-
-
-/**
- * Split the given string into a vector of its space-delimited parts
- * @param line -> The line to be split.
- * @return the split line.
- */
-std::vector<std::string> Assembler::split(std::string line) {
-  std::vector<std::string> tokens;
-  std::istringstream stream(line);
-  std::copy(std::istream_iterator<std::string>(stream),
-            std::istream_iterator<std::string>(),
-            std::back_inserter<std::vector<std::string>>(tokens));
-  return tokens;
-}

@@ -19,16 +19,9 @@ class VirtualMachine {
  public:
   VirtualMachine();
   VirtualMachine(uint16_t, uint16_t);
-
   void run(std::string);
 
  private:
-  std::vector<int16_t> r;
-  std::vector<int16_t> mem;
-
-  uint16_t pc, sr, sp, base, limit, clock;
-  bool halt;
-
   union Opcode_t {
     uint16_t i;
     struct {
@@ -48,41 +41,35 @@ class VirtualMachine {
       uint8_t op      : 5;
     } fmt1;
   } ir;
-
   typedef void (VirtualMachine::*MemFuncPtr)();
+
+  std::vector<int16_t> r;
+  std::vector<int16_t> mem;
+  uint16_t pc, sr, sp, base, limit, clock;
+  bool halt;
   MemFuncPtr ops[256];
   uint8_t clocks[256];
-
-  std::string base_filename;
+  std::string base_file_name;
   std::ifstream dot_in_file;
   std::ofstream dot_out_file;
 
-  // These functions test the given bit in the sr field, subject to the
-  // specification. btr_ and bts_ variants reset and set the bit, respectively.
-  // I wish I could write these in assembly, but I guess that's overkill.
   bool bt_overflow() const;
   bool btr_overflow();
   bool bts_overflow();
-
   bool bt_less() const;
   bool btr_less();
   bool bts_less();
-
   bool bt_equal() const;
   bool btr_equal();
   bool bts_equal();
-
   bool bt_greater() const;
   bool btr_greater();
   bool bts_greater();
-
   bool bt_carry() const;
   bool btr_carry();
   bool bts_carry();
-
   void op(const Opcode_t&);
 
-  // Operators. One function for each opcode.
   void op_load();
   void op_loadi();
   void op_store();
@@ -117,6 +104,8 @@ class VirtualMachine {
   void op_write();
   void op_halt();
   void op_noop();
+
+  void setupOpMap();
 
   DISALLOW_COPY_AND_ASSIGN(VirtualMachine);
 };
