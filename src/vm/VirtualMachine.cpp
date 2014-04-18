@@ -5,6 +5,7 @@
 #include "./VirtualMachine.h"
 #include <err/Errors.h>
 #include <util/Utilities.h>
+#include <asm/Assembler.h>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
@@ -13,6 +14,10 @@
 #include <fstream>
 #include <algorithm>
 #include <iterator>
+
+#ifdef DEBUG
+ extern std::vector<std::string> debug_source;
+#endif  // DEBUG
 
 #define REG_FILE_SIZE 4
 #define MEM_SIZE      256
@@ -123,7 +128,7 @@ void VirtualMachine::run(std::string file_name) {
     // main loop
     while (!halt) {
 #ifdef DEBUG
-      log_file << "Line " << pc << ": " << bin(ir.i, 16) << std::endl;
+      log_file << debug_source[pc] << std::endl;
 #endif  // DEBUG
       ir.i = mem[pc];
       ++pc;

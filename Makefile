@@ -162,6 +162,7 @@ clean:
 	@$(RM) -r bin
 	@$(RM) test/*.o
 	@$(RM) test/*.out
+	@$(RM) test/*.log
 
 # target: help        List available targets
 .PHONY: help

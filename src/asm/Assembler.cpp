@@ -14,6 +14,10 @@
 #include <algorithm>
 #include <iterator>
 
+#ifdef DEBUG
+ std::vector<std::string> debug_source;
+#endif  // DEBUG
+
 /**
  * Explanation of formats.
  *
@@ -138,6 +142,9 @@ std::string Assembler::parse(std::string file_name) {
 
   // Convert it to object file source
   for (auto line : asm_source) {
+#ifdef DEBUG
+    debug_source.push_back(line);
+#endif  // DEBUG
     output_file << binaryStringToDecimal(convertToObjectCode(line)) << "\n";
   }
 
