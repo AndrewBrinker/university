@@ -5,6 +5,9 @@
 #ifndef DEBUG_H
 #define DEBUG_H
 
+#include <string>
+#include <vector>
+
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \
   TypeName(const TypeName&);               \
   void operator=(const TypeName&);

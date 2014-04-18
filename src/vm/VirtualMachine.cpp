@@ -123,7 +123,9 @@ void VirtualMachine::run(std::string file_name) {
   try {
     // main loop
     while (!halt) {
-      if (Debug::Instance().on) log_file << Debug::Instance().source[pc] << std::endl;
+      if (Debug::Instance().on) {
+        log_file << Debug::Instance().source[pc] << std::endl;
+      }
       ir.i = mem[pc];
       ++pc;
       (*this.*ops[ir.i >> 8])();
