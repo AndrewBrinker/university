@@ -5,6 +5,7 @@
 #include "./Assembler.h"
 #include <err/Errors.h>
 #include <util/Utilities.h>
+#include <env/Environment.h>
 #include <cstdint>
 #include <cstdlib>
 #include <cctype>
@@ -13,10 +14,6 @@
 #include <vector>
 #include <algorithm>
 #include <iterator>
-
-#ifdef DEBUG
- std::vector<std::string> debug_source;
-#endif  // DEBUG
 
 /**
  * Explanation of formats.
@@ -142,9 +139,7 @@ std::string Assembler::parse(std::string file_name) {
 
   // Convert it to object file source
   for (auto line : asm_source) {
-#ifdef DEBUG
-    debug_source.push_back(line);
-#endif  // DEBUG
+    if (env::debug.on()) env::debug.source.push_back(line);
     output_file << binaryStringToDecimal(convertToObjectCode(line)) << "\n";
   }
 

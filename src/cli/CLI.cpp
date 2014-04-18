@@ -5,13 +5,13 @@
 #include "./CLI.h"
 #include <asm/Assembler.h>
 #include <vm/VirtualMachine.h>
+#include <env/Environment.h>
 #include <cstdio>
 #include <map>
 #include <string>
 #include <iostream>
 
 #define CURRENT_VERSION "0.1"
-
 
 /**
  * Load the contents of argv into args and files, respectively.
@@ -23,6 +23,7 @@ CLI::CLI(const int argc, char **argv) {
   //   --help        | -h
   //   --version     | -V
   //   --interactive | -i
+  //   --debug       | -d
   // Everything else is treated as a file name.
   for (int i = 1; i < argc; ++i) {
     const std::string current = std::string(argv[i]);
@@ -32,6 +33,8 @@ CLI::CLI(const int argc, char **argv) {
       args["version"] = true;
     } else if (current == "--interactive" || current == "-i") {
       args["interactive"] = true;
+    } else if (current == "--debug" || current == "-d") {
+      args["debug"] = true;
     } else {
       files.push_back(current);
     }
@@ -54,6 +57,9 @@ void CLI::parse() {
   if (args.count("interactive")) {
     startInteractiveSession();
     return;
+  }
+  if (args.count("debug")) {
+    env::debug.activate();
   }
   Assembler a;
   VirtualMachine vm;
@@ -82,6 +88,7 @@ void CLI::printHelp() {
   printf("\t-h | --help          Print this help text.\n");
   printf("\t-v | --version       Print the current version number.\n");
   printf("\t-i | --interactive   Open an interactive session.\n");
+  printf("\t-d | --debug         Execute files in debug mode.\n");
   printf("\n");
 }
 

@@ -6,6 +6,7 @@
 #include <err/Errors.h>
 #include <util/Utilities.h>
 #include <asm/Assembler.h>
+#include <env/Environment.h>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
@@ -14,10 +15,6 @@
 #include <fstream>
 #include <algorithm>
 #include <iterator>
-
-#ifdef DEBUG
- extern std::vector<std::string> debug_source;
-#endif  // DEBUG
 
 #define REG_FILE_SIZE 4
 #define MEM_SIZE      256
@@ -120,31 +117,28 @@ void VirtualMachine::run(std::string file_name) {
 
   input_file.close();
 
-#ifdef DEBUG
-  std::ofstream log_file(stripExtension(file_name) + ".log");
-#endif  // DEBUG
+  std::ofstream log_file;
+  if (env::debug.on()) log_file.open(stripExtension(file_name) + ".log");
 
   try {
     // main loop
     while (!halt) {
-#ifdef DEBUG
-      log_file << debug_source[pc] << std::endl;
-#endif  // DEBUG
+      if (env::debug.on()) log_file << env::debug.source[pc] << std::endl;
       ir.i = mem[pc];
       ++pc;
       (*this.*ops[ir.i >> 8])();
       clock += clocks[ir.i >> 8];
-#ifdef DEBUG
-      log_file << "r0: " << r[0] << ' ';
-      log_file << "r1: " << r[1] << ' ';
-      log_file << "r2: " << r[2] << ' ';
-      log_file << "r3: " << r[3] << std::endl;
-      for (unsigned int i = 0; i < mem.size(); ++i) {
-        log_file << hex(mem[i] & 0xffff, 4) << ' ';
-        if (i % 16 == 15) log_file << std::endl;
+      if (env::debug.on()) {
+        log_file << "r0: " << r[0] << ' ';
+        log_file << "r1: " << r[1] << ' ';
+        log_file << "r2: " << r[2] << ' ';
+        log_file << "r3: " << r[3] << std::endl;
+        for (unsigned int i = 0; i < mem.size(); ++i) {
+          log_file << hex(mem[i] & 0xffff, 4) << ' ';
+          if (i % 16 == 15) log_file << std::endl;
+        }
+        log_file << std::endl << std::endl;
       }
-      log_file << std::endl << std::endl;
-#endif  // DEBUG
     }
   } catch(std::bad_function_call&) {
     try {
@@ -157,9 +151,7 @@ void VirtualMachine::run(std::string file_name) {
   dot_out_file << clock << std::endl;
   dot_in_file.close();
   dot_out_file.close();
-#ifdef DEBUG
-  log_file.close();
-#endif  // DEBUG
+  if (env::debug.on()) log_file.close();
 }
 
 
