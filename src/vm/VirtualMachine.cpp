@@ -20,51 +20,6 @@
 #define OUT_FILE_EXT ".out"
 #define IN_FILE_EXT  ".in"
 
-#ifdef DEBUG
-std::string bin(uintmax_t n, uintmax_t size = 0) {
-  std::string binstr;
-
-  do {
-    binstr.push_back('0' + (n & 1));
-  } while (n >>= 1);
-
-  while (binstr.size() < size)
-    binstr.push_back('0');
-
-  std::reverse(std::begin(binstr), std::end(binstr));
-
-  return binstr;
-}
-
-std::string hex(uintmax_t n, uintmax_t size = 0) {
-  std::string binstr;
-
-  do {
-    binstr.push_back(((n & 0xf) == 0x0) ? '0' :
-                      ((n & 0xf) == 0x1) ? '1' :
-                      ((n & 0xf) == 0x2) ? '2' :
-                      ((n & 0xf) == 0x3) ? '3' :
-                      ((n & 0xf) == 0x4) ? '4' :
-                      ((n & 0xf) == 0x5) ? '5' :
-                      ((n & 0xf) == 0x6) ? '6' :
-                      ((n & 0xf) == 0x7) ? '7' :
-                      ((n & 0xf) == 0x8) ? '8' :
-                      ((n & 0xf) == 0x9) ? '9' :
-                      ((n & 0xf) == 0xa) ? 'a' :
-                      ((n & 0xf) == 0xb) ? 'b' :
-                      ((n & 0xf) == 0xc) ? 'c' :
-                      ((n & 0xf) == 0xd) ? 'd' :
-                      ((n & 0xf) == 0xe) ? 'e' : 'f');
-  } while (n >>= 4);
-
-  while (binstr.size() < size)
-    binstr.push_back('0');
-
-  std::reverse(std::begin(binstr), std::end(binstr));
-
-  return binstr;
-}
-#endif  // DEBUG
 
 /**
  * Construct the VM with the default values
