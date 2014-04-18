@@ -20,6 +20,52 @@
 #define OUT_FILE_EXT ".out"
 #define IN_FILE_EXT  ".in"
 
+#ifdef DEBUG
+std::string bin( uintmax_t n, uintmax_t size = 0 ) {
+  std::string binstr;
+
+  do
+    binstr.push_back( '0' + ( n & 1 ) );
+  while( n >>= 1 );
+
+  while( binstr.size() < size )
+    binstr.push_back( '0' );
+
+  std::reverse( std::begin( binstr ), std::end( binstr ) );
+
+  return binstr;
+}
+
+std::string hex( uintmax_t n, uintmax_t size = 0 ) {
+  std::string binstr;
+
+  do
+    binstr.push_back( ( ( n & 0xf ) == 0x0 ) ? '0' :
+                      ( ( n & 0xf ) == 0x1 ) ? '1' :
+                      ( ( n & 0xf ) == 0x2 ) ? '2' :
+                      ( ( n & 0xf ) == 0x3 ) ? '3' :
+                      ( ( n & 0xf ) == 0x4 ) ? '4' :
+                      ( ( n & 0xf ) == 0x5 ) ? '5' :
+                      ( ( n & 0xf ) == 0x6 ) ? '6' :
+                      ( ( n & 0xf ) == 0x7 ) ? '7' :
+                      ( ( n & 0xf ) == 0x8 ) ? '8' :
+                      ( ( n & 0xf ) == 0x9 ) ? '9' :
+                      ( ( n & 0xf ) == 0xa ) ? 'a' :
+                      ( ( n & 0xf ) == 0xb ) ? 'b' :
+                      ( ( n & 0xf ) == 0xc ) ? 'c' :
+                      ( ( n & 0xf ) == 0xd ) ? 'd' :
+                      ( ( n & 0xf ) == 0xe ) ? 'e' : 'f' );
+  while( n >>= 4 );
+
+  while( binstr.size() < size )
+    binstr.push_back( '0' );
+
+  std::reverse( std::begin( binstr ), std::end( binstr ) );
+
+  return binstr;
+}
+#endif // DEBUG
+
 VirtualMachine::VirtualMachine()
   : VirtualMachine(REG_FILE_SIZE, MEM_SIZE) {}
 
@@ -96,20 +142,37 @@ void VirtualMachine::run(std::string file_name) {
   // Load file into memory
   int count = 0;
   for (std::string line; getline(input_file, line);) {
-    uint16_t value = atoi(line.c_str());
-    mem[count] = value;
+    mem[count] = stoi(line);
     ++count;
   }
 
   input_file.close();
 
+#ifdef DEBUG
+  std::ofstream log_file(stripExtension(file_name) + ".log");
+#endif // DEBUG
+
   try {
     // main loop
     while (!halt) {
+#ifdef DEBUG
+      log_file << "Line " << pc << ": " << bin( ir.i, 16 ) << std::endl;
+#endif // DEBUG
       ir.i = mem[pc];
       ++pc;
       (*this.*ops[ir.i >> 8])();
       clock += clocks[ir.i >> 8];
+#ifdef DEBUG
+      log_file << "r0: " << r[0] << ' ';
+      log_file << "r1: " << r[1] << ' ';
+      log_file << "r2: " << r[2] << ' ';
+      log_file << "r3: " << r[3] << std::endl;
+      for(unsigned int i = 0; i < mem.size(); ++i) {
+        log_file << hex( mem[i] & 0xffff, 4 ) << ' ';
+        if(i % 16 == 15) log_file << std::endl;
+      }
+      log_file << std::endl << std::endl;
+#endif // DEBUG
     }
   } catch(std::bad_function_call&) {
     try {
@@ -122,6 +185,9 @@ void VirtualMachine::run(std::string file_name) {
   dot_out_file << clock << std::endl;
   dot_in_file.close();
   dot_out_file.close();
+#ifdef DEBUG
+  log_file.close();
+#endif // DEBUG
 }
 
 inline bool VirtualMachine::bt_overflow() const {
