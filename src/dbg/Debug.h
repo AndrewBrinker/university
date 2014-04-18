@@ -11,28 +11,19 @@
 
 class Debug {
  public:
-  Debug() {
-    _debug = false;
-    source = std::vector<std::string>();
+  static Debug& Instance() {
+    static Debug instance;
+    return instance;
   }
 
-  inline void activate() {
-    _debug = true;
-  }
-
-  inline void deactivate() {
-    _debug = false;
-  }
-
-  inline bool on() {
-    return _debug;
-  }
-
+  bool on;
   std::vector<std::string> source;
 
  private:
-  bool _debug;
-
+  Debug() {
+    on = false;
+    source = std::vector<std::string>();
+  }
   DISALLOW_COPY_AND_ASSIGN(Debug);
 };
 

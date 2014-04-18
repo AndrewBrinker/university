@@ -6,7 +6,7 @@
 #include <err/Errors.h>
 #include <util/Utilities.h>
 #include <asm/Assembler.h>
-#include <env/Environment.h>
+#include <dbg/Debug.h>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
@@ -118,17 +118,17 @@ void VirtualMachine::run(std::string file_name) {
   input_file.close();
 
   std::ofstream log_file;
-  if (env::debug.on()) log_file.open(stripExtension(file_name) + ".log");
+  if (Debug::Instance().on) log_file.open(stripExtension(file_name) + ".log");
 
   try {
     // main loop
     while (!halt) {
-      if (env::debug.on()) log_file << env::debug.source[pc] << std::endl;
+      if (Debug::Instance().on) log_file << Debug::Instance().source[pc] << std::endl;
       ir.i = mem[pc];
       ++pc;
       (*this.*ops[ir.i >> 8])();
       clock += clocks[ir.i >> 8];
-      if (env::debug.on()) {
+      if (Debug::Instance().on) {
         log_file << "r0: " << r[0] << ' ';
         log_file << "r1: " << r[1] << ' ';
         log_file << "r2: " << r[2] << ' ';
@@ -151,7 +151,7 @@ void VirtualMachine::run(std::string file_name) {
   dot_out_file << clock << std::endl;
   dot_in_file.close();
   dot_out_file.close();
-  if (env::debug.on()) log_file.close();
+  if (Debug::Instance().on) log_file.close();
 }
 
 

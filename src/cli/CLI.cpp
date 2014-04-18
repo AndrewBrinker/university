@@ -5,7 +5,7 @@
 #include "./CLI.h"
 #include <asm/Assembler.h>
 #include <vm/VirtualMachine.h>
-#include <env/Environment.h>
+#include <dbg/Debug.h>
 #include <cstdio>
 #include <map>
 #include <string>
@@ -59,7 +59,7 @@ void CLI::parse() {
     return;
   }
   if (args.count("debug")) {
-    env::debug.activate();
+    Debug::Instance().on = true;
   }
   Assembler a;
   VirtualMachine vm;

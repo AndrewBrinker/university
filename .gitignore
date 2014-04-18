@@ -4,3 +4,6 @@ lint/
 os
 bin/release/
 bin/debug/
+*.o
+*.log
+*.out
