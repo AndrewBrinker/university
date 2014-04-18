@@ -13,6 +13,11 @@
 #define CURRENT_VERSION "0.1"
 
 
+/**
+ * Load the contents of argv into args and files, respectively.
+ * @param argc -> The size of argv
+ * @param argv -> The arguments themselves
+ */
 CLI::CLI(const int argc, char **argv) {
   // Valid args:
   //   --help        | -h
@@ -34,6 +39,9 @@ CLI::CLI(const int argc, char **argv) {
 }
 
 
+/**
+ * Process the given arguments appropriately
+ */
 void CLI::parse() {
   if (args.count("help") || (args.size() == 0 && files.size() == 0)) {
     printHelp();
@@ -58,6 +66,9 @@ void CLI::parse() {
 }
 
 
+/**
+ * Print the help message explaining how this thing works
+ */
 void CLI::printHelp() {
   printf("\n");
   printf("About:\n");
@@ -75,11 +86,17 @@ void CLI::printHelp() {
 }
 
 
+/**
+ * Print the current version number
+ */
 void CLI::printVersion() {
   printf("Version %s\n", CURRENT_VERSION);
 }
 
 
+/**
+ * Open an interactive session
+ */
 void CLI::startInteractiveSession() {
   printf("Interactive Session Opened.\n");
   printf("You may input paths to assembly files to assemble and run them.\n");

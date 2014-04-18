@@ -21,10 +21,17 @@
 #define IN_FILE_EXT  ".in"
 
 
+/**
+ * Construct the VM with the default values
+ */
 VirtualMachine::VirtualMachine()
   : VirtualMachine(REG_FILE_SIZE, MEM_SIZE) {}
 
 
+/**
+ * Construct the VM with custom register size and memory size, and setup the op
+ * code for later use.
+ */
 VirtualMachine::VirtualMachine(uint16_t reg_file_size,
                                uint16_t mem_size)
                              : r(reg_file_size),
@@ -37,6 +44,11 @@ VirtualMachine::VirtualMachine(uint16_t reg_file_size,
   setupOpMap();
 }
 
+
+/**
+ * Parse the given file and run the code it describes
+ * @param file_name -> The name of the file being parsed
+ */
 void VirtualMachine::run(std::string file_name) {
   try {
     if (!isFileNameValid(file_name, VM_MODE)) {
@@ -125,100 +137,192 @@ void VirtualMachine::run(std::string file_name) {
   dot_out_file.close();
 }
 
+
+/**
+ * Test the value of the overflow bit.
+ * @return whether the overflow bit is 1 or 0.
+ */
 inline bool VirtualMachine::bt_overflow() const {
   return sr & 0x0010;
 }
 
+
+/**
+ * Test the value of the overflow bit and set it to 0.
+ * @return whether the overflow bit is 1 or 0.
+ */
 inline bool VirtualMachine::btr_overflow() {
   bool s = sr & 0x0010;
   sr &= 0xFFEF;
   return s;
 }
 
+
+/**
+ * Test the value of the given bit and set it to 1.
+ * @return whether the overflow bit is 1 or 0.
+ */
 inline bool VirtualMachine::bts_overflow() {
   bool s = sr & 0x0010;
   sr |= 0x0010;
   return s;
 }
 
+
+/**
+ * Test the value of the less bit.
+ * @return whether the less bit is 1 or 0.
+ */
 inline bool VirtualMachine::bt_less() const {
   return sr & 0x0008;
 }
 
+
+/**
+ * Test the value of the less bit and set it to 0.
+ * @return whether the less bit is 1 or 0.
+ */
 inline bool VirtualMachine::btr_less() {
   bool s = sr & 0x0008;
   sr &= 0xFFF7;
   return s;
 }
 
+
+/**
+ * Test the value of the less bit and set it to 1.
+ * @return whether the less bit is 1 or 0.
+ */
 inline bool VirtualMachine::bts_less() {
   bool s = sr & 0x0008;
   sr |= 0x0008;
   return s;
 }
 
+
+/**
+ * Test the value of the equal bit.
+ * @return whether the equal bit is 1 or 0.
+ */
 inline bool VirtualMachine::bt_equal() const {
   return sr & 0x0004;
 }
 
+
+/**
+ * Test the value of the equal bit and set it to 0.
+ * @return whether the equal bit is 1 or 0.
+ */
 inline bool VirtualMachine::btr_equal() {
   bool s = sr & 0x0004;
   sr &= 0xFFFB;
   return s;
 }
 
+
+/**
+ * Test the value of the equal bit and set it to 1.
+ * @return whether the equal bit is 1 or 0.
+ */
 inline bool VirtualMachine::bts_equal() {
   bool s = sr & 0x0004;
   sr |= 0x0004;
   return s;
 }
 
+
+/**
+ * Test the value of the greater bit.
+ * @return whether the greater bit is 1 or 0.
+ */
 inline bool VirtualMachine::bt_greater() const {
   return sr & 0x0002;
 }
 
+
+/**
+ * Test the value of the greater bit and set it to 0.
+ * @return whether the greater bit is 1 or 0.
+ */
 inline bool VirtualMachine::btr_greater() {
   bool s = sr & 0x0002;
   sr &= 0xFFFD;
   return s;
 }
 
+
+/**
+ * Test the value of the greater bit and set it to 1.
+ * @return whether the greater bit is 1 or 0.
+ */
 inline bool VirtualMachine::bts_greater() {
   bool s = sr & 0x0002;
   sr |= 0x0002;
   return s;
 }
 
+
+/**
+ * Test the value of the carry bit.
+ * @return whether the carry bit is 1 or 0.
+ */
 inline bool VirtualMachine::bt_carry() const {
   return sr & 0x0001;
 }
 
+
+/**
+ * Test the value of the carry bit and set it to 0.
+ * @return whether the carry bit is 1 or 0.
+ */
 inline bool VirtualMachine::btr_carry() {
   bool s = sr & 0x0001;
   sr &= 0xFFFE;
   return s;
 }
 
+
+/**
+ * Test the value of the carry bit and set it to 1.
+ * @return whether the carry bit is 1 or 0.
+ */
 inline bool VirtualMachine::bts_carry() {
   bool s = sr & 0x0001;
   sr |= 0x0001;
   return s;
 }
 
+
+/**
+ * Load the given memory location's value into a register.
+ */
 void VirtualMachine::op_load() {
   r[ir.fmt1.rd] = mem[ir.fmt1.addr];
 }
 
+
+/**
+ * Load the given constant into a register.
+ */
 void VirtualMachine::op_loadi() {
   r[ir.fmt1.rd] = ir.fmt1.constant;
 }
 
+
+/**
+ * Store the given register value in memory.
+ */
 void VirtualMachine::op_store() {
   mem[ir.fmt1.addr] = r[ir.fmt1.rd];
 }
 
-// To determine carry, we use a larger-size int than necessary, and check the
-// first bit outside the last two bytes
+
+/**
+ * Add the value of rs to rd and store in rd, accounting for carries.
+ *
+ * To determine carry, we use a larger-size int than necessary, and check the
+ * first bit outside the last two bytes.
+ */
 void VirtualMachine::op_add() {
   int32_t temp = r[ir.fmt0.rd];
   temp += r[ir.fmt0.rs];
@@ -226,6 +330,10 @@ void VirtualMachine::op_add() {
   r[ir.fmt0.rd] = temp & 0xffff;
 }
 
+
+/**
+ * Add the given constant to rd and store in rd, accounting for carries.
+ */
 void VirtualMachine::op_addi() {
   int32_t temp = r[ir.fmt1.rd];
   temp += ir.fmt1.constant;
@@ -233,6 +341,10 @@ void VirtualMachine::op_addi() {
   r[ir.fmt1.rd] = temp & 0xffff;
 }
 
+
+/**
+ * Add rs to rd and store in rd, incrementing temp afterward.
+ */
 void VirtualMachine::op_addc() {
   int32_t temp = r[ir.fmt0.rd];
   temp += r[ir.fmt0.rs];
@@ -241,6 +353,10 @@ void VirtualMachine::op_addc() {
   r[ir.fmt0.rd] = temp & 0xffff;
 }
 
+
+/**
+ * Add the constant to rd and store in rd, incrementing temp afterward.
+ */
 void VirtualMachine::op_addci() {
   int32_t temp = r[ir.fmt1.rd];
   temp += ir.fmt1.constant;
@@ -249,7 +365,12 @@ void VirtualMachine::op_addci() {
   r[ir.fmt1.rd] = temp & 0xffff;
 }
 
-// Not sure how to test for carry when subtracting. These might be correct.
+
+/**
+ * Subtract rs from rd and store in rd.
+ *
+ * NOTE: Not sure how to test for carry when subtracting. This may be correct.
+ */
 void VirtualMachine::op_sub() {
   int32_t temp = r[ir.fmt0.rd];
   temp -= r[ir.fmt0.rs];
@@ -257,6 +378,10 @@ void VirtualMachine::op_sub() {
   r[ir.fmt0.rd] = temp & 0xffff;
 }
 
+
+/**
+ * Subtract constant from rd and store in rd.
+ */
 void VirtualMachine::op_subi() {
   int32_t temp = r[ir.fmt1.rd];
   temp -= ir.fmt1.constant;
@@ -264,6 +389,10 @@ void VirtualMachine::op_subi() {
   r[ir.fmt0.rd] = temp & 0xffff;
 }
 
+
+/**
+ * Substract rs from rd and store in rd, decrementing temp afterward.
+ */
 void VirtualMachine::op_subc() {
   int32_t temp = r[ir.fmt0.rd];
   temp -= r[ir.fmt0.rs];
@@ -272,6 +401,10 @@ void VirtualMachine::op_subc() {
   r[ir.fmt0.rd] = temp & 0xffff;
 }
 
+
+/**
+ * Subtract constant from rd and store in rd, decrementing temp afterward.
+ */
 void VirtualMachine::op_subci() {
   int32_t temp = r[ir.fmt1.rd];
   temp -= ir.fmt1.constant;
@@ -281,50 +414,94 @@ void VirtualMachine::op_subci() {
   r[ir.fmt1.rd] = temp & 0xffff;
 }
 
+
+/**
+ * Perform logical AND of rs and rd, storing in rd.
+ */
 void VirtualMachine::op_and() {
   r[ir.fmt0.rd] &= r[ir.fmt0.rs];
 }
 
+
+/**
+ * Perform logical AND of rd and constant, storing in rd.
+ */
 void VirtualMachine::op_andi() {
   r[ir.fmt1.rd] &= ir.fmt1.constant;
 }
 
+
+/**
+ * Perform logical XOR of rd and rs, storing in rd.
+ */
 void VirtualMachine::op_xor() {
   r[ir.fmt0.rd] ^= r[ir.fmt0.rs];
 }
 
+
+/**
+ * Perform logical XOR of rd and constant, storing in rd.
+ */
 void VirtualMachine::op_xori() {
   r[ir.fmt0.rd] ^= ir.fmt1.constant;
 }
 
+
+/**
+ * Perform logical NOT of rd, storing in rd.
+ */
 void VirtualMachine::op_compl() {
   r[ir.fmt0.rd] = ~r[ir.fmt0.rd];
 }
 
-// Logical left shift; does not retain sign bit
+
+/**
+ * Take logical left shift of rd, storing in rd.
+ *
+ * Does not retain sign bit,
+ */
 void VirtualMachine::op_shl() {
   if (r[ir.fmt0.rd] & 0x80) bts_carry();
   r[ir.fmt0.rd] <<= 1;
 }
 
-// Arithmetic left shirt; retains sign bit
+
+/**
+ * Take arithmetic left shift of rd, storing in rd.
+ *
+ * Retains sign bit.
+ */
 void VirtualMachine::op_shla() {
   if (r[ir.fmt0.rd] & 0x80) bts_carry();
   r[ir.fmt0.rd] = (r[ir.fmt0.rd] & 0x80) | ((r[ir.fmt0.rd] << 1) & 0x7f);
 }
 
-// Logical right bit; does not retain sign bit
+
+/**
+ * Take logical right shift of rd, storing in rd.
+ *
+ * Does not retain sign bit.
+ */
 void VirtualMachine::op_shr() {
   if (r[ir.fmt0.rd] & 0x01) bts_carry();
   r[ir.fmt0.rd] = (r[ir.fmt0.rd] >> 1) & 0x7f;
 }
 
-// Arithmetic right shift; retains sign bit
+
+/**
+ * Take arithmetic right shift of rd, storing in rd.
+ *
+ * Retains sign bit.
+ */
 void VirtualMachine::op_shra() {
   if (r[ir.fmt0.rd] & 0x01) bts_carry();
   r[ir.fmt0.rd] >>= 1;
 }
 
+
+/**
+ * Compare rs and rd, setting the less, greater, and equal bits
+ */
 void VirtualMachine::op_compr() {
   if (r[ir.fmt0.rd] < r[ir.fmt0.rs]) {
     bts_less(), btr_equal(), btr_greater();
@@ -335,6 +512,10 @@ void VirtualMachine::op_compr() {
   }
 }
 
+
+/**
+ * Compare rd and constant, setting the less, greater, and equal bits
+ */
 void VirtualMachine::op_compri() {
   if (r[ir.fmt1.rd] < ir.fmt1.constant) {
     bts_less(), btr_equal(), btr_greater();
@@ -345,30 +526,58 @@ void VirtualMachine::op_compri() {
   }
 }
 
+
+/**
+ * Load sr into rd.
+ */
 void VirtualMachine::op_getstat() {
   r[ir.fmt0.rd] = sr;
 }
 
+
+/**
+ * Put rd into sr
+ */
 void VirtualMachine::op_putstat() {
   sr = r[ir.fmt0.rd];
 }
 
+
+/**
+ * Set pc to the given address
+ */
 void VirtualMachine::op_jump() {
   pc = ir.fmt1.addr;
 }
 
+
+/**
+ * Set pc to the given address if less is true
+ */
 void VirtualMachine::op_jumpl() {
   if (bt_less()) pc = ir.fmt1.addr;
 }
 
+
+/**
+ * Set pc to the given address if equal is true
+ */
 void VirtualMachine::op_jumpe() {
   if (bt_equal()) pc = ir.fmt1.addr;
 }
 
+
+/**
+ * Set pc to the given address if greater is true
+ */
 void VirtualMachine::op_jumpg() {
   if (bt_greater()) pc = ir.fmt1.addr;
 }
 
+
+/**
+ * Call the given function, saving state appropriately
+ */
 void VirtualMachine::op_call() {
   if (sp < limit + 6) {
     try {
@@ -392,6 +601,10 @@ void VirtualMachine::op_call() {
   pc = ir.fmt1.addr;
 }
 
+
+/**
+ * Return from the given function and restore state
+ */
 void VirtualMachine::op_return() {
   if (sp >= 256) {
     try {
@@ -414,20 +627,40 @@ void VirtualMachine::op_return() {
   pc = mem[sp];
 }
 
+
+/**
+ * Read data from input file into rd
+ */
 void VirtualMachine::op_read() {
   dot_in_file >> r[ir.fmt0.rd];
 }
 
+
+/**
+ * Write data from rd out to output file
+ */
 void VirtualMachine::op_write() {
   dot_out_file << r[ir.fmt0.rd] << std::endl;
 }
 
+
+/**
+ * Set halt to true
+ */
 void VirtualMachine::op_halt() {
   halt = true;
 }
 
+
+/**
+ * Do nothing
+ */
 void VirtualMachine::op_noop() {}
 
+
+/**
+ * Load map of opcodes to operation functions
+ */
 void VirtualMachine::setupOpMap() {
   Opcode_t value;
   for (int i = 0; i < 256; ++i) {
