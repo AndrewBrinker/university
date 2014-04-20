@@ -140,7 +140,7 @@ void VirtualMachine::run(std::string file_name) {
         log_file << "r1: " << r[1] << ' ';
         log_file << "r2: " << r[2] << ' ';
         log_file << "r3: " << r[3] << std::endl;
-        log_file << "sr: " << bin( sr, 16 ) << std::endl;
+        log_file << "sr: " << bin(sr, 16) << std::endl;
         for (unsigned int i = 0; i < mem.size(); ++i) {
           log_file << hex(mem[i] & 0xffff, 4) << ' ';
           if (i % 16 == 15) log_file << std::endl;
@@ -173,34 +173,16 @@ inline bool VirtualMachine::getOverflow() const {
 
 
 /**
- * Test the value of the overflow bit and set it to 0.
- * @return whether the overflow bit is 1 or 0.
- *
-inline bool VirtualMachine::btr_overflow() {
-  bool s = sr & 0x0010;
-  sr &= 0xFFEF;
-  return s;
-}*/
-
-
-/**
- * Test the value of the given bit and set it to 1.
- * @return whether the overflow bit is 1 or 0.
- *
-inline bool VirtualMachine::bts_overflow() {
-  bool s = sr & 0x0010;
-  sr |= 0x0010;
-  return s;
-}*/
-
-/**
  * Test the value of the overflow bit, and set it to the input value.
  * @param The value to which to set the overflow bit
  * @return The value of the overflow bit /before/ modification.
  */
 inline bool VirtualMachine::setOverflow(bool b) {
   bool s = sr & OVERFLOW_MASK;
-  if (b) sr |= OVERFLOW_MASK; else sr &= ~OVERFLOW_MASK;
+  if (b)
+    sr |= OVERFLOW_MASK;
+  else
+    sr &= ~OVERFLOW_MASK;
   return s;
 }
 
@@ -215,34 +197,16 @@ inline bool VirtualMachine::getLess() const {
 
 
 /**
- * Test the value of the less bit and set it to 0.
- * @return whether the less bit is 1 or 0.
- *
-inline bool VirtualMachine::btr_less() {
-  bool s = sr & 0x0008;
-  sr &= 0xFFF7;
-  return s;
-}*/
-
-
-/**
- * Test the value of the less bit and set it to 1.
- * @return whether the less bit is 1 or 0.
- *
-inline bool VirtualMachine::bts_less() {
-  bool s = sr & 0x0008;
-  sr |= 0x0008;
-  return s;
-}*/
-
-/**
  * Test the value of the less bit, and set it to the value of the input.
  * @param The value to which to set the less bit.
  * @return The value of the less bit /before/ modification.
  */
 inline bool VirtualMachine::setLess(bool b) {
   bool s = sr & LESS_MASK;
-  if (b) sr |= LESS_MASK; else sr &= ~LESS_MASK;
+  if (b)
+    sr |= LESS_MASK;
+  else
+    sr &= ~LESS_MASK;
   return s;
 }
 
@@ -257,34 +221,16 @@ inline bool VirtualMachine::getEqual() const {
 
 
 /**
- * Test the value of the equal bit and set it to 0.
- * @return whether the equal bit is 1 or 0.
- *
-inline bool VirtualMachine::btr_equal() {
-  bool s = sr & 0x0004;
-  sr &= 0xFFFB;
-  return s;
-}*/
-
-
-/**
- * Test the value of the equal bit and set it to 1.
- * @return whether the equal bit is 1 or 0.
- *
-inline bool VirtualMachine::bts_equal() {
-  bool s = sr & 0x0004;
-  sr |= 0x0004;
-  return s;
-}*/
-
-/**
  * Test the value of the equal bit and set it to the value of the input.
  * @param The value to which to set the equal bit.
  * @return The value of the equal bit /before/ modification.
  */
 inline bool VirtualMachine::setEqual(bool b) {
   bool s = sr & EQUAL_MASK;
-  if (b) sr |= EQUAL_MASK; else sr &= ~EQUAL_MASK;
+  if (b)
+    sr |= EQUAL_MASK;
+  else
+    sr &= ~EQUAL_MASK;
   return s;
 }
 
@@ -299,35 +245,16 @@ inline bool VirtualMachine::getGreater() const {
 
 
 /**
- * Test the value of the greater bit and set it to 0.
- * @return whether the greater bit is 1 or 0.
- *
-inline bool VirtualMachine::btr_greater() {
-  bool s = sr & 0x0002;
-  sr &= 0xFFFD;
-  return s;
-}*/
-
-
-/**
- * Test the value of the greater bit and set it to 1.
- * @return whether the greater bit is 1 or 0.
- *
-inline bool VirtualMachine::bts_greater() {
-  bool s = sr & 0x0002;
-  sr |= 0x0002;
-  return s;
-}*/
-
-
-/**
  * Test the value of the greater bit and set it to the value of the input.
  * @param The value to which to set the greater bit.
  * @return The value of the greater bit /before/ modification.
  */
 inline bool VirtualMachine::setGreater(bool b) {
   bool s = sr & GREATER_MASK;
-  if (b) sr |= GREATER_MASK; else sr &= ~GREATER_MASK;
+  if (b)
+    sr |= GREATER_MASK;
+  else
+    sr &= ~GREATER_MASK;
   return s;
 }
 
@@ -339,29 +266,6 @@ inline bool VirtualMachine::getCarry() const {
   return sr & CARRY_MASK;
 }
 
-
-/**
- * Test the value of the carry bit and set it to 0.
- * @return whether the carry bit is 1 or 0.
- *
-inline bool VirtualMachine::btr_carry() {
-  bool s = sr & 0x0001;
-  sr &= 0xFFFE;
-  return s;
-}*/
-
-
-/**
- * Test the value of the carry bit and set it to 1.
- * @return whether the carry bit is 1 or 0.
- *
-inline bool VirtualMachine::bts_carry() {
-  bool s = sr & 0x0001;
-  sr |= 0x0001;
-  return s;
-}*/
-
-
 /**
  * Test the value of the carry bit and set it to the value of the input.
  * @param The value to which to set the carry bit.
@@ -369,7 +273,10 @@ inline bool VirtualMachine::bts_carry() {
  */
 inline bool VirtualMachine::setCarry(bool b) {
   bool s = sr & CARRY_MASK;
-  if (b) sr |= CARRY_MASK; else sr &= ~CARRY_MASK;
+  if (b)
+    sr |= CARRY_MASK;
+  else
+    sr &= ~CARRY_MASK;
   return s;
 }
 
