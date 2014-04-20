@@ -138,6 +138,7 @@ void CLI::startInteractiveSession() {
     std::string object_file = a.parse(input);
     if (object_file != "") {
       vm.run(object_file);
+      printf("\tFile assembled and run successfully.\n");
     }
   }
   printf("Exiting interactive session...\n");
