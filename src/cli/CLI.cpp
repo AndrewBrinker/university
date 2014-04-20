@@ -96,19 +96,27 @@ void CLI::parse() {
  */
 void CLI::printHelp() {
   printf("\n");
-  printf("About:\n");
-  printf("\tskagOS is a virtual operating system made for CSE 460 at CSUSB\n");
-  printf("\tin the Spring of 2014 by Andrew Brinker and Anthony Sterrett.\n");
+  printf("NAME\n");
+  printf("\tos -- virtual machine & assembler\n");
   printf("\n");
-  printf("Usage:\n");
-  printf("\t./os [flags] <file> [file...]\n");
+  printf("SYNOPSIS\n");
+  printf("\t./os [-hvidm] <file> [file ...]\n");
   printf("\n");
-  printf("Flags:\n");
-  printf("\t-h | --help          Print this help text.\n");
-  printf("\t-v | --version       Print the current version number.\n");
-  printf("\t-i | --interactive   Open an interactive session.\n");
-  printf("\t-d | --debug         Execute files in debug mode.\n");
-  printf("\t-m | --memory        The size of memory in words (default 256)\n");
+  printf("DESCRIPTION\n");
+  printf("\tskagOS is a virtual operating system made for CSE 460 at CSUSB in the Spring of\n");
+  printf("\t2014 by Andrew Brinker and Anthony Sterrett.\n");
+  printf("\n");
+  printf("\tThe following options are available:\n");
+  printf("\n");
+  printf("\t-h    Print this help text.\n");
+  printf("\n");
+  printf("\t-v    Print the current version number.\n");
+  printf("\n");
+  printf("\t-i    Open an interactive session.\n");
+  printf("\n");
+  printf("\t-d    Execute files in debug mode.\n");
+  printf("\n");
+  printf("\t-m    The size of memory in words (default 256)\n");
   printf("\n");
 }
 
