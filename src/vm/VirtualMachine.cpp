@@ -22,6 +22,11 @@
 #define OUT_FILE_EXT ".out"
 #define IN_FILE_EXT  ".in"
 
+#define OVERFLOW_MASK 0x0010
+#define LESS_MASK     0x0008
+#define EQUAL_MASK    0x0004
+#define GREATER_MASK  0x0002
+#define CARRY_MASK    0x0001
 
 /**
  * Construct the VM with the default values
@@ -135,6 +140,7 @@ void VirtualMachine::run(std::string file_name) {
         log_file << "r1: " << r[1] << ' ';
         log_file << "r2: " << r[2] << ' ';
         log_file << "r3: " << r[3] << std::endl;
+        log_file << "sr: " << bin( sr, 16 ) << std::endl;
         for (unsigned int i = 0; i < mem.size(); ++i) {
           log_file << hex(mem[i] & 0xffff, 4) << ' ';
           if (i % 16 == 15) log_file << std::endl;
@@ -159,155 +165,211 @@ void VirtualMachine::run(std::string file_name) {
 
 /**
  * Test the value of the overflow bit.
- * @return whether the overflow bit is 1 or 0.
+ * @return the value of the overflow bit.
  */
-inline bool VirtualMachine::bt_overflow() const {
-  return sr & 0x0010;
+inline bool VirtualMachine::getOverflow() const {
+  return sr & OVERFLOW_MASK;
 }
 
 
 /**
  * Test the value of the overflow bit and set it to 0.
  * @return whether the overflow bit is 1 or 0.
- */
+ *
 inline bool VirtualMachine::btr_overflow() {
   bool s = sr & 0x0010;
   sr &= 0xFFEF;
   return s;
-}
+}*/
 
 
 /**
  * Test the value of the given bit and set it to 1.
  * @return whether the overflow bit is 1 or 0.
- */
+ *
 inline bool VirtualMachine::bts_overflow() {
   bool s = sr & 0x0010;
   sr |= 0x0010;
+  return s;
+}*/
+
+/**
+ * Test the value of the overflow bit, and set it to the input value.
+ * @param The value to which to set the overflow bit
+ * @return The value of the overflow bit /before/ modification.
+ */
+inline bool VirtualMachine::setOverflow(bool b) {
+  bool s = sr & OVERFLOW_MASK;
+  if (b) sr |= OVERFLOW_MASK; else sr &= ~OVERFLOW_MASK;
   return s;
 }
 
 
 /**
  * Test the value of the less bit.
- * @return whether the less bit is 1 or 0.
+ * @return the value of the less bit.
  */
-inline bool VirtualMachine::bt_less() const {
-  return sr & 0x0008;
+inline bool VirtualMachine::getLess() const {
+  return sr & LESS_MASK;
 }
 
 
 /**
  * Test the value of the less bit and set it to 0.
  * @return whether the less bit is 1 or 0.
- */
+ *
 inline bool VirtualMachine::btr_less() {
   bool s = sr & 0x0008;
   sr &= 0xFFF7;
   return s;
-}
+}*/
 
 
 /**
  * Test the value of the less bit and set it to 1.
  * @return whether the less bit is 1 or 0.
- */
+ *
 inline bool VirtualMachine::bts_less() {
   bool s = sr & 0x0008;
   sr |= 0x0008;
+  return s;
+}*/
+
+/**
+ * Test the value of the less bit, and set it to the value of the input.
+ * @param The value to which to set the less bit.
+ * @return The value of the less bit /before/ modification.
+ */
+inline bool VirtualMachine::setLess(bool b) {
+  bool s = sr & LESS_MASK;
+  if (b) sr |= LESS_MASK; else sr &= ~LESS_MASK;
   return s;
 }
 
 
 /**
  * Test the value of the equal bit.
- * @return whether the equal bit is 1 or 0.
+ * @return the value of the equal bit.
  */
-inline bool VirtualMachine::bt_equal() const {
-  return sr & 0x0004;
+inline bool VirtualMachine::getEqual() const {
+  return sr & EQUAL_MASK;
 }
 
 
 /**
  * Test the value of the equal bit and set it to 0.
  * @return whether the equal bit is 1 or 0.
- */
+ *
 inline bool VirtualMachine::btr_equal() {
   bool s = sr & 0x0004;
   sr &= 0xFFFB;
   return s;
-}
+}*/
 
 
 /**
  * Test the value of the equal bit and set it to 1.
  * @return whether the equal bit is 1 or 0.
- */
+ *
 inline bool VirtualMachine::bts_equal() {
   bool s = sr & 0x0004;
   sr |= 0x0004;
+  return s;
+}*/
+
+/**
+ * Test the value of the equal bit and set it to the value of the input.
+ * @param The value to which to set the equal bit.
+ * @return The value of the equal bit /before/ modification.
+ */
+inline bool VirtualMachine::setEqual(bool b) {
+  bool s = sr & EQUAL_MASK;
+  if (b) sr |= EQUAL_MASK; else sr &= ~EQUAL_MASK;
   return s;
 }
 
 
 /**
  * Test the value of the greater bit.
- * @return whether the greater bit is 1 or 0.
+ * @return the value of the greater bit.
  */
-inline bool VirtualMachine::bt_greater() const {
-  return sr & 0x0002;
+inline bool VirtualMachine::getGreater() const {
+  return sr & GREATER_MASK;
 }
 
 
 /**
  * Test the value of the greater bit and set it to 0.
  * @return whether the greater bit is 1 or 0.
- */
+ *
 inline bool VirtualMachine::btr_greater() {
   bool s = sr & 0x0002;
   sr &= 0xFFFD;
   return s;
-}
+}*/
 
 
 /**
  * Test the value of the greater bit and set it to 1.
  * @return whether the greater bit is 1 or 0.
- */
+ *
 inline bool VirtualMachine::bts_greater() {
   bool s = sr & 0x0002;
   sr |= 0x0002;
   return s;
-}
+}*/
 
 
 /**
- * Test the value of the carry bit.
- * @return whether the carry bit is 1 or 0.
+ * Test the value of the greater bit and set it to the value of the input.
+ * @param The value to which to set the greater bit.
+ * @return The value of the greater bit /before/ modification.
  */
-inline bool VirtualMachine::bt_carry() const {
-  return sr & 0x0001;
+inline bool VirtualMachine::setGreater(bool b) {
+  bool s = sr & GREATER_MASK;
+  if (b) sr |= GREATER_MASK; else sr &= ~GREATER_MASK;
+  return s;
+}
+
+/**
+ * Test the value of the carry bit.
+ * @return the value of the carry bit.
+ */
+inline bool VirtualMachine::getCarry() const {
+  return sr & CARRY_MASK;
 }
 
 
 /**
  * Test the value of the carry bit and set it to 0.
  * @return whether the carry bit is 1 or 0.
- */
+ *
 inline bool VirtualMachine::btr_carry() {
   bool s = sr & 0x0001;
   sr &= 0xFFFE;
   return s;
-}
+}*/
 
 
 /**
  * Test the value of the carry bit and set it to 1.
  * @return whether the carry bit is 1 or 0.
- */
+ *
 inline bool VirtualMachine::bts_carry() {
   bool s = sr & 0x0001;
   sr |= 0x0001;
+  return s;
+}*/
+
+
+/**
+ * Test the value of the carry bit and set it to the value of the input.
+ * @param The value to which to set the carry bit.
+ * @return The value of the carry bit /before/ modification.
+ */
+inline bool VirtualMachine::setCarry(bool b) {
+  bool s = sr & CARRY_MASK;
+  if (b) sr |= CARRY_MASK; else sr &= ~CARRY_MASK;
   return s;
 }
 
@@ -345,7 +407,7 @@ void VirtualMachine::op_store() {
 void VirtualMachine::op_add() {
   int32_t temp = r[ir.fmt0.rd];
   temp += r[ir.fmt0.rs];
-  (temp & 0x00010000) ? bts_carry() : btr_carry();
+  setCarry(temp & 0x00010000);
   r[ir.fmt0.rd] = temp & 0xffff;
 }
 
@@ -356,7 +418,7 @@ void VirtualMachine::op_add() {
 void VirtualMachine::op_addi() {
   int32_t temp = r[ir.fmt1.rd];
   temp += ir.fmt1.constant;
-  (temp & 0x00010000) ? bts_carry() : btr_carry();
+  setCarry(temp & 0x00010000);
   r[ir.fmt1.rd] = temp & 0xffff;
 }
 
@@ -368,7 +430,7 @@ void VirtualMachine::op_addc() {
   int32_t temp = r[ir.fmt0.rd];
   temp += r[ir.fmt0.rs];
   ++temp;
-  (temp & 0x00010000) ? bts_carry() : btr_carry();
+  setCarry(temp & 0x00010000);
   r[ir.fmt0.rd] = temp & 0xffff;
 }
 
@@ -380,7 +442,7 @@ void VirtualMachine::op_addci() {
   int32_t temp = r[ir.fmt1.rd];
   temp += ir.fmt1.constant;
   ++temp;
-  (temp & 0x00010000) ? bts_carry() : btr_carry();
+  setCarry(temp & 0x00010000);
   r[ir.fmt1.rd] = temp & 0xffff;
 }
 
@@ -393,7 +455,7 @@ void VirtualMachine::op_addci() {
 void VirtualMachine::op_sub() {
   int32_t temp = r[ir.fmt0.rd];
   temp -= r[ir.fmt0.rs];
-  (temp & 0x00010000) ? bts_carry() : btr_carry();
+  setCarry(temp & 0x00010000);
   r[ir.fmt0.rd] = temp & 0xffff;
 }
 
@@ -404,7 +466,7 @@ void VirtualMachine::op_sub() {
 void VirtualMachine::op_subi() {
   int32_t temp = r[ir.fmt1.rd];
   temp -= ir.fmt1.constant;
-  (temp & 0x00010000) ? bts_carry() : btr_carry();
+  setCarry(temp & 0x00010000);
   r[ir.fmt0.rd] = temp & 0xffff;
 }
 
@@ -415,8 +477,8 @@ void VirtualMachine::op_subi() {
 void VirtualMachine::op_subc() {
   int32_t temp = r[ir.fmt0.rd];
   temp -= r[ir.fmt0.rs];
-  if (bt_carry()) --temp;
-  (temp & 0x00010000) ? bts_carry() : btr_carry();
+  if (getCarry()) --temp;
+  setCarry(temp & 0x00010000);
   r[ir.fmt0.rd] = temp & 0xffff;
 }
 
@@ -427,9 +489,8 @@ void VirtualMachine::op_subc() {
 void VirtualMachine::op_subci() {
   int32_t temp = r[ir.fmt1.rd];
   temp -= ir.fmt1.constant;
-  --temp;
-  if (bt_carry()) --temp;
-  (temp & 0x00010000) ? bts_carry() : btr_carry();
+  if (getCarry()) --temp;
+  setCarry(temp & 0x00010000);
   r[ir.fmt1.rd] = temp & 0xffff;
 }
 
@@ -480,7 +541,7 @@ void VirtualMachine::op_compl() {
  * Does not retain sign bit,
  */
 void VirtualMachine::op_shl() {
-  (r[ir.fmt0.rd] & 0x80) ? bts_carry() : btr_carry();
+  setCarry(r[ir.fmt0.rd] & 0x80);
   r[ir.fmt0.rd] <<= 1;
 }
 
@@ -491,7 +552,7 @@ void VirtualMachine::op_shl() {
  * Retains sign bit.
  */
 void VirtualMachine::op_shla() {
-  (r[ir.fmt0.rd] & 0x80) ? bts_carry() : btr_carry();
+  setCarry(r[ir.fmt0.rd] & 0x80);
   r[ir.fmt0.rd] = (r[ir.fmt0.rd] & 0x80) | ((r[ir.fmt0.rd] << 1) & 0x7f);
 }
 
@@ -502,7 +563,7 @@ void VirtualMachine::op_shla() {
  * Does not retain sign bit.
  */
 void VirtualMachine::op_shr() {
-  (r[ir.fmt0.rd] & 0x01) ? bts_carry() : btr_carry();
+  setCarry(r[ir.fmt0.rd] & 0x01);
   r[ir.fmt0.rd] = (r[ir.fmt0.rd] >> 1) & 0x7f;
 }
 
@@ -513,7 +574,7 @@ void VirtualMachine::op_shr() {
  * Retains sign bit.
  */
 void VirtualMachine::op_shra() {
-  (r[ir.fmt0.rd] & 0x01) ? bts_carry() : btr_carry();
+  setCarry(r[ir.fmt0.rd] & 0x01);
   r[ir.fmt0.rd] >>= 1;
 }
 
@@ -522,13 +583,9 @@ void VirtualMachine::op_shra() {
  * Compare rs and rd, setting the less, greater, and equal bits
  */
 void VirtualMachine::op_compr() {
-  if (r[ir.fmt0.rd] < r[ir.fmt0.rs]) {
-    bts_less(), btr_equal(), btr_greater();
-  } else if (r[ir.fmt0.rd] == r[ir.fmt0.rs]) {
-    btr_less(), bts_equal(), btr_greater();
-  } else {
-    btr_less(), btr_equal(), bts_greater();
-  }
+  setLess(   r[ir.fmt0.rd] <  r[ir.fmt0.rs]);
+  setEqual(  r[ir.fmt0.rd] == r[ir.fmt0.rs]);
+  setGreater(r[ir.fmt0.rd] >  r[ir.fmt0.rs]);
 }
 
 
@@ -536,13 +593,9 @@ void VirtualMachine::op_compr() {
  * Compare rd and constant, setting the less, greater, and equal bits
  */
 void VirtualMachine::op_compri() {
-  if (r[ir.fmt1.rd] < ir.fmt1.constant) {
-    bts_less(), btr_equal(), btr_greater();
-  } else if (r[ir.fmt1.rd] == ir.fmt1.constant) {
-    btr_less(), bts_equal(), btr_greater();
-  } else {
-    btr_less(), btr_equal(), bts_greater();
-  }
+  setLess(   r[ir.fmt1.rd] <  ir.fmt1.constant);
+  setEqual(  r[ir.fmt1.rd] == ir.fmt1.constant);
+  setGreater(r[ir.fmt1.rd] >  ir.fmt1.constant);
 }
 
 
@@ -574,7 +627,7 @@ void VirtualMachine::op_jump() {
  * Set pc to the given address if less is true
  */
 void VirtualMachine::op_jumpl() {
-  if (bt_less()) pc = ir.fmt1.addr;
+  if (getLess()) pc = ir.fmt1.addr;
 }
 
 
@@ -582,7 +635,7 @@ void VirtualMachine::op_jumpl() {
  * Set pc to the given address if equal is true
  */
 void VirtualMachine::op_jumpe() {
-  if (bt_equal()) pc = ir.fmt1.addr;
+  if (getEqual()) pc = ir.fmt1.addr;
 }
 
 
@@ -590,7 +643,7 @@ void VirtualMachine::op_jumpe() {
  * Set pc to the given address if greater is true
  */
 void VirtualMachine::op_jumpg() {
-  if (bt_greater()) pc = ir.fmt1.addr;
+  if (getGreater()) pc = ir.fmt1.addr;
 }
 
 

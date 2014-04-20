@@ -52,7 +52,7 @@ class VirtualMachine {
   std::string base_file_name;
   std::ifstream dot_in_file;
   std::ofstream dot_out_file;
-
+/*
   bool bt_overflow() const;
   bool btr_overflow();
   bool bts_overflow();
@@ -68,6 +68,23 @@ class VirtualMachine {
   bool bt_carry() const;
   bool btr_carry();
   bool bts_carry();
+*/
+
+  bool getOverflow() const;
+  bool setOverflow(bool);
+
+  bool getLess() const;
+  bool setLess(bool);
+
+  bool getEqual() const;
+  bool setEqual(bool);
+
+  bool getGreater() const;
+  bool setGreater(bool);
+
+  bool getCarry() const;
+  bool setCarry(bool);
+  
   void op(const Opcode_t&);
 
   void op_load();
