@@ -15,3 +15,4 @@
 #include "./InvalidRegisterID.h"
 #include "./StackUnderflow.h"
 #include "./UnknownError.h"
+#include "./UnrecognizedFlag.h"

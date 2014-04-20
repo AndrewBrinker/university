@@ -6,6 +6,8 @@
 #include <asm/Assembler.h>
 #include <vm/VirtualMachine.h>
 #include <dbg/Debug.h>
+#include <err/Errors.h>
+#include <util/Utilities.h>
 #include <cstdio>
 #include <map>
 #include <string>
@@ -39,6 +41,12 @@ CLI::CLI(const int argc, char **argv) {
     } else if (current == "--memory" || current == "-m") {
       args["memory"] = true;
       memory_size = atoi(argv[++i]);
+    } else if (current[0] == '-') {
+      try {
+        throw UnrecognizedFlag("Command Line Interface");
+      } catch(GenericError &e) {
+        e.reportError();
+      }
     } else {
       files.push_back(current);
     }
