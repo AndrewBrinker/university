@@ -345,7 +345,7 @@ void VirtualMachine::op_store() {
 void VirtualMachine::op_add() {
   int32_t temp = r[ir.fmt0.rd];
   temp += r[ir.fmt0.rs];
-  if (temp & 0x00010000) bts_carry();
+  (temp & 0x00010000) ? bts_carry() : btr_carry();
   r[ir.fmt0.rd] = temp & 0xffff;
 }
 
@@ -356,7 +356,7 @@ void VirtualMachine::op_add() {
 void VirtualMachine::op_addi() {
   int32_t temp = r[ir.fmt1.rd];
   temp += ir.fmt1.constant;
-  if (temp & 0x00010000) bts_carry();
+  (temp & 0x00010000) ? bts_carry() : btr_carry();
   r[ir.fmt1.rd] = temp & 0xffff;
 }
 
@@ -368,7 +368,7 @@ void VirtualMachine::op_addc() {
   int32_t temp = r[ir.fmt0.rd];
   temp += r[ir.fmt0.rs];
   ++temp;
-  if (temp & 0x00010000) bts_carry();
+  (temp & 0x00010000) ? bts_carry() : btr_carry();
   r[ir.fmt0.rd] = temp & 0xffff;
 }
 
@@ -380,7 +380,7 @@ void VirtualMachine::op_addci() {
   int32_t temp = r[ir.fmt1.rd];
   temp += ir.fmt1.constant;
   ++temp;
-  if (temp & 0x00010000) bts_carry();
+  (temp & 0x00010000) ? bts_carry() : btr_carry();
   r[ir.fmt1.rd] = temp & 0xffff;
 }
 
@@ -393,7 +393,7 @@ void VirtualMachine::op_addci() {
 void VirtualMachine::op_sub() {
   int32_t temp = r[ir.fmt0.rd];
   temp -= r[ir.fmt0.rs];
-  if (temp & 0x00010000) bts_carry();
+  (temp & 0x00010000) ? bts_carry() : btr_carry();
   r[ir.fmt0.rd] = temp & 0xffff;
 }
 
@@ -404,7 +404,7 @@ void VirtualMachine::op_sub() {
 void VirtualMachine::op_subi() {
   int32_t temp = r[ir.fmt1.rd];
   temp -= ir.fmt1.constant;
-  if (temp & 0x00010000) bts_carry();
+  (temp & 0x00010000) ? bts_carry() : btr_carry();
   r[ir.fmt0.rd] = temp & 0xffff;
 }
 
@@ -415,8 +415,8 @@ void VirtualMachine::op_subi() {
 void VirtualMachine::op_subc() {
   int32_t temp = r[ir.fmt0.rd];
   temp -= r[ir.fmt0.rs];
-  if (bts_carry()) --temp;
-  if (temp & 0x00010000) bts_carry();
+  if (bt_carry()) --temp;
+  (temp & 0x00010000) ? bts_carry() : btr_carry();
   r[ir.fmt0.rd] = temp & 0xffff;
 }
 
@@ -428,8 +428,8 @@ void VirtualMachine::op_subci() {
   int32_t temp = r[ir.fmt1.rd];
   temp -= ir.fmt1.constant;
   --temp;
-  if (bts_carry()) --temp;
-  if (temp & 0x00010000) bts_carry();
+  if (bt_carry()) --temp;
+  (temp & 0x00010000) ? bts_carry() : btr_carry();
   r[ir.fmt1.rd] = temp & 0xffff;
 }
 
@@ -480,7 +480,7 @@ void VirtualMachine::op_compl() {
  * Does not retain sign bit,
  */
 void VirtualMachine::op_shl() {
-  if (r[ir.fmt0.rd] & 0x80) bts_carry();
+  (r[ir.fmt0.rd] & 0x80) ? bts_carry() : btr_carry();
   r[ir.fmt0.rd] <<= 1;
 }
 
@@ -491,7 +491,7 @@ void VirtualMachine::op_shl() {
  * Retains sign bit.
  */
 void VirtualMachine::op_shla() {
-  if (r[ir.fmt0.rd] & 0x80) bts_carry();
+  (r[ir.fmt0.rd] & 0x80) ? bts_carry() : btr_carry();
   r[ir.fmt0.rd] = (r[ir.fmt0.rd] & 0x80) | ((r[ir.fmt0.rd] << 1) & 0x7f);
 }
 
@@ -502,7 +502,7 @@ void VirtualMachine::op_shla() {
  * Does not retain sign bit.
  */
 void VirtualMachine::op_shr() {
-  if (r[ir.fmt0.rd] & 0x01) bts_carry();
+  (r[ir.fmt0.rd] & 0x01) ? bts_carry() : btr_carry();
   r[ir.fmt0.rd] = (r[ir.fmt0.rd] >> 1) & 0x7f;
 }
 
@@ -513,7 +513,7 @@ void VirtualMachine::op_shr() {
  * Retains sign bit.
  */
 void VirtualMachine::op_shra() {
-  if (r[ir.fmt0.rd] & 0x01) bts_carry();
+  (r[ir.fmt0.rd] & 0x01) ? bts_carry() : btr_carry();
   r[ir.fmt0.rd] >>= 1;
 }
 
