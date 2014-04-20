@@ -11,7 +11,6 @@
 #include "./GenericError.h"
 #include "./InvalidAddress.h"
 #include "./InvalidFileName.h"
-#include "./InvalidIntegerConversionMode.h"
 #include "./InvalidOperation.h"
 #include "./InvalidRegisterID.h"
 #include "./StackUnderflow.h"
