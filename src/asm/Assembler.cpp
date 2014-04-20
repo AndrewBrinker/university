@@ -40,6 +40,8 @@
 #define CONST_BIT_COUNT 8
 #define OBJ_LINE_SIZE   16
 
+#define REGISTER_COUNT  4
+
 static const Assembler::op_t operations[] = {
   {"load"   , "00000", NOT_IMMEDIATE, ADDR_FMT       },
   {"loadi"  , "00000", IMMEDIATE    , CONST_FMT      },
@@ -150,6 +152,15 @@ std::string Assembler::parse(std::string file_name) {
 
   // Return the name of the file you output to
   return object_file_name;
+}
+
+
+/**
+ * Set the size of memory for the system
+ * @param memory_size -> The size of memory in number of words.
+ */
+void Assembler::setMemory(int memory_size) {
+  _memory_size = memory_size;
 }
 
 
@@ -271,15 +282,14 @@ Assembler::op_t Assembler::findOperation(std::string name) {
  * @return the binary register ID
  */
 std::string Assembler::getRegisterID(std::string id) {
-  if (id == "0") return "00";
-  if (id == "1") return "01";
-  if (id == "2") return "10";
-  if (id == "3") return "11";
-  try {
-    throw InvalidRegisterID("Assembler");
-  } catch(GenericError &e) {
-    e.reportError();
+  int int_id = atoi(id.c_str());
+  if (int_id > REGISTER_COUNT || int_id < 0) {
+    try {
+      throw InvalidRegisterID("Assembler");
+    } catch(GenericError &e) {
+      e.reportError();
+    }
   }
-  return "";
+  return toUnsignedBinaryString(int_id, 2);
 }
 

@@ -22,6 +22,9 @@ class CLI {
   std::map<std::string, bool> args;
   std::vector<std::string> files;
 
+  int memory_size;
+  int register_count;
+
   void printHelp();
   void printVersion();
   void startInteractiveSession();

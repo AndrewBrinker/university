@@ -25,7 +25,11 @@ class Assembler {
   Assembler();
   std::string parse(std::string);
 
+  void setMemory(int);
+
  private:
+  int _memory_size;
+
   std::vector<std::string> readASMSource(std::ifstream &);
   std::string convertToObjectCode(std::string);
   op_t findOperation(std::string);

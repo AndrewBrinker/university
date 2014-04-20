@@ -11,7 +11,7 @@
 #include <string>
 #include <iostream>
 
-#define CURRENT_VERSION "0.1"
+#define CURRENT_VERSION "1.0"
 
 /**
  * Load the contents of argv into args and files, respectively.
@@ -21,9 +21,10 @@
 CLI::CLI(const int argc, char **argv) {
   // Valid args:
   //   --help        | -h
-  //   --version     | -V
+  //   --version     | -v
   //   --interactive | -i
   //   --debug       | -d
+  //   --memory      | -m
   // Everything else is treated as a file name.
   for (int i = 1; i < argc; ++i) {
     const std::string current = std::string(argv[i]);
@@ -35,6 +36,9 @@ CLI::CLI(const int argc, char **argv) {
       args["interactive"] = true;
     } else if (current == "--debug" || current == "-d") {
       args["debug"] = true;
+    } else if (current == "--memory" || current == "-m") {
+      args["memory"] = true;
+      memory_size = atoi(argv[++i]);
     } else {
       files.push_back(current);
     }
@@ -61,8 +65,15 @@ void CLI::parse() {
   if (args.count("debug")) {
     Debug::Instance().on = true;
   }
+
   Assembler a;
   VirtualMachine vm;
+
+  if (args.count("memory")) {
+    a.setMemory(memory_size);
+    vm.setMemory(memory_size);
+  }
+
   for (std::string file : files) {
     std::string object_file = a.parse(file);
     if (object_file != "") {
@@ -89,6 +100,7 @@ void CLI::printHelp() {
   printf("\t-v | --version       Print the current version number.\n");
   printf("\t-i | --interactive   Open an interactive session.\n");
   printf("\t-d | --debug         Execute files in debug mode.\n");
+  printf("\t-m | --memory        The size of memory in words (default 256)\n");
   printf("\n");
 }
 

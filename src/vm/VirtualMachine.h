@@ -21,6 +21,8 @@ class VirtualMachine {
   VirtualMachine(uint16_t, uint16_t);
   void run(std::string);
 
+  void setMemory(int);
+
  private:
   union Opcode_t {
     uint16_t i;

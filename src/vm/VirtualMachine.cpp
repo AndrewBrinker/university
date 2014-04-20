@@ -164,6 +164,16 @@ void VirtualMachine::run(std::string file_name) {
 
 
 /**
+ * Set the size of memory for the system
+ * @param memory_size -> The size of memory in number of words.
+ */
+void VirtualMachine::setMemory(int memory_size) {
+  mem.resize(memory_size);
+}
+
+
+
+/**
  * Test the value of the overflow bit.
  * @return the value of the overflow bit.
  */
