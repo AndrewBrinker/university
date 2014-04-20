@@ -490,8 +490,8 @@ void VirtualMachine::op_shra() {
  * Compare rs and rd, setting the less, greater, and equal bits
  */
 void VirtualMachine::op_compr() {
-  setLess(   r[ir.fmt0.rd] <  r[ir.fmt0.rs]);
-  setEqual(  r[ir.fmt0.rd] == r[ir.fmt0.rs]);
+  setLess(r[ir.fmt0.rd] < r[ir.fmt0.rs]);
+  setEqual(r[ir.fmt0.rd] == r[ir.fmt0.rs]);
   setGreater(r[ir.fmt0.rd] >  r[ir.fmt0.rs]);
 }
 
@@ -500,8 +500,8 @@ void VirtualMachine::op_compr() {
  * Compare rd and constant, setting the less, greater, and equal bits
  */
 void VirtualMachine::op_compri() {
-  setLess(   r[ir.fmt1.rd] <  ir.fmt1.constant);
-  setEqual(  r[ir.fmt1.rd] == ir.fmt1.constant);
+  setLess(r[ir.fmt1.rd] < ir.fmt1.constant);
+  setEqual(r[ir.fmt1.rd] == ir.fmt1.constant);
   setGreater(r[ir.fmt1.rd] >  ir.fmt1.constant);
 }
 
