@@ -108,15 +108,20 @@ void CLI::printHelp() {
   printf("\n");
   printf("\tThe following options are available:\n");
   printf("\n");
-  printf("\t-h    Print this help text.\n");
+  printf("\t-h, --help\n");
+  printf("\t\tPrint this help text.\n");
   printf("\n");
-  printf("\t-v    Print the current version number.\n");
+  printf("\t-v, --version\n");
+  printf("\t\tPrint the current version number.\n");
   printf("\n");
-  printf("\t-i    Open an interactive session.\n");
+  printf("\t-i, --interactive\n");
+  printf("\t\tOpen an interactive session.\n");
   printf("\n");
-  printf("\t-d    Execute files in debug mode.\n");
+  printf("\t-d, --debug\n");
+  printf("\t\tExecute files in debug mode.\n");
   printf("\n");
-  printf("\t-m    The size of memory in words (default 256)\n");
+  printf("\t-m <size>, --memory <size>\n");
+  printf("\t\tThe size of memory in words (default 256)\n");
   printf("\n");
 }
 
