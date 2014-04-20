@@ -103,8 +103,8 @@ void CLI::printHelp() {
   printf("\t./os [-hvidm] <file> [file ...]\n");
   printf("\n");
   printf("DESCRIPTION\n");
-  printf("\tskagOS is a virtual operating system made for CSE 460 at CSUSB in the Spring of\n");
-  printf("\t2014 by Andrew Brinker and Anthony Sterrett.\n");
+  printf("\tskagOS is a virtual operating system made for CSE 460 at CSUSB\n");
+  printf("\tin the Spring of 2014 by Andrew Brinker and Anthony Sterrett.\n");
   printf("\n");
   printf("\tThe following options are available:\n");
   printf("\n");
