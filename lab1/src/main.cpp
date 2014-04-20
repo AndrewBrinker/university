@@ -10,6 +10,7 @@
 #define TARGET_VALUE  (START_VALUE * 2)
 #define INTEREST_RATE 6
 
+
 int main() {
     /**
      * First Account Tests
@@ -41,8 +42,8 @@ int main() {
      */
 
     Account savings_with_interest(START_VALUE, INTEREST_RATE);
-    int years = 0;
 
+    int years = 0;
     while (savings_with_interest.query() < TARGET_VALUE) {
         savings_with_interest.addInterest();
         ++years;
