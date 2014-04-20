@@ -24,7 +24,6 @@ class Assembler {
 
   Assembler();
   std::string parse(std::string);
-
   void setMemory(int);
 
  private:
