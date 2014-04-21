@@ -2,7 +2,7 @@
 # The name of the executable to be created
 BIN_NAME := os
 # Compiler used
-CXX ?= g++
+CXX = /usr/bin/g++-4.4
 # Extension of source files used in the project
 SRC_EXT = cpp
 # Extension of header files used in the project
@@ -10,7 +10,7 @@ HEADER_EXT = h
 # Path to the source directory, relative to the makefile
 SRC_PATH = src
 # General compiler flags
-COMPILE_FLAGS = -std=c++11 -Wall -Wextra -g
+COMPILE_FLAGS = -std=c++0x -Wall -Wextra -g
 # Additional release-specific flags
 RCOMPILE_FLAGS = -D NDEBUG
 # Additional debug-specific flags
@@ -29,6 +29,8 @@ DESTDIR = /
 INSTALL_PREFIX = usr/local
 # Linting filters
 FILTERS = -readability/streams,-build/header_guard,-readability/braces,-runtime/references,-readability/function
+# LaTeX compiler used
+LATEX = pdflatex
 #### END PROJECT SETTINGS ####
 
 # Generally should not need to edit below this line
@@ -163,11 +165,21 @@ clean:
 	@$(RM) test/*.o
 	@$(RM) test/*.out
 	@$(RM) test/*.log
+	@$(RM) *.tex
+	@$(RM) *.pdf
 
 # target: help        List available targets
 .PHONY: help
 help:
 	@egrep "^# target:" [Mm]akefile
+
+# target: listing     Create LaTeX code listing
+.PHONY: listing
+listing:
+	@python listing.py $(BIN_NAME)
+	@$(LATEX) $(BIN_NAME).tex
+	@$(RM) $(BIN_NAME).aux
+	@$(RM) $(BIN_NAME).log
 
 # Main rule, checks the executable and symlinks to the output
 all: $(BIN_PATH)/$(BIN_NAME)

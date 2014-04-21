@@ -84,6 +84,8 @@ void CLI::parse() {
 
   for (std::string file : files) {
     std::string object_file = a.parse(file);
+  for (std::vector<std::string>::iterator it = files.begin(); it != files.end(); ++it) {
+    std::string object_file = a.parse(*it);
     if (object_file != "") {
       vm.run(object_file);
     }

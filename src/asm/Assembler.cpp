@@ -41,6 +41,7 @@
 #define OBJ_LINE_SIZE   16
 
 #define REGISTER_COUNT  4
+#define N_OPERATIONS    34
 
 static const Assembler::op_t operations[] = {
   {"load"   , "00000", NOT_IMMEDIATE, ADDR_FMT       },
@@ -141,9 +142,10 @@ std::string Assembler::parse(std::string file_name) {
   std::vector<std::string> asm_source = readASMSource(input_file);
 
   // Convert it to object file source
-  for (auto line : asm_source) {
-    if (Debug::Instance().on) Debug::Instance().source.push_back(line);
-    output_file << binaryStringToDecimal(convertToObjectCode(line)) << "\n";
+  for (std::vector<std::string>::iterator it = asm_source.begin();
+       it != asm_source.end(); ++it ) {
+    if (Debug::Instance().on) Debug::Instance().source.push_back(*it);
+    output_file << binaryStringToDecimal(convertToObjectCode(*it)) << "\n";
   }
 
   // Close the file streams and return
@@ -262,11 +264,10 @@ std::string Assembler::convertToObjectCode(std::string line) {
  * @return the associated operation.
  */
 Assembler::op_t Assembler::findOperation(std::string name) {
-  for (auto operation : operations) {
-    if (operation.name == name) {
-      return operation;
-    }
-  }
+  for (int i = 0; i < N_OPERATIONS; ++i )
+    if (operations[i].name == name)
+      return operations[i];
+
   try {
     throw InvalidOperation("Assembler");
   } catch(GenericError &e) {

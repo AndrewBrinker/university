@@ -204,7 +204,7 @@ inline std::string bin(uintmax_t n, uintmax_t size = 0) {
   while (binstr.size() < size) {
     binstr.push_back('0');
   }
-  std::reverse(std::begin(binstr), std::end(binstr));
+  std::reverse(binstr.begin(), binstr.end());
   return binstr;
 }
 
@@ -237,7 +237,7 @@ inline std::string hex(uintmax_t n, uintmax_t size = 0) {
   while (binstr.size() < size) {
     binstr.push_back('0');
   }
-  std::reverse(std::begin(binstr), std::end(binstr));
+  std::reverse(binstr.begin(), binstr.end());
   return binstr;
 }
 
