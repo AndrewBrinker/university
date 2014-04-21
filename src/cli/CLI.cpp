@@ -12,6 +12,7 @@
 #include <map>
 #include <string>
 #include <iostream>
+#include <vector>
 
 #define CURRENT_VERSION "1.0"
 
@@ -82,9 +83,8 @@ void CLI::parse() {
     vm.setMemory(memory_size);
   }
 
-  for (std::string file : files) {
-    std::string object_file = a.parse(file);
-  for (std::vector<std::string>::iterator it = files.begin(); it != files.end(); ++it) {
+  for (std::vector<std::string>::iterator it = files.begin();
+       it != files.end(); ++it) {
     std::string object_file = a.parse(*it);
     if (object_file != "") {
       vm.run(object_file);

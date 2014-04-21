@@ -2,7 +2,7 @@
 # The name of the executable to be created
 BIN_NAME := os
 # Compiler used
-CXX = /usr/bin/g++-4.4
+CXX = g++
 # Extension of source files used in the project
 SRC_EXT = cpp
 # Extension of header files used in the project
