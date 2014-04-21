@@ -63,8 +63,10 @@ void CLI::parse() {
   }
   Assembler a;
   VirtualMachine vm;
-  for (std::string file : files) {
-    std::string object_file = a.parse(file);
+//  for (std::string file : files) {
+  for (std::vector<std::string>::iterator it = files.begin(); it != files.end(); ++it) {
+//    std::string object_file = a.parse(file);
+    std::string object_file = a.parse(*it);
     if (object_file != "") {
       vm.run(object_file);
     }

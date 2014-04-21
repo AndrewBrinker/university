@@ -29,22 +29,14 @@
 #define CARRY_MASK    0x0001
 
 /**
- * Construct the VM with the default values
- */
-VirtualMachine::VirtualMachine()
-  : VirtualMachine(REG_FILE_SIZE, MEM_SIZE) {}
-
-
-/**
  * Construct the VM with custom register size and memory size, and setup the op
  * code for later use.
  */
-VirtualMachine::VirtualMachine(uint16_t reg_file_size,
-                               uint16_t mem_size)
-                             : r(reg_file_size),
-                               mem(mem_size),
+VirtualMachine::VirtualMachine()
+                             : r(REG_FILE_SIZE),
+                               mem(MEM_SIZE),
                                pc(0),
-                               sp(mem_size - 1),
+                               sp(MEM_SIZE - 1),
                                base(0),
                                clock(0),
                                halt(0) {

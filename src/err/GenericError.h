@@ -14,6 +14,9 @@ class GenericError : public std::exception {
   explicit GenericError(std::string source)
     : _source(source) {}
 
+  ~GenericError() throw()
+  {}
+
   std::string source() const throw() {
     return _source;
   }
