@@ -11,8 +11,8 @@
 
 #ifndef DISALLOW_COPY_AND_ASSIGN
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \
-  TypeName(const TypeName&);               \
-  void operator=(const TypeName&)
+  TypeName(const TypeName&) = delete;               \
+  void operator=(const TypeName&) = delete;
 #endif
 
 class Assembler {
@@ -36,7 +36,7 @@ class Assembler {
   op_t findOperation(std::string);
   std::string getRegisterID(std::string);
 
-  DISALLOW_COPY_AND_ASSIGN(Assembler);
+  DISALLOW_COPY_AND_ASSIGN(Assembler)
 };
 
 #endif  // ASSEMBLER_H

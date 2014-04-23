@@ -2,10 +2,10 @@
  * Copyright 2014 Andrew Brinker, Anthony Sterrett
  */
 
-#include <cli/CLI.h>
+#include <os/OS.h>
 
-int main(int argc, char **argv) {
-  CLI c(argc, argv);
-  c.parse();
+int main() {
+  OS os;
+  os.run();
   return 0;
 }

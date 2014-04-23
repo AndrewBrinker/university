@@ -13,8 +13,8 @@
 
 #ifndef DISALLOW_COPY_AND_ASSIGN
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \
-  TypeName(const TypeName&);               \
-  void operator=(const TypeName&);
+  TypeName(const TypeName&) = delete;               \
+  void operator=(const TypeName&) = delete;
 #endif
 
 class VirtualMachine {
@@ -110,7 +110,7 @@ class VirtualMachine {
 
   void setupOpMap();
 
-  DISALLOW_COPY_AND_ASSIGN(VirtualMachine);
+  DISALLOW_COPY_AND_ASSIGN(VirtualMachine)
 };
 
 #endif  // VIRTUAL_MACHINE_H

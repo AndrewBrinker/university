@@ -6,7 +6,6 @@
 #include <err/Errors.h>
 #include <util/Utilities.h>
 #include <asm/Assembler.h>
-#include <dbg/Debug.h>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
@@ -115,19 +114,21 @@ void VirtualMachine::run(std::string file_name) {
   input_file.close();
 
   std::ofstream log_file;
-  if (Debug::Instance().on) log_file.open(stripExtension(file_name) + ".log");
+#ifdef DEBUG
+  log_file.open(stripExtension(file_name) + ".log");
+#endif  // DEBUG
 
   try {
     // main loop
     while (!halt) {
-      if (Debug::Instance().on) {
-        log_file << Debug::Instance().source[pc] << std::endl;
-      }
+#ifdef DEBUG
+      // Find a way to print the actual instruction
+#endif  // DEBUG
       ir.i = mem[pc];
       ++pc;
       (*this.*ops[ir.i >> 8])();
       clock += clocks[ir.i >> 8];
-      if (Debug::Instance().on) {
+#ifdef DEBUG
         log_file << "r0: " << r[0] << ' ';
         log_file << "r1: " << r[1] << ' ';
         log_file << "r2: " << r[2] << ' ';
@@ -138,7 +139,7 @@ void VirtualMachine::run(std::string file_name) {
           if (i % 16 == 15) log_file << std::endl;
         }
         log_file << std::endl << std::endl;
-      }
+#endif  // DEBUG
     }
   } catch(std::bad_function_call&) {
     try {
@@ -151,7 +152,9 @@ void VirtualMachine::run(std::string file_name) {
   dot_out_file << clock << std::endl;
   dot_in_file.close();
   dot_out_file.close();
-  if (Debug::Instance().on) log_file.close();
+#ifdef DEBUG
+  log_file.close();
+#endif  // DEBUG
 }
 
 
