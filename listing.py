@@ -42,6 +42,8 @@ latex_file = """
 \\end{{titlepage}}
 \\pagenumbering{{arabic}}
 
+\\lstinputlisting[title=Makefile]{{Makefile}}
+\\clearpage
 {LISTINGS}
 
 \\end{{document}}
