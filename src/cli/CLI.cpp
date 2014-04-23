@@ -5,6 +5,7 @@
 #include "./CLI.h"
 #include <asm/Assembler.h>
 #include <vm/VirtualMachine.h>
+#include "../os/OS.h"
 #include <dbg/Debug.h>
 #include <err/Errors.h>
 #include <util/Utilities.h>
@@ -74,7 +75,7 @@ void CLI::parse() {
   if (args.count("debug")) {
     Debug::Instance().on = true;
   }
-
+/*
   Assembler a;
   VirtualMachine vm;
 
@@ -90,6 +91,10 @@ void CLI::parse() {
       vm.run(object_file);
     }
   }
+*/
+
+  OS os;
+  os.run();
 }
 
 

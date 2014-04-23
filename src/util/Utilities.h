@@ -241,4 +241,17 @@ inline std::string hex(uintmax_t n, uintmax_t size = 0) {
   return binstr;
 }
 
+/**
+ * Check to see if the given string has the second string as a suffix.
+ * @param str -> The string
+ * @param suf -> The suffix
+ * @return whether suf is a suffix of str
+ */
+inline bool has_suffix(std::string str, std::string suf) {
+  std::string::iterator it = str.begin();
+  while (str.end() - it > suf.size())
+    ++it;
+  return std::equal(it, str.end(), suf.begin());
+}
+
 #endif  // UTILITIES_H

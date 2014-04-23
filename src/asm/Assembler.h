@@ -9,9 +9,11 @@
 #ifndef ASSEMBLER_H
 #define ASSEMBLER_H
 
+#ifndef DISALLOW_COPY_AND_ASSIGN
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \
   TypeName(const TypeName&);               \
-  void operator=(const TypeName&);
+  void operator=(const TypeName&)
+#endif
 
 class Assembler {
  public:
