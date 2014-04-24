@@ -1,12 +1,17 @@
+/**
+ * Copyright 2014 Andrew Brinker, Anthony Sterrett
+ */
+
 #include "./OS.h"
-#include "../dir/Dir.h"
-#include "../util/Utilities.h"
 
 #include <string>
 #include <vector>
 #include <cstdio>
 #include <memory>   // std::unique_ptr
 #include <utility>  // std::move
+
+#include "../dir/Dir.h"
+#include "../util/Utilities.h"
 
 #define N_REGISTERS 4
 
@@ -21,7 +26,8 @@ void OS::run() {
       puts(source_file.c_str());
 #endif  // DEBUG
 
-    // Assemble each file, load it into memory, create its PCB, and put into the ready queue
+    // Assemble each file, load it into memory, create its PCB, and put into
+    // the ready queue
     std::string object_file;
     std::unique_ptr<PCB> curr_pcb;
 
@@ -35,7 +41,6 @@ void OS::run() {
 #endif  // DEBUG
       ready.push(std::move(curr_pcb));
     }
-
 }
 
 // Find all *.s files and load their names (and paths) into memory

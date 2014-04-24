@@ -1,8 +1,9 @@
+/**
+ * Copyright 2014 Andrew Brinker, Anthony Sterrett
+ */
+
 #ifndef OS_H
 #define OS_H
-
-#include "../asm/Assembler.h"
-#include "../vm/VirtualMachine.h"
 
 #include <list>
 #include <queue>
@@ -10,18 +11,20 @@
 #include <fstream>
 #include <vector>
 #include <string>
-#include <queue>
 #include <memory>
+
+#include "../asm/Assembler.h"
+#include "../vm/VirtualMachine.h"
 
 #define N_REGISTERS 4
 
 class OS {
-public:
+ public:
   OS();
 
   void run();
 
-private:
+ private:
   struct PCB {
     uint16_t pc = 0, sr = 0, sp = 0, base = 0, limit = 0;
     std::vector<int16_t> r;
