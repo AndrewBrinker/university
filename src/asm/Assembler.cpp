@@ -137,8 +137,12 @@ std::string Assembler::parse(std::string file_name) {
     e.reportError();
   }
 
+#ifndef DEBUG
+  std::vector<std::string> asm_source;
+#endif  // NDEBUG
+
   // Get the assembly file source
-  std::vector<std::string> asm_source = readASMSource(input_file);
+  asm_source = readASMSource(input_file);
 
   // Convert it to object file source
   for (std::vector<std::string>::iterator it = asm_source.begin();
@@ -151,15 +155,6 @@ std::string Assembler::parse(std::string file_name) {
 
   // Return the name of the file you output to
   return object_file_name;
-}
-
-
-/**
- * Set the size of memory for the system
- * @param memory_size -> The size of memory in number of words.
- */
-void Assembler::setMemory(int memory_size) {
-  _memory_size = memory_size;
 }
 
 

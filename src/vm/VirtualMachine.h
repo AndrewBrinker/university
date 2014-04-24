@@ -17,6 +17,8 @@
   void operator=(const TypeName&) = delete;
 #endif
 
+class OS;
+
 class VirtualMachine {
  public:
   VirtualMachine();
@@ -109,6 +111,8 @@ class VirtualMachine {
   void op_noop();
 
   void setupOpMap();
+
+  friend class OS;
 
   DISALLOW_COPY_AND_ASSIGN(VirtualMachine)
 };
