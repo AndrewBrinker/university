@@ -1,9 +1,10 @@
 .release_time
 build/
 lint/
-os
+sos
 bin/release/
 bin/debug/
 *.o
 *.log
 *.out
+*.swp
