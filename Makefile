@@ -28,7 +28,7 @@ DESTDIR = /
 # Install path (bin/ is appended automatically)
 INSTALL_PREFIX = usr/local
 # Linting filters
-FILTERS = -readability/streams,-build/header_guard,-readability/braces,-runtime/references,-readability/function
+FILTERS = -readability/streams,-build/header_guard,-readability/braces,-runtime/references,-readability/function,-runtime/threadsafe_fn
 # LaTeX compiler used
 LATEX = pdflatex
 #### END PROJECT SETTINGS ####
