@@ -25,13 +25,22 @@ class OS {
 
  private:
   struct PCB {
-    uint16_t pc = 0, sr = 0, sp = 0, base = 0, limit = 0;
+    uint16_t pc = 0;
+    uint16_t sr = 0;
+    uint16_t sp = 0;
+    uint16_t base = 0;
+    uint16_t limit = 0;
     std::vector<int16_t> r;
     std::string pname;
-    std::ifstream o_file, in_file;
-    std::ofstream out_file, st_file;
-    uintmax_t vm_time = 0, waiting_time = 0, turnaround_time = 0, io_time = 0,
-              largest_stack_size = 0;
+    std::ifstream o_file;
+    std::ifstream in_file;
+    std::ofstream out_file;
+    std::ofstream st_file;
+    uintmax_t vm_time = 0;
+    uintmax_t waiting_time = 0;
+    uintmax_t turnaround_time = 0;
+    uintmax_t io_time = 0;
+    uintmax_t largest_stack_size = 0;
 #ifdef DEBUG
     std::vector<std::string> asm_source;
 #endif  // DEBUG
