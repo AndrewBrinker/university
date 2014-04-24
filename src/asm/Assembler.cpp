@@ -265,7 +265,7 @@ Assembler::op_t Assembler::findOperation(std::string name) {
   } catch(GenericError &e) {
     e.reportError();
   }
-  return {"", "", "", INVALID_FMT};
+  return {"", "", "", INVALID_FMT};  // NOLINT
 }
 
 

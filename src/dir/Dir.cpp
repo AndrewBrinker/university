@@ -32,7 +32,7 @@ DirEntry dir(std::string root, bool hidden) {
   // Try to open the current root directory
   if ((current_directory = opendir(root.c_str()))) {
     // Iterate over contents
-    while ((current_directory_entry = readdir(current_directory))) {
+    while ((current_directory_entry = readdir(current_directory))) {  // NOLINT
       // If we're skipping hidden files, then skip them.
       if (!hidden && current_directory_entry->d_name[0] == '.') {
         continue;

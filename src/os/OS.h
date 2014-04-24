@@ -5,14 +5,13 @@
 #ifndef OS_H
 #define OS_H
 
+#include <cstdint>
 #include <list>
 #include <queue>
-#include <cstdint>
 #include <fstream>
 #include <vector>
 #include <string>
 #include <memory>
-
 #include "../asm/Assembler.h"
 #include "../vm/VirtualMachine.h"
 

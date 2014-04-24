@@ -24,7 +24,7 @@ class VirtualMachine {
   VirtualMachine();
   void run(std::string);
 
-  void setMemory(int);
+  void setMemory(int);  // NOLINT
 
  private:
   union Opcode_t {
