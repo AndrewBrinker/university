@@ -1,5 +1,8 @@
-#include "./Dir.h"
+/**
+ * Copyright 2014 Andrew Brinker, Anthony Sterrett
+ */
 
+#include "./Dir.h"
 #include <dirent.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -7,6 +10,8 @@
 #include <algorithm>
 #include <stack>
 #include <cstring>
+#include <vector>
+#include <string>
 
 std::string join(std::string path, std::string base) {
   if (path.back() == '/')
@@ -25,21 +30,19 @@ DirEntry dir(std::string root, bool hidden) {
 
   // Try to open the current root directory
   if ((currDir = opendir(root.c_str()))) {
-
     // Iterate over contents
     while ((currDirEnt = readdir(currDir))) {
-
       // If we're skipping hidden files, then skip them.
-      if (!hidden and currDirEnt->d_name[0] == '.')
+      if (!hidden && currDirEnt->d_name[0] == '.')
         continue;
 
       // Skip special subdirectories
-      if (strcmp(currDirEnt->d_name, "." ) == 0 or
+      if (strcmp(currDirEnt->d_name, "." ) == 0 ||
           strcmp(currDirEnt->d_name, "..") == 0)
         continue;
 
       // Get path of file in question
-      currFilePath = join( root, currDirEnt->d_name);
+      currFilePath = join(root, currDirEnt->d_name);
 
       stat(currFilePath.c_str(), &statbuf);
 
@@ -76,11 +79,12 @@ std::vector<DirEntry> walk(std::string root, bool hidden) {
 
     // Push subdirectories onto stack
     // We push in reverse order to preserve sortedness
-    for (std::vector<std::string>::reverse_iterator rit = currDirEntry.subdirectories.rbegin();
+    for (std::vector<std::string>::reverse_iterator
+         rit = currDirEntry.subdirectories.rbegin();
          rit != currDirEntry.subdirectories.rend();
          ++rit)
       subdirStack.push(*rit);
-    
+
     dirListing.push_back(currDirEntry);
   }
 

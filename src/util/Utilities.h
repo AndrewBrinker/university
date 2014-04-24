@@ -91,7 +91,7 @@ std::string stripComments(std::string line);
  * @param  line -> The string to be stripped
  * @return the stripped string
  */
-std::string stripEndingWhitespace(std::string line); 
+std::string stripEndingWhitespace(std::string line);
 
 
 /**
@@ -99,7 +99,7 @@ std::string stripEndingWhitespace(std::string line);
  * @param line -> The line to be split.
  * @return the split line.
  */
-std::vector<std::string> split(std::string line); 
+std::vector<std::string> split(std::string line);
 
 
 /**
@@ -108,7 +108,7 @@ std::vector<std::string> split(std::string line);
  * @param  size -> The size of the output string
  * @return the binary string representation of the integer
  */
-std::string bin(uintmax_t n, uintmax_t size = 0); 
+std::string bin(uintmax_t n, uintmax_t size = 0);
 
 
 /**
@@ -117,7 +117,7 @@ std::string bin(uintmax_t n, uintmax_t size = 0);
  * @param  size -> The size of the output string
  * @return the hexadecimal string representation of the integer
  */
-std::string hex(uintmax_t n, uintmax_t size = 0); 
+std::string hex(uintmax_t n, uintmax_t size = 0);
 
 /**
  * Check to see if the given string has the second string as a suffix.
@@ -125,6 +125,6 @@ std::string hex(uintmax_t n, uintmax_t size = 0);
  * @param suf -> The suffix
  * @return whether suf is a suffix of str
  */
-bool has_suffix(std::string str, std::string suf); 
+bool has_suffix(std::string str, std::string suf);
 
 #endif  // UTILITIES_H
