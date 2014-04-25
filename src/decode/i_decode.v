@@ -3,8 +3,6 @@
 `include "src/decode/id_ex.v"
 `include "src/decode/s_extend.v"
 
-`timescale 1ns / 1ps
-
 module i_decode (
         input   wire [31:0] IF_ID_instruction_out,
         input   wire [31:0] IF_ID_npc_out,

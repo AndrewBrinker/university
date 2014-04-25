@@ -1,5 +1,3 @@
-`timescale 1ns / 1ps
-
 module id_ex (
         input  wire [1:0]  ctl_wb_out,
         input  wire [2:0]  ctl_m_out,
