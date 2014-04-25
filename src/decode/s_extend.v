@@ -1,11 +1,9 @@
 `timescale 1ns / 1ps
 
 module s_extend (
-        input  wire [15:0] nextend,
-        output reg  [31:0] extend
+        input  wire [15:0] original,
+        output wire [31:0] extended
     );
 
-    always@ * begin
-        // Replicate signed bit 16 times then cancatinate
-    end
+    assign extended = {{16{original[15]}}, original};
 endmodule

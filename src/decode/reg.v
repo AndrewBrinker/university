@@ -4,26 +4,25 @@ module register (
         input       [4:0]  rs,
         input       [4:0]  rt,
         input       [4:0]  rd,
-        input       [31:0] writedata,
-        input              regwrite,
+        input       [31:0] write_data,
+        input              reg_write,
         output reg  [31:0] A,
         output reg  [31:0] B
     );
 
     reg [31:0] REG [0:31];
-    integer i;
 
     initial begin
         A <= 0;
         B <= 0;
 
-        for (i = 0; i < 32; i = i + 1) {
+        for (integer i = 0; i < 32; i = i + 1) {
             REG[i] <= 0;
         }
 
         $display("From Register Memory:");
-        for (i = 0; i < 9; i = i + 1) {
-            $display("\tREG[%0d] = %0d",i,REG[i]);
+        for (integer i = 0; i < 9; i = i + 1) {
+            $display("\tREG[%0d] = %0d", i, REG[i]);
         }
 
         $display("\t...");
@@ -31,11 +30,11 @@ module register (
     end
 
     always @ * begin
-        A <= // Assign the rs index of REG to A ;
-        B <= // Assign the __ index of REG to B ;
+        A <= REG[rs];
+        B <= REG[rt];
 
         // WRITE data using index rd
-        if (rd != 0 && regwrite) {
+        if (rd != 0 && reg_write) {
             //finish this line
         }
     end

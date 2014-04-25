@@ -1,59 +1,59 @@
 `timescale 1ns / 1ps
 
-module IDECODE (
-        input   wire [31:0] IF_ID_instrout,
-        input   wire [31:0] IF_ID_npcout,
+module i_decode (
+        input   wire [31:0] IF_ID_instruction_out,
+        input   wire [31:0] IF_ID_npc_out,
         input   wire [4:0]  MEM_WB_rd,
-        input   wire        MEM_WB_regwrite,
-        input   wire [31:0] WB_mux5_writedata,
-        output  wire [1:0]  wb_ctlout,
-        output  wire [2:0]  m_ctlout,
-        output  wire        regdst, alusrc,
-        output  wire [1:0]  aluop,
-        output  wire [31:0] npcout, rdata1out, rdata2out, s_extendout,
-        output  wire [4:0]  instrout_2016, instrout_1511
+        input   wire        MEM_WB_reg_write,
+        input   wire [31:0] WB_mux5_write_data,
+        output  wire [1:0]  wb_ctl_out,
+        output  wire [2:0]  m_ctl_out,
+        output  wire        reg_dst, alu_src,
+        output  wire [1:0]  alu_op,
+        output  wire [31:0] npc_out, r_data1_out, r_data2_out, sign_extend_out,
+        output  wire [4:0]  instruction_out_2016, instruction_out_1511
     );
 
-    wire [3:0]  ctlex_out;
-    wire [2:0]  ctlm_out;
-    wire [1:0]  ctlwb_out;
-    wire [31:0] readdat1, readdat2, signext_out;
+    wire [3:0]  ctl_ex_out;
+    wire [2:0]  ctl_m_out;
+    wire [1:0]  ctl_wb_out;
+    wire [31:0] read_data_1, read_data_2, sign_ext_out;
 
-    control control2 (.opcode(IF_ID_instrout[31:26]),
-                      .EX(ctlex_out),
-                      .M(ctlm_out),
-                      .WB(ctlwb_out));
+    control control1 (.op_code(IF_ID_instruction_out[31:26]),
+                      .EX(ctl_ex_out),
+                      .M(ctl_m_out),
+                      .WB(ctl_wb_out));
 
-    register register2 (.rs(IF_ID_instrout[25:21]),
-                        .rt(IF_ID_instrout[20:16]),
+    register register1 (.rs(IF_ID_instruction_out[25:21]),
+                        .rt(IF_ID_instruction_out[20:16]),
                         .rd(MEM_WB_rd),
-                        .writedata(WB_mux5_writedata),
-                        .regwrite(MEM_WB_regwrite),
-                        .A(readdat1),
-                        .B(readdat2));
+                        .write_data(WB_mux5_write_data),
+                        .reg_write(MEM_WB_reg_write),
+                        .A(read_data_1),
+                        .B(read_data_2));
 
-    s_extend s_extend2 (.nextend(IF_ID_instrout[15:0]),
-                        .extend(signext_out));
+    s_extend s_extend1 (.nextend(IF_ID_instruction_out[15:0]),
+                        .extend(sign_ext_out));
 
-    id_ex id_ex2 (.ctlwb_out(ctlwb_out),
-                  .ctlm_out(ctlm_out),
-                  .ctlex_out(ctlex_out),
-                  .npc(IF_ID_npcout),
-                  .readdat1(readdat1),
-                  .readdat2(readdat2),
-                  .signext_out(signext_out),
-                  .instr_2016(IF_ID_instrout[20:16]),
-                  .instr_1511(IF_ID_instrout[15:11]),
-                  .wb_ctlout(wb_ctlout),
-                  .m_ctlout(m_ctlout),
-                  .regdst(regdst),
-                  .alusrc(alusrc),
-                  .aluop(aluop),
-                  .npcout(npcout),
-                  .rdata1out(rdata1out),
-                  .rdata2out(rdata2out),
-                  .s_extendout(s_extendout),
-                  .instrout_2016(instrout_2016),
-                  .instrout_1511(instrout_1511));
+    id_ex id_ex1 (.ctl_wb_out(ctl_wb_out),
+                  .ctl_m_out(ctl_m_out),
+                  .ctl_ex_out(ctl_ex_out),
+                  .npc(IF_ID_npc_out),
+                  .read_data_1(read_data_1),
+                  .read_data_2(read_data_2),
+                  .sign_ext_out(sign_ext_out),
+                  .instr_2016(IF_ID_instruction_out[20:16]),
+                  .instr_1511(IF_ID_instruction_out[15:11]),
+                  .wb_ctl_out(wb_ctl_out),
+                  .m_ctl_out(m_ctl_out),
+                  .reg_dst(reg_dst),
+                  .alu_src(alu_src),
+                  .alu_op(alu_op),
+                  .npc_out(npc_out),
+                  .r_data1_out(r_data1_out),
+                  .r_data2_out(r_data2_out),
+                  .sign_extend_out(sign_extend_out),
+                  .instruction_out_2016(instruction_out_2016),
+                  .instruction_out_1511(instruction_out_1511));
 
 endmodule

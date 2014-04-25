@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 
 module control (
-          input  wire [5:0] opcode,
+          input  wire [5:0] op_code,
           output reg  [3:0] EX,
           output reg  [2:0] M,
           output reg  [1:0] WB
@@ -13,20 +13,14 @@ module control (
     parameter BEQ   = 6'b000100;
     parameter NOP   = 6'b100000;
 
-    /**
-     * Initialize output registers to 0.
-     */
     initial begin
         EX <= 0;
-        M <= 0;
+        M  <= 0;
         WB <= 0;
     end
 
-    /**
-     * Process opcodes
-     */
     always@* begin
-        case (opcode)
+        case (op_code)
             RTYPE: begin
                 EX <= 4'b1100;
                 M  <= 3'b000;
@@ -34,20 +28,16 @@ module control (
             end
             LW: begin
                 EX <= ;
-                M <= ;
+                M  <= ;
                 WB <= ;
             end
             SW: begin
-                /**
-                 * Nothing here for now. Will be filled out later.
-                 */
+                // Nothing here for now. Will be filled out later.
             end
             BEQ: begin
-                /**
-                 * Nothing here for now. Will be filled out later.
-                 */
+                // Nothing here for now. Will be filled out later.
             end
-            default: $display ("Opcode not recognized.");
+            default: $display ("Op code not recognized.");
         endcase
     end
 endmodule

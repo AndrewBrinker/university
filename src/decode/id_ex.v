@@ -1,46 +1,46 @@
 `timescale 1ns / 1ps
 
 module id_ex (
-        input  wire [1:0]  ctlwb_out,
-        input  wire [2:0]  ctlm_out,
-        input  wire [3:0]  ctlex_out,
-        input  wire [31:0] npc, readdat1, readdat2, signext_out,
-        input  wire [4:0]  instr_2016, instr_1511,
-        output reg  [1:0]  wb_ctlout,
-        output reg  [2:0]  m_ctlout,
-        output reg         regdst, alusrc,
-        output reg  [1:0]  aluop,
-        output reg  [31:0] npcout, rdata1out, rdata2out, s_extendout,
-        output reg  [4:0]  instrout_2016, instrout_1511
+        input  wire [1:0]  ctl_wb_out,
+        input  wire [2:0]  ctl_m_out,
+        input  wire [3:0]  ctl_ex_out,
+        input  wire [31:0] npc, read_data_1, read_data_2, sign_ext_out,
+        input  wire [4:0]  instruction_2016, instruction_1511,
+        output reg  [1:0]  wb_ctl_out,
+        output reg  [2:0]  m_ctl_out,
+        output reg         reg_dest, alu_src,
+        output reg  [1:0]  alo_op,
+        output reg  [31:0] npcout, r_data_1_out, r_data_2_out, sign_extend_out,
+        output reg  [4:0]  instruction_out_2016, instruction_out_1511
     );
 
     initial begin
-        wb_ctlout     <= 0
-        m_ctlout      <= 0
-        regdst        <= 0
-        aluop         <= 0
-        alusrc        <= 0
-        npcout        <= 0
-        rdata1out     <= 0
-        rdata2out     <= 0
-        s_extendout   <= 0
-        instrout_2016 <= 0
-        instrout_1511 <= 0
+        wb_ctl_out           <= 0
+        m_ctl_out            <= 0
+        reg_dest             <= 0
+        alo_op               <= 0
+        alu_src              <= 0
+        npcout               <= 0
+        r_data_1_out         <= 0
+        r_data_2_out         <= 0
+        sign_extend_out      <= 0
+        instruction_out_2016 <= 0
+        instruction_out_1511 <= 0
     end
 
     always @ * begin
-        // Wire the inputs to the outputs corresponding outputs
+        // Wire the inputs to the corresponding outputs
         #1
-        wb_ctlout     <=
-        m_ctlout      <=
-        regdst        <=
-        aluop         <=
-        alusrc        <=
-        npcout        <=
-        rdata1out     <=
-        rdata2out     <=
-        s_extendout   <=
-        instrout_2016 <=
-        instrout_1511 <=
+        wb_ctl_out           <=
+        m_ctl_out            <=
+        reg_dest             <=
+        alo_op               <=
+        alu_src              <=
+        npcout               <=
+        r_data_1_out         <=
+        r_data_2_out         <=
+        sign_extend_out      <=
+        instruction_out_2016 <=
+        instruction_out_1511 <=
     end
 endmodule
