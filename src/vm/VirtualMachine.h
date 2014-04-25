@@ -8,6 +8,8 @@
 #include <fstream>
 #include <functional>
 
+#include <pcb/PCB.h>
+
 #ifndef VIRTUAL_MACHINE_H
 #define VIRTUAL_MACHINE_H
 
@@ -22,9 +24,10 @@ class OS;
 class VirtualMachine {
  public:
   VirtualMachine();
-  void run(std::string);
 
-  void setMemory(int);  // NOLINT
+  void load(PCB* pcb);
+
+  void run(std::string); // REFACTOR
 
  private:
   union Opcode_t {
@@ -57,6 +60,8 @@ class VirtualMachine {
   std::string base_file_name;
   std::ifstream dot_in_file;
   std::ofstream dot_out_file;
+
+  void load_file(std::fstream& object_file);
 
   bool getOverflow() const;
   bool setOverflow(bool b);

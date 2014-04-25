@@ -12,7 +12,8 @@
 #include <iterator>
 #include <vector>
 
-#define EXT_SEP        "."
+#define PATH_SEP      "/"
+#define EXT_SEP       "."
 #define COMMENT_SEP   "!"
 #define ASM_FILE_EXT  ".s"
 #define OBJ_FILE_EXT  ".o"
@@ -65,6 +66,19 @@ std::string stripExtension(std::string file_name) {
   size_t pos = file_name.find_last_of(EXT_SEP);
   if (pos != std::string::npos) {
     return file_name.substr(0, pos);
+  }
+  return file_name;
+}
+
+/**
+ * Remove the path from the given file name
+ * @param  file_name -> The file name being stripped.
+ * @return the stripped file name.
+ */
+std::string stripPath(std::string file_name) {
+  size_t pos = file_name.find_last_of(PATH_SEP);
+  if (pos != std::string::npos) {
+    return file_name.substr(pos + 1, std::string::npos);
   }
   return file_name;
 }

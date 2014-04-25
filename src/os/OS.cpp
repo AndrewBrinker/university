@@ -10,12 +10,15 @@
 #include <memory>   // std::unique_ptr
 #include <utility>  // std::move
 
-#include "../dir/Dir.h"
-#include "../util/Utilities.h"
+#include <dir/Dir.h>
+#include <util/Utilities.h>
 
 #define N_REGISTERS 4
 
-OS::OS() {}
+OS::OS() :
+  as(new Assembler),
+  vm(new VirtualMachine)
+{}
 
 void OS::run() {
   // Find all *.s files and load their names (and paths) into memory
@@ -32,15 +35,20 @@ void OS::run() {
     std::unique_ptr<PCB> curr_pcb;
 
     for (std::string source_file : source_files) {
-      object_file = as.parse(source_file);
-      curr_pcb = std::unique_ptr<PCB>(new PCB);
-      curr_pcb->pname = source_file;
-      curr_pcb->r.resize(N_REGISTERS);
-#ifdef DEBUG
-      curr_pcb->asm_source = as.asm_source;
-#endif  // DEBUG
+      curr_pcb = std::unique_ptr<PCB>(new PCB(source_file));
+      as->parse(curr_pcb.get());
+      vm->load(curr_pcb.get());
       ready.push(std::move(curr_pcb));
     }
+
+#ifdef DEBUG
+    PCB* front = ready.front().get();
+    do {
+      puts(ready.front()->process_name.c_str());
+      ready.push(std::move(ready.front()));
+      ready.pop();
+    } while (front != ready.front().get());
+#endif  // DEBUG
 }
 
 // Find all *.s files and load their names (and paths) into memory

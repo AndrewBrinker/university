@@ -5,7 +5,6 @@
 #include "./VirtualMachine.h"
 #include <err/Errors.h>
 #include <util/Utilities.h>
-#include <asm/Assembler.h>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
@@ -15,9 +14,6 @@
 #include <algorithm>
 #include <iterator>
 #include <cassert>
-
-#define REG_FILE_SIZE 4
-#define MEM_SIZE      256
 
 #define OUT_FILE_EXT ".out"
 #define IN_FILE_EXT  ".in"
@@ -61,80 +57,40 @@ VirtualMachine::VirtualMachine()
 
 
 /**
+ * Load the program indicated by the PCB into memory, setting appropriate
+ *   variables in the PCB.
+ * @param pcb -> The Program Control Block
+ */
+void VirtualMachine::load(PCB* pcb) {
+  load_file(pcb->o_file);
+
+  pcb->o_file.close();
+}
+
+void VirtualMachine::load_file(std::fstream& object_file) {
+  uint16_t new_limit = limit;
+  // Get size of file
+  object_file.seekg(0, std::ios::end);
+  new_limit += object_file.tellg();
+  object_file.seekg(0, std::ios::beg);
+
+  // Because size will be in bytes, not in 16-bit words
+  if (new_limit > mem.size() * 2) {
+    object_file.close();
+    throw CantFitInMemory("VirtualMachine");
+  }
+
+  for (std::string line; getline(object_file, line); ++limit) {
+    mem[limit] = stoi(line);
+  }
+}
+
+/**
  * Parse the given file and run the code it describes
  * @param file_name -> The name of the file being parsed
  */
-void VirtualMachine::run(std::string file_name) {
-  try {
-    if (!isFileNameValid(file_name, VM_MODE)) {
-      throw InvalidFileName("Virtual Machine");
-    }
-  } catch(GenericError &e) {
-    e.reportError();
-  }
-
-  try {
-    if (!doesFileExist(file_name)) {
-      throw FileDoesNotExist("Virtual Machine");
-    }
-  } catch(GenericError &e) {
-    e.reportError();
-  }
-
-  std::ifstream input_file(file_name);
-  try {
-    if (!input_file.is_open()) {
-      throw CantOpenFile("Virtual Machine");
-    }
-  } catch(GenericError &e) {
-    e.reportError();
-  }
-
-  std::string object_file_name = stripExtension(file_name);
-  object_file_name += OUT_FILE_EXT;
-  dot_out_file.open(object_file_name);
-  try {
-    if (!dot_out_file.is_open()) {
-      throw CantMakeFile("Virtual Machine");
-    }
-  } catch(GenericError &e) {
-    e.reportError();
-  }
-
-  object_file_name = stripExtension(file_name);
-  object_file_name += IN_FILE_EXT;
-  dot_in_file.open(object_file_name);
-
-  // Get size of file
-  input_file.seekg(0, std::ios::end);
-  limit = input_file.tellg();
-  input_file.seekg(0, std::ios::beg);
-
-  // because size will be in bytes, not in 16-bit words
-  if (limit > mem.size() * 2) {
-    input_file.close();
-    try {
-      throw CantFitInMemory("Virtual Machine");
-    } catch(GenericError &e) {
-      e.reportError();
-    }
-    return;
-  }
-
-  // Load file into memory
-  int count = 0;
-  for (std::string line; getline(input_file, line);) {
-    mem[count] = stoi(line);
-    ++count;
-  }
-
-  input_file.close();
-
-  std::ofstream log_file;
-#ifdef DEBUG
-  log_file.open(stripExtension(file_name) + ".log");
-#endif  // DEBUG
-
+void VirtualMachine::run(std::string) {
+  /*
   try {
     // main loop
     while (!halt) {
@@ -161,25 +117,8 @@ void VirtualMachine::run(std::string file_name) {
   } catch(std::bad_function_call&) {
     setReturnStatus(ReturnStatus_t::INVALID_OPCODE);
   }
-/*
-  dot_out_file << clock << std::endl;
-  dot_in_file.close();
-  dot_out_file.close();
-#ifdef DEBUG
-  log_file.close();
-#endif  // DEBUG
-*/
+  */
 }
-
-
-/**
- * Set the size of memory for the system
- * @param memory_size -> The size of memory in number of words.
- */
-void VirtualMachine::setMemory(int memory_size) {
-  mem.resize(memory_size);
-}
-
 
 
 /**

@@ -44,6 +44,14 @@ std::string stripExtension(std::string file_name);
 
 
 /**
+ * Remove the path from the given file name
+ * @param  file_name -> The file name being stripped.
+ * @return the stripped file name.
+ */
+std::string stripPath(std::string file_name);
+
+
+/**
  * Pad the given line with the fill character up to the given size
  * @param line        -> The line to be padded
  * @param fill        -> The filler character to use

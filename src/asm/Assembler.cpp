@@ -93,68 +93,24 @@ Assembler::Assembler() {}
  * it will proceed to parse the file, otherwise it will report the error and
  * exit.
  *
- * @param  file_name -> The name of the file to be compiled.
- * @return the name of the created object file.
+ * @param  pcb  -> The Process Control Block for the process to be created
  */
-std::string Assembler::parse(std::string file_name) {
-  // Check whether the file name is valid
-  try {
-    if (!isFileNameValid(file_name, ASM_MODE)) {
-      throw InvalidFileName("Assembler");
-    }
-  } catch(GenericError &e) {
-    e.reportError();
-  }
-
-  // Check whether the file exists
-  try {
-    if (!doesFileExist(file_name)) {
-      throw FileDoesNotExist("Assembler");
-    }
-  } catch(GenericError &e) {
-    e.reportError();
-  }
-
-  // Check whether the file can be opened
-  std::ifstream input_file(file_name);
-  try {
-    if (!input_file.is_open()) {
-      throw CantOpenFile("Assembler");
-    }
-  } catch(GenericError &e) {
-    e.reportError();
-  }
-
-  // Check whether the output file can be made.
-  std::string object_file_name = stripExtension(file_name);
-  object_file_name += OBJ_FILE_EXT;
-  std::ofstream output_file(object_file_name);
-  try {
-    if (!output_file.is_open()) {
-      throw CantMakeFile("Assembler");
-    }
-  } catch(GenericError &e) {
-    e.reportError();
-  }
-
-#ifndef DEBUG
-  std::vector<std::string> asm_source;
-#endif  // NDEBUG
-
+void Assembler::parse(PCB* pcb) {
   // Get the assembly file source
-  asm_source = readASMSource(input_file);
+  std::vector<std::string> asm_source = readASMSource(pcb->s_file);
+
+#ifdef DEBUG
+  pcb->asm_source = asm_source;
+#endif  // DEBUG
 
   // Convert it to object file source
   for (std::vector<std::string>::iterator it = asm_source.begin();
-       it != asm_source.end(); ++it )
-    output_file << binaryStringToDecimal(convertToObjectCode(*it)) << "\n";
+       it != asm_source.end(); ++it ) {
+    pcb->o_file << binaryStringToDecimal(convertToObjectCode(*it)) << "\n";
+  }
 
   // Close the file streams and return
-  input_file.close();
-  output_file.close();
-
-  // Return the name of the file you output to
-  return object_file_name;
+  pcb->s_file.close();
 }
 
 
@@ -163,7 +119,7 @@ std::string Assembler::parse(std::string file_name) {
  * @param  input_file -> The stream to the assembly file being read
  * @return the source of the assembly file
  */
-std::vector<std::string> Assembler::readASMSource(std::ifstream &input_file) {
+std::vector<std::string> Assembler::readASMSource(std::fstream& input_file) {
   std::vector<std::string> source;
   for (std::string line; getline(input_file, line);) {
     line = stripComments(line);
@@ -173,6 +129,7 @@ std::vector<std::string> Assembler::readASMSource(std::ifstream &input_file) {
     }
     source.push_back(line);
   }
+
   return source;
 }
 

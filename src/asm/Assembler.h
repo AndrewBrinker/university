@@ -6,6 +6,8 @@
 #include <vector>
 #include <string>
 
+#include <pcb/PCB.h>
+
 #ifndef ASSEMBLER_H
 #define ASSEMBLER_H
 
@@ -27,14 +29,14 @@ class Assembler {
   } op_t;
 
   Assembler();
-  std::string parse(std::string);
+  void parse(PCB* pcb);
 
  private:
 #ifdef DEBUG
   std::vector<std::string> asm_source;
 #endif  // DEBUG
 
-  std::vector<std::string> readASMSource(std::ifstream &);
+  std::vector<std::string> readASMSource(std::fstream&);
   std::string convertToObjectCode(std::string);
   op_t findOperation(std::string);
   std::string getRegisterID(std::string);
