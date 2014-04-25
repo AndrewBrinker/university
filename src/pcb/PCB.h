@@ -10,6 +10,12 @@
 #include <vector>
 #include <fstream>
 
+#ifndef DISALLOW_COPY_AND_ASSIGN
+#define DISALLOW_COPY_AND_ASSIGN(TypeName) \
+  TypeName(const TypeName&) = delete;      \
+  void operator=(const TypeName&) = delete;
+#endif
+
 #define REG_FILE_SIZE 4
 #define MEM_SIZE      256
 
@@ -43,6 +49,8 @@ struct PCB {
   std::vector<std::string> asm_source;
   std::fstream log_file;
 #endif  // DEBUG
+
+  DISALLOW_COPY_AND_ASSIGN(PCB)
 };
 
 #endif  // PCB_H

@@ -15,6 +15,7 @@
 #define ASM_MODE      0
 #define VM_MODE       1
 
+
 /**
  * Check whether the given file name is a valid assembly source file.
  *
