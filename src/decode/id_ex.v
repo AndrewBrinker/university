@@ -16,32 +16,31 @@ module id_ex (
     );
 
     initial begin
-        wb_ctl_out           <= 0
-        m_ctl_out            <= 0
-        reg_dest             <= 0
-        alu_op               <= 0
-        alu_src              <= 0
-        npc_out              <= 0
-        r_data_1_out         <= 0
-        r_data_2_out         <= 0
-        sign_extend_out      <= 0
-        instruction_out_2016 <= 0
-        instruction_out_1511 <= 0
+        wb_ctl_out           <= 0;
+        m_ctl_out            <= 0;
+        reg_dest             <= 0;
+        alu_op               <= 0;
+        alu_src              <= 0;
+        npc_out              <= 0;
+        r_data_1_out         <= 0;
+        r_data_2_out         <= 0;
+        sign_extend_out      <= 0;
+        instruction_out_2016 <= 0;
+        instruction_out_1511 <= 0;
     end
 
     always @ * begin
-        // Wire the inputs to the corresponding outputs
         #1
-        wb_ctl_out           <= ctl_wb_out
-        m_ctl_out            <= ctl_m_out
-        reg_dest             <=
-        alu_op               <=
-        alu_src              <=
-        npc_out              <= npc
-        r_data_1_out         <= read_data_1
-        r_data_2_out         <= read_data_2
-        sign_extend_out      <= sign_ext_out
-        instruction_out_2016 <= instruction_2016
-        instruction_out_1511 <= instruction_1511
+        wb_ctl_out           <= ctl_wb_out;
+        m_ctl_out            <= ctl_m_out;
+        reg_dest             <= ctl_ex_out[3];
+        alu_op               <= ctl_ex_out[2:1];
+        alu_src              <= ctl_ex_out[0];
+        npc_out              <= npc;
+        r_data_1_out         <= read_data_1;
+        r_data_2_out         <= read_data_2;
+        sign_extend_out      <= sign_ext_out;
+        instruction_out_2016 <= instruction_2016;
+        instruction_out_1511 <= instruction_1511;
     end
 endmodule
