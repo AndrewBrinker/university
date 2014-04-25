@@ -6,6 +6,7 @@ module register (
         input       [4:0]  write_reg,
         input       [31:0] write_data,
         input              reg_write,
+
         output reg  [31:0] A,
         output reg  [31:0] B
     );

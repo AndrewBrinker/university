@@ -2,6 +2,7 @@
 
 module control (
           input  wire [5:0] op_code,
+
           output reg  [3:0] EX,
           output reg  [2:0] M,
           output reg  [1:0] WB

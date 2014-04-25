@@ -11,6 +11,7 @@ module i_decode (
         input   wire [4:0]  MEM_WB_rd,
         input   wire        MEM_WB_reg_write,
         input   wire [31:0] WB_mux5_write_data,
+
         output  wire [1:0]  wb_ctl_out,
         output  wire [2:0]  m_ctl_out,
         output  wire        reg_dst, alu_src,
