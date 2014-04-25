@@ -14,6 +14,7 @@
 #include <fstream>
 #include <algorithm>
 #include <iterator>
+#include <cassert>
 
 #define REG_FILE_SIZE 4
 #define MEM_SIZE      256
@@ -26,6 +27,22 @@
 #define EQUAL_MASK    0x0004
 #define GREATER_MASK  0x0002
 #define CARRY_MASK    0x0001
+
+#define RETURN_STATUS_MASK  0x111
+#define RETURN_STATUS_SHIFT 5
+#define IO_REGISTER_MASK    0x11
+#define IO_REGISTER_SHIFT   8
+
+enum ReturnStatus_t {
+  TIME_SLICE              = 00,
+  HALT_INSTRUCTION        = 01,
+  OUT_OF_BOUND_REFERENCE  = 02,
+  STACK_OVERFLOW          = 03,
+  STACK_UNDERFLOW         = 04,
+  INVALID_OPCODE          = 05,
+  READ_OPERATION          = 06,
+  WRITE_OPERATION         = 07
+};
 
 /**
  * Construct the VM with custom register size and memory size, and setup the op
@@ -142,19 +159,16 @@ void VirtualMachine::run(std::string file_name) {
 #endif  // DEBUG
     }
   } catch(std::bad_function_call&) {
-    try {
-      throw InvalidOperation("Virtual Machine");
-    } catch(GenericError &e) {
-      e.reportError();
-    }
+    setReturnStatus(ReturnStatus_t::INVALID_OPCODE);
   }
-
+/*
   dot_out_file << clock << std::endl;
   dot_in_file.close();
   dot_out_file.close();
 #ifdef DEBUG
   log_file.close();
 #endif  // DEBUG
+*/
 }
 
 
@@ -180,7 +194,7 @@ inline bool VirtualMachine::getOverflow() const {
 /**
  * Test the value of the overflow bit, and set it to the input value.
  * @param The value to which to set the overflow bit
- * @return The value of the overflow bit /before/ modification.
+ * @return the value of the overflow bit /before/ modification.
  */
 inline bool VirtualMachine::setOverflow(bool b) {
   bool s = sr & OVERFLOW_MASK;
@@ -202,9 +216,9 @@ inline bool VirtualMachine::getLess() const {
 
 
 /**
- * Test the value of the less bit, and set it to the value of the input.
+ * Test the value of the less bit, and set it to the value of the parameter.
  * @param The value to which to set the less bit.
- * @return The value of the less bit /before/ modification.
+ * @return the value of the less bit /before/ modification.
  */
 inline bool VirtualMachine::setLess(bool b) {
   bool s = sr & LESS_MASK;
@@ -226,9 +240,9 @@ inline bool VirtualMachine::getEqual() const {
 
 
 /**
- * Test the value of the equal bit and set it to the value of the input.
+ * Test the value of the equal bit and set it to the value of the parameter.
  * @param The value to which to set the equal bit.
- * @return The value of the equal bit /before/ modification.
+ * @return the value of the equal bit /before/ modification.
  */
 inline bool VirtualMachine::setEqual(bool b) {
   bool s = sr & EQUAL_MASK;
@@ -250,9 +264,9 @@ inline bool VirtualMachine::getGreater() const {
 
 
 /**
- * Test the value of the greater bit and set it to the value of the input.
+ * Test the value of the greater bit and set it to the value of the parameter.
  * @param The value to which to set the greater bit.
- * @return The value of the greater bit /before/ modification.
+ * @return the value of the greater bit /before/ modification.
  */
 inline bool VirtualMachine::setGreater(bool b) {
   bool s = sr & GREATER_MASK;
@@ -272,9 +286,9 @@ inline bool VirtualMachine::getCarry() const {
 }
 
 /**
- * Test the value of the carry bit and set it to the value of the input.
+ * Test the value of the carry bit and set it to the value of the parameter.
  * @param The value to which to set the carry bit.
- * @return The value of the carry bit /before/ modification.
+ * @return the value of the carry bit /before/ modification.
  */
 inline bool VirtualMachine::setCarry(bool b) {
   bool s = sr & CARRY_MASK;
@@ -284,6 +298,57 @@ inline bool VirtualMachine::setCarry(bool b) {
     sr &= ~CARRY_MASK;
   return s;
 }
+
+
+/**
+ * Test the value of the return status.
+ * @return the value of the return status.
+ */
+inline uint8_t VirtualMachine::getReturnStatus() const {
+  return (sr & RETURN_STATUS_MASK) >> RETURN_STATUS_SHIFT;
+}
+
+
+/**
+ * Test the value of the return status and set it to the value of the parameter.
+ * @param The value to which to set the return status.
+ * @return the value of the return status /before/ modification.
+ */
+inline uint8_t VirtualMachine::setReturnStatus(uint8_t status) {
+#ifdef DEBUG
+  assert(status < 8);
+#endif  // DEBUG
+  uint8_t s = (sr & RETURN_STATUS_MASK) >> RETURN_STATUS_SHIFT;
+  sr &= ~(RETURN_STATUS_MASK << RETURN_STATUS_SHIFT);
+  sr |= status << RETURN_STATUS_SHIFT;
+  return s;
+}
+
+
+/**
+ * Test the value of the I/O register field.
+ * @return the value of the I/O register field.
+ */
+inline uint8_t VirtualMachine::getIO_Register() const {
+  return (sr & IO_REGISTER_MASK) >> IO_REGISTER_SHIFT;
+}
+
+
+/**
+ * Test the value of the I/O register field and set it to the value of the parameter.
+ * @param The value to which to set the I/O register field.
+ * @return the value of the I/O register field /before/ modification.
+ */
+inline uint8_t VirtualMachine::setIO_Register(uint8_t reg) {
+#ifdef DEBUG
+  assert(reg < 4);
+#endif  // DEBUG
+  uint8_t s = (sr & IO_REGISTER_MASK) >> IO_REGISTER_SHIFT;
+  sr &= ~(IO_REGISTER_MASK) << IO_REGISTER_SHIFT;
+  sr |= reg << IO_REGISTER_SHIFT;
+  return s;
+}
+
 
 
 /**
@@ -564,11 +629,9 @@ void VirtualMachine::op_jumpg() {
  */
 void VirtualMachine::op_call() {
   if (sp < limit + 6) {
-    try {
-      throw ExceededMaxStackDepth("Virtual Machine");
-    } catch(GenericError &e) {
-      e.reportError();
-    }
+    setReturnStatus(ReturnStatus_t::STACK_OVERFLOW);
+    halt = true;
+    return;
   }
   mem[sp] = pc;
   --sp;
@@ -591,12 +654,11 @@ void VirtualMachine::op_call() {
  */
 void VirtualMachine::op_return() {
   if (sp >= 256) {
-    try {
-      throw StackUnderflow("Virtual Machine");
-    } catch(GenericError &e) {
-      e.reportError();
-    }
+    setReturnStatus(ReturnStatus_t::STACK_UNDERFLOW);
+    halt = true;
+    return;
   }
+
   ++sp;
   sr = mem[sp];
   ++sp;
@@ -616,7 +678,10 @@ void VirtualMachine::op_return() {
  * Read data from input file into rd
  */
 void VirtualMachine::op_read() {
-  dot_in_file >> r[ir.fmt0.rd];
+//  dot_in_file >> r[ir.fmt0.rd];
+  setReturnStatus(ReturnStatus_t::READ_OPERATION);
+  setIO_Register(ir.fmt0.rd);
+  halt = true;
 }
 
 
@@ -624,7 +689,10 @@ void VirtualMachine::op_read() {
  * Write data from rd out to output file
  */
 void VirtualMachine::op_write() {
-  dot_out_file << r[ir.fmt0.rd] << std::endl;
+//  dot_out_file << r[ir.fmt0.rd] << std::endl;
+  setReturnStatus(ReturnStatus_t::WRITE_OPERATION);
+  setIO_Register(ir.fmt0.rd);
+  halt = true;
 }
 
 
@@ -633,6 +701,7 @@ void VirtualMachine::op_write() {
  */
 void VirtualMachine::op_halt() {
   halt = true;
+  setReturnStatus(ReturnStatus_t::HALT_INSTRUCTION);
 }
 
 

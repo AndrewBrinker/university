@@ -73,6 +73,12 @@ class VirtualMachine {
   bool getCarry() const;
   bool setCarry(bool b);
 
+  uint8_t getReturnStatus() const;
+  uint8_t setReturnStatus(uint8_t status);
+
+  uint8_t getIO_Register() const;
+  uint8_t setIO_Register(uint8_t reg);
+
   void op(const Opcode_t&);
 
   void op_load();
