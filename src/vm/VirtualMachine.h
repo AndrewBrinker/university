@@ -2,13 +2,12 @@
  * Copyright 2014 Andrew Brinker, Anthony Sterrett
  */
 
+#include <pcb/PCB.h>
 #include <cstdint>
 #include <vector>
 #include <string>
 #include <fstream>
 #include <functional>
-
-#include <pcb/PCB.h>
 
 #ifndef VIRTUAL_MACHINE_H
 #define VIRTUAL_MACHINE_H
@@ -27,7 +26,7 @@ class VirtualMachine {
 
   void load(PCB* pcb);
 
-  void run(std::string); // REFACTOR
+  void run(std::string);  // REFACTOR
 
  private:
   union Opcode_t {

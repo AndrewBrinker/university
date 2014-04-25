@@ -24,7 +24,7 @@
 #endif  // DEBUG
 
 struct PCB {
-  PCB(std::string source_file);
+  explicit PCB(std::string source_file);
 
   uint16_t pc, sr, sp, base, limit;
   std::vector<int16_t> r;

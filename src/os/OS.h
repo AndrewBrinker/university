@@ -5,6 +5,9 @@
 #ifndef OS_H
 #define OS_H
 
+#include <asm/Assembler.h>
+#include <vm/VirtualMachine.h>
+#include <pcb/PCB.h>
 #include <cstdint>
 #include <list>
 #include <queue>
@@ -12,9 +15,6 @@
 #include <vector>
 #include <string>
 #include <memory>
-#include <asm/Assembler.h>
-#include <vm/VirtualMachine.h>
-#include <pcb/PCB.h>
 
 #define N_REGISTERS 4
 

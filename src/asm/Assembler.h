@@ -2,11 +2,10 @@
  * Copyright 2014 Andrew Brinker, Anthony Sterrett
  */
 
+#include <pcb/PCB.h>
 #include <cstdint>
 #include <vector>
 #include <string>
-
-#include <pcb/PCB.h>
 
 #ifndef ASSEMBLER_H
 #define ASSEMBLER_H
