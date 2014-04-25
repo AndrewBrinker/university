@@ -1,3 +1,8 @@
+`include "src/decode/reg.v"
+`include "src/decode/control.v"
+`include "src/decode/id_ex.v"
+`include "src/decode/s_extend.v"
+
 `timescale 1ns / 1ps
 
 module i_decode (

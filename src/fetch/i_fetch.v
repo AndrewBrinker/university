@@ -1,8 +1,8 @@
-`include "src/mux.v"
-`include "src/incr.v"
-`include "src/memory.v"
-`include "src/if_id.v"
-`include "src/pc_mod.v"
+`include "src/fetch/mux.v"
+`include "src/fetch/incr.v"
+`include "src/fetch/memory.v"
+`include "src/fetch/if_id.v"
+`include "src/fetch/pc_mod.v"
 
 module i_fetch ();
     wire [31:0] IF_ID_instruction;
