@@ -38,8 +38,8 @@ module i_fetch ();
     initial begin
         EX_MEM_PC_Source <= 1'b0;
         EX_MEM_NPC <= 32'b0;
-        $display("Time\t PC\t npc\t data of MEM\t IF_ID_instr\t IF_ID_npc");
-        $monitor("%0d\t %0d\t %0d\t %h\t %h\t %0d", $time, PC, npc, data_out, IF_ID_instruction, IF_ID_npc);
-        #20 $finish;
+        // $display("Time\t PC\t npc\t data of MEM\t IF_ID_instr\t IF_ID_npc");
+        // $monitor("%0d\t %0d\t %0d\t %h\t %h\t %0d", $time, PC, npc, data_out, IF_ID_instruction, IF_ID_npc);
+        // #20 $finish;
     end
 endmodule
