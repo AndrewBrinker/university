@@ -4,9 +4,11 @@
 `include "src/fetch/if_id.v"
 `include "src/fetch/pc_mod.v"
 
-module i_fetch ();
-    wire [31:0] IF_ID_instruction;
-    wire [31:0] IF_ID_npc;
+module i_fetch (
+        output wire [31:0] IF_ID_instruction;
+        output wire [31:0] IF_ID_npc;
+    );
+
     reg         EX_MEM_PC_Source;
     reg  [31:0] EX_MEM_NPC;
 
