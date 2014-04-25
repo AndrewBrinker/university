@@ -32,14 +32,14 @@ module i_decode (
 
     register register1 (.rs(IF_ID_instruction_out[25:21]),
                         .rt(IF_ID_instruction_out[20:16]),
-                        .rd(MEM_WB_rd),
+                        .write_reg(MEM_WB_rd),
                         .write_data(WB_mux5_write_data),
                         .reg_write(MEM_WB_reg_write),
                         .A(read_data_1),
                         .B(read_data_2));
 
-    s_extend s_extend1 (.nextend(IF_ID_instruction_out[15:0]),
-                        .extend(sign_ext_out));
+    s_extend s_extend1 (.original(IF_ID_instruction_out[15:0]),
+                        .extended(sign_ext_out));
 
     id_ex id_ex1 (.ctl_wb_out(ctl_wb_out),
                   .ctl_m_out(ctl_m_out),
@@ -48,16 +48,16 @@ module i_decode (
                   .read_data_1(read_data_1),
                   .read_data_2(read_data_2),
                   .sign_ext_out(sign_ext_out),
-                  .instr_2016(IF_ID_instruction_out[20:16]),
-                  .instr_1511(IF_ID_instruction_out[15:11]),
+                  .instruction_2016(IF_ID_instruction_out[20:16]),
+                  .instruction_1511(IF_ID_instruction_out[15:11]),
                   .wb_ctl_out(wb_ctl_out),
                   .m_ctl_out(m_ctl_out),
-                  .reg_dst(reg_dst),
+                  .reg_dest(reg_dst),
                   .alu_src(alu_src),
                   .alu_op(alu_op),
                   .npc_out(npc_out),
-                  .r_data1_out(r_data1_out),
-                  .r_data2_out(r_data2_out),
+                  .r_data_1_out(r_data1_out),
+                  .r_data_2_out(r_data2_out),
                   .sign_extend_out(sign_extend_out),
                   .instruction_out_2016(instruction_out_2016),
                   .instruction_out_1511(instruction_out_1511));
