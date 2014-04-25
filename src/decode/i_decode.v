@@ -14,10 +14,15 @@ module i_decode (
 
         output  wire [1:0]  wb_ctl_out,
         output  wire [2:0]  m_ctl_out,
-        output  wire        reg_dst, alu_src,
+        output  wire        reg_dst,
+                            alu_src,
         output  wire [1:0]  alu_op,
-        output  wire [31:0] npc_out, r_data1_out, r_data2_out, sign_extend_out,
-        output  wire [4:0]  instruction_out_2016, instruction_out_1511
+        output  wire [31:0] npc_out,
+                            r_data1_out,
+                            r_data2_out,
+                            sign_extend_out,
+        output  wire [4:0]  instruction_out_2016,
+                            instruction_out_1511
     );
 
     wire [3:0]  ctl_ex_out;

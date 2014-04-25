@@ -4,15 +4,24 @@ module id_ex (
         input  wire [1:0]  ctl_wb_out,
         input  wire [2:0]  ctl_m_out,
         input  wire [3:0]  ctl_ex_out,
-        input  wire [31:0] npc, read_data_1, read_data_2, sign_ext_out,
-        input  wire [4:0]  instruction_2016, instruction_1511,
+        input  wire [31:0] npc,
+                           read_data_1,
+                           read_data_2,
+                           sign_ext_out,
+        input  wire [4:0]  instruction_2016,
+                           instruction_1511,
 
         output reg  [1:0]  wb_ctl_out,
         output reg  [2:0]  m_ctl_out,
-        output reg         reg_dest, alu_src,
+        output reg         reg_dest,
+                           alu_src,
         output reg  [1:0]  alu_op,
-        output reg  [31:0] npc_out, r_data_1_out, r_data_2_out, sign_extend_out,
-        output reg  [4:0]  instruction_out_2016, instruction_out_1511
+        output reg  [31:0] npc_out,
+                           r_data_1_out,
+                           r_data_2_out,
+                           sign_extend_out,
+        output reg  [4:0]  instruction_out_2016,
+                           instruction_out_1511
     );
 
     initial begin
