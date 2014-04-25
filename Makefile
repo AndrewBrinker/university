@@ -165,6 +165,7 @@ clean:
 	@$(RM) test/*.o
 	@$(RM) test/*.out
 	@$(RM) test/*.log
+	@$(RM) test/*.st
 	@$(RM) *.tex
 	@$(RM) *.pdf
 
