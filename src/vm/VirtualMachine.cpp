@@ -50,7 +50,6 @@ VirtualMachine::VirtualMachine()
                                pc(0),
                                sp(MEM_SIZE - 1),
                                base(0),
-                               clock(0),
                                halt(0) {
   setupOpMap();
 }
@@ -62,20 +61,66 @@ VirtualMachine::VirtualMachine()
  * @param pcb -> The Program Control Block
  */
 void VirtualMachine::load(PCB* pcb) {
+  pcb->base = limit;
+  base = pcb->base;
   load_file(pcb->o_file);
 
   pcb->o_file.close();
+
+  unload_pcb(pcb);
+}
+
+uint8_t VirtualMachine::run_process(PCB* pcb, uint8_t time_slice) {
+  load_pcb(pcb);
+
+  uint8_t count = 0;
+
+  try {
+    // main loop
+    while (!halt) {
+#ifdef DEBUG
+      pcb->log_file << "r0: " << r[0] << ' ';
+      pcb->log_file << "r1: " << r[1] << ' ';
+      pcb->log_file << "r2: " << r[2] << ' ';
+      pcb->log_file << "r3: " << r[3] << std::endl;
+      pcb->log_file << "sr: " << bin(sr, 16) << std::endl;
+      for (unsigned int i = 0; i < mem.size(); ++i) {
+        pcb->log_file << hex(mem[i] & 0xffff, 4) << ' ';
+        if (i % 16 == 15) pcb->log_file << std::endl;
+      }
+      pcb->log_file << std::endl << std::endl;
+      pcb->log_file << pcb->asm_source[pc - base] << std::endl;
+#endif  // DEBUG
+
+      ir.i = mem[pc];
+      ++pc;
+      (*this.*ops[ir.i >> 8])();
+      if (!halt) {
+        pcb->vm_time += clocks[ir.i >> 8];
+        count += clocks[ir.i >> 8];
+        if (count >= time_slice) {
+          halt = true;
+          setReturnStatus(ReturnStatus_t::TIME_SLICE);
+        }
+      }
+    }
+  } catch(std::bad_function_call&) {
+    setReturnStatus(ReturnStatus_t::INVALID_OPCODE);
+  }
+
+  unload_pcb(pcb);
+
+  return count;
 }
 
 void VirtualMachine::load_file(std::fstream& object_file) {
   uint16_t new_limit = limit;
   // Get size of file
   object_file.seekg(0, std::ios::end);
-  new_limit += object_file.tellg();
+  new_limit += object_file.tellg() / 2;
   object_file.seekg(0, std::ios::beg);
 
-  // Because size will be in bytes, not in 16-bit words
-  if (new_limit > mem.size() * 2) {
+  if (new_limit > mem.size()) {
     object_file.close();
     throw CantFitInMemory("VirtualMachine");
   }
@@ -85,37 +130,39 @@ void VirtualMachine::load_file(std::fstream& object_file) {
   }
 }
 
-void VirtualMachine::run_process(PCB* pcb, uint8_t time_slice) {
-  /*
-  try {
-    // main loop
-    while (!halt) {
-#ifdef DEBUG
-      // Find a way to print the actual instruction
-#endif  // DEBUG
-      ir.i = mem[pc];
-      ++pc;
-      (*this.*ops[ir.i >> 8])();
-      clock += clocks[ir.i >> 8];
-#ifdef DEBUG
-        log_file << "r0: " << r[0] << ' ';
-        log_file << "r1: " << r[1] << ' ';
-        log_file << "r2: " << r[2] << ' ';
-        log_file << "r3: " << r[3] << std::endl;
-        log_file << "sr: " << bin(sr, 16) << std::endl;
-        for (unsigned int i = 0; i < mem.size(); ++i) {
-          log_file << hex(mem[i] & 0xffff, 4) << ' ';
-          if (i % 16 == 15) log_file << std::endl;
-        }
-        log_file << std::endl << std::endl;
-#endif  // DEBUG
-    }
-  } catch(std::bad_function_call&) {
-    setReturnStatus(ReturnStatus_t::INVALID_OPCODE);
-  }
-  */
+void VirtualMachine::load_pcb(PCB* pcb) {
+  pc = pcb->pc;
+  r = pcb->r;
+  sr = pcb->sr;
+  sp = pcb->sp;
+  base = pcb->base;
+  limit = pcb->limit;
+
+  if (sp < 256)
+    read_stack(pcb->st_file);
 }
 
+void VirtualMachine::unload_pcb(PCB* pcb) {
+  pcb->pc = pc;
+  pcb->r = r;
+  pcb->sr = sr;
+  pcb->sp = sp;
+
+  if (sp < 256)
+    write_stack(pcb->st_file);
+}
+
+void VirtualMachine::read_stack(std::fstream& stack_file) {
+  for (uint16_t i = mem.size(); i != sp; --i) {
+    stack_file >> mem[i];
+  }
+}
+
+void VirtualMachine::write_stack(std::fstream& stack_file) {
+  for (uint16_t i = mem.size(); i != sp; --i) {
+    stack_file << mem[i] << std::endl;
+  }
+}
 
 /**
  * Test the value of the overflow bit.
@@ -290,7 +337,7 @@ inline uint8_t VirtualMachine::setIO_Register(uint8_t reg) {
  * Load the given memory location's value into a register.
  */
 void VirtualMachine::op_load() {
-  r[ir.fmt1.rd] = mem[ir.fmt1.addr];
+  r[ir.fmt1.rd] = mem[base + ir.fmt1.addr];
 }
 
 
@@ -306,7 +353,7 @@ void VirtualMachine::op_loadi() {
  * Store the given register value in memory.
  */
 void VirtualMachine::op_store() {
-  mem[ir.fmt1.addr] = r[ir.fmt1.rd];
+  mem[base + ir.fmt1.addr] = r[ir.fmt1.rd];
 }
 
 
@@ -531,7 +578,7 @@ void VirtualMachine::op_putstat() {
  * Set pc to the given address
  */
 void VirtualMachine::op_jump() {
-  pc = ir.fmt1.addr;
+  pc = base + ir.fmt1.addr;
 }
 
 
@@ -539,7 +586,7 @@ void VirtualMachine::op_jump() {
  * Set pc to the given address if less is true
  */
 void VirtualMachine::op_jumpl() {
-  if (getLess()) pc = ir.fmt1.addr;
+  if (getLess()) pc = base + ir.fmt1.addr;
 }
 
 
@@ -547,7 +594,7 @@ void VirtualMachine::op_jumpl() {
  * Set pc to the given address if equal is true
  */
 void VirtualMachine::op_jumpe() {
-  if (getEqual()) pc = ir.fmt1.addr;
+  if (getEqual()) pc = base + ir.fmt1.addr;
 }
 
 
@@ -555,7 +602,7 @@ void VirtualMachine::op_jumpe() {
  * Set pc to the given address if greater is true
  */
 void VirtualMachine::op_jumpg() {
-  if (getGreater()) pc = ir.fmt1.addr;
+  if (getGreater()) pc = base + ir.fmt1.addr;
 }
 
 
@@ -580,7 +627,7 @@ void VirtualMachine::op_call() {
   --sp;
   mem[sp] = sr;
   --sp;
-  pc = ir.fmt1.addr;
+  pc = base + ir.fmt1.addr;
 }
 
 

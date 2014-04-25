@@ -24,7 +24,7 @@ class VirtualMachine {
 
   void load(PCB* pcb);
 
-  void run_process(PCB* pcb, uint8_t time_slice);  // REFACTOR
+  uint8_t run_process(PCB* pcb, uint8_t time_slice);
 
  private:
   union Opcode_t {
@@ -46,19 +46,20 @@ class VirtualMachine {
       uint8_t op      : 5;
     } fmt1;
   } ir;
-  typedef void (VirtualMachine::*MemFuncPtr)();
 
   std::vector<int16_t> r;
   std::vector<int16_t> mem;
-  uint16_t pc, sr, sp, base, limit, clock;
+  uint16_t pc, sr, sp, base, limit;
   bool halt;
-  MemFuncPtr ops[256];
+  void (VirtualMachine::*ops[256])();
   uint8_t clocks[256];
-  std::string base_file_name;
-  std::ifstream dot_in_file;
-  std::ofstream dot_out_file;
 
   void load_file(std::fstream& object_file);
+  void load_pcb(PCB* pcb);
+  void unload_pcb(PCB* pcb);
+
+  void read_stack(std::fstream& stack_file);
+  void write_stack(std::fstream& stack_file);
 
   bool getOverflow() const;
   bool setOverflow(bool b);

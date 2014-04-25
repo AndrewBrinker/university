@@ -65,10 +65,18 @@ void OS::run() {
 
   // Main loop
   while (!ready.empty() && !waiting.empty()) {
+    // If IO is complete
+    if (waiting.front()->interrupt_time >= system_time) {
+      ready.push(std::move(waiting.front()));
+      waiting.pop();
+    }
+
     if (!ready.empty()) {
       run_next_process();
     } else {
       // process waiting processes
+      idle_time += waiting.front()->interrupt_time - system_time;
+      system_time = waiting.front()->interrupt_time;
     }
   }
 }
@@ -77,7 +85,7 @@ void OS::run() {
 void OS::run_next_process() {
   running = std::move(ready.front());
   ready.pop();
-  vm->run_process(running.get(), TIME_SLICE);
+  system_time += vm->run_process(running.get(), TIME_SLICE);
 }
 
 // Find all *.s files and load their names (and paths) into memory
