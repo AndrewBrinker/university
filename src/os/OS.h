@@ -36,7 +36,15 @@ class OS {
   std::queue<std::unique_ptr<PCB>> ready, waiting;
   std::unique_ptr<PCB> running;
 
+  uint32_t system_time;
+  double system_utilization;
+  double user_utilization;
+  double vm_throughput;
+  uint32_t idle_time;
+
   std::vector<std::string> get_sourcefiles();
+
+  void run_next_process();
 
   DISALLOW_COPY_AND_ASSIGN(OS)
 };

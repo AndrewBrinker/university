@@ -85,11 +85,7 @@ void VirtualMachine::load_file(std::fstream& object_file) {
   }
 }
 
-/**
- * Parse the given file and run the code it describes
- * @param file_name -> The name of the file being parsed
- */
-void VirtualMachine::run(std::string) {
+void VirtualMachine::run_process(PCB* pcb, uint8_t time_slice) {
   /*
   try {
     // main loop

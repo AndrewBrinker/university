@@ -18,15 +18,13 @@
   void operator=(const TypeName&) = delete;
 #endif
 
-class OS;
-
 class VirtualMachine {
  public:
   VirtualMachine();
 
   void load(PCB* pcb);
 
-  void run(std::string);  // REFACTOR
+  void run_process(PCB* pcb, uint8_t time_slice);  // REFACTOR
 
  private:
   union Opcode_t {
@@ -121,8 +119,6 @@ class VirtualMachine {
   void op_noop();
 
   void setupOpMap();
-
-  friend class OS;
 
   DISALLOW_COPY_AND_ASSIGN(VirtualMachine)
 };

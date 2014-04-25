@@ -32,24 +32,35 @@
 struct PCB {
   explicit PCB(std::string source_file);
 
+  // Virtual Machine data
   uint16_t pc, sr, sp, base, limit;
   std::vector<int16_t> r;
+
+  // Process name
   std::string process_name;
+
+  // Files
   std::fstream s_file;
   std::fstream o_file;
   std::fstream in_file;
   std::fstream out_file;
   std::fstream st_file;
-  uintmax_t vm_time = 0;
-  uintmax_t waiting_time = 0;
-  uintmax_t turnaround_time = 0;
-  uintmax_t io_time = 0;
-  uintmax_t largest_stack_size = 0;
+
+  // Accounting
+  uint32_t vm_time;
+  uint32_t waiting_time;
+  uint32_t turnaround_time;
+  uint32_t io_time;
+  uint32_t largest_stack_size;
+
+  // Interrupt
+  uint32_t interrupt_time;
 #ifdef DEBUG
   std::vector<std::string> asm_source;
   std::fstream log_file;
 #endif  // DEBUG
 
+ private:
   DISALLOW_COPY_AND_ASSIGN(PCB)
 };
 

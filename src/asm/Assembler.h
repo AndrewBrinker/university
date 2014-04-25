@@ -16,8 +16,6 @@
   void operator=(const TypeName&) = delete;
 #endif
 
-class OS;
-
 class Assembler {
  public:
   typedef struct op_t {
@@ -39,8 +37,6 @@ class Assembler {
   std::string convertToObjectCode(std::string);
   op_t findOperation(std::string);
   std::string getRegisterID(std::string);
-
-  friend class OS;
 
   DISALLOW_COPY_AND_ASSIGN(Assembler)
 };
