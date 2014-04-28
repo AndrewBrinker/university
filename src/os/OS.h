@@ -42,6 +42,9 @@ class OS {
   double vm_throughput;
   uint32_t idle_time;
 
+  uint8_t getReturnStatus(const PCB* pcb) const;
+  uint8_t getIORegister(const PCB* pcb) const;
+
   std::vector<std::string> get_sourcefiles();
 
   void run_next_process();

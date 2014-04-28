@@ -18,6 +18,17 @@
   void operator=(const TypeName&) = delete;
 #endif
 
+enum ReturnStatus_t {
+  TIME_SLICE              = 00,
+  HALT_INSTRUCTION        = 01,
+  OUT_OF_BOUND_REFERENCE  = 02,
+  STACK_OVERFLOW          = 03,
+  STACK_UNDERFLOW         = 04,
+  INVALID_OPCODE          = 05,
+  READ_OPERATION          = 06,
+  WRITE_OPERATION         = 07
+};
+
 class VirtualMachine {
  public:
   VirtualMachine();

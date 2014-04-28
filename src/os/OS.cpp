@@ -13,7 +13,14 @@
 
 #define N_REGISTERS 4
 
-#define TIME_SLICE 15
+#define TIME_SLICE_TIME 15
+
+#define RETURN_STATUS_MASK 07
+#define RETURN_STATUS_SHIFT 5
+#define IO_REGISTER_MASK 03
+#define IO_REGISTER_SHIFT 8
+
+#define IO_SYSTEM_TIME 27
 
 OS::OS()
   : as(new Assembler),
@@ -85,7 +92,57 @@ void OS::run() {
 void OS::run_next_process() {
   running = std::move(ready.front());
   ready.pop();
-  system_time += vm->run_process(running.get(), TIME_SLICE);
+  system_time += vm->run_process(running.get(), TIME_SLICE_TIME);
+
+  ReturnStatus_t return_status = static_cast<ReturnStatus_t>(getReturnStatus(running.get()));
+  uint8_t io_register;
+  switch(return_status) {
+  case ReturnStatus_t::TIME_SLICE :
+    ready.push(std::move(running));
+    break;
+  case ReturnStatus_t::HALT_INSTRUCTION :
+    running.reset();
+    break;
+  case ReturnStatus_t::OUT_OF_BOUND_REFERENCE :
+    fprintf(stderr, "Out of bound reference in process %s\n", running->process_name.c_str());
+    running.reset();
+    break;
+  case ReturnStatus_t::STACK_OVERFLOW :
+    fprintf(stderr, "Stack overflow in process %s\n", running->process_name.c_str());
+    running.reset();
+    break;
+  case ReturnStatus_t::STACK_UNDERFLOW :
+    fprintf(stderr, "Stack underflow in process %s\n", running->process_name.c_str());
+    running.reset();
+    break;
+  case ReturnStatus_t::INVALID_OPCODE :
+    fprintf(stderr, "Invalid opcode in process %s\n", running->process_name.c_str());
+    running.reset();
+    break;
+  case ReturnStatus_t::READ_OPERATION :
+    io_register = getIORegister(running.get());
+    running->in_file >> running->r[io_register];
+    running->interrupt_time = system_time + IO_SYSTEM_TIME;
+    waiting.push(std::move(running));
+    break;
+  case ReturnStatus_t::WRITE_OPERATION :
+    io_register = getIORegister(running.get());
+    running->out_file << running->r[io_register] << std::endl;
+    running->interrupt_time = system_time + IO_SYSTEM_TIME;
+    waiting.push(std::move(running));
+    break;
+  default :
+    fputs("SOMETHING WENT TERRIBLY WRONG", stderr);
+    throw std::exception();
+  };
+}
+
+inline uint8_t OS::getReturnStatus(const PCB* pcb) const {
+  return (pcb->sr & (RETURN_STATUS_MASK << RETURN_STATUS_SHIFT) >> RETURN_STATUS_SHIFT);
+}
+
+inline uint8_t OS::getIORegister(const PCB* pcb) const {
+  return (pcb->sr & (IO_REGISTER_MASK << IO_REGISTER_SHIFT) >> IO_REGISTER_SHIFT);
 }
 
 // Find all *.s files and load their names (and paths) into memory
