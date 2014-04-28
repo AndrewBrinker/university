@@ -103,6 +103,12 @@ void Assembler::parse(PCB* pcb) {
   pcb->asm_source = asm_source;
 #endif  // DEBUG
 
+#ifdef DEBUG
+  if (!pcb->o_file.is_open()) {
+    puts("Yeah, the .o file isn't open.");
+  }
+#endif  // DEBUG
+
   // Convert it to object file source
   for (std::vector<std::string>::iterator it = asm_source.begin();
        it != asm_source.end(); ++it ) {

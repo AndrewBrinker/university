@@ -52,30 +52,41 @@ void OS::run() {
     puts("Parsed successfully!");
     printf("Attempting to load %s... ", source_file.c_str());
 #endif  // DEBUG
-    vm->load(curr_pcb.get());
+    vm->load_into_memory(curr_pcb.get());
 #ifdef DEBUG
+    printf("Base of process %s is %d\n",
+           curr_pcb->process_name.c_str(),
+           curr_pcb->base);
     puts("Loaded successfully!\n");
 #endif  // DEBUG
-    ready.push(std::move(curr_pcb));
+    ready.push(curr_pcb.get());
+    jobs.push_back(std::move(curr_pcb));
   }
 
 #ifdef DEBUG
+  printf("Contents of jobs list:\n\t");
+  for (const std::unique_ptr<PCB>& pcb : jobs)
+    printf("%s ", pcb->process_name.c_str());
+  puts("\n");
+
   printf("Contents of ready queue:\n\t");
-  PCB* front = ready.front().get();
+  const PCB* front = ready.front();
   do {
     printf("%s ", ready.front()->process_name.c_str());
     ready.push(std::move(ready.front()));
     ready.pop();
-  } while (front != ready.front().get());
+  } while (front != ready.front());
   puts("");
 #endif  // DEBUG
 
   // Main loop
-  while (!ready.empty() && !waiting.empty()) {
+  while (!ready.empty() || !waiting.empty()) {
     // If IO is complete
-    if (waiting.front()->interrupt_time >= system_time) {
-      ready.push(std::move(waiting.front()));
-      waiting.pop();
+    if (!waiting.empty()) {
+      if (waiting.front()->interrupt_time >= system_time) {
+        ready.push(waiting.front());
+        waiting.pop();
+      }
     }
 
     if (!ready.empty()) {
@@ -90,48 +101,68 @@ void OS::run() {
 
 // Load the next process into the Virtual Machine and run it for its time slice.
 void OS::run_next_process() {
-  running = std::move(ready.front());
+  running = const_cast<PCB*>(ready.front());
   ready.pop();
-  system_time += vm->run_process(running.get(), TIME_SLICE_TIME);
+#ifdef DEBUG
+  printf("Beginning time slice for process %s\n",
+         running->process_name.c_str());
+#endif  // DEBUG
+  system_time += vm->run_process(running, TIME_SLICE_TIME);
 
   ReturnStatus_t return_status =
-    static_cast<ReturnStatus_t>(getReturnStatus(running.get()));
+    static_cast<ReturnStatus_t>(getReturnStatus(running));
   uint8_t io_register;
   switch (return_status) {
   case ReturnStatus_t::TIME_SLICE :
+#ifdef DEBUG
+    printf("Time slice completed for process %s\n",
+           running->process_name.c_str());
+#endif  // DEBUG
     ready.push(std::move(running));
     break;
   case ReturnStatus_t::HALT_INSTRUCTION :
-    running.reset();
+#ifdef DEBUG
+    printf("Process %s encountered halt instruction\n",
+           running->process_name.c_str());
+#endif  // DEBUG
+    running = nullptr;
     break;
   case ReturnStatus_t::OUT_OF_BOUND_REFERENCE :
     fprintf(stderr, "Out of bound reference in process %s\n",
             running->process_name.c_str());
-    running.reset();
+    running = nullptr;
     break;
   case ReturnStatus_t::STACK_OVERFLOW :
     fprintf(stderr, "Stack overflow in process %s\n",
             running->process_name.c_str());
-    running.reset();
+    running = nullptr;
     break;
   case ReturnStatus_t::STACK_UNDERFLOW :
     fprintf(stderr, "Stack underflow in process %s\n",
             running->process_name.c_str());
-    running.reset();
+    running = nullptr;
     break;
   case ReturnStatus_t::INVALID_OPCODE :
     fprintf(stderr, "Invalid opcode in process %s\n",
             running->process_name.c_str());
-    running.reset();
+    running = nullptr;
     break;
   case ReturnStatus_t::READ_OPERATION :
-    io_register = getIORegister(running.get());
+#ifdef DEBUG
+    printf("Process %s encountered read operation\n",
+           running->process_name.c_str());
+#endif  // DEBUG
+    io_register = getIORegister(running);
     running->in_file >> running->r[io_register];
     running->interrupt_time = system_time + IO_SYSTEM_TIME;
     waiting.push(std::move(running));
     break;
   case ReturnStatus_t::WRITE_OPERATION :
-    io_register = getIORegister(running.get());
+#ifdef DEBUG
+    printf("Process %s encountered write operation\n",
+        running->process_name.c_str());
+#endif  // DEBUG
+    io_register = getIORegister(running);
     running->out_file << running->r[io_register] << std::endl;
     running->interrupt_time = system_time + IO_SYSTEM_TIME;
     waiting.push(std::move(running));

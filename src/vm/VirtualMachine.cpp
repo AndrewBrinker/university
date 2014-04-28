@@ -40,6 +40,7 @@ VirtualMachine::VirtualMachine()
                                pc(0),
                                sp(MEM_SIZE - 1),
                                base(0),
+                               limit(0),
                                halt(0) {
   setupOpMap();
 }
@@ -50,7 +51,7 @@ VirtualMachine::VirtualMachine()
  *   variables in the PCB.
  * @param pcb -> The Program Control Block
  */
-void VirtualMachine::load(PCB* pcb) {
+void VirtualMachine::load_into_memory(PCB* pcb) {
   pcb->base = limit;
   base = pcb->base;
   load_file(pcb->o_file);

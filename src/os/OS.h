@@ -33,8 +33,9 @@ class OS {
  private:
   std::unique_ptr<Assembler> as;
   std::unique_ptr<VirtualMachine> vm;
-  std::queue<std::unique_ptr<PCB>> ready, waiting;
-  std::unique_ptr<PCB> running;
+  std::list<std::unique_ptr<PCB>> jobs;
+  std::queue<const PCB*> ready, waiting;
+  PCB* running;
 
   uint32_t system_time;
   double system_utilization;

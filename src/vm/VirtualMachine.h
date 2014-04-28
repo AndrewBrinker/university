@@ -33,7 +33,7 @@ class VirtualMachine {
  public:
   VirtualMachine();
 
-  void load(PCB* pcb);
+  void load_into_memory(PCB* pcb);
 
   uint8_t run_process(PCB* pcb, uint8_t time_slice);
 
