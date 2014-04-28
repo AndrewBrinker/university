@@ -83,7 +83,7 @@ void OS::run() {
   while (!ready.empty() || !waiting.empty()) {
     // If IO is complete
     if (!waiting.empty()) {
-      if (waiting.front()->interrupt_time >= system_time) {
+      if (waiting.front()->interrupt_time <= system_time) {
         ready.push(waiting.front());
         waiting.pop();
       }
@@ -171,13 +171,13 @@ void OS::run_next_process() {
 }
 
 inline uint8_t OS::getReturnStatus(const PCB* pcb) const {
-  return (pcb->sr &
-          (RETURN_STATUS_MASK << RETURN_STATUS_SHIFT) >> RETURN_STATUS_SHIFT);
+  return ((pcb->sr &
+           (RETURN_STATUS_MASK << RETURN_STATUS_SHIFT)) >> RETURN_STATUS_SHIFT);
 }
 
 inline uint8_t OS::getIORegister(const PCB* pcb) const {
-  return (pcb->sr &
-          (IO_REGISTER_MASK << IO_REGISTER_SHIFT) >> IO_REGISTER_SHIFT);
+  return ((pcb->sr &
+           (IO_REGISTER_MASK << IO_REGISTER_SHIFT)) >> IO_REGISTER_SHIFT);
 }
 
 // Find all *.s files and load their names (and paths) into memory

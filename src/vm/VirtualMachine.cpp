@@ -55,6 +55,7 @@ void VirtualMachine::load_into_memory(PCB* pcb) {
   pcb->base = limit;
   base = pcb->base;
   load_file(pcb->o_file);
+  pcb->limit = limit - base;
 
   pcb->o_file.close();
 
@@ -127,9 +128,8 @@ void VirtualMachine::load_pcb(PCB* pcb) {
   sr = pcb->sr;
   sp = pcb->sp;
   base = pcb->base;
-  limit = pcb->limit;
 
-  if (sp < 256)
+  if (sp < MEM_SIZE - 1)
     read_stack(pcb->st_file);
 }
 
@@ -139,7 +139,7 @@ void VirtualMachine::unload_pcb(PCB* pcb) {
   pcb->sr = sr;
   pcb->sp = sp;
 
-  if (sp < 256)
+  if (sp < MEM_SIZE - 1)
     write_stack(pcb->st_file);
 }
 
@@ -278,7 +278,8 @@ inline bool VirtualMachine::setCarry(bool b) {
  * @return the value of the return status.
  */
 inline uint8_t VirtualMachine::getReturnStatus() const {
-  return (sr & RETURN_STATUS_MASK) >> RETURN_STATUS_SHIFT;
+  return (sr & (RETURN_STATUS_MASK >> RETURN_STATUS_SHIFT)) >>
+         RETURN_STATUS_SHIFT;
 }
 
 
@@ -316,8 +317,9 @@ inline uint8_t VirtualMachine::setIO_Register(uint8_t reg) {
 #ifdef DEBUG
   assert(reg < 4);
 #endif  // DEBUG
-  uint8_t s = (sr & IO_REGISTER_MASK) >> IO_REGISTER_SHIFT;
-  sr &= ~(IO_REGISTER_MASK) << IO_REGISTER_SHIFT;
+  uint8_t s = (sr & (IO_REGISTER_MASK << IO_REGISTER_SHIFT)) >>
+               IO_REGISTER_SHIFT;
+  sr &= ~(IO_REGISTER_MASK << IO_REGISTER_SHIFT);
   sr |= reg << IO_REGISTER_SHIFT;
   return s;
 }
