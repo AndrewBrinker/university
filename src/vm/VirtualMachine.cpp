@@ -24,9 +24,9 @@
 #define GREATER_MASK  0x0002
 #define CARRY_MASK    0x0001
 
-#define RETURN_STATUS_MASK  0x111
+#define RETURN_STATUS_MASK  0x7
 #define RETURN_STATUS_SHIFT 5
-#define IO_REGISTER_MASK    0x11
+#define IO_REGISTER_MASK    0x3
 #define IO_REGISTER_SHIFT   8
 
 
@@ -66,6 +66,7 @@ uint8_t VirtualMachine::run_process(PCB* pcb, uint8_t time_slice) {
   load_pcb(pcb);
 
   uint8_t count = 0;
+  halt = false;
 
   try {
     // main loop
@@ -81,10 +82,10 @@ uint8_t VirtualMachine::run_process(PCB* pcb, uint8_t time_slice) {
         if (i % 16 == 15) pcb->log_file << std::endl;
       }
       pcb->log_file << std::endl << std::endl;
-      pcb->log_file << pcb->asm_source[pc - base] << std::endl;
+      pcb->log_file << pcb->asm_source[pc] << std::endl;
 #endif  // DEBUG
 
-      ir.i = mem[pc];
+      ir.i = mem[pc + base];
       ++pc;
       (*this.*ops[ir.i >> 8])();
       if (!halt) {
@@ -292,7 +293,8 @@ inline uint8_t VirtualMachine::setReturnStatus(uint8_t status) {
 #ifdef DEBUG
   assert(status < 8);
 #endif  // DEBUG
-  uint8_t s = (sr & RETURN_STATUS_MASK) >> RETURN_STATUS_SHIFT;
+  uint8_t s = (sr & (RETURN_STATUS_MASK << RETURN_STATUS_SHIFT)) >>
+               RETURN_STATUS_SHIFT;
   sr &= ~(RETURN_STATUS_MASK << RETURN_STATUS_SHIFT);
   sr |= status << RETURN_STATUS_SHIFT;
   return s;
