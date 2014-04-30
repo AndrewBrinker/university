@@ -4,6 +4,7 @@
 #include <string.h>
 #include "../lib/filename.c"
 #include "../lib/chomp.c"
+#include "../lib/err.c"
 #include "../lib/label.c"
 #include "../lib/token.c"
 #include "../lib/convert.c"
@@ -39,21 +40,19 @@ int yywrap();
 
 %%
 
-
 program:    block;
 
 block:      block line |
             line;
 
 line:       INTEGER {
-                label *label = putlabel(atoi($1));
-                fprintf(yyout, "%s: ", label->name);
+                label *new_label = putlabel(atoi($1));
+                fprintf(yyout, "%s: ", new_label->name);
             } statement endl |
             statement endl;
 
 statement:  PRINT exprlist {
                 chomp($2);
-                printf("");
                 token *root = tokenize($2, ",");
                 while (root) {
                     fprintf(yyout,
@@ -77,8 +76,7 @@ statement:  PRINT exprlist {
                 int result = eval(postfix);
                 label *new_label = getlabel(result);
                 if (!new_label) {
-                    printf("No matching label. Exiting...\n");
-                    exit(EXIT_FAILURE);
+                    err("No matching label. Exiting...");
                 }
                 fprintf(yyout, "goto %s;\n", new_label->name);
             } |
