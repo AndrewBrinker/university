@@ -32,10 +32,10 @@ int yywrap();
 %token NEWLINE ASSIGN COMMA
 %token PLUS MINUS TIMES DIVIDED_BY LEFT_PAREN RIGHT_PAREN
 
-%left '=' ','
+%left ASSIGN COMMA
 %left LT LE GT GE EQ NQ
-%left '+' '-'
-%left '*' '/'
+%left PLUS MINUS
+%left TIMES DIVIDED_BY
 
 %%
 

@@ -215,23 +215,3 @@ int eval(const char *expression) {
     }
     return stack[top];
 }
-
-
-/*
-int main(int argc, char **argv) {
-    if (argc != 2) {
-        printf("Usage: %s \"<string>\"\n", argv[0]);
-        exit(EXIT_FAILURE);
-    }
-
-    char *postfix = infix_to_postfix(argv[1]);
-    int result = eval(postfix);
-
-    printf("Infix:   %s\n", argv[1]);
-    printf("Postfix: %s\n", postfix);
-    printf("Result:  %d\n", result);
-
-    free(postfix);
-    return 0;
-}
-*/

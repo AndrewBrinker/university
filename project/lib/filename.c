@@ -34,13 +34,13 @@ char *strip_extension(const char *input) {
 
 
 /**
- * Convert file name from "blah.b" to "blah.c"
+ * Convert file name from "blah.b" to "blah.cpp"
  *
  * Strips the current file extension from the file name, and replaces it with
  * the new extension. Requires that the created string be manually deallocated.
  *
  * @param  input -> The current file name
- * @return the ".c" extension file name
+ * @return the ".cpp" extension file name
  */
 char *convert_file_name(const char* input) {
     char *stripped = strip_extension(input);
