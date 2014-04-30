@@ -41,7 +41,11 @@ VirtualMachine::VirtualMachine()
                                sp(MEM_SIZE - 1),
                                base(0),
                                limit(0),
-                               halt(0) {
+                               halt(0) 
+#ifdef DEBUG
+                               , vm_log_file( "vm.log" )
+#endif  // DEBUG
+{
   setupOpMap();
 }
 
@@ -71,23 +75,42 @@ uint8_t VirtualMachine::run_process(PCB* pcb, uint8_t time_slice) {
   try {
     // main loop
     while (!halt) {
+
+#ifdef DEBUG
+      pcb->log_file << pcb->asm_source[pc] << std::endl;
+      puts(pcb->asm_source[pc].c_str());
+
+      vm_log_file << pcb->process_name << ": " << pcb->asm_source[pc] << std::endl;
+#endif  // DEBUG
+
+      ir.i = mem[pc + base];
+      ++pc;
+      (*this.*ops[ir.i >> 8])();
+
 #ifdef DEBUG
       pcb->log_file << "r0: " << r[0] << ' ';
       pcb->log_file << "r1: " << r[1] << ' ';
       pcb->log_file << "r2: " << r[2] << ' ';
       pcb->log_file << "r3: " << r[3] << std::endl;
       pcb->log_file << "sr: " << bin(sr, 16) << std::endl;
-      for (unsigned int i = 0; i < mem.size(); ++i) {
-        pcb->log_file << hex(mem[i] & 0xffff, 4) << ' ';
-        if (i % 16 == 15) pcb->log_file << std::endl;
-      }
+//      for (unsigned int i = 0; i < mem.size(); ++i) {
+//        pcb->log_file << hex(mem[i] & 0xffff, 4) << ' ';
+//        if (i % 16 == 15) pcb->log_file << std::endl;
+//      }
       pcb->log_file << std::endl << std::endl;
-      pcb->log_file << pcb->asm_source[pc] << std::endl;
+      
+      vm_log_file << "r0: " << r[0] << ' ';
+      vm_log_file << "r1: " << r[1] << ' ';
+      vm_log_file << "r2: " << r[2] << ' ';
+      vm_log_file << "r3: " << r[3] << std::endl;
+      vm_log_file << "sr: " << bin(sr, 16) << std::endl;
+      for (unsigned int i = 0; i < mem.size(); ++i) {
+        vm_log_file << hex(mem[i] & 0xffff, 4) << ' ';
+        if (i % 16 == 15) vm_log_file << std::endl;
+      }
+      vm_log_file << std::endl << std::endl;
 #endif  // DEBUG
 
-      ir.i = mem[pc + base];
-      ++pc;
-      (*this.*ops[ir.i >> 8])();
       if (!halt) {
         pcb->vm_time += clocks[ir.i >> 8];
         count += clocks[ir.i >> 8];
@@ -145,13 +168,15 @@ void VirtualMachine::unload_pcb(PCB* pcb) {
 }
 
 void VirtualMachine::read_stack(std::fstream& stack_file) {
-  for (uint16_t i = mem.size(); i != sp; --i) {
-    stack_file >> mem[i];
+  uint16_t i = mem.size();
+  uint16_t value;
+  while (stack_file >> value) {
+    mem[--i] = value;
   }
 }
 
 void VirtualMachine::write_stack(std::fstream& stack_file) {
-  for (uint16_t i = mem.size(); i != sp; --i) {
+  for (uint16_t i = mem.size() - 1; i != sp; --i) {
     stack_file << mem[i] << std::endl;
   }
 }
@@ -573,7 +598,7 @@ void VirtualMachine::op_putstat() {
  * Set pc to the given address
  */
 void VirtualMachine::op_jump() {
-  pc = base + ir.fmt1.addr;
+  pc = ir.fmt1.addr;
 }
 
 
@@ -581,7 +606,7 @@ void VirtualMachine::op_jump() {
  * Set pc to the given address if less is true
  */
 void VirtualMachine::op_jumpl() {
-  if (getLess()) pc = base + ir.fmt1.addr;
+  if (getLess()) pc = ir.fmt1.addr;
 }
 
 
@@ -589,7 +614,7 @@ void VirtualMachine::op_jumpl() {
  * Set pc to the given address if equal is true
  */
 void VirtualMachine::op_jumpe() {
-  if (getEqual()) pc = base + ir.fmt1.addr;
+  if (getEqual()) pc = ir.fmt1.addr;
 }
 
 
@@ -597,7 +622,7 @@ void VirtualMachine::op_jumpe() {
  * Set pc to the given address if greater is true
  */
 void VirtualMachine::op_jumpg() {
-  if (getGreater()) pc = base + ir.fmt1.addr;
+  if (getGreater()) pc = ir.fmt1.addr;
 }
 
 
@@ -622,7 +647,7 @@ void VirtualMachine::op_call() {
   --sp;
   mem[sp] = sr;
   --sp;
-  pc = base + ir.fmt1.addr;
+  pc = ir.fmt1.addr;
 }
 
 

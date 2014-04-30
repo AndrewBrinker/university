@@ -65,6 +65,10 @@ class VirtualMachine {
   void (VirtualMachine::*ops[256])();
   uint8_t clocks[256];
 
+#ifdef DEBUG
+  std::ofstream vm_log_file;
+#endif  // DEBUG
+
   void load_file(std::fstream& object_file);
   void load_pcb(PCB* pcb);
   void unload_pcb(PCB* pcb);

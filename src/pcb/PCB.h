@@ -57,7 +57,7 @@ struct PCB {
   uint32_t interrupt_time;
 #ifdef DEBUG
   std::vector<std::string> asm_source;
-  std::fstream log_file;
+  std::ofstream log_file;
 #endif  // DEBUG
 
  private:
