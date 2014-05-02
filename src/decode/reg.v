@@ -13,6 +13,7 @@ module register (
     integer i;
 
     initial begin
+        #0
         A <= 0;
         B <= 0;
 

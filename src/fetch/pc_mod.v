@@ -4,6 +4,7 @@ module pc_mod (
     );
 
     initial begin
+        #0
         PC <= 0;
     end
 

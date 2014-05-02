@@ -7,6 +7,7 @@ module if_id (
     );
 
     initial begin
+        #0
         instrout <= 0;
         npcout   <= 0;
     end

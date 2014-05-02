@@ -8,6 +8,7 @@ module memory (
     reg [31:0] mem[0:127];
 
     initial begin
+        #0
         $readmemh(`MEMORY_FILE_NAME, mem);
     end
 
