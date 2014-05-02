@@ -5,8 +5,8 @@
 `include "src/fetch/pc_mod.v"
 
 module i_fetch (
-        output wire [31:0] IF_ID_instruction;
-        output wire [31:0] IF_ID_npc;
+        output wire [31:0] IF_ID_instruction,
+        output wire [31:0] IF_ID_npc
     );
 
     reg         EX_MEM_PC_Source;

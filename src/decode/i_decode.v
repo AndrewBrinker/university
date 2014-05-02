@@ -20,10 +20,6 @@ module i_decode (
                             instruction_out_1511
     );
 
-    //input   wire [4:0]  MEM_WB_rd,
-    //input   wire        MEM_WB_reg_write,
-    //input   wire [31:0] WB_mux5_write_data,
-
     wire [3:0]  ctl_ex_out;
     wire [2:0]  ctl_m_out;
     wire [1:0]  ctl_wb_out;
