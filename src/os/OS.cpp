@@ -58,7 +58,7 @@ void OS::run() {
     puts("Parsed successfully!");
     printf("Attempting to load %s... ", source_file.c_str());
 #endif  // DEBUG
-    vm->load_into_memory(curr_pcb.get());
+    vm->loadIntoMemory(curr_pcb.get());
 #ifdef DEBUG
     printf("Base of process %s is %d\n",
            curr_pcb->process_name.c_str(),
@@ -116,7 +116,7 @@ void OS::run_next_process() {
   printf("Beginning time slice for process %s\n",
          running->process_name.c_str());
 #endif  // DEBUG
-  system_time += vm->run_process(running, TIME_SLICE_TIME);
+  system_time += vm->runProcess(running, TIME_SLICE_TIME);
 
   ReturnStatus_t return_status =
     static_cast<ReturnStatus_t>(getReturnStatus(running));

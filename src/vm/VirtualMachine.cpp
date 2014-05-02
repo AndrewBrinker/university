@@ -55,19 +55,19 @@ VirtualMachine::VirtualMachine()
  *   variables in the PCB.
  * @param pcb -> The Program Control Block
  */
-void VirtualMachine::load_into_memory(PCB* pcb) {
+void VirtualMachine::loadIntoMemory(PCB* pcb) {
   pcb->base = limit;
   base = pcb->base;
-  load_file(pcb->o_file);
+  loadFile(pcb->o_file);
   pcb->limit = limit - base;
 
   pcb->o_file.close();
 
-  unload_pcb(pcb);
+  unloadPCB(pcb);
 }
 
-uint8_t VirtualMachine::run_process(PCB* pcb, uint8_t time_slice) {
-  load_pcb(pcb);
+uint8_t VirtualMachine::runProcess(PCB* pcb, uint8_t time_slice) {
+  loadPCB(pcb);
 
   uint8_t count = 0;
   halt = false;
@@ -123,12 +123,12 @@ uint8_t VirtualMachine::run_process(PCB* pcb, uint8_t time_slice) {
     setReturnStatus(ReturnStatus_t::INVALID_OPCODE);
   }
 
-  unload_pcb(pcb);
+  unloadPCB(pcb);
 
   return count;
 }
 
-void VirtualMachine::load_file(std::fstream& object_file) {
+void VirtualMachine::loadFile(std::fstream& object_file) {
   uint16_t new_limit = limit;
   // Get size of file
   object_file.seekg(0, std::ios::end);
@@ -145,7 +145,7 @@ void VirtualMachine::load_file(std::fstream& object_file) {
   }
 }
 
-void VirtualMachine::load_pcb(PCB* pcb) {
+void VirtualMachine::loadPCB(PCB* pcb) {
   pc = pcb->pc;
   r = pcb->r;
   sr = pcb->sr;
@@ -153,20 +153,20 @@ void VirtualMachine::load_pcb(PCB* pcb) {
   base = pcb->base;
 
   if (sp < MEM_SIZE - 1)
-    read_stack(pcb->st_file);
+    readStack(pcb->st_file);
 }
 
-void VirtualMachine::unload_pcb(PCB* pcb) {
+void VirtualMachine::unloadPCB(PCB* pcb) {
   pcb->pc = pc;
   pcb->r = r;
   pcb->sr = sr;
   pcb->sp = sp;
 
   if (sp < MEM_SIZE - 1)
-    write_stack(pcb->st_file);
+    writeStack(pcb->st_file);
 }
 
-void VirtualMachine::read_stack(std::fstream& stack_file) {
+void VirtualMachine::readStack(std::fstream& stack_file) {
   for (uint16_t i = mem.size() - 1; i != sp; --i) {
     if (!(stack_file >> mem[--i])) {
       fputs("BADSTACKNO", stderr);
@@ -175,7 +175,7 @@ void VirtualMachine::read_stack(std::fstream& stack_file) {
   }
 }
 
-void VirtualMachine::write_stack(std::fstream& stack_file) {
+void VirtualMachine::writeStack(std::fstream& stack_file) {
   for (uint16_t i = mem.size() - 1; i != sp; --i) {
     stack_file << mem[i] << std::endl;
   }

@@ -32,10 +32,8 @@ enum ReturnStatus_t {
 class VirtualMachine {
  public:
   VirtualMachine();
-
-  void load_into_memory(PCB* pcb);
-
-  uint8_t run_process(PCB* pcb, uint8_t time_slice);
+  void loadIntoMemory(PCB* pcb);
+  uint8_t runProcess(PCB* pcb, uint8_t time_slice);
 
  private:
   union Opcode_t {
@@ -69,12 +67,12 @@ class VirtualMachine {
   std::ofstream vm_log_file;
 #endif  // DEBUG
 
-  void load_file(std::fstream& object_file);
-  void load_pcb(PCB* pcb);
-  void unload_pcb(PCB* pcb);
+  void loadFile(std::fstream& object_file);
+  void loadPCB(PCB* pcb);
+  void unloadPCB(PCB* pcb);
 
-  void read_stack(std::fstream& stack_file);
-  void write_stack(std::fstream& stack_file);
+  void readStack(std::fstream& stack_file);
+  void writeStack(std::fstream& stack_file);
 
   bool getOverflow() const;
   bool setOverflow(bool b);
