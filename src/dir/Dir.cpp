@@ -13,10 +13,9 @@
 #include <vector>
 #include <string>
 
+
 std::string join(std::string path, std::string base) {
-  if (path.back() == '/') {
-    path.pop_back();
-  }
+  if (path.back() == '/') path.pop_back();
   return path + "/" + base;
 }
 

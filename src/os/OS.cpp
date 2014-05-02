@@ -22,17 +22,23 @@
 
 #define IO_SYSTEM_TIME 27
 
+/**
+ * Initialize the internal variables.
+ */
 OS::OS()
   : as(new Assembler),
     vm(new VirtualMachine),
-
     system_time(0),
     system_utilization(0.0),
     user_utilization(0.0),
     vm_throughput(0.0),
-    idle_time(0)
-{}
+    idle_time(0) {}
 
+
+/**
+ * Load all the assembly files, create the PCBs, and run them all with
+ * time-sharing.
+ */
 void OS::run() {
   // Find all *.s files and load their names (and paths) into memory
   std::vector<std::string> source_files = get_sourcefiles();
@@ -99,7 +105,10 @@ void OS::run() {
   }
 }
 
-// Load the next process into the Virtual Machine and run it for its time slice.
+
+/**
+ * Load the next process into the Virtual Machine and run it for its time slice.
+ */
 void OS::run_next_process() {
   running = const_cast<PCB*>(ready.front());
   ready.pop();
@@ -170,17 +179,32 @@ void OS::run_next_process() {
   }
 }
 
+
+/**
+ * Get the return status of the given PCB.
+ * @param  pcb -> The PCB being checked.
+ * @return the status of that PCB
+ */
 inline uint8_t OS::getReturnStatus(const PCB* pcb) const {
   return ((pcb->sr &
            (RETURN_STATUS_MASK << RETURN_STATUS_SHIFT)) >> RETURN_STATUS_SHIFT);
 }
 
+
+/**
+ * Get the I/O register of the given PCB.
+ * @param  pcb -> The PCB being checked.
+ * @return the IO register of that PCB.
+ */
 inline uint8_t OS::getIORegister(const PCB* pcb) const {
   return ((pcb->sr &
            (IO_REGISTER_MASK << IO_REGISTER_SHIFT)) >> IO_REGISTER_SHIFT);
 }
 
-// Find all *.s files and load their names (and paths) into memory
+
+/**
+ * Find all *.s files and load their names (and paths) into memory
+ */
 std::vector<std::string> OS::get_sourcefiles() {
   std::vector<std::string> filenames;
   for (auto de : walk()) {
