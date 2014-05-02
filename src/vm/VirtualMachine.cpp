@@ -92,7 +92,7 @@ uint8_t VirtualMachine::run_process(PCB* pcb, uint8_t time_slice) {
       pcb->log_file << "r1: " << r[1] << ' ';
       pcb->log_file << "r2: " << r[2] << ' ';
       pcb->log_file << "r3: " << r[3] << std::endl;
-      pcb->log_file << "sr: " << bin(sr, 16) << std::endl;
+      pcb->log_file << "sr: " << bin(sr, 16) << "  sp: " << sp << std::endl;
 //      for (unsigned int i = 0; i < mem.size(); ++i) {
 //        pcb->log_file << hex(mem[i] & 0xffff, 4) << ' ';
 //        if (i % 16 == 15) pcb->log_file << std::endl;
@@ -103,7 +103,7 @@ uint8_t VirtualMachine::run_process(PCB* pcb, uint8_t time_slice) {
       vm_log_file << "r1: " << r[1] << ' ';
       vm_log_file << "r2: " << r[2] << ' ';
       vm_log_file << "r3: " << r[3] << std::endl;
-      vm_log_file << "sr: " << bin(sr, 16) << std::endl;
+      vm_log_file << "sr: " << bin(sr, 16) << "  sp: " << sp << std::endl;
       for (unsigned int i = 0; i < mem.size(); ++i) {
         vm_log_file << hex(mem[i] & 0xffff, 4) << ' ';
         if (i % 16 == 15) vm_log_file << std::endl;
@@ -635,6 +635,11 @@ void VirtualMachine::op_call() {
     halt = true;
     return;
   }
+
+#ifdef DEBUG
+  uint16_t old_sp = sp;
+#endif  // DEBUG
+
   mem[sp] = pc;
   --sp;
   mem[sp] = r[0];
@@ -648,6 +653,10 @@ void VirtualMachine::op_call() {
   mem[sp] = sr;
   --sp;
   pc = ir.fmt1.addr;
+
+#ifdef DEBUG
+  assert( old_sp - 6 == sp );
+#endif  // DEBUG
 }
 
 
@@ -661,6 +670,10 @@ void VirtualMachine::op_return() {
     return;
   }
 
+#ifdef DEBUG
+  uint16_t old_sp = sp;
+#endif  // DEBUG
+
   ++sp;
   sr = mem[sp];
   ++sp;
@@ -673,6 +686,10 @@ void VirtualMachine::op_return() {
   r[0] = mem[sp];
   ++sp;
   pc = mem[sp];
+
+#ifdef DEBUG
+  assert( old_sp + 6 == sp );
+#endif  // DEBUG
 }
 
 
