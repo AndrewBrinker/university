@@ -2,6 +2,8 @@
 `include "src/decode/i_decode.v"
 // `include "src/execute/i_execute.v"
 
+`timescale 1ns / 1ps
+
 module pipeline ();
     wire [31:0] IF_ID_instrout;
     wire [31:0] IF_ID_npcout;
