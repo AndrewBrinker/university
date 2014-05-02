@@ -9,6 +9,9 @@ module pipeline ();
                       .IF_ID_npc(IF_ID_npc_out));
 
     i_decode i_decode1 (.IF_ID_instruction(IF_ID_instruction_out),
-                        .IF_ID_npc(IF_ID_npc_out));
+                        .IF_ID_npc(IF_ID_npc_out),
+                        .MEM_WB_rd(5'b0),
+                        .MEM_WB_reg_write(1'b0),
+                        .WB_mux5_write_data(32'b0));
 
 endmodule
