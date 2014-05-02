@@ -42,9 +42,9 @@ module control (
                 WB <= 2'b0x;
             end
             NOP: begin
-                EX <= 4'b0;
-                M  <= 3'b0;
-                WB <= 2'b0;
+                EX <= 4'b0000;
+                M  <= 3'b000;
+                WB <= 2'b00;
             end
             default: $display ("Opcode not recognized.");
         endcase
