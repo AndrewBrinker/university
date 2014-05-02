@@ -1,6 +1,5 @@
 `include "src/fetch/i_fetch.v"
 `include "src/decode/i_decode.v"
-// `include "src/execute/i_execute.v"
 
 module pipeline ();
     wire [31:0] IF_ID_instrout;
