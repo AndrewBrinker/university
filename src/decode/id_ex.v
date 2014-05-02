@@ -47,7 +47,7 @@ module id_ex (
          rdata1out     <= readdat1;
          rdata2out     <= readdat2;
          s_extendout   <= signext_out;
-         instrout_2016 <= instrout_2016;
-         instrout_1511 <= instrout_1511;
+         instrout_2016 <= instr_2016;
+         instrout_1511 <= instr_1511;
     end
 endmodule

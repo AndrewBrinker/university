@@ -20,7 +20,7 @@ module i_fetch (
     mux mux1 (.y(npc_mux),
               .a(EX_MEM_NPC),
               .b(npc),
-              .select(EX_MEM_PC_Source));
+              .select(EX_MEM_PCSrc));
 
     pc_mod pc_mod1 (.PC(PC),
                     .npc(npc_mux));
