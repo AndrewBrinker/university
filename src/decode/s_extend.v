@@ -1,8 +1,8 @@
 module s_extend (
-        input  wire [15:0] original,
+        input  wire [15:0] nextend,
 
-        output wire [31:0] extended
+        output wire [31:0] extend
     );
 
-    assign extended = {{16{original[15]}}, original};
+    assign extend = {{16{nextend[15]}}, nextend};
 endmodule

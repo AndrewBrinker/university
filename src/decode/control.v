@@ -1,9 +1,9 @@
 module control (
-          input  wire [5:0] op_code,
+        input  wire [5:0] opcode,
 
-          output reg  [3:0] EX,
-          output reg  [2:0] M,
-          output reg  [1:0] WB
+        output reg  [3:0] EX,
+        output reg  [2:0] M,
+        output reg  [1:0] WB
     );
 
     parameter RTYPE = 6'b000000;
@@ -18,8 +18,8 @@ module control (
         WB <= 0;
     end
 
-    always@* begin
-        case (op_code)
+    always @* begin
+        case (opcode)
             RTYPE: begin
                 EX <= 4'b1100;
                 M  <= 3'b000;
@@ -45,7 +45,7 @@ module control (
                 M  <= 3'b0;
                 WB <= 2'b0;
             end
-            default: $display ("Op code not recognized.");
+            default: $display ("Opcode not recognized.");
         endcase
     end
 endmodule
