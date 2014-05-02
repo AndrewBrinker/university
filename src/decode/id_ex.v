@@ -37,7 +37,7 @@ module id_ex (
         instrout_1511 <= 0;
     end
 
-    always @* begin
+    always@* begin
          #1
          wb_ctlout     <= ctlwb_out;
          m_ctlout      <= ctlm_out;

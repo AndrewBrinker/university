@@ -29,7 +29,7 @@ module register (
         $display("\tREG[%0d] = %0d", 31, REG[31]);
     end
 
-    always @* begin
+    always@* begin
         A <= REG[rs];
         B <= REG[rt];
         if (rd != 0 && regwrite) begin

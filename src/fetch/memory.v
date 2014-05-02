@@ -12,7 +12,7 @@ module memory (
         $readmemh(`MEMORY_FILE_NAME, mem);
     end
 
-    always @* begin
+    always@* begin
         data <= mem[addr];
     end
 endmodule

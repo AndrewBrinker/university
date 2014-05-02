@@ -4,7 +4,7 @@ module s_extend (
         output reg [31:0] extend
     );
 
-    always @* begin
+    always@* begin
         extend <= {{16{nextend[15]}}, nextend};
     end
 endmodule

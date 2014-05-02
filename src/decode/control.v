@@ -19,7 +19,7 @@ module control (
         WB <= 0;
     end
 
-    always @* begin
+    always@* begin
         case (opcode)
             RTYPE: begin
                 EX <= 4'b1100;

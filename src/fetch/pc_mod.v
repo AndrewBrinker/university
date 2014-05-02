@@ -9,6 +9,7 @@ module pc_mod (
     end
 
     always @ (npc) begin
-        #1 PC <= npc;
+        #1
+        PC <= npc;
     end
 endmodule

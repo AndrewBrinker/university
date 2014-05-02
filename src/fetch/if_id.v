@@ -12,7 +12,7 @@ module if_id (
         npcout   <= 0;
     end
 
-    always @* begin
+    always@* begin
         #1
         instrout <= instr;
         npcout   <= npc;
