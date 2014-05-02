@@ -167,10 +167,11 @@ void VirtualMachine::unload_pcb(PCB* pcb) {
 }
 
 void VirtualMachine::read_stack(std::fstream& stack_file) {
-  uint16_t i = mem.size();
-  uint16_t value;
-  while (stack_file >> value) {
-    mem[--i] = value;
+  for (uint16_t i = mem.size() - 1; i != sp; --i) {
+    if (!(stack_file >> mem[--i])) {
+      fputs("BADSTACKNO", stderr);
+      exit(1);
+    }
   }
 }
 
