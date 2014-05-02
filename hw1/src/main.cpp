@@ -13,6 +13,7 @@ int main() {
     std::cout << "File opening failed." << std::endl;
     return 0;
   }
+
   std::vector<Person> friends;
   while (input_file.good()) {
     std::string name  = "";

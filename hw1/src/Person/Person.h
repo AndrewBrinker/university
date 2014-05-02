@@ -4,7 +4,7 @@
 #include <string>
 
 class Person {
-public:
+ public:
   Person(std::string, std::string, std::string, std::string);
   std::string name();
   std::string month();
