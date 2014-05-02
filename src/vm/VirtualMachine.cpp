@@ -41,7 +41,7 @@ VirtualMachine::VirtualMachine()
                                sp(MEM_SIZE - 1),
                                base(0),
                                limit(0),
-                               halt(0) 
+                               halt(0)  // NOLINT
 #ifdef DEBUG
                                , vm_log_file("vm.log")
 #endif  // DEBUG
@@ -98,7 +98,6 @@ uint8_t VirtualMachine::run_process(PCB* pcb, uint8_t time_slice) {
 //        if (i % 16 == 15) pcb->log_file << std::endl;
 //      }
       pcb->log_file << std::endl << std::endl;
-      
       vm_log_file << "r0: " << r[0] << ' ';
       vm_log_file << "r1: " << r[1] << ' ';
       vm_log_file << "r2: " << r[2] << ' ';
