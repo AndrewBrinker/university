@@ -10,7 +10,7 @@ module control (
     parameter LW    = 6'b100011;
     parameter SW    = 6'b101011;
     parameter BEQ   = 6'b000100;
-    parameter NOOP  = 6'bxxxxxx;
+    parameter NOP   = 6'b100000;
 
     initial begin
         EX <= 0;
@@ -40,10 +40,10 @@ module control (
                 M  <= 3'b100;
                 WB <= 2'b00;
             end
-            NOOP: begin
-                EX <= 4'b0000;
-                M  <= 3'b000;
-                WB <= 2'b00;
+            NOP: begin
+                EX <= 4'b0;
+                M  <= 3'b0;
+                WB <= 2'b0;
             end
             default: $display ("Op code not recognized.");
         endcase
