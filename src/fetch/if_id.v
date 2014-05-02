@@ -1,15 +1,19 @@
 module if_id (
-   output reg [31:0] instruction_out,
-                     npc_out,
-   input wire [31:0] instruction,
-                     npc
+      input wire [31:0] instr,
+                        npc,
+
+      output reg [31:0] instrout,
+                        npcout
    );
+
    initial begin
-      instruction_out <= 0;
-      npc_out   <= 0;
+      instrout <= 0;
+      npcout   <= 0;
    end
+
    always @* begin
-      #1 instruction_out <= instruction;
-           npc_out       <= npc;
+      #1
+      instrout <= instr;
+      npcout   <= npc;
    end
 endmodule

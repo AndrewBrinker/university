@@ -1,8 +1,9 @@
 module mux (
-        input [31:0] pc,
-        input [31:0] jump,
+        input [31:0] a,
+        input [31:0] b,
         input select,
-        output wire [31:0] out
+        output wire [31:0] y
     );
-    assign out = select ? pc : jump;
+
+    assign y = select ? a : b;
 endmodule

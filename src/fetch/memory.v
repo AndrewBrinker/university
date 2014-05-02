@@ -11,5 +11,7 @@ module memory (
         $readmemh(`MEMORY_FILE_NAME, mem);
     end
 
-    always @ (addr) data <= mem[addr];
+    always @* begin
+        data <= mem[addr];
+    end
 endmodule

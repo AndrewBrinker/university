@@ -5,39 +5,34 @@
 `include "src/fetch/pc_mod.v"
 
 module i_fetch (
-        output wire [31:0] IF_ID_instruction,
+        input  wire        EX_MEM_PCSrc,
+        input  wire [31:0] EX_MEM_NPC,
+
+        output wire [31:0] IF_ID_instr,
         output wire [31:0] IF_ID_npc
     );
 
-    reg         EX_MEM_PC_Source;
-    reg  [31:0] EX_MEM_NPC;
-
     wire [31:0] PC,
-                data_out,
+                dataout,
                 npc,
                 npc_mux;
 
-    mux mux1 (.out(npc_mux),
-              .pc(EX_MEM_NPC),
-              .jump(npc),
+    mux mux1 (.y(npc_mux),
+              .a(EX_MEM_NPC),
+              .b(npc),
               .select(EX_MEM_PC_Source));
 
     pc_mod pc_mod1 (.PC(PC),
                     .npc(npc_mux));
 
-    memory memory1 (.data(data_out),
+    memory memory1 (.data(dataout),
                     .addr(PC));
 
-    if_id  if_id1 (.instruction_out(IF_ID_instruction),
-                   .npc_out(IF_ID_npc),
-                   .instruction(data_out),
+    if_id  if_id1 (.instrout(IF_ID_instr),
+                   .npcout(IF_ID_npc),
+                   .instr(dataout),
                    .npc(npc));
 
-    incrementer incrementer1 (.out(npc),
-                              .in(PC));
-
-    initial begin
-        EX_MEM_PC_Source <= 1'b0;
-        EX_MEM_NPC <= 32'b0;
-    end
+    incrementer incrementer1 (.pcout(npc),
+                              .pcin(PC));
 endmodule
