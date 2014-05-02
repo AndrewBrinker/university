@@ -68,6 +68,7 @@ module i_decode (
                   .instrout_1511(instrout_1511));
 
     always @(IF_ID_instrout) begin
+        $display("clock: %0d", $time);
         $display("wb_ctlout: %b", wb_ctlout);
         $display("m_ctlout: %b", m_ctlout);
         $display("regdst: %b", regdst);
