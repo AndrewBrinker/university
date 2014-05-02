@@ -66,6 +66,13 @@ void VirtualMachine::loadIntoMemory(PCB* pcb) {
   unloadPCB(pcb);
 }
 
+
+/**
+ * Run the process with the given time slice.
+ * @param  pcb        -> The process to run.
+ * @param  time_slice -> The time slice allocated to it.
+ * @return the exit status of the process.
+ */
 uint8_t VirtualMachine::runProcess(PCB* pcb, uint8_t time_slice) {
   loadPCB(pcb);
 
@@ -93,10 +100,6 @@ uint8_t VirtualMachine::runProcess(PCB* pcb, uint8_t time_slice) {
       pcb->log_file << "r2: " << r[2] << ' ';
       pcb->log_file << "r3: " << r[3] << std::endl;
       pcb->log_file << "sr: " << bin(sr, 16) << "  sp: " << sp << std::endl;
-//      for (unsigned int i = 0; i < mem.size(); ++i) {
-//        pcb->log_file << hex(mem[i] & 0xffff, 4) << ' ';
-//        if (i % 16 == 15) pcb->log_file << std::endl;
-//      }
       pcb->log_file << std::endl << std::endl;
       vm_log_file << "r0: " << r[0] << ' ';
       vm_log_file << "r1: " << r[1] << ' ';
@@ -124,10 +127,14 @@ uint8_t VirtualMachine::runProcess(PCB* pcb, uint8_t time_slice) {
   }
 
   unloadPCB(pcb);
-
   return count;
 }
 
+
+/**
+ * Load the given file into memory.
+ * @param object_file -> A stream to the file being loaded.
+ */
 void VirtualMachine::loadFile(std::fstream& object_file) {
   uint16_t new_limit = limit;
   // Get size of file
@@ -145,6 +152,11 @@ void VirtualMachine::loadFile(std::fstream& object_file) {
   }
 }
 
+
+/**
+ * Load the given PCB into the VM.
+ * @param pcb -> The PCB being loaded.
+ */
 void VirtualMachine::loadPCB(PCB* pcb) {
   pc = pcb->pc;
   r = pcb->r;
@@ -156,6 +168,11 @@ void VirtualMachine::loadPCB(PCB* pcb) {
     readStack(pcb->st_file);
 }
 
+
+/**
+ * Write back changes to the PCB.
+ * @param pcb -> The PCB being modified.
+ */
 void VirtualMachine::unloadPCB(PCB* pcb) {
   pcb->pc = pc;
   pcb->r = r;
@@ -166,6 +183,11 @@ void VirtualMachine::unloadPCB(PCB* pcb) {
     writeStack(pcb->st_file);
 }
 
+
+/**
+ * Read in the stack from the given stack file stream.
+ * @param stack_file -> The file being read from.
+ */
 void VirtualMachine::readStack(std::fstream& stack_file) {
   for (uint16_t i = mem.size() - 1; i != sp; --i) {
     if (!(stack_file >> mem[--i])) {
@@ -175,11 +197,17 @@ void VirtualMachine::readStack(std::fstream& stack_file) {
   }
 }
 
+
+/**
+ * Write the stack contents out to the given file.
+ * @param stack_file -> The file being written to.
+ */
 void VirtualMachine::writeStack(std::fstream& stack_file) {
   for (uint16_t i = mem.size() - 1; i != sp; --i) {
     stack_file << mem[i] << std::endl;
   }
 }
+
 
 /**
  * Test the value of the overflow bit.
