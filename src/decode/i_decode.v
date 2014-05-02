@@ -66,4 +66,19 @@ module i_decode (
                   .instruction_out_2016(instruction_out_2016),
                   .instruction_out_1511(instruction_out_1511));
 
+
+    always @(IF_ID_instruction) begin
+      $display ("wb_ctlout: %b", wb_ctl_out);
+      $display ("m_ctlout: %b", m_ctl_out);
+      $display ("reg_dst: %b", reg_dst);
+      $display ("alu_src: %b", alu_src);
+      $display ("alu_op: %b", alu_op);
+      $display ("npc_out: %b", npc_out);
+      $display ("r_data1_out: %b", r_data1_out);
+      $display ("r_data2_out: %b", r_data2_out);
+      $display ("sign_extend_out: %b", sign_extend_out);
+      $display ("instruction_out_2016: %b", instruction_out_2016);
+      $display ("instruction_out_1511: %b", instruction_out_1511);
+      $display ("");
+    end
 endmodule

@@ -19,6 +19,7 @@ module register (
         for (i = 0; i < 32; i = i + 1) begin
             REG[i] <= 0;
         end
+/*
         #10
         $display("From Register Memory:");
         for (i = 0; i < 9; i = i + 1) begin
@@ -27,6 +28,7 @@ module register (
 
         $display("\t...");
         $display("\tREG[%0d] = %0d", 31, REG[31]);
+*/
     end
 
     always @ * begin
