@@ -43,7 +43,7 @@ VirtualMachine::VirtualMachine()
                                limit(0),
                                halt(0) 
 #ifdef DEBUG
-                               , vm_log_file( "vm.log" )
+                               , vm_log_file("vm.log")
 #endif  // DEBUG
 {
   setupOpMap();
@@ -75,12 +75,12 @@ uint8_t VirtualMachine::run_process(PCB* pcb, uint8_t time_slice) {
   try {
     // main loop
     while (!halt) {
-
 #ifdef DEBUG
       pcb->log_file << pcb->asm_source[pc] << std::endl;
       puts(pcb->asm_source[pc].c_str());
 
-      vm_log_file << pcb->process_name << ": " << pcb->asm_source[pc] << std::endl;
+      vm_log_file << pcb->process_name << ": "
+                  << pcb->asm_source[pc] << std::endl;
 #endif  // DEBUG
 
       ir.i = mem[pc + base];
@@ -655,7 +655,7 @@ void VirtualMachine::op_call() {
   pc = ir.fmt1.addr;
 
 #ifdef DEBUG
-  assert( old_sp - 6 == sp );
+  assert(old_sp - 6 == sp);
 #endif  // DEBUG
 }
 
@@ -688,7 +688,7 @@ void VirtualMachine::op_return() {
   pc = mem[sp];
 
 #ifdef DEBUG
-  assert( old_sp + 6 == sp );
+  assert(old_sp + 6 == sp);
 #endif  // DEBUG
 }
 
