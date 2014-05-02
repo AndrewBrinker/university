@@ -13,7 +13,6 @@ module control (
     parameter NOP   = 6'b100000;
 
     initial begin
-        #0
         EX <= 0;
         M  <= 0;
         WB <= 0;

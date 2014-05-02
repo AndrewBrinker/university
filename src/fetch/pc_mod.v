@@ -4,11 +4,10 @@ module pc_mod (
     );
 
     initial begin
-        #0
         PC <= 0;
     end
 
-    always @ (npc) begin
+    always @(npc) begin
         #1
         PC <= npc;
     end

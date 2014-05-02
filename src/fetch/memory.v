@@ -6,7 +6,6 @@ module memory (
     reg [31:0] MEM[0:127];
 
     initial begin
-        #0
         MEM[0] <= 'h002300AA; // 000000 => RTYPE
         MEM[1] <= 'h10654321; // 000100 => BEQ
         MEM[2] <= 'h00100022; // 000000 => RTYPE

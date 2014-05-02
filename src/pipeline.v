@@ -9,7 +9,6 @@ module pipeline ();
     reg  [4:0]  regwrite;
 
     initial begin
-        #0
         EX_MEM_PCSrc <= 1'b0;
         EX_MEM_NPC   <= 32'b0;
         regwrite     <= 5'b0;

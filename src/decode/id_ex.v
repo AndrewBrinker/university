@@ -23,7 +23,6 @@ module id_ex (
     );
 
     initial begin
-        #0
         wb_ctlout     <= 0;
         m_ctlout      <= 0;
         regdst        <= 0;
