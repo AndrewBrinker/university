@@ -32,14 +32,14 @@ module control (
                 WB <= 2'b11;
             end
             SW: begin
-                EX <= 4'b0001;
+                EX <= 4'bx001;
                 M  <= 3'b001;
-                WB <= 2'b00;
+                WB <= 2'b0x;
             end
             BEQ: begin
-                EX <= 4'b0010;
+                EX <= 4'bx010;
                 M  <= 3'b100;
-                WB <= 2'b00;
+                WB <= 2'b0x;
             end
             NOP: begin
                 EX <= 4'b0;
