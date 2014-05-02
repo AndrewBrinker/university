@@ -3,12 +3,12 @@
  */
 
 #include "./Preprocessor.h"
+#include <Grammar/Grammar.h>
 #include <string>
 #include <set>
 #include <fstream>
 #include <cstdio>
 #include <list>
-#include "./Grammar.h"
 
 #define COMMENT   "#"
 #define SPLIT     "|"

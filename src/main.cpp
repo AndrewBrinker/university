@@ -2,9 +2,9 @@
  * Copyright 2014 Andrew Brinker
  */
 
-#include <gram/Parser.h>
-#include <gram/LRSet.h>
-#include <gram/Item.h>
+#include <Parser/Parser.h>
+#include <LRSet/LRSet.h>
+#include <Item/Item.h>
 #include <set>
 #include <cstdio>
 #include <cctype>

@@ -2,8 +2,8 @@
  * Copyright 2014 Andrew Brinker
  */
 
+#include <Item/Item.h>
 #include <set>
-#include "./Item.h"
 
 #ifndef LRSET_H
 #define LRSET_H

@@ -3,7 +3,7 @@
  */
 
 #include <string>
-#include "./Grammar.h"
+#include <Grammar/Grammar.h>
 
 #ifndef PREPROCESSOR_H
 #define PREPROCESSOR_H

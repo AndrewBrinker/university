@@ -2,12 +2,12 @@
  * Copyright 2014 Andrew Brinker
  */
 
+#include <Grammar/Grammar.h>
+#include <Item/Item.h>
+#include <LRSet/LRSet.h>
 #include <string>
 #include <set>
 #include <map>
-#include "./Grammar.h"
-#include "./Item.h"
-#include "./LRSet.h"
 
 #ifndef PARSER_H
 #define PARSER_H

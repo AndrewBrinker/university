@@ -3,8 +3,8 @@
  */
 
 #include "./LRSet.h"
+#include <Item/Item.h>
 #include <set>
-#include "./Item.h"
 
 /**
  * Initialize an LRSet

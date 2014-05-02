@@ -3,6 +3,10 @@
  */
 
 #include "./Parser.h"
+#include <Preprocessor/Preprocessor.h>
+#include <Grammar/Grammar.h>
+#include <Item/Item.h>
+#include <LRSet/LRSet.h>
 #include <cstdio>
 #include <cctype>
 #include <set>
@@ -11,10 +15,6 @@
 #include <fstream>
 #include <list>
 #include <vector>
-#include "./Preprocessor.h"
-#include "./Grammar.h"
-#include "./Item.h"
-#include "./LRSet.h"
 
 #define DELIM     "$"
 #define EPSILON   "e"
