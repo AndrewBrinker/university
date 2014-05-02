@@ -79,7 +79,7 @@ uint8_t VirtualMachine::run_process(PCB* pcb, uint8_t time_slice) {
       pcb->log_file << pcb->asm_source[pc] << std::endl;
       puts(pcb->asm_source[pc].c_str());
 
-      vm_log_file << pcb->process_name << ": "
+      vm_log_file << pcb->process_name << ":" << pc << ": "
                   << pcb->asm_source[pc] << std::endl;
 #endif  // DEBUG
 
