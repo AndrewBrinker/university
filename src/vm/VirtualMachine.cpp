@@ -225,10 +225,11 @@ inline bool VirtualMachine::getOverflow() const {
  */
 inline bool VirtualMachine::setOverflow(bool b) {
   bool s = sr & OVERFLOW_MASK;
-  if (b)
+  if (b) {
     sr |= OVERFLOW_MASK;
-  else
+  } else {
     sr &= ~OVERFLOW_MASK;
+  }
   return s;
 }
 
@@ -249,10 +250,11 @@ inline bool VirtualMachine::getLess() const {
  */
 inline bool VirtualMachine::setLess(bool b) {
   bool s = sr & LESS_MASK;
-  if (b)
+  if (b) {
     sr |= LESS_MASK;
-  else
+  } else {
     sr &= ~LESS_MASK;
+  }
   return s;
 }
 
@@ -273,10 +275,11 @@ inline bool VirtualMachine::getEqual() const {
  */
 inline bool VirtualMachine::setEqual(bool b) {
   bool s = sr & EQUAL_MASK;
-  if (b)
+  if (b) {
     sr |= EQUAL_MASK;
-  else
+  } else {
     sr &= ~EQUAL_MASK;
+  }
   return s;
 }
 
@@ -297,10 +300,11 @@ inline bool VirtualMachine::getGreater() const {
  */
 inline bool VirtualMachine::setGreater(bool b) {
   bool s = sr & GREATER_MASK;
-  if (b)
+  if (b) {
     sr |= GREATER_MASK;
-  else
+  } else {
     sr &= ~GREATER_MASK;
+  }
   return s;
 }
 
@@ -319,10 +323,11 @@ inline bool VirtualMachine::getCarry() const {
  */
 inline bool VirtualMachine::setCarry(bool b) {
   bool s = sr & CARRY_MASK;
-  if (b)
+  if (b) {
     sr |= CARRY_MASK;
-  else
+  } else {
     sr &= ~CARRY_MASK;
+  }
   return s;
 }
 
