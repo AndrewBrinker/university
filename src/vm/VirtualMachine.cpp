@@ -35,15 +35,15 @@
  * code for later use.
  */
 VirtualMachine::VirtualMachine()
-                             : r(REG_FILE_SIZE),
-                               mem(MEM_SIZE),
-                               pc(0),
-                               sp(MEM_SIZE - 1),
-                               base(0),
-                               limit(0),
-                               halt(0)  // NOLINT
+ : r(REG_FILE_SIZE),
+   mem(MEM_SIZE),
+   pc(0),
+   sp(MEM_SIZE - 1),
+   base(0),
+   limit(0),
+   halt(0)  // NOLINT
 #ifdef DEBUG
-                               , vm_log_file("vm.log")
+, vm_log_file("vm.log")
 #endif  // DEBUG
 {
   setupOpMap();
