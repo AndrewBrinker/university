@@ -19,14 +19,14 @@
 #endif
 
 enum ReturnStatus_t {
-  TIME_SLICE              = 00,
-  HALT_INSTRUCTION        = 01,
-  OUT_OF_BOUND_REFERENCE  = 02,
-  STACK_OVERFLOW          = 03,
-  STACK_UNDERFLOW         = 04,
-  INVALID_OPCODE          = 05,
-  READ_OPERATION          = 06,
-  WRITE_OPERATION         = 07
+  TIME_SLICE             = 00,
+  HALT_INSTRUCTION       = 01,
+  OUT_OF_BOUND_REFERENCE = 02,
+  STACK_OVERFLOW         = 03,
+  STACK_UNDERFLOW        = 04,
+  INVALID_OPCODE         = 05,
+  READ_OPERATION         = 06,
+  WRITE_OPERATION        = 07
 };
 
 class VirtualMachine {
@@ -62,10 +62,6 @@ class VirtualMachine {
   bool halt;
   void (VirtualMachine::*ops[256])();
   uint8_t clocks[256];
-
-#ifdef DEBUG
-  std::ofstream vm_log_file;
-#endif  // DEBUG
 
   void loadFile(std::fstream& object_file);
   void loadPCB(PCB* pcb);

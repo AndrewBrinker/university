@@ -15,6 +15,7 @@
 #include <iterator>
 #include <cassert>
 
+
 #define OUT_FILE_EXT ".out"
 #define IN_FILE_EXT  ".in"
 
@@ -35,24 +36,20 @@
  * code for later use.
  */
 VirtualMachine::VirtualMachine()
- : r(REG_FILE_SIZE),
-   mem(MEM_SIZE),
-   pc(0),
-   sp(MEM_SIZE - 1),
-   base(0),
-   limit(0),
-   halt(0)  // NOLINT
-#ifdef DEBUG
-, vm_log_file("vm.log")
-#endif  // DEBUG
-{
+                             : r(REG_FILE_SIZE),
+                               mem(MEM_SIZE),
+                               pc(0),
+                               sp(MEM_SIZE - 1),
+                               base(0),
+                               limit(0),
+                               halt(0) {
   setupOpMap();
 }
 
 
 /**
  * Load the program indicated by the PCB into memory, setting appropriate
- *   variables in the PCB.
+ * variables in the PCB.
  * @param pcb -> The Program Control Block
  */
 void VirtualMachine::loadIntoMemory(PCB* pcb) {
@@ -60,9 +57,7 @@ void VirtualMachine::loadIntoMemory(PCB* pcb) {
   base = pcb->base;
   loadFile(pcb->o_file);
   pcb->limit = limit - base;
-
   pcb->o_file.close();
-
   unloadPCB(pcb);
 }
 
@@ -75,46 +70,13 @@ void VirtualMachine::loadIntoMemory(PCB* pcb) {
  */
 uint8_t VirtualMachine::runProcess(PCB* pcb, uint8_t time_slice) {
   loadPCB(pcb);
-
   uint8_t count = 0;
   halt = false;
-
   try {
-    // main loop
     while (!halt) {
-#ifdef DEBUG
-      pcb->log_file << pcb->asm_source[pc] << std::endl;
-      puts(pcb->asm_source[pc].c_str());
-
-      vm_log_file << pcb->process_name << ":" << pc << ": "
-                  << pcb->asm_source[pc] << std::endl;
-#endif  // DEBUG
-
       ir.i = mem[pc + base];
       ++pc;
       (*this.*ops[ir.i >> 8])();
-
-#ifdef DEBUG
-      pcb->log_file << "r0: " << r[0] << ' ';
-      pcb->log_file << "r1: " << r[1] << ' ';
-      pcb->log_file << "r2: " << r[2] << ' ';
-      pcb->log_file << "r3: " << r[3] << std::endl;
-      pcb->log_file << "sr: " << toUnsignedBinaryString(sr, 16)
-                    << "  sp: " << sp << std::endl;
-      pcb->log_file << std::endl << std::endl;
-      vm_log_file << "r0: " << r[0] << ' ';
-      vm_log_file << "r1: " << r[1] << ' ';
-      vm_log_file << "r2: " << r[2] << ' ';
-      vm_log_file << "r3: " << r[3] << std::endl;
-      vm_log_file << "sr: " << toUnsignedBinaryString(sr, 16)
-                  << "  sp: " << sp << std::endl;
-      for (unsigned int i = 0; i < mem.size(); ++i) {
-        vm_log_file << hex(mem[i] & 0xffff, 4) << ' ';
-        if (i % 16 == 15) vm_log_file << std::endl;
-      }
-      vm_log_file << std::endl << std::endl;
-#endif  // DEBUG
-
       if (!halt) {
         pcb->vm_time += clocks[ir.i >> 8];
         count += clocks[ir.i >> 8];
@@ -127,7 +89,6 @@ uint8_t VirtualMachine::runProcess(PCB* pcb, uint8_t time_slice) {
   } catch(std::bad_function_call&) {
     setReturnStatus(ReturnStatus_t::INVALID_OPCODE);
   }
-
   unloadPCB(pcb);
   return count;
 }
@@ -143,12 +104,10 @@ void VirtualMachine::loadFile(std::fstream& object_file) {
   object_file.seekg(0, std::ios::end);
   new_limit += object_file.tellg() / 2;
   object_file.seekg(0, std::ios::beg);
-
   if (new_limit > mem.size()) {
     object_file.close();
     throw CantFitInMemory("VirtualMachine");
   }
-
   for (std::string line; getline(object_file, line); ++limit) {
     mem[limit] = stoi(line);
   }
@@ -161,13 +120,13 @@ void VirtualMachine::loadFile(std::fstream& object_file) {
  */
 void VirtualMachine::loadPCB(PCB* pcb) {
   pc = pcb->pc;
-  r = pcb->r;
+  r  = pcb->r;
   sr = pcb->sr;
   sp = pcb->sp;
   base = pcb->base;
-
-  if (sp < MEM_SIZE - 1)
+  if (sp < MEM_SIZE - 1) {
     readStack(pcb->st_file);
+  }
 }
 
 
@@ -180,9 +139,9 @@ void VirtualMachine::unloadPCB(PCB* pcb) {
   pcb->r = r;
   pcb->sr = sr;
   pcb->sp = sp;
-
-  if (sp < MEM_SIZE - 1)
+  if (sp < MEM_SIZE - 1) {
     writeStack(pcb->st_file);
+  }
 }
 
 
@@ -191,12 +150,12 @@ void VirtualMachine::unloadPCB(PCB* pcb) {
  * @param stack_file -> The file being read from.
  */
 void VirtualMachine::readStack(std::fstream& stack_file) {
+  std::cout << "READ SIZE:  " << mem.size() - 1 - sp << "\n\t";
   for (uint16_t i = mem.size() - 1; i != sp; --i) {
-    if (!(stack_file >> mem[--i])) {
-      fputs("BADSTACKNO\n", stderr);
-      exit(1);
-    }
+    stack_file >> mem[i];
+    std::cout << mem[i] << " ";
   }
+  std::cout << std::endl << std::endl;
 }
 
 
@@ -205,9 +164,12 @@ void VirtualMachine::readStack(std::fstream& stack_file) {
  * @param stack_file -> The file being written to.
  */
 void VirtualMachine::writeStack(std::fstream& stack_file) {
+  std::cout << "WRITE SIZE: " << mem.size() - 1 - sp << "\n\t";
   for (uint16_t i = mem.size() - 1; i != sp; --i) {
     stack_file << mem[i] << std::endl;
+    std::cout << mem[i] << " ";
   }
+  std::cout << std::endl;
 }
 
 

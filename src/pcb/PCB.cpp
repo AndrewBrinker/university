@@ -28,24 +28,4 @@ PCB::PCB(std::string source_file)
     turnaround_time(0),
     io_time(0),
     largest_stack_size(0),
-    interrupt_time(0)
-#ifdef DEBUG
-    , log_file(stripExtension(source_file) + LOG_EXT,
-               std::ios::out | std::ios::trunc)
-#endif  // DEBUG
-{
-#ifdef DEBUG
-  if (!s_file.is_open())
-    printf("%s isn't open.\n", (process_name + SOURCE_EXT).c_str());
-  if (!o_file.is_open())
-    printf("%s isn't open.\n", (process_name + OBJECT_EXT).c_str());
-  if (!in_file.is_open())
-    printf("%s isn't open.\n", (process_name + INPUT_EXT).c_str());
-  if (!out_file.is_open())
-    printf("%s isn't open.\n", (process_name + OUTPUT_EXT).c_str());
-  if (!st_file.is_open())
-    printf("%s isn't open.\n", (process_name + STACK_EXT).c_str());
-  if (!log_file.is_open())
-    printf("%s isn't open.\n", (process_name + LOG_EXT).c_str());
-#endif  // DEBUG
-}
+    interrupt_time(0) {}
