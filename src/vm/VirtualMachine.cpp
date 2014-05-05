@@ -119,6 +119,7 @@ void VirtualMachine::loadFile(std::fstream& object_file) {
  * @param pcb -> The PCB being loaded.
  */
 void VirtualMachine::loadPCB(PCB* pcb) {
+  std::cout << pcb->process_name << std::endl;
   pc = pcb->pc;
   r  = pcb->r;
   sr = pcb->sr;
@@ -135,6 +136,7 @@ void VirtualMachine::loadPCB(PCB* pcb) {
  * @param pcb -> The PCB being modified.
  */
 void VirtualMachine::unloadPCB(PCB* pcb) {
+  std::cout << pcb->process_name << std::endl;
   pcb->pc = pc;
   pcb->r = r;
   pcb->sr = sr;
