@@ -8,3 +8,4 @@ bin/debug/
 *.log
 *.out
 *.swp
+*.st
