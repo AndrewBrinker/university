@@ -99,13 +99,13 @@ uint8_t VirtualMachine::runProcess(PCB* pcb, uint8_t time_slice) {
       pcb->log_file << "r1: " << r[1] << ' ';
       pcb->log_file << "r2: " << r[2] << ' ';
       pcb->log_file << "r3: " << r[3] << std::endl;
-      pcb->log_file << "sr: " << bin(sr, 16) << "  sp: " << sp << std::endl;
+      pcb->log_file << "sr: " << toUnsignedBinaryString(sr, 16) << "  sp: " << sp << std::endl;
       pcb->log_file << std::endl << std::endl;
       vm_log_file << "r0: " << r[0] << ' ';
       vm_log_file << "r1: " << r[1] << ' ';
       vm_log_file << "r2: " << r[2] << ' ';
       vm_log_file << "r3: " << r[3] << std::endl;
-      vm_log_file << "sr: " << bin(sr, 16) << "  sp: " << sp << std::endl;
+      vm_log_file << "sr: " << toUnsignedBinaryString(sr, 16) << "  sp: " << sp << std::endl;
       for (unsigned int i = 0; i < mem.size(); ++i) {
         vm_log_file << hex(mem[i] & 0xffff, 4) << ' ';
         if (i % 16 == 15) vm_log_file << std::endl;
@@ -191,7 +191,7 @@ void VirtualMachine::unloadPCB(PCB* pcb) {
 void VirtualMachine::readStack(std::fstream& stack_file) {
   for (uint16_t i = mem.size() - 1; i != sp; --i) {
     if (!(stack_file >> mem[--i])) {
-      fputs("BADSTACKNO", stderr);
+      fputs("BADSTACKNO\n", stderr);
       exit(1);
     }
   }

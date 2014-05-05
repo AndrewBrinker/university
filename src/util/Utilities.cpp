@@ -70,6 +70,7 @@ std::string stripExtension(std::string file_name) {
   return file_name;
 }
 
+
 /**
  * Remove the path from the given file name
  * @param  file_name -> The file name being stripped.
@@ -204,25 +205,6 @@ std::vector<std::string> split(std::string line) {
 
 
 /**
- * Convert the given integer into a binary string represenation
- * @param  n    -> The integer being converted
- * @param  size -> The size of the output string
- * @return the binary string representation of the integer
- */
-std::string bin(uintmax_t n, uintmax_t size) {
-  std::string binstr;
-  do {
-    binstr.push_back('0' + (n & 1));
-  } while (n >>= 1);
-  while (binstr.size() < size) {
-    binstr.push_back('0');
-  }
-  std::reverse(binstr.begin(), binstr.end());
-  return binstr;
-}
-
-
-/**
  * Convert the given integer into a hexadecimal string representation
  * @param  n    -> The integer being converted
  * @param  size -> The size of the output string
@@ -254,6 +236,7 @@ std::string hex(uintmax_t n, uintmax_t size) {
   return binstr;
 }
 
+
 /**
  * Check to see if the given string has the second string as a suffix.
  * @param str -> The string
@@ -262,7 +245,8 @@ std::string hex(uintmax_t n, uintmax_t size) {
  */
 bool has_suffix(std::string str, std::string suf) {
   std::string::iterator it = str.begin();
-  while (static_cast<unsigned>(str.end() - it) > suf.size())
+  while (static_cast<unsigned>(str.end() - it) > suf.size()) {
     ++it;
+  }
   return std::equal(it, str.end(), suf.begin());
 }
