@@ -153,7 +153,7 @@ std::vector<std::string> OS::getSourceFiles() {
   std::vector<std::string> filenames;
   for (auto de : walk()) {
     for (std::string filename : de.files) {
-      if (has_suffix(filename, ".s")) {
+      if (hasSuffix(filename, ".s")) {
         filenames.push_back(filename);
       }
     }

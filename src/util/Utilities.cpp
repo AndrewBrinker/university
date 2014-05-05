@@ -243,7 +243,7 @@ std::string hex(uintmax_t n, uintmax_t size) {
  * @param suf -> The suffix
  * @return whether suf is a suffix of str
  */
-bool has_suffix(std::string str, std::string suf) {
+bool hasSuffix(std::string str, std::string suf) {
   std::string::iterator it = str.begin();
   while (static_cast<unsigned>(str.end() - it) > suf.size()) {
     ++it;

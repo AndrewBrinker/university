@@ -112,15 +112,6 @@ std::vector<std::string> split(std::string line);
 
 
 /**
- * Convert the given integer into a binary string represenation
- * @param  n    -> The integer being converted
- * @param  size -> The size of the output string
- * @return the binary string representation of the integer
- */
-std::string bin(uintmax_t n, uintmax_t size = 0);
-
-
-/**
  * Convert the given integer into a hexadecimal string representation
  * @param  n    -> The integer being converted
  * @param  size -> The size of the output string
@@ -134,6 +125,6 @@ std::string hex(uintmax_t n, uintmax_t size = 0);
  * @param suf -> The suffix
  * @return whether suf is a suffix of str
  */
-bool has_suffix(std::string str, std::string suf);
+bool hasSuffix(std::string str, std::string suf);
 
 #endif  // UTILITIES_H
