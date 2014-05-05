@@ -41,7 +41,6 @@ void OS::run() {
 
   // Assemble each file, load it into memory, create its PCB, and put into
   // the ready queue
-  std::string object_file;
   std::unique_ptr<PCB> current_pcb;
 
   for (std::string source_file : source_files) {
