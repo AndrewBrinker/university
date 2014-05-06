@@ -99,6 +99,7 @@ uint8_t VirtualMachine::runProcess(PCB* pcb, uint8_t time_slice) {
  * @param object_file -> A stream to the file being loaded.
  */
 void VirtualMachine::loadFile(std::fstream& object_file) {
+  /*
   uint16_t new_limit = limit;
   // Get size of file
   object_file.seekg(0, std::ios::end);
@@ -108,7 +109,13 @@ void VirtualMachine::loadFile(std::fstream& object_file) {
     object_file.close();
     throw CantFitInMemory("VirtualMachine");
   }
+  */
+  object_file.seekg(0, std::ios::beg);
   for (std::string line; getline(object_file, line); ++limit) {
+    if( limit >= mem.size() ) {
+      object_file.close();
+      throw CantFitInMemory("VirtualMachine");
+    }
     mem[limit] = stoi(line);
   }
 }
