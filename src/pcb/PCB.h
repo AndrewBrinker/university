@@ -58,6 +58,7 @@ struct PCB {
 #ifdef DEBUG
   std::vector<std::string> asm_source;
   std::ofstream log_file;
+  std::vector<uint16_t> stack;
 #endif  // DEBUG
 
  private:

@@ -39,7 +39,7 @@ VirtualMachine::VirtualMachine()
                              : r(REG_FILE_SIZE),
                                mem(MEM_SIZE),
                                pc(0),
-                               sp(MEM_SIZE - 1),
+                               sp(MEM_SIZE),
                                base(0),
                                limit(0),
                                halt(0) {
@@ -121,8 +121,8 @@ void VirtualMachine::loadPCB(PCB* pcb) {
   sr = pcb->sr;
   sp = pcb->sp;
   base = pcb->base;
-  if (sp < MEM_SIZE - 1) {
-    readStack(pcb->st_file);
+  if (sp < MEM_SIZE) {
+    readStack(pcb);
   }
 }
 
@@ -137,8 +137,8 @@ void VirtualMachine::unloadPCB(PCB* pcb) {
   pcb->r = r;
   pcb->sr = sr;
   pcb->sp = sp;
-  if (sp < MEM_SIZE - 1) {
-    writeStack(pcb->st_file);
+  if (sp < MEM_SIZE) {
+    writeStack(pcb);
   }
 }
 
@@ -147,13 +147,11 @@ void VirtualMachine::unloadPCB(PCB* pcb) {
  * Read in the stack from the given stack file stream.
  * @param stack_file -> The file being read from.
  */
-void VirtualMachine::readStack(std::fstream& stack_file) {
-  std::cout << "READ SIZE:  " << mem.size() - 1 - sp << "\n\t";
-  for (uint16_t i = mem.size() - 1; i != sp; --i) {
-    stack_file >> mem[i];
-    std::cout << mem[i] << " ";
-  }
-  std::cout << std::endl << std::endl;
+void VirtualMachine::readStack(PCB* pcb) {
+  std::copy(std::begin(pcb->stack),
+            std::end(pcb->stack),
+            std::begin(mem) + sp);
+  pcb->stack.clear();
 }
 
 
@@ -161,13 +159,11 @@ void VirtualMachine::readStack(std::fstream& stack_file) {
  * Write the stack contents out to the given file.
  * @param stack_file -> The file being written to.
  */
-void VirtualMachine::writeStack(std::fstream& stack_file) {
-  std::cout << "WRITE SIZE: " << mem.size() - 1 - sp << "\n\t";
-  for (uint16_t i = mem.size() - 1; i != sp; --i) {
-    stack_file << mem[i] << std::endl;
-    std::cout << mem[i] << " ";
-  }
-  std::cout << std::endl;
+void VirtualMachine::writeStack(PCB* pcb) {
+  pcb->stack.clear();
+  std::copy(std::begin(mem) + sp,
+            std::end(mem),
+            std::back_inserter(pcb->stack));
 }
 
 
@@ -636,6 +632,7 @@ void VirtualMachine::op_call() {
   uint16_t old_sp = sp;
 #endif  // DEBUG
 
+  --sp;
   mem[sp] = pc;
   --sp;
   mem[sp] = r[0];
@@ -647,7 +644,6 @@ void VirtualMachine::op_call() {
   mem[sp] = r[3];
   --sp;
   mem[sp] = sr;
-  --sp;
   pc = ir.fmt1.addr;
 
 #ifdef DEBUG
@@ -670,7 +666,6 @@ void VirtualMachine::op_return() {
   uint16_t old_sp = sp;
 #endif  // DEBUG
 
-  ++sp;
   sr = mem[sp];
   ++sp;
   r[3] = mem[sp];
@@ -682,6 +677,7 @@ void VirtualMachine::op_return() {
   r[0] = mem[sp];
   ++sp;
   pc = mem[sp];
+  ++sp;
 
 #ifdef DEBUG
   assert(old_sp + 6 == sp);

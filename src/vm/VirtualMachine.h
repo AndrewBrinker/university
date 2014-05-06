@@ -67,8 +67,8 @@ class VirtualMachine {
   void loadPCB(PCB* pcb);
   void unloadPCB(PCB* pcb);
 
-  void readStack(std::fstream& stack_file);
-  void writeStack(std::fstream& stack_file);
+  void readStack(PCB* pcb);
+  void writeStack(PCB* pcb);
 
   bool getOverflow() const;
   bool setOverflow(bool b);
