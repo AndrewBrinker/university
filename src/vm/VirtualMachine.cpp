@@ -148,14 +148,10 @@ void VirtualMachine::unloadPCB(PCB* pcb) {
 void VirtualMachine::readStack(std::fstream& stack_file) {
   std::string line;
   stack_file.seekg(0, std::ios::beg);
-  for( uint16_t i = sp; i < mem.size(); ++i) {
-    std::getline( stack_file, line );
-    mem[i] = stoi( line );
-  }/*
-  std::copy(std::begin(pcb->stack),
-            std::end(pcb->stack),
-            std::begin(mem) + sp);
-  pcb->stack.clear();*/
+  for (uint16_t i = sp; i < mem.size(); ++i) {
+    std::getline(stack_file, line);
+    mem[i] = stoi(line);
+  }
 }
 
 
@@ -165,14 +161,9 @@ void VirtualMachine::readStack(std::fstream& stack_file) {
  */
 void VirtualMachine::writeStack(std::fstream& stack_file) {
   stack_file.seekg(0, std::ios::beg);
-  for( uint16_t i = sp; i < mem.size(); ++i) {
+  for (uint16_t i = sp; i < mem.size(); ++i) {
     stack_file << mem[i] << std::endl;
   }
-  /*
-  pcb->stack.clear();
-  std::copy(std::begin(mem) + sp,
-            std::end(mem),
-            std::back_inserter(pcb->stack));*/
 }
 
 

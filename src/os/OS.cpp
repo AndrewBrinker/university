@@ -11,6 +11,7 @@
 #include <memory>   // std::unique_ptr
 #include <utility>  // std::move
 #include <iostream>
+#include <algorithm>
 #include <iterator>
 
 
@@ -63,7 +64,7 @@ void OS::run() {
   }
 
   assignNextProcess();
-  while(running) {
+  while (running) {
     system_time += vm->runProcess(running, TIME_SLICE_TIME);
     contextSwitch();
   }
@@ -77,7 +78,7 @@ void OS::assignNextProcess() {
   if (!ready.empty()) {
     running = const_cast<PCB*>(ready.front());
     ready.pop();
-  } else if(!waiting.empty()) {
+  } else if (!waiting.empty()) {
     idle_time += waiting.front()->interrupt_time - system_time;
     system_time = waiting.front()->interrupt_time;
     ready.push(std::move(waiting.front()));
@@ -93,7 +94,7 @@ void OS::assignNextProcess() {
 void OS::contextSwitch() {
   // first, all the processes in wait whose I/O operation has been completed are
   // placed in ready
-  while (!waiting.empty() and waiting.front()->interrupt_time <= system_time) {
+  while (!waiting.empty() && waiting.front()->interrupt_time <= system_time) {
     ready.push(waiting.front());
     waiting.pop();
   }
