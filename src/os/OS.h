@@ -33,7 +33,8 @@ class OS {
   uint8_t getReturnStatus(const PCB* pcb) const;
   uint8_t getIORegister(const PCB* pcb) const;
   std::vector<std::string> getSourceFiles();
-  void runNextProcess();
+  void assignNextProcess();
+  void contextSwitch();
 
   std::unique_ptr<Assembler> as;
   std::unique_ptr<VirtualMachine> vm;

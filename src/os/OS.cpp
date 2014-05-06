@@ -10,6 +10,8 @@
 #include <cstdio>
 #include <memory>   // std::unique_ptr
 #include <utility>  // std::move
+#include <iostream>
+#include <iterator>
 
 
 #define N_REGISTERS         4
@@ -18,7 +20,7 @@
 #define RETURN_STATUS_SHIFT 5
 #define IO_REGISTER_MASK    03
 #define IO_REGISTER_SHIFT   8
-#define IO_SYSTEM_TIME      27
+#define IO_DURATION         28
 
 
 /**
@@ -39,6 +41,15 @@ void OS::run() {
   // Find all *.s files and load their names (and paths) into memory
   std::vector<std::string> source_files = getSourceFiles();
 
+#ifdef DEBUG
+  // Print the loaded processes
+  std::cout << "Loaded processes:" << std::endl;
+  std::copy(std::begin(source_files),
+            std::end(source_files),
+            std::ostream_iterator<std::string>(std::cout, "\n"));
+  std::cout << std::endl;
+#endif  // DEBUG
+
   // Assemble each file, load it into memory, create its PCB, and put into
   // the ready queue
   std::unique_ptr<PCB> current_pcb;
@@ -51,32 +62,43 @@ void OS::run() {
     jobs.push_back(std::move(current_pcb));
   }
 
-  while (!ready.empty() || !waiting.empty()) {
-    // If IO is complete
-    if (!waiting.empty()) {
-      if (waiting.front()->interrupt_time <= system_time) {
-        ready.push(waiting.front());
-        waiting.pop();
-      }
-    }
-    if (!ready.empty()) {
-      runNextProcess();
-    } else {
-      idle_time += waiting.front()->interrupt_time - system_time;
-      system_time = waiting.front()->interrupt_time;
-    }
+  assignNextProcess();
+  while(running) {
+    system_time += vm->runProcess(running, TIME_SLICE_TIME);
+    contextSwitch();
   }
 }
 
 
 /**
- * Load the next process into the Virtual Machine and run it for its time slice.
+ * Assign the next process from the ready queue to running
  */
-void OS::runNextProcess() {
-  running = const_cast<PCB*>(ready.front());
-  ready.pop();
-  system_time += vm->runProcess(running, TIME_SLICE_TIME);
+void OS::assignNextProcess() {
+  if (!ready.empty()) {
+    running = const_cast<PCB*>(ready.front());
+    ready.pop();
+  } else if(!waiting.empty()) {
+    idle_time += waiting.front()->interrupt_time - system_time;
+    system_time = waiting.front()->interrupt_time;
+    ready.push(std::move(waiting.front()));
+    waiting.pop();
+    assignNextProcess();
+  }
+}
 
+
+/**
+ * Perform a context switch.
+ */
+void OS::contextSwitch() {
+  // first, all the processes in wait whose I/O operation has been completed are
+  // placed in ready
+  while (!waiting.empty() and waiting.front()->interrupt_time <= system_time) {
+    ready.push(waiting.front());
+    waiting.pop();
+  }
+
+  // second the running process is placed in the proper queue or terminated, and
   ReturnStatus_t return_status =
     static_cast<ReturnStatus_t>(getReturnStatus(running));
   uint8_t io_register;
@@ -110,16 +132,22 @@ void OS::runNextProcess() {
     case ReturnStatus_t::READ_OPERATION:
       io_register = getIORegister(running);
       running->in_file >> running->r[io_register];
-      running->interrupt_time = system_time + IO_SYSTEM_TIME;
+      running->interrupt_time = system_time + IO_DURATION;
       waiting.push(std::move(running));
       break;
     case ReturnStatus_t::WRITE_OPERATION:
       io_register = getIORegister(running);
       running->out_file << running->r[io_register] << std::endl;
-      running->interrupt_time = system_time + IO_SYSTEM_TIME;
+      running->interrupt_time = system_time + IO_DURATION;
       waiting.push(std::move(running));
       break;
   }
+
+  // third the next process for ready is assigned to the VM
+  assignNextProcess();
+
+  // A context switch takes 5 ticks of system time
+  system_time += 5;
 }
 
 

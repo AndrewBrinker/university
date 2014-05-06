@@ -55,11 +55,6 @@ struct PCB {
 
   // Interrupt
   uint32_t interrupt_time;
-#ifdef DEBUG
-  std::vector<std::string> asm_source;
-  std::ofstream log_file;
-  std::vector<uint16_t> stack;
-#endif  // DEBUG
 
  private:
   DISALLOW_COPY_AND_ASSIGN(PCB)

@@ -115,14 +115,13 @@ void VirtualMachine::loadFile(std::fstream& object_file) {
  * @param pcb -> The PCB being loaded.
  */
 void VirtualMachine::loadPCB(PCB* pcb) {
-  std::cout << pcb->process_name << std::endl;
   pc = pcb->pc;
   r  = pcb->r;
   sr = pcb->sr;
   sp = pcb->sp;
   base = pcb->base;
   if (sp < MEM_SIZE) {
-    readStack(pcb);
+    readStack(pcb->st_file);
   }
 }
 
@@ -132,13 +131,12 @@ void VirtualMachine::loadPCB(PCB* pcb) {
  * @param pcb -> The PCB being modified.
  */
 void VirtualMachine::unloadPCB(PCB* pcb) {
-  std::cout << pcb->process_name << std::endl;
   pcb->pc = pc;
   pcb->r = r;
   pcb->sr = sr;
   pcb->sp = sp;
   if (sp < MEM_SIZE) {
-    writeStack(pcb);
+    writeStack(pcb->st_file);
   }
 }
 
@@ -147,11 +145,17 @@ void VirtualMachine::unloadPCB(PCB* pcb) {
  * Read in the stack from the given stack file stream.
  * @param stack_file -> The file being read from.
  */
-void VirtualMachine::readStack(PCB* pcb) {
+void VirtualMachine::readStack(std::fstream& stack_file) {
+  std::string line;
+  stack_file.seekg(0, std::ios::beg);
+  for( uint16_t i = sp; i < mem.size(); ++i) {
+    std::getline( stack_file, line );
+    mem[i] = stoi( line );
+  }/*
   std::copy(std::begin(pcb->stack),
             std::end(pcb->stack),
             std::begin(mem) + sp);
-  pcb->stack.clear();
+  pcb->stack.clear();*/
 }
 
 
@@ -159,11 +163,16 @@ void VirtualMachine::readStack(PCB* pcb) {
  * Write the stack contents out to the given file.
  * @param stack_file -> The file being written to.
  */
-void VirtualMachine::writeStack(PCB* pcb) {
+void VirtualMachine::writeStack(std::fstream& stack_file) {
+  stack_file.seekg(0, std::ios::beg);
+  for( uint16_t i = sp; i < mem.size(); ++i) {
+    stack_file << mem[i] << std::endl;
+  }
+  /*
   pcb->stack.clear();
   std::copy(std::begin(mem) + sp,
             std::end(mem),
-            std::back_inserter(pcb->stack));
+            std::back_inserter(pcb->stack));*/
 }
 
 

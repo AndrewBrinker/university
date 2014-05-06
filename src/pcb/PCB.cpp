@@ -28,4 +28,5 @@ PCB::PCB(std::string source_file)
     turnaround_time(0),
     io_time(0),
     largest_stack_size(0),
-    interrupt_time(0) {}
+    interrupt_time(0)
+{}
