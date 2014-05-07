@@ -39,6 +39,7 @@ OS::OS()
  * time-sharing.
  */
 void OS::run() {
+  int elapsed_time;
   // Find all *.s files and load their names (and paths) into memory
   std::vector<std::string> source_files = getSourceFiles();
 
@@ -65,8 +66,41 @@ void OS::run() {
 
   assignNextProcess();
   while (running) {
-    system_time += vm->runProcess(running, TIME_SLICE_TIME);
+    elapsed_time = vm->runProcess(running, TIME_SLICE_TIME);
+    system_time += elapsed_time;
+    running->vm_time += elapsed_time;
     contextSwitch();
+  }
+
+  // Output accounting information
+
+  double sys_utilization = (system_time - idle_time) /
+                           static_cast<double>(system_time);
+
+  double user_utilization;
+  user_utilization = 0.0;
+  for (std::unique_ptr<PCB>& pcb : jobs) {
+    user_utilization += pcb->vm_time;
+  }
+  user_utilization /= system_time;
+
+  double throughput = jobs.size() * 1000.0 / system_time;
+
+  for (std::unique_ptr<PCB>& pcb : jobs) {
+    // Process-specific accounting information
+    pcb->out_file << "VM Time: " << pcb->vm_time << std::endl <<
+                     "Waiting Time: " << pcb->waiting_time << std::endl <<
+                     "Turnaround Time: " << pcb->turnaround_time << std::endl <<
+                     "I/O Time: " << pcb->io_time << std::endl <<
+                     "Largest Stack Size: " << pcb->largest_stack_size <<
+                     std::endl << std::endl;
+
+    // System accounting information
+    pcb->out_file << "System CPU Utilization: " << sys_utilization <<
+                     std::endl <<
+                     "User CPU Utilization: " << user_utilization <<
+                     std::endl <<
+                     "Throughput: " << throughput << std::endl;
   }
 }
 
@@ -75,14 +109,20 @@ void OS::run() {
  * Assign the next process from the ready queue to running
  */
 void OS::assignNextProcess() {
+  PCB* temp;
   if (!ready.empty()) {
     running = const_cast<PCB*>(ready.front());
     ready.pop();
+    running->waiting_time += system_time - running->time_entered_ready_queue;
   } else if (!waiting.empty()) {
     idle_time += waiting.front()->interrupt_time - system_time;
     system_time = waiting.front()->interrupt_time;
-    ready.push(std::move(waiting.front()));
+    temp = const_cast<PCB*>(waiting.front());
     waiting.pop();
+    temp->io_time += system_time - temp->time_entered_waiting_queue;
+    temp->time_entered_ready_queue = system_time;
+    ready.push(temp);
+    temp = nullptr;
     assignNextProcess();
   }
 }
@@ -92,11 +132,16 @@ void OS::assignNextProcess() {
  * Perform a context switch.
  */
 void OS::contextSwitch() {
+  PCB* temp;
   // first, all the processes in wait whose I/O operation has been completed are
   // placed in ready
   while (!waiting.empty() && waiting.front()->interrupt_time <= system_time) {
-    ready.push(waiting.front());
+    temp = const_cast<PCB*>(waiting.front());
     waiting.pop();
+    temp->io_time += system_time - temp->time_entered_waiting_queue;
+    temp->time_entered_ready_queue = system_time;
+    ready.push(temp);
+    temp = nullptr;
   }
 
   // second the running process is placed in the proper queue or terminated, and
@@ -105,9 +150,11 @@ void OS::contextSwitch() {
   uint8_t io_register;
   switch (return_status) {
     case ReturnStatus_t::TIME_SLICE:
+      running->time_entered_ready_queue = system_time;
       ready.push(std::move(running));
       break;
     case ReturnStatus_t::HALT_INSTRUCTION:
+      running->turnaround_time = system_time;
       running = nullptr;
       break;
     case ReturnStatus_t::OUT_OF_BOUND_REFERENCE:
@@ -134,12 +181,14 @@ void OS::contextSwitch() {
       io_register = getIORegister(running);
       running->in_file >> running->r[io_register];
       running->interrupt_time = system_time + IO_DURATION;
+      running->time_entered_waiting_queue = system_time;
       waiting.push(std::move(running));
       break;
     case ReturnStatus_t::WRITE_OPERATION:
       io_register = getIORegister(running);
       running->out_file << running->r[io_register] << std::endl;
       running->interrupt_time = system_time + IO_DURATION;
+      running->time_entered_waiting_queue = system_time;
       waiting.push(std::move(running));
       break;
   }

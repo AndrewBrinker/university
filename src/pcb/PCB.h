@@ -56,6 +56,10 @@ struct PCB {
   // Interrupt
   uint32_t interrupt_time;
 
+  // Helpers
+  uint32_t time_entered_ready_queue;
+  uint32_t time_entered_waiting_queue;
+
  private:
   DISALLOW_COPY_AND_ASSIGN(PCB)
 };

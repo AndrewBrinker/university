@@ -78,13 +78,14 @@ uint8_t VirtualMachine::runProcess(PCB* pcb, uint8_t time_slice) {
       ++pc;
       (*this.*ops[ir.i >> 8])();
       if (!halt) {
-        pcb->vm_time += clocks[ir.i >> 8];
         count += clocks[ir.i >> 8];
         if (count >= time_slice) {
           halt = true;
           setReturnStatus(ReturnStatus_t::TIME_SLICE);
         }
       }
+      if (pcb->largest_stack_size < mem.size() - sp)
+        pcb->largest_stack_size = mem.size() - sp;
     }
   } catch(std::bad_function_call&) {
     setReturnStatus(ReturnStatus_t::INVALID_OPCODE);
@@ -838,11 +839,11 @@ void VirtualMachine::setupOpMap() {
       ops[i] = &VirtualMachine::op_return;
       break;
     case 22:
-      clocks[i] = 28;
+      clocks[i] = 1;  // 1 tick VM time, 27 ticks OS time
       ops[i] = &VirtualMachine::op_read;
       break;
     case 23:
-      clocks[i] = 28;
+      clocks[i] = 1;  // 1 tick VM time, 27 ticks OS time
       ops[i] = &VirtualMachine::op_write;
       break;
     case 24:
