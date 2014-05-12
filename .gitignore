@@ -4,6 +4,8 @@ lint/
 sos
 bin/release/
 bin/debug/
+sos.pdf
+sos.tex
 *.o
 *.log
 *.out
