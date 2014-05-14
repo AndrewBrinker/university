@@ -5,5 +5,5 @@ module adder (
         output  wire [31:0] add_out
     );
 
-	// Need to figure out
+    assign add_out = add_in1 + add_in2;
 endmodule

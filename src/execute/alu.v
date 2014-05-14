@@ -7,40 +7,29 @@ module alu (
         output  wire         zero
     );
 
-    parameter ALUadd =
-    /*
-        Get these values from Figure 3.2 in Lab Manual:
-        ALUsub      =
-        ALUand      =
-        ALUor       =
-        ALUslt      =
-    */
-
-
-    // Handles negative inputs
-    wire sign_mismatch;
-    assign sign_mismatch = ;
+    parameter ALUlwsw = 3'b010,
+              ALUbeq  = 3'b110,
+              ALUadd  = 3'b010,
+              ALUsub  = 3'b110,
+              ALUand  = 3'b000,
+              ALUor   = 3'b001,
+              ALUslt  = 3'b111,
+              ALUx    = 3'b011;
 
     initial begin
         result <= 0;
     end
 
     always@* begin
+        #1
         case (control)
-            ALUadd:   result = a + b;
-            ALUsub:   result = a - b;
-            ALUand:   result = a && b;
-            ALUor:    result = a || b;
-            ALUslt:   result = a < b ? 1 - sign_mismatch : 0 + sign_mismatch;
-            default:  result = 32'bx;
+            ALUadd:   result <= a + b;
+            ALUsub:   result <= a - b;
+            ALUand:   result <= a && b;
+            ALUor:    result <= a || b;
+            ALUslt:   result <= a < b ? 1 : 0;
+            default:  result <= 32'bx;
         endcase
-
-        assign zero = ;
-        /*
-            Check to see if result is equal to zero. if it is assign it true (1). if it isn't assign it false (0)
-            Complete this line using a turnary operator. If you don't know what that is then Google it.
-            P.S. I tabbed all of these lines, so you might want to delete these comments after you implement this line or
-            replace the tabs with white space for when you import this into your LaTeX write up.
-        */
+        zero <= result == 0 ? 1 : 0;
     end
 endmodule

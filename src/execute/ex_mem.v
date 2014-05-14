@@ -32,15 +32,15 @@ module ex_mem (
 
     always@* begin
         #1
-        wb_ctlout       <= ;
+        wb_ctlout       <= ctlwb_out;
         branch          <= ;
         memread         <= ;
         memwrite        <= ;
-        add_result      <= ;
-        zero            <= ;
-        alu_result      <= ;
-        rdata2out       <= ;
-        five_bit_muxout <= ;
+        add_result      <= adder_out;
+        zero            <= aluzero;
+        alu_result      <= aluout;
+        rdata2out       <= readdat2;
+        five_bit_muxout <= muxout;
     end
 
 endmodule
