@@ -82,4 +82,5 @@ module i_decode (
         $display("instrout_1511: %b", instrout_1511);
         $display("");
     end
+
 endmodule

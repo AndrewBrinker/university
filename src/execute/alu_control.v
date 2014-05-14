@@ -44,7 +44,7 @@ module alu_control (
                     default: select <= ALUx;
                 endcase
             end
-            else if (aluop == lwsw) begin
+            else if (aluop == Mtype) begin
                 select <= ALUlwsw;
             end
             else if (aluop == Itype) begin

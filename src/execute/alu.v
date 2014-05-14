@@ -4,7 +4,7 @@ module alu (
         input   wire  [2:0]  control,
 
         output  reg   [31:0] result,
-        output  wire         zero
+        output  reg          zero
     );
 
     parameter ALUlwsw = 3'b010,
@@ -30,6 +30,6 @@ module alu (
             ALUslt:   result <= a < b ? 1 : 0;
             default:  result <= 32'bx;
         endcase
-        zero <= result == 0 ? 1 : 0;
+        zero <= (result == 0) ? 1 : 0;
     end
 endmodule

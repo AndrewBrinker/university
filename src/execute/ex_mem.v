@@ -33,9 +33,9 @@ module ex_mem (
     always@* begin
         #1
         wb_ctlout       <= ctlwb_out;
-        branch          <= ;
-        memread         <= ;
-        memwrite        <= ;
+        branch          <= ctlm_out[0];
+        memread         <= ctlm_out[1];
+        memwrite        <= ctlm_out[2];
         add_result      <= adder_out;
         zero            <= aluzero;
         alu_result      <= aluout;
