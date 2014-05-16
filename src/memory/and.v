@@ -1,9 +1,9 @@
-module and (
-        input  reg branch,
-        input  reg zero,
+module AND (
+        input  wire BRANCH,
+        input  wire zero,
 
-        output reg out
+        output wire out
     );
 
-    assign output = branch && zero;
+    assign out = BRANCH && zero;
 endmodule

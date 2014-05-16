@@ -24,7 +24,6 @@ module d_mem (
     end
 
     always@(addr) begin
-        // Finish this thread. Hint: Requires 2 if statements
         if (memwrite == 1) begin
             // Write stuff
             DMEM[addr] <= write_data;
