@@ -2,7 +2,6 @@
 `include "src/execute/alu.v"
 `include "src/execute/alu_control.v"
 `include "src/execute/ex_mem.v"
-`include "src/execute/five_bit_mux.v"
 
 module i_execute (
         input   wire [1:0]  wb_ctl,
@@ -45,12 +44,12 @@ module i_execute (
                              .aluop(aluop),
                              .select(control));
 
-    five_bit_mux five_bit_mux1(.pc(instrout_2016),
-                               .jump(instrout_1511),
-                               .select(regdst),
-                               .out(muxout));
+    mux #(.SIZE(5)) mux2(.a(instrout_2016),
+                         .b(instrout_1511),
+                         .select(regdst),
+                         .y(muxout));
 
-    mux mux1(.a(rdata2),
+    mux mux3(.a(rdata2),
              .b(rdata1),
              .select(alusrc),
              .y(b));
