@@ -14,7 +14,7 @@ module d_mem (
     initial begin
         read_data <= 0;
 
-        //  Initialize DMEM[0-5] from data.txt
+        // Initialize DMEM[0-5] from data.txt
         $readmemb("etc/data.txt", DMEM);
 
         // Initialize DMEM[6-255] to 6-255
@@ -24,6 +24,17 @@ module d_mem (
     end
 
     always@(addr) begin
-        // finish this thread. Hint: Requires 2 if statements
+        // Finish this thread. Hint: Requires 2 if statements
+        if (memwrite == 1) begin
+            // Write stuff
+            DMEM[addr] <= write_data;
+            read_data  <= 32'bx;
+        end else if (memread == 1) begin
+            // Read stuff
+            read_data <= DMEM[addr];
+        end else begin
+            // No idea!
+            read_data <= 32'bx;
+        end
     end
 endmodule
