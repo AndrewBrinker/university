@@ -16,8 +16,17 @@
 
 class TLB {
  public:
-  TLB() : data(std::map<uint8_t, uint8_t>());
-  std::map<uint8_t, uint8_t> data;
+  union tlb_entry_t {
+    uint8_t i;
+    struct {
+      uint8_t frame  : 5;
+      uint8_t modify : 1;
+      uint8_t valid  : 1;
+    } fmt0;
+  }
+
+  TLB() : data(std::map<tlb_entry_t, uint8_t>());
+  std::map<tlb_entry_t, uint8_t> data;
 
  private:
   DISALLOW_COPY_AND_ASSIGN(Assembler)
