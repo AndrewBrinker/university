@@ -1,10 +1,10 @@
 module alu (
-        input   wire  [31:0] a,
-        input   wire  [31:0] b,
-        input   wire  [2:0]  control,
+        input  wire [31:0] a,
+        input  wire [31:0] b,
+        input  wire [2:0]  control,
 
-        output  reg   [31:0] result,
-        output  reg          zero
+        output reg  [31:0] result,
+        output reg         zero
     );
 
     parameter ALUlwsw = 3'b010,
