@@ -45,7 +45,7 @@ module control (
                 M  <= 3'b000;
                 WB <= 2'b00;
             end
-            default: $display ("Opcode not recognized.");
+            default: begin end
         endcase
     end
 endmodule

@@ -67,20 +67,4 @@ module i_decode (
                   .instrout_2016(instrout_2016),
                   .instrout_1511(instrout_1511));
 
-    always @(IF_ID_instrout) begin
-        $display("clock: %0d", $time);
-        $display("wb_ctlout: %b", wb_ctlout);
-        $display("m_ctlout: %b", m_ctlout);
-        $display("regdst: %b", regdst);
-        $display("alusrc: %b", alusrc);
-        $display("aluop: %b", aluop);
-        $display("npcout: %b", npcout);
-        $display("rdata1out: %b", rdata1out);
-        $display("rdata2out: %b", rdata2out);
-        $display("signext_out: %b", signext_out);
-        $display("instrout_2016: %b", instrout_2016);
-        $display("instrout_1511: %b", instrout_1511);
-        $display("");
-    end
-
 endmodule

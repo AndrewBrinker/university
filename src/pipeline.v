@@ -2,13 +2,15 @@
 `include "src/decode/i_decode.v"
 `include "src/execute/i_execute.v"
 `include "src/memory/i_memory.v"
+`include "src/writeback/i_writeback.v"
 
 module pipeline ();
     wire [31:0] IF_ID_instrout;
     wire [31:0] IF_ID_npcout;
     wire        EX_MEM_PCSrc;
-    wire [31:0] EX_MEM_NPC;
-    reg  [4:0]  regwrite;
+    wire [31:0] EX_MEM_NPC,
+                WB_mux5_writedata;
+    wire [4:0]  regwrite;
     wire [1:0]  wb_ctlout, wb_ctlout2;
     wire [2:0]  m_ctlout;
     wire        regdst,
@@ -18,16 +20,19 @@ module pipeline ();
                 rdata1out,
                 rdata2out,
                 rdata2out2,
-                s_extendout;
+                s_extendout,
+                mem_alu_result,
+                read_data,
+                alu_result;
     wire [4:0]  instrout_2016,
                 instrout_1511,
                 five_bit_muxout;
     wire        memwrite,
-                zero;
-
-    initial begin
-        regwrite <= 5'b0;
-    end
+                zero,
+                memtoreg,
+                MEM_WB_regwrite;
+    wire        branch,
+                memread;
 
     i_fetch i_fetch1 (.EX_MEM_PCSrc(EX_MEM_PCSrc),
                       .EX_MEM_NPC(EX_MEM_NPC),
@@ -37,8 +42,8 @@ module pipeline ();
     i_decode i_decode1 (.IF_ID_instrout(IF_ID_instrout),
                         .IF_ID_npcout(IF_ID_npcout),
                         .MEM_WB_rd(regwrite),
-                        .MEM_WB_regwrite(EX_MEM_PCSrc),
-                        .WB_mux5_writedata(EX_MEM_NPC),
+                        .MEM_WB_regwrite(MEM_WB_regwrite),
+                        .WB_mux5_writedata(WB_mux5_writedata),
                         .wb_ctlout(wb_ctlout),
                         .m_ctlout(m_ctlout),
                         .regdst(regdst),
@@ -81,10 +86,16 @@ module pipeline ();
                        .rdata2out(rdata2out2),
                        .five_bit_muxout(five_bit_muxout),
                        .MEM_PCSrc(EX_MEM_PCSrc),
-                       .MEM_WB_regwrite(),
-                       .MEM_WB_memtoreg(),
-                       .read_data(),
-                       .mem_alu_result(),
-                       .mem_write_reg());
+                       .MEM_WB_regwrite(MEM_WB_regwrite),
+                       .MEM_WB_memtoreg(memtoreg),
+                       .read_data(read_data),
+                       .mem_alu_result(mem_alu_result),
+                       .mem_write_reg(regwrite));
+
+    i_writeback i_writeback1(.memtoreg(memtoreg),
+                             .read_data(read_data),
+                             .mem_alu_result(mem_alu_result),
+
+                             .wb_data(WB_mux5_writedata));
 
 endmodule

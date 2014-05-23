@@ -77,28 +77,4 @@ module i_execute (
                    .rdata2out(rdata2out),
                    .five_bit_muxout(five_bit_muxout));
 
-    always @(instrout_2016 or instrout_1511) begin
-        $display("clock: %0d", $time);
-        $display("wb_ctl: %b", wb_ctl);
-        $display("m_ctl: %b", m_ctl);
-        $display("regdst: %b", regdst);
-        $display("alusrc: %b", alusrc);
-        $display("aluop: %b", aluop);
-        $display("npcout: %b", npcout);
-        $display("rdata1: %b", rdata1);
-        $display("rdata2: %b", rdata2);
-        $display("s_extendout: %b", s_extendout);
-        $display("instrout_2016: %b", instrout_2016);
-        $display("instrout_1511: %b", instrout_1511);
-        $display("wb_ctlout: %b", wb_ctlout);
-        $display("branch: %b", branch);
-        $display("memread: %b", memread);
-        $display("memwrite: %b", memwrite);
-        $display("EX_MEM_NPC: %b", EX_MEM_NPC);
-        $display("zero: %b", zero);
-        $display("alu_result: %b", alu_result);
-        $display("rdata2out: %b", rdata2out);
-        $display("five_bit_muxout: %b", five_bit_muxout);
-        $display("");
-    end
 endmodule
