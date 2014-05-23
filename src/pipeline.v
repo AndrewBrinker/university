@@ -26,7 +26,7 @@ module pipeline ();
                 zero;
 
     initial begin
-        regwrite     <= 5'b0;
+        regwrite <= 5'b0;
     end
 
     i_fetch i_fetch1 (.EX_MEM_PCSrc(EX_MEM_PCSrc),
@@ -80,7 +80,6 @@ module pipeline ();
                        .alu_result(alu_result),
                        .rdata2out(rdata2out2),
                        .five_bit_muxout(five_bit_muxout),
-
                        .MEM_PCSrc(EX_MEM_PCSrc),
                        .MEM_WB_regwrite(),
                        .MEM_WB_memtoreg(),
