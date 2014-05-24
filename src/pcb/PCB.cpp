@@ -3,7 +3,6 @@
  */
 
 #include "./PCB.h"
-
 #include <util/Utilities.h>
 #include <string>
 
@@ -28,6 +27,8 @@ PCB::PCB(std::string source_file)
     turnaround_time(0),
     io_time(0),
     largest_stack_size(0),
+    page_fault_count(0),
+    hit_ratio(0),
     interrupt_time(0),
     time_entered_ready_queue(0),
     time_entered_waiting_queue(0) {}
