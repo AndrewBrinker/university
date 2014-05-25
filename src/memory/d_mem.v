@@ -14,7 +14,6 @@ module d_mem (
     initial begin
         read_data <= 0;
 
-        // Initialize DMEM[0-5] from data.txt
         DMEM[0] = 32'b00000000000000000000000000000000;
         DMEM[1] = 32'b00000000000000000000000000000001;
         DMEM[2] = 32'b00000000000000000000000000000010;
