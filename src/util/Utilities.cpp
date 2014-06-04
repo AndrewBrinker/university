@@ -199,7 +199,7 @@ std::vector<std::string> split(std::string line) {
   std::istringstream stream(line);
   std::copy(std::istream_iterator<std::string>(stream),
             std::istream_iterator<std::string>(),
-            std::back_inserter<std::vector<std::string>>(tokens));
+            std::back_inserter<std::vector<std::string>>(tokens));  // NOLINT
   return tokens;
 }
 
