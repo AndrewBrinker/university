@@ -19,7 +19,7 @@ int main(int argc, char* argv[]) {
 int main() {
   TLB_Entry te;
 
-  printf( "%d\n", te.frame );
+  printf("%d\n", te.frame);
 
   return 0;
 }

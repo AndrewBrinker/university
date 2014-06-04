@@ -3,6 +3,7 @@
  */
 
 #include <pcb/PCB.h>
+#include <tlb/TLB.h>
 #include <cstdint>
 #include <vector>
 #include <string>
@@ -55,6 +56,8 @@ class VirtualMachine {
       uint8_t op      : 5;
     } fmt1;
   } ir;
+
+  TLB tlb;
 
   std::vector<int16_t> r;
   std::vector<int16_t> mem;

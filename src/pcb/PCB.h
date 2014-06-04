@@ -5,6 +5,8 @@
 #ifndef PCB_H
 #define PCB_H
 
+#include <tlb/TLB.h>
+
 #include <cstdint>
 #include <string>
 #include <vector>
@@ -61,6 +63,9 @@ struct PCB {
   // Helpers
   uint32_t time_entered_ready_queue;
   uint32_t time_entered_waiting_queue;
+
+  // TLB
+  TLB tlb;
 
  private:
   DISALLOW_COPY_AND_ASSIGN(PCB)

@@ -3,14 +3,17 @@
  */
 
 #include <cstdint>
-#include <vector>
+#include <array>
 
 #ifndef TLB_H
 #define TLB_H
 
+#define PAGE_SIZE 8
+#define N_FRAMES 32
+
 struct TLB_Entry {
   TLB_Entry();
-  TLB_Entry( const uint8_t& );
+  explicit TLB_Entry(const uint8_t&);
 
   uint8_t frame    : 5;
   bool    modified : 1;
@@ -18,6 +21,6 @@ struct TLB_Entry {
   bool    empty    : 1;
 };
 
-typedef std::vector< TLB_Entry > TLB;
+typedef std::array< TLB_Entry, N_FRAMES > TLB;
 
 #endif  // TLB_H
