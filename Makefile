@@ -182,6 +182,11 @@ listing:
 	@$(RM) $(BIN_NAME).aux
 	@$(RM) $(BIN_NAME).log
 
+# target: authors     Generate AUTHORS.md with list of authors from git history.
+authors:
+	@printf "# Authors\n\nWe'd like to thank the following people for their contributions...\n\n" > AUTHORS.md
+	@git log --raw | grep "^Author: " | sort | uniq | cut -d ' ' -f2- | sed 's/^/- /' >> AUTHORS.md
+
 # Main rule, checks the executable and symlinks to the output
 all: $(BIN_PATH)/$(BIN_NAME)
 	@echo "Making symlink: $(BIN_NAME) -> $<"
