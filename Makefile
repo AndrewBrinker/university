@@ -31,6 +31,8 @@ INSTALL_PREFIX = usr/local
 FILTERS = -readability/streams,-build/header_guard,-runtime/references
 # LaTeX compiler used
 LATEX = pdflatex
+# Authors file name.
+AUTHORS = AUTHORS.md
 #### END PROJECT SETTINGS ####
 
 # Generally should not need to edit below this line
@@ -182,10 +184,10 @@ listing:
 	@$(RM) $(BIN_NAME).aux
 	@$(RM) $(BIN_NAME).log
 
-# target: authors     Generate AUTHORS.md with list of authors from git history.
+# target: authors     Generate authors file with list of authors from git history.
 authors:
-	@printf "# Authors\n\nWe'd like to thank the following people for their contributions...\n\n" > AUTHORS.md
-	@git log --format=format:'- %aN <%aE>' | sort -u >> AUTHORS.md
+	@printf "# Authors\n\nWe'd like to thank the following people for their contributions...\n\n" > $(AUTHORS)
+	@git log --format=format:'- %aN <%aE>' | sort -u >> $(AUTHORS)
 
 # Main rule, checks the executable and symlinks to the output
 all: $(BIN_PATH)/$(BIN_NAME)
