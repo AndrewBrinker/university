@@ -347,6 +347,30 @@ inline uint8_t VirtualMachine::setIO_Register(uint8_t reg) {
 }
 
 
+/**
+ * Test the value of the Page Fault bit.
+ * @return the value of the Page Fault bit.
+ */
+inline bool VirtualMachine::getPageFault() const {
+  return sr & PAGE_FAULT_MASK;
+}
+
+
+/**
+ * Test the value of the Page Fault bit and set it to the value of the
+ * parameter.
+ * @param The value to which to set the Page Fault bit.
+ * @return the value of the Page Fault bit /before/ modification.
+ */
+inline bool VirtualMachine::setPageFault(bool b) {
+  bool s = sr & PAGE_FAULT_MASK;
+  if (b) {
+    sr |= PAGE_FAULT_MASK;
+  }
+  return s;  
+}
+
+
 
 /**
  * Load the given memory location's value into a register.

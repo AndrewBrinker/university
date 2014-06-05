@@ -95,6 +95,9 @@ class VirtualMachine {
   uint8_t getIO_Register() const;
   uint8_t setIO_Register(uint8_t reg);
 
+  bool getPageFault() const;
+  bool setPageFault(bool b);
+
   void op(const Opcode_t&);
 
   void op_load();
