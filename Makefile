@@ -31,8 +31,12 @@ INSTALL_PREFIX = usr/local
 FILTERS = -readability/streams,-build/header_guard,-runtime/references
 # LaTeX compiler used
 LATEX = pdflatex
-# Authors file name.
+# Authors file name
 AUTHORS = AUTHORS.md
+# Path to scripts
+SCRIPTS_PATH = scripts
+# Listing script name
+LISTING = listing.py
 #### END PROJECT SETTINGS ####
 
 # Generally should not need to edit below this line
@@ -179,7 +183,7 @@ help:
 # target: listing     Create LaTeX code listing
 .PHONY: listing
 listing:
-	@python listing.py $(BIN_NAME)
+	@python $(SCRIPTS_PATH)/$(LISTING) $(BIN_NAME)
 	@$(LATEX) $(BIN_NAME).tex
 	@$(RM) $(BIN_NAME).aux
 	@$(RM) $(BIN_NAME).log
