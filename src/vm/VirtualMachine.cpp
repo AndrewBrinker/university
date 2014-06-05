@@ -19,6 +19,8 @@
 #define OUT_FILE_EXT ".out"
 #define IN_FILE_EXT  ".in"
 
+#define PAGE_FAULT_MASK 0x0200
+
 #define OVERFLOW_MASK 0x0010
 #define LESS_MASK     0x0008
 #define EQUAL_MASK    0x0004

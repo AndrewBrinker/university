@@ -8,6 +8,7 @@
 #include <asm/Assembler.h>
 #include <vm/VirtualMachine.h>
 #include <pcb/PCB.h>
+#include <tlb/TLB.h>
 #include <cstdint>
 #include <list>
 #include <queue>
@@ -44,6 +45,8 @@ class OS {
   PCB* running;
   uint32_t system_time;
   uint32_t idle_time;
+
+  std::array<uint32_t, N_FRAMES> frame_registers;
 
   DISALLOW_COPY_AND_ASSIGN(OS)
 };

@@ -58,6 +58,7 @@ class VirtualMachine {
   } ir;
 
   TLB tlb;
+  std::array<uint16_t, N_FRAMES> frame_registers;
 
   std::vector<int16_t> r;
   std::vector<int16_t> mem;
