@@ -38,7 +38,7 @@ OS::OS()
  * Load all the assembly files, create the PCBs, and run them all with
  * time-sharing.
  */
-void OS::run() {
+void OS::run(std::string /*page_replacement_algorithm*/) {
   int elapsed_time;
   // Find all *.s files and load their names (and paths) into memory
   std::vector<std::string> source_files = getSourceFiles();

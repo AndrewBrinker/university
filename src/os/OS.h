@@ -27,7 +27,7 @@
 class OS {
  public:
   OS();
-  void run();
+  void run(std::string);
 
  private:
   uint8_t getReturnStatus(const PCB* pcb) const;
