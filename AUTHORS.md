@@ -1,6 +1,6 @@
 # Authors
 
-We'd like to thank the following people for their contributions...
+This project made by the following people:
 
 - Andrew Brinker <me@andrewbrinker.com>
 - J. Anthony Sterrett, Jr <jasterrett@gmail.com>

@@ -190,7 +190,7 @@ listing:
 
 # target: authors     Generate authors file with list of authors from git history.
 authors:
-	@printf "# Authors\n\nWe'd like to thank the following people for their contributions...\n\n" > $(AUTHORS)
+	@printf "# Authors\n\nThis project made by the following people:\n\n" > $(AUTHORS)
 	@git log --format=format:'- %aN <%aE>' | sort -u >> $(AUTHORS)
 
 # Main rule, checks the executable and symlinks to the output
