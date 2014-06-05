@@ -55,6 +55,7 @@ struct PCB {
   uint32_t io_time;
   uint32_t largest_stack_size;
   uint32_t page_fault_count;
+  uint32_t memory_access_count;
   double   hit_ratio;
 
   // Interrupt

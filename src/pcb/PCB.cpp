@@ -28,6 +28,7 @@ PCB::PCB(std::string source_file)
     io_time(0),
     largest_stack_size(0),
     page_fault_count(0),
+    memory_access_count(0),
     hit_ratio(0),
     interrupt_time(0),
     time_entered_ready_queue(0),
