@@ -18,7 +18,6 @@ struct TLB_Entry {
   uint8_t frame    : 5;
   bool    modified : 1;
   bool    valid    : 1;
-  bool    __unused : 1;
 };
 
 typedef std::array<TLB_Entry, N_FRAMES> TLB;
