@@ -3,7 +3,7 @@
  */
 
 #include <pcb/PCB.h>
-#include <tlb/TLB.h>
+#include <tbl/Table.h>
 #include <cstdint>
 #include <vector>
 #include <string>
@@ -19,7 +19,7 @@
   void operator=(const TypeName&) = delete;
 #endif
 
-enum ReturnStatus_t {
+enum return_t {
   TIME_SLICE             = 00,
   HALT_INSTRUCTION       = 01,
   OUT_OF_BOUND_REFERENCE = 02,
@@ -35,6 +35,8 @@ class VirtualMachine {
   VirtualMachine();
   void loadIntoMemory(PCB* pcb);
   uint8_t runProcess(PCB* pcb, uint8_t time_slice);
+  std::array<uint8_t, N_FRAMES> getFrameRegisters();
+  uint16_t getClock();
 
  private:
   union Opcode_t {
@@ -58,11 +60,12 @@ class VirtualMachine {
   } ir;
 
   TLB tlb;
-  std::array<uint16_t, N_FRAMES> frame_registers;
+  std::array<uint8_t, N_FRAMES> frame_registers;
 
   std::vector<int16_t> r;
   std::vector<int16_t> mem;
-  uint16_t pc, sr, sp, base, limit;
+
+  uint16_t pc, sr, sp, base, limit, clock;
   bool halt;
   void (VirtualMachine::*ops[256])();
   uint8_t clocks[256];

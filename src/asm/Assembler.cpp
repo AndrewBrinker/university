@@ -125,7 +125,6 @@ std::vector<std::string> Assembler::readASMSource(std::fstream& input_file) {
     }
     source.push_back(line);
   }
-
   return source;
 }
 
@@ -209,10 +208,11 @@ std::string Assembler::convertToObjectCode(std::string line) {
  * @return the associated operation.
  */
 Assembler::op_t Assembler::findOperation(std::string name) {
-  for (int i = 0; i < N_OPERATIONS; ++i )
-    if (operations[i].name == name)
+  for (int i = 0; i < N_OPERATIONS; ++i) {
+    if (operations[i].name == name) {
       return operations[i];
-
+    }
+  }
   try {
     throw InvalidOperation("Assembler");
   } catch(GenericError &e) {

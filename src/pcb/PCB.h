@@ -5,8 +5,7 @@
 #ifndef PCB_H
 #define PCB_H
 
-#include <tlb/TLB.h>
-
+#include <tbl/Table.h>
 #include <cstdint>
 #include <string>
 #include <vector>
@@ -39,7 +38,7 @@ struct PCB {
   std::vector<int16_t> r;
 
   // Process name
-  std::string process_name;
+  std::string name;
 
   // Files
   std::fstream s_file;
@@ -53,10 +52,10 @@ struct PCB {
   uint32_t waiting_time;
   uint32_t turnaround_time;
   uint32_t io_time;
-  uint32_t largest_stack_size;
+  uint32_t largest_stack;
   uint32_t page_fault_count;
   uint32_t memory_access_count;
-  uint32_t memory_hit_count; // hit ratio = # memory hits / # memory accesses
+  uint32_t memory_hit_count;  // hit ratio = # memory hits / # memory accesses
 
   // Interrupt
   uint32_t interrupt_time;

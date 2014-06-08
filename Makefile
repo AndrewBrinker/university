@@ -192,6 +192,7 @@ listing:
 authors:
 	@printf "# Authors\n\nThis project made by the following people:\n\n" > $(AUTHORS)
 	@git log --format=format:'- %aN <%aE>' | sort -u >> $(AUTHORS)
+	@printf "\n" >> $(AUTHORS)
 
 # Main rule, checks the executable and symlinks to the output
 all: $(BIN_PATH)/$(BIN_NAME)

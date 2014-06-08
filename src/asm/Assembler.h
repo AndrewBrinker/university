@@ -29,14 +29,10 @@ class Assembler {
   void parse(PCB* pcb);
 
  private:
-#ifdef DEBUG
-  std::vector<std::string> asm_source;
-#endif  // DEBUG
-
   std::vector<std::string> readASMSource(std::fstream&);
-  std::string convertToObjectCode(std::string);
-  op_t findOperation(std::string);
-  std::string getRegisterID(std::string);
+  std::string              convertToObjectCode(std::string);
+  op_t                     findOperation(std::string);
+  std::string              getRegisterID(std::string);
 
   DISALLOW_COPY_AND_ASSIGN(Assembler)
 };

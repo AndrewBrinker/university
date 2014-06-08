@@ -5,21 +5,20 @@
 #include <cstdint>
 #include <array>
 
-#ifndef TLB_H
-#define TLB_H
+#ifndef TABLE_H
+#define TABLE_H
 
-#define PAGE_SIZE 8
 #define N_FRAMES  32
 
-struct TLB_Entry {
-  TLB_Entry();
-  explicit TLB_Entry(const uint8_t &);
+struct TableEntry {
+  TableEntry();
+  explicit TableEntry(const uint8_t &);
 
   uint8_t frame    : 5;
   bool    modified : 1;
   bool    valid    : 1;
 };
 
-typedef std::array<TLB_Entry, N_FRAMES> TLB;
+typedef std::array<TableEntry, N_FRAMES> TLB;
 
-#endif  // TLB_H
+#endif  // TABLE_H

@@ -19,14 +19,12 @@
 #define OUT_FILE_EXT ".out"
 #define IN_FILE_EXT  ".in"
 
-#define PAGE_FAULT_MASK 0x0200
-
-#define OVERFLOW_MASK 0x0010
-#define LESS_MASK     0x0008
-#define EQUAL_MASK    0x0004
-#define GREATER_MASK  0x0002
-#define CARRY_MASK    0x0001
-
+#define PAGE_FAULT_MASK     0x0200
+#define OVERFLOW_MASK       0x0010
+#define LESS_MASK           0x0008
+#define EQUAL_MASK          0x0004
+#define GREATER_MASK        0x0002
+#define CARRY_MASK          0x0001
 #define RETURN_STATUS_MASK  0x7
 #define RETURN_STATUS_SHIFT 5
 #define IO_REGISTER_MASK    0x3
@@ -44,6 +42,7 @@ VirtualMachine::VirtualMachine()
                                sp(MEM_SIZE),
                                base(0),
                                limit(0),
+                               clock(0),
                                halt(0) {
   setupOpMap();
 }
@@ -52,7 +51,7 @@ VirtualMachine::VirtualMachine()
 /**
  * Load the program indicated by the PCB into memory, setting appropriate
  * variables in the PCB.
- * @param pcb -> The Program Control Block
+ * @param pcb -> The Process Control Block
  */
 void VirtualMachine::loadIntoMemory(PCB* pcb) {
   pcb->base = limit;
@@ -75,25 +74,56 @@ uint8_t VirtualMachine::runProcess(PCB* pcb, uint8_t time_slice) {
   uint8_t count = 0;
   halt = false;
   try {
+    // While halt is false
     while (!halt) {
+      // Get the next instruction and increment the program counter
       ir.i = mem[pc + base];
       ++pc;
+      // Run the operation defined by the instruction
       (*this.*ops[ir.i >> 8])();
+      clock += clocks[ir.i >> 8];
+      // If it wasn't a halt instruction
       if (!halt) {
+        // Update the count
         count += clocks[ir.i >> 8];
+        // If you've run out of time
         if (count >= time_slice) {
+          // Halt the program and set the return status to TIME_SLICE
           halt = true;
-          setReturnStatus(ReturnStatus_t::TIME_SLICE);
+          setReturnStatus(return_t::TIME_SLICE);
         }
       }
-      if (pcb->largest_stack_size < mem.size() - sp)
-        pcb->largest_stack_size = mem.size() - sp;
+      // If necessary, update the largest stack size
+      if (pcb->largest_stack < mem.size() - sp)
+        pcb->largest_stack = mem.size() - sp;
     }
   } catch(std::bad_function_call&) {
-    setReturnStatus(ReturnStatus_t::INVALID_OPCODE);
+    // If the function call failed, set the return status to INVALID_OPCODE
+    setReturnStatus(return_t::INVALID_OPCODE);
   }
+  // Unload the PCB
   unloadPCB(pcb);
+  // Return the count
   return count;
+}
+
+
+/**
+ * Return the VM's internal frame registers. Used by the OS for LRU checking.
+ * @return the frame registers
+ */
+std::array<uint8_t, N_FRAMES> VirtualMachine::getFrameRegisters() {
+  return frame_registers;
+}
+
+
+/**
+ * Return the VM's current clock tick count. Used by the OS for page
+ * replacement.
+ * @return the current number of clock ticks
+ */
+uint16_t VirtualMachine::getClock() {
+  return clock;
 }
 
 
@@ -102,12 +132,20 @@ uint8_t VirtualMachine::runProcess(PCB* pcb, uint8_t time_slice) {
  * @param object_file -> A stream to the file being loaded.
  */
 void VirtualMachine::loadFile(std::fstream& object_file) {
+  // Go to the beginning of the object file
   object_file.seekg(0, std::ios::beg);
+  // For each line of the object file...
   for (std::string line; getline(object_file, line); ++limit) {
+    // If we've run out of space, throw an error.
     if (limit >= mem.size()) {
       object_file.close();
-      throw CantFitInMemory("VirtualMachine");
+      try {
+        throw CantFitInMemory("VirtualMachine");
+      } catch(GenericError &e) {
+        e.reportError();
+      }
     }
+    // Otherwise, load the line into memory
     mem[limit] = stoi(line);
   }
 }
@@ -367,9 +405,8 @@ inline bool VirtualMachine::setPageFault(bool b) {
   if (b) {
     sr |= PAGE_FAULT_MASK;
   }
-  return s;  
+  return s;
 }
-
 
 
 /**
@@ -650,7 +687,7 @@ void VirtualMachine::op_jumpg() {
  */
 void VirtualMachine::op_call() {
   if (sp < limit + 6) {
-    setReturnStatus(ReturnStatus_t::STACK_OVERFLOW);
+    setReturnStatus(return_t::STACK_OVERFLOW);
     halt = true;
     return;
   }
@@ -684,7 +721,7 @@ void VirtualMachine::op_call() {
  */
 void VirtualMachine::op_return() {
   if (sp >= 256) {
-    setReturnStatus(ReturnStatus_t::STACK_UNDERFLOW);
+    setReturnStatus(return_t::STACK_UNDERFLOW);
     halt = true;
     return;
   }
@@ -717,7 +754,7 @@ void VirtualMachine::op_return() {
  */
 void VirtualMachine::op_read() {
 //  dot_in_file >> r[ir.fmt0.rd];
-  setReturnStatus(ReturnStatus_t::READ_OPERATION);
+  setReturnStatus(return_t::READ_OPERATION);
   setIO_Register(ir.fmt0.rd);
   halt = true;
 }
@@ -728,7 +765,7 @@ void VirtualMachine::op_read() {
  */
 void VirtualMachine::op_write() {
 //  dot_out_file << r[ir.fmt0.rd] << std::endl;
-  setReturnStatus(ReturnStatus_t::WRITE_OPERATION);
+  setReturnStatus(return_t::WRITE_OPERATION);
   setIO_Register(ir.fmt0.rd);
   halt = true;
 }
@@ -739,7 +776,7 @@ void VirtualMachine::op_write() {
  */
 void VirtualMachine::op_halt() {
   halt = true;
-  setReturnStatus(ReturnStatus_t::HALT_INSTRUCTION);
+  setReturnStatus(return_t::HALT_INSTRUCTION);
 }
 
 

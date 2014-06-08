@@ -8,7 +8,7 @@
 #include <asm/Assembler.h>
 #include <vm/VirtualMachine.h>
 #include <pcb/PCB.h>
-#include <tlb/TLB.h>
+#include <tbl/Table.h>
 #include <cstdint>
 #include <list>
 #include <queue>
@@ -23,12 +23,13 @@
   void operator=(const TypeName&) = delete;
 #endif
 
-#define N_REGISTERS 4
+#define FIFO_ALGO 0
+#define LRU_ALGO  1
 
 class OS {
  public:
   OS();
-  void run(std::string);
+  void run(int algo_id);
 
  private:
   uint8_t getReturnStatus(const PCB* pcb) const;
@@ -36,6 +37,10 @@ class OS {
   std::vector<std::string> getSourceFiles();
   void assignNextProcess();
   void contextSwitch();
+  int pickVictimFrame();
+
+  std::array<uint8_t, N_FRAMES> frame_registers;
+  bool algo;
 
   std::unique_ptr<Assembler> as;
   std::unique_ptr<VirtualMachine> vm;
@@ -45,8 +50,6 @@ class OS {
   PCB* running;
   uint32_t system_time;
   uint32_t idle_time;
-
-  std::array<uint32_t, N_FRAMES> frame_registers;
 
   DISALLOW_COPY_AND_ASSIGN(OS)
 };

@@ -17,6 +17,29 @@
 
 
 /**
+ * Get a slice of an iterable container.
+ * @param orig -> The original container
+ * @param s_pos -> The starting position for the slice
+ * @param e_pos -> The ending position for the slice
+ */
+template <typename T>
+std::vector<T> vector_slice(std::vector<T> orig, size_t s_pos, size_t e_pos) {
+    typedef typename std::vector<T> vect;
+    vect slice = std::vector<T>();
+    if (s_pos > e_pos) {
+        return slice;
+    }
+    typename vect::iterator begin = orig.begin();
+    typename vect::iterator b = begin + s_pos;
+    typename vect::iterator e = begin + e_pos;
+    for (; b != e && b != orig.end(); ++b) {
+        slice.push_back(*b);
+    }
+    return slice;
+}
+
+
+/**
  * Check whether the given file name is a valid assembly source file.
  *
  * The only standard for validity is that it ends with a ".s" extension. That is

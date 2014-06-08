@@ -12,7 +12,6 @@
   - frame number - 5 bits
   - modify bit - 1 bit
   - valid/invalid bit - 1 bit
-  - empty bit - 1 bit
 
 ## Algorithms
 
@@ -26,11 +25,45 @@
   - The process is placed in the wait queue with the trap completion set to 35 clock ticks
   - After 35 clock ticks, the process is moved to the ready queue and the new page is loaded into memory
 
+1. Page fault is signalled from the VM
+2. If there are free frames in the TLB, the proper page is loaded into a frame
+3. If there are no free frames...
+  1. If LRU, the OS accesses the VM's frame registers and selects the victim page according to LRU
+  2. If FIFO, the OS accesses its own frame registers and selects the victim page according to FIFO
+4. The victim page is swapped out of the TLB and replaced with the new page
+5. Wait until 35 clock ticks have happened
+6. Once 35 clock ticks have occurred, the process is moved to the ready queue
+
 ## PCB
 
 - Each process (PCB) should have
   - # of page faults
   - hit ratio
+
+## Multiprogramming
+
+- A degree of multiprogramming equal to 5 is maintained at all times, meaning that only five programs should be in the ready queue, wait queue, or running at any given time.
+- All programs should be in the jobs queue. When a program finishes, the jobs queue should be checked. If there is a job that is not yet in either the ready or wait queue, add it to the ready queue.
+
+## Context Switches
+
+- Page Fault must be added as a reason to context switch. Bit 10 of sr is used along with bits 5-7. When 5-7 are all zeros, if 10 is 0 than it's a time slice. If bit 10 is 1 then it's a page fault.
+
+## Programs
+
+- There should be ten total programs:
+  - addVector.s
+  - fact1.s
+  - fact2.s
+  - io.s
+  - simple1.s
+  - simple2.s
+  - sub.s
+  - subVector.s
+  - sum1.s
+  - sum2.s
+- Test with only two programs at first and add more later
+- The first two programs each generate one page fault w/ 28 frames still free, so no replacement is needed for them.
 
 ## TLB
 
@@ -58,7 +91,6 @@
 
 ## FIFO
 
-- FIFO doesn’t use these registers
 - The OS maintains its own vector of frame registers, and FIFO is entirely done by the OS without the VM
 - When a page is brought into memory, the OS records the current time in its frame registers.
 - When it picks a victim, it uses its own registers, not the VM’s

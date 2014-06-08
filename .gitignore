@@ -1,4 +1,5 @@
 .release_time
+.debug_time
 build/
 lint/
 sos
