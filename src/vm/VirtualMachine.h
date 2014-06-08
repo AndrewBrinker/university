@@ -27,7 +27,8 @@ enum return_t {
   STACK_UNDERFLOW        = 04,
   INVALID_OPCODE         = 05,
   READ_OPERATION         = 06,
-  WRITE_OPERATION        = 07
+  WRITE_OPERATION        = 07,
+  PAGE_FAULT             = 10  // Sorry to mess up the nice octal numbering
 };
 
 class VirtualMachine {
