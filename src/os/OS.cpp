@@ -55,6 +55,10 @@ void OS::run(int algo_id) {
     // Create a PCB for the file
     current_pcb = std::unique_ptr<PCB>(new PCB(source_file));
 
+#ifdef DEBUG
+    std::cout << "Loading process: " << current_pcb->name << std::endl;
+#endif  // DEBUG
+
     // Parse the assembly
     as->parse(current_pcb.get());
 
