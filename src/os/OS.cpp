@@ -62,11 +62,11 @@ void OS::run(int algo_id) {
     // Parse the assembly
     as->parse(current_pcb.get());
 
-    // Load the assembly into memory
-    vm->loadIntoMemory(current_pcb.get());
-
-    // Push the PCB onto the ready queue
     if (ready.size() < MULT_LIMIT) {
+      // Load the assembly into memory
+      vm->loadIntoMemory(current_pcb.get());
+
+      // Push the PCB onto the ready queue
       ready.push(current_pcb.get());
     }
 
