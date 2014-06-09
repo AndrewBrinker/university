@@ -32,4 +32,5 @@ PCB::PCB(std::string source_file)
     memory_hit_count(0),
     interrupt_time(0),
     time_entered_ready_queue(0),
-    time_entered_waiting_queue(0) {}
+    time_entered_waiting_queue(0),
+    pages(PageTable()) {}

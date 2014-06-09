@@ -39,7 +39,7 @@ class VirtualMachine {
   uint16_t getClock();
 
  private:
-  union Opcode_t {
+  union op_t {
     uint16_t i;
     struct {
       uint8_t unused  : 6;
@@ -101,7 +101,7 @@ class VirtualMachine {
   bool getPageFault() const;
   bool setPageFault(bool b);
 
-  void op(const Opcode_t&);
+  void op(const op_t&);
 
   void op_load();
   void op_loadi();

@@ -790,7 +790,7 @@ void VirtualMachine::op_noop() {}
  * Load map of opcodes to operation functions
  */
 void VirtualMachine::setupOpMap() {
-  Opcode_t value;
+  op_t value;
   for (int i = 0; i < 256; ++i) {
     value.i = i << 8;
     switch (value.fmt0.op) {
