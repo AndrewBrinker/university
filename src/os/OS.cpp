@@ -167,6 +167,8 @@ void OS::contextSwitch() {
     case return_t::TIME_SLICE:
       // If it's a time slice, update the time and move the running
       // process onto the ready queue.
+      // if the 10th bit is 0, then it's a time slice interrupt
+      // if the 10th bit is 1, then it's a page fault
       running->time_entered_ready_queue = system_time;
       ready.push(std::move(running));
       break;
