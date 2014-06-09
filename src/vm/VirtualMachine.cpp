@@ -162,6 +162,7 @@ void VirtualMachine::loadPCB(PCB* pcb) {
   sr = pcb->sr;
   sp = pcb->sp;
   base = pcb->base;
+  tlb = pcb->pages;
   if (sp < MEM_SIZE) {
     readStack(pcb->st_file);
   }
@@ -177,6 +178,7 @@ void VirtualMachine::unloadPCB(PCB* pcb) {
   pcb->r = r;
   pcb->sr = sr;
   pcb->sp = sp;
+  pcb->pages = tlb;
   if (sp < MEM_SIZE) {
     writeStack(pcb->st_file);
   }
