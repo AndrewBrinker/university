@@ -135,7 +135,8 @@ void VirtualMachine::loadFile(std::fstream& object_file) {
   // Go to the beginning of the object file
   object_file.seekg(0, std::ios::beg);
   // For each line of the object file...
-  for (std::string line; getline(object_file, line); ++limit) {
+  for (uint16_t word; object_file.read(reinterpret_cast<char*>(&word), 2);
+       ++limit) {
     // If we've run out of space, throw an error.
     if (limit >= mem.size()) {
       object_file.close();
@@ -146,7 +147,7 @@ void VirtualMachine::loadFile(std::fstream& object_file) {
       }
     }
     // Otherwise, load the line into memory
-    mem[limit] = stoi(line);
+    mem[limit] = word;
   }
 }
 

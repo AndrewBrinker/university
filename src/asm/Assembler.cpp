@@ -99,10 +99,13 @@ void Assembler::parse(PCB* pcb) {
   // Get the assembly file source
   std::vector<std::string> asm_source = readASMSource(pcb->s_file);
 
+  int temp;
+
   // Convert it to object file source
   for (std::vector<std::string>::iterator it = asm_source.begin();
        it != asm_source.end(); ++it ) {
-    pcb->o_file << binaryStringToDecimal(convertToObjectCode(*it)) << "\n";
+    temp = binaryStringToDecimal(convertToObjectCode(*it));
+    pcb->o_file.write(reinterpret_cast<const char*>(&temp), 2);
   }
 
   // Close the file streams and return
