@@ -20,5 +20,6 @@ struct TableEntry {
 };
 
 typedef std::array<TableEntry, N_FRAMES> TLB;
+typedef std::array<TableEntry, N_FRAMES> PageTable;
 
 #endif  // TABLE_H

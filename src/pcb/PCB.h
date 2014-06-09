@@ -64,8 +64,8 @@ struct PCB {
   uint32_t time_entered_ready_queue;
   uint32_t time_entered_waiting_queue;
 
-  // TLB
-  TLB tlb;
+  // Page Table
+  PageTable pages;
 
  private:
   DISALLOW_COPY_AND_ASSIGN(PCB)
