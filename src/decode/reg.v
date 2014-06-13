@@ -27,4 +27,9 @@ module register (
             REG[rd] = writedata;
         end
     end
+
+    always @* begin
+      #5 $display("%d, %d, %d", REG[0], REG[1], REG[2]);
+    end
+
 endmodule

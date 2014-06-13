@@ -32,9 +32,6 @@ module d_mem (
 
     initial begin
         $readmemb("etc/data.txt", DMEM);
-        for (i = 0; i < 6; i = i + 1) begin
-            $display(DMEM[i]);
-        end
     end
 
     always@(addr) begin
