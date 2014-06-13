@@ -28,9 +28,31 @@ module register (
         end
     end
 
-    always @* begin
-        #1
-        $display("%d, %d, %d", REG[0], REG[1], REG[2]);
+    always @ (REG[0]) begin
+        #1  $display("%d %d %d", REG[0], REG[1], REG[2]);
+        #2  $display("%d %d %d", REG[0], REG[1], REG[2]);
+        #3  $display("%d %d %d", REG[0], REG[1], REG[2]);
+        #4  $display("%d %d %d", REG[0], REG[1], REG[2]);
+        #5  $display("%d %d %d", REG[0], REG[1], REG[2]);
+        #6  $display("%d %d %d", REG[0], REG[1], REG[2]);
+        #7  $display("%d %d %d", REG[0], REG[1], REG[2]);
+        #8  $display("%d %d %d", REG[0], REG[1], REG[2]);
+        #9  $display("%d %d %d", REG[0], REG[1], REG[2]);
+        #10 $display("%d %d %d", REG[0], REG[1], REG[2]);
+        #11 $display("%d %d %d", REG[0], REG[1], REG[2]);
+        #12 $display("%d %d %d", REG[0], REG[1], REG[2]);
+        #13 $display("%d %d %d", REG[0], REG[1], REG[2]);
+        #14 $display("%d %d %d", REG[0], REG[1], REG[2]);
+        #15 $display("%d %d %d", REG[0], REG[1], REG[2]);
+        #16 $display("%d %d %d", REG[0], REG[1], REG[2]);
+        #17 $display("%d %d %d", REG[0], REG[1], REG[2]);
+        #18 $display("%d %d %d", REG[0], REG[1], REG[2]);
+        #19 $display("%d %d %d", REG[0], REG[1], REG[2]);
+        #20 $display("%d %d %d", REG[0], REG[1], REG[2]);
+        #21 $display("%d %d %d", REG[0], REG[1], REG[2]);
+        #22 $display("%d %d %d", REG[0], REG[1], REG[2]);
+        #23 $display("%d %d %d", REG[0], REG[1], REG[2]);
+        #24
+        $finish;
     end
-
 endmodule
