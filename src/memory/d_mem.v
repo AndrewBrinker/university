@@ -11,6 +11,7 @@ module d_mem (
     reg [31:0] DMEM[0:255];
 
     integer i;
+    /*
     initial begin
         read_data <= 0;
 
@@ -25,6 +26,14 @@ module d_mem (
         // Initialize DMEM[6-255] to 6-255
         for (i = 6; i < 256; i = i + 1) begin
             DMEM[i] = i;
+        end
+    end
+    */
+
+    initial begin
+        $readmemb("etc/data.txt", DMEM);
+        for (i = 0; i < 6; i = i + 1) begin
+            $display(DMEM[i]);
         end
     end
 

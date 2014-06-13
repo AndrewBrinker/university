@@ -5,6 +5,7 @@ module memory (
 
     reg [31:0] MEM[0:127];
 
+    /*
     initial begin
         MEM[0] <= 'h002300AA; // 000000 => RTYPE
         MEM[1] <= 'h10654321; // 000100 => BEQ
@@ -15,7 +16,16 @@ module memory (
         MEM[6] <= 'h13012345; // 000100 => BEQ
         MEM[7] <= 'hAC654321; // 101011 => SW
         MEM[8] <= 'h12012345; // 000100 => BEQ
-   end
+    end
+    */
+
+    integer i;
+    initial begin
+        $readmemb("etc/risc.txt", MEM);
+        for (i = 0; i < 24; i = i + 1) begin
+            $display(MEM[i]);
+        end
+    end
 
     always @(addr) data <= MEM[addr];
 endmodule
