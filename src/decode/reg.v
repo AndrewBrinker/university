@@ -20,7 +20,7 @@ module register (
         end
     end
 
-    always @ * begin
+    always @ (REG[rs] || REG[rt]) begin
         #1
         A <= REG[rs];
         B <= REG[rt];
@@ -29,7 +29,7 @@ module register (
         end
     end
 
-    always @ (REG[0]) begin
+    always @ (REG[0] || REG[1] || REG[2]) begin
         #1  $display("%d %d %d", REG[0], REG[1], REG[2]);
         #2  $display("%d %d %d", REG[0], REG[1], REG[2]);
         #3  $display("%d %d %d", REG[0], REG[1], REG[2]);

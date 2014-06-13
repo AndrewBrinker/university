@@ -16,22 +16,28 @@ module alu (
               ALUslt  = 3'b111,
               ALUx    = 3'b011;
 
-    wire sign_mismatch;
-    assign sign_mismatch = 0;  // ???
-
     initial begin
         result <= 0;
+    end
+
+    reg sign_mismatch;
+    always @* begin
+        #1
+        sign_mismatch <= 0;
+        if ((a !== $unsigned(a)) || (b !== $unsigned(b))) begin
+            sign_mismatch <= 1;
+        end
     end
 
     always@* begin
         case (control)
             ALUadd:   result <= a + b;
             ALUsub:   result <= a - b;
-            ALUand:   result <= a && b;
-            ALUor:    result <= a || b;
+            ALUand:   result <= a & b;
+            ALUor:    result <= a | b;
             ALUslt:   result <= a < b ? 1 - sign_mismatch : 0 + sign_mismatch;
             default:  result <= 32'bx;
         endcase
-        zero <= (result == 0) ? 1 : 0;
+        zero <= result ? 0 : 1;
     end
 endmodule
