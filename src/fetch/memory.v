@@ -1,6 +1,7 @@
 module memory (
-        output reg  [31:0] data,
-        input  wire [31:0] addr
+        input  wire [31:0] addr,
+
+        output reg  [31:0] data
     );
 
     reg [31:0] MEM[0:127];

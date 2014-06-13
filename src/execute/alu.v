@@ -35,7 +35,7 @@ module alu (
             ALUsub:   result <= a - b;
             ALUand:   result <= a && b;
             ALUor:    result <= a || b;
-            ALUslt:   result <= a < b ? 1 - sign_mismatch : 0 + sign_mismatch;
+            ALUslt:   result <= a < b ? (1 - sign_mismatch) : (0 + sign_mismatch);
             default:  result <= 32'bx;
         endcase
         zero <= result ? 0 : 1;
