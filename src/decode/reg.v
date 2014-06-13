@@ -10,8 +10,8 @@ module register (
     );
 
     reg [31:0] REG [0:31];
-    integer i;
 
+    integer i;
     initial begin
         A <= 0;
         B <= 0;
@@ -20,7 +20,7 @@ module register (
         end
     end
 
-    always@* begin
+    always @* begin
         A <= REG[rs];
         B <= REG[rt];
         if (rd != 0 && regwrite) begin
@@ -29,7 +29,8 @@ module register (
     end
 
     always @* begin
-      #5 $display("%d, %d, %d", REG[0], REG[1], REG[2]);
+        #1
+        $display("%d, %d, %d", REG[0], REG[1], REG[2]);
     end
 
 endmodule
