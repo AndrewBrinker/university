@@ -95,7 +95,6 @@ module pipeline ();
     i_writeback i_writeback1(.memtoreg(memtoreg),
                              .read_data(read_data),
                              .mem_alu_result(mem_alu_result),
-
                              .wb_data(WB_mux5_writedata));
 
 endmodule

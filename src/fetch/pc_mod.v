@@ -7,7 +7,7 @@ module pc_mod (
         PC <= 0;
     end
 
-    always @(npc) begin
+    always @ (npc) begin
         #1
         PC <= npc;
     end

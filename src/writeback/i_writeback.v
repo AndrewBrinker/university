@@ -10,5 +10,4 @@ module i_writeback (
              .b(read_data),
              .select(memtoreg),
              .y(wb_data));
-
 endmodule

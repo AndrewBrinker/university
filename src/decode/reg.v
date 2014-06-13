@@ -20,7 +20,8 @@ module register (
         end
     end
 
-    always @* begin
+    always @ * begin
+        #1
         A <= REG[rs];
         B <= REG[rt];
         if (rd != 0 && regwrite) begin

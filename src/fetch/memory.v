@@ -5,10 +5,12 @@ module memory (
 
     reg [31:0] MEM[0:127];
 
-    integer i;
     initial begin
         $readmemb("etc/risc.txt", MEM);
     end
 
-    always @(addr) data <= MEM[addr];
+    always @(addr) begin
+        #1
+        data <= MEM[addr];
+    end
 endmodule

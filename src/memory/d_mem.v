@@ -10,35 +10,12 @@ module d_mem (
     // 256 words of 32-bit memory
     reg [31:0] DMEM[0:255];
 
-    integer i;
-    /*
-    initial begin
-        read_data <= 0;
-
-        DMEM[0] = 32'b00000000000000000000000000000000;
-        DMEM[1] = 32'b00000000000000000000000000000001;
-        DMEM[2] = 32'b00000000000000000000000000000010;
-        DMEM[3] = 32'b00000000000000000000000000000011;
-        DMEM[4] = 32'b00000000000000000000000000000100;
-        DMEM[5] = 32'b00000000000000000000000000000101;
-
-
-        // Initialize DMEM[6-255] to 6-255
-        for (i = 6; i < 256; i = i + 1) begin
-            DMEM[i] = i;
-        end
-    end
-    */
-
     initial begin
         $readmemb("etc/data.txt", DMEM);
-
-        for (i = 6; i < 256; i = i + 1) begin
-            DMEM[i] = 0;
-        end
     end
 
-    always@(addr) begin
+    always @ (addr) begin
+        #1
         if (memwrite == 1) begin
             // Write stuff
             DMEM[addr] <= write_data;

@@ -18,7 +18,8 @@ module control (
         WB <= 0;
     end
 
-    always@* begin
+    always @* begin
+        #1
         case (opcode)
             RTYPE: begin
                 EX <= 4'b1100;
@@ -45,7 +46,9 @@ module control (
                 M  <= 3'b000;
                 WB <= 2'b00;
             end
-            default: begin end
+            default: begin
+                // Do nothing
+            end
         endcase
     end
 endmodule

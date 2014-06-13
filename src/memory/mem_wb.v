@@ -19,7 +19,7 @@ initial begin
     mem_write_reg  <= 5'b0;
 end
 
-always @* begin
+always @ * begin
     #1
     regwrite       <= control_wb_in[0];
     memtoreg       <= control_wb_in[1];
