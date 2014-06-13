@@ -10,7 +10,6 @@ module memory (
     end
 
     always @(addr) begin
-        #1
         data <= MEM[addr];
     end
 endmodule

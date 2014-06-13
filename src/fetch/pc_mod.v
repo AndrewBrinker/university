@@ -1,6 +1,7 @@
 module pc_mod (
-        output reg  [31:0] PC,
-        input  wire [31:0] npc
+        input  wire [31:0] npc,
+
+        output reg  [31:0] PC
     );
 
     initial begin

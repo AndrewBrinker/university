@@ -6,11 +6,11 @@ module control (
         output reg  [1:0] WB
     );
 
-    parameter RTYPE = 6'b000000;
-    parameter LW    = 6'b100011;
-    parameter SW    = 6'b101011;
-    parameter BEQ   = 6'b000100;
-    parameter NOP   = 6'b100000;
+    parameter RTYPE = 6'b000000,
+              LW    = 6'b100011,
+              SW    = 6'b101011,
+              BEQ   = 6'b000100,
+              NOP   = 6'b100000;
 
     initial begin
         EX <= 0;
@@ -19,7 +19,6 @@ module control (
     end
 
     always @* begin
-        #1
         case (opcode)
             RTYPE: begin
                 EX <= 4'b1100;
@@ -47,7 +46,7 @@ module control (
                 WB <= 2'b00;
             end
             default: begin
-                // Do nothing
+                $display("opcode not recognized.");
             end
         endcase
     end
