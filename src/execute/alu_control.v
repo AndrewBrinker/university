@@ -33,8 +33,7 @@ module alu_control (
         end
 
         always@* begin
-            #1
-            if (aluop === Rtype) begin
+            if (aluop == Rtype) begin
                 case (funct)
                     Radd:    select <= ALUadd;
                     Rsub:    select <= ALUsub;
@@ -44,13 +43,13 @@ module alu_control (
                     default: select <= ALUx;
                 endcase
             end
-            else if (aluop === Mtype) begin
+            else if (aluop == Mtype) begin
                 select <= ALUlwsw;
             end
-            else if (aluop === Itype) begin
+            else if (aluop == Itype) begin
                 select <= ALUbeq;
             end
-            else if (aluop === unknown) begin
+            else if (aluop == unknown) begin
                 select <= ALUx;
             end
             else begin
