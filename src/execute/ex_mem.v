@@ -30,7 +30,7 @@ module ex_mem (
         five_bit_muxout <= 0;
     end
 
-    always @* begin
+    always @ (ctlm_out[2:0]) begin
         #1
         wb_ctlout       <= ctlwb_out;
         branch          <= ctlm_out[0];
