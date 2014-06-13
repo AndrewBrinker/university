@@ -10,4 +10,4 @@ if __name__ == "__main__":
         else:
             print "Usage: python build.py [clean]"
     else:
-        system("iverilog -Wall -o pipeline src/pipeline.v")
+        system("iverilog -gio-range-error -gstrict-ca-eval -Winfloop -Wsensitivity-entire-vector -Wall -o pipeline src/pipeline.v")
