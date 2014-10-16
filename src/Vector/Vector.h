@@ -37,13 +37,11 @@ class Vector {
   T *data;
 };
 
-
 /**
  * Default constructor. Initializes all internal variables to 0.
  */
 template <typename T>
 Vector<T>::Vector(): _capacity(0), _size(0), data(0) {}
-
 
 /**
  * Copy constructor. Duplicates an existing Vector.
@@ -59,7 +57,6 @@ Vector<T>::Vector(const Vector &v) {
   }
 }
 
-
 /**
  * Fill constructor. Creates a new instances of size n with fill item x.
  * @param: n -> The size of the Vector
@@ -73,7 +70,6 @@ Vector<T>::Vector(unsigned int n, T x): _capacity(n), _size(n) {
   }
 }
 
-
 /**
  * Destructor. Deletes the internal data.
  */
@@ -81,7 +77,6 @@ template <typename T>
 Vector<T>::~Vector() {
   delete [] data;
 }
-
 
 /**
  * Assignment operator. Duplicates the internal data of the other Vector
@@ -103,7 +98,6 @@ Vector<T>& Vector<T>::operator=(const Vector &v) {
   return *this;
 }
 
-
 /**
  * Index operator.
  * @param: i -> The index being grabbed
@@ -114,7 +108,6 @@ T & Vector<T>::operator[](unsigned int i) {
   return data[i];
 }
 
-
 /**
  * Capacity accessor function
  * @return the capacity of the Vector
@@ -123,7 +116,6 @@ template <typename T>
 unsigned int Vector<T>::capacity() const {
     return _capacity;
 }
-
 
 /**
  * Size accessor function
@@ -134,7 +126,6 @@ unsigned int Vector<T>::size() const {
     return _size;
 }
 
-
 /**
  * Checks whether the Vector is empty.
  * @return whether it's empty
@@ -143,7 +134,6 @@ template <typename T>
 bool Vector<T>::empty() const {
   return _size == 0;
 }
-
 
 /**
  * Increase the capacity to the new minimum capacity.
@@ -165,7 +155,6 @@ void Vector<T>::reserve(unsigned int min_cap) {
   _capacity = min_cap;
 }
 
-
 /**
  * Increase the size to the new minimum size with the given fill item.
  * @param: min_size -> The minimum size of the Vector
@@ -184,7 +173,6 @@ void Vector<T>::resize(unsigned int min_size, T k) {
   _size = min_size;
 }
 
-
 /**
  * Get a reference to the first item in the Vector
  * @return a reference to the first item
@@ -193,7 +181,6 @@ template <typename T>
 T& Vector<T>::front() const {
   return data[0];
 }
-
 
 /**
  * Get a reference to the last item in the Vector
@@ -204,7 +191,6 @@ T& Vector<T>::back() const {
   return data[_size - 1];
 }
 
-
 /**
  * Remove the last item.
  */
@@ -212,7 +198,6 @@ template <typename T>
 void Vector<T>::pop_back() {
   --_size;
 }
-
 
 /**
  * Add an item to the end
@@ -224,7 +209,6 @@ void Vector<T>::push_back(T x) {
   data[_size - 1] = x;
 }
 
-
 /**
  * Get an iterator to the first item.
  * @return an iterator to the first item
@@ -233,7 +217,6 @@ template <typename T>
 typename Vector<T>::iterator Vector<T>::begin() const {
   return data;
 }
-
 
 /**
  * Get an iterator to the last item.
@@ -246,3 +229,4 @@ typename Vector<T>::iterator Vector<T>::end() const {
 
 
 #endif   // VECTOR_H
+

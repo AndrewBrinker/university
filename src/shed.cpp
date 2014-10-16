@@ -5,7 +5,7 @@
 #include <Test/Test.h>
 
 int main() {
-  //vectorTest();
+  vectorTest();
   listTest();
   stackTest();
   return 0;
