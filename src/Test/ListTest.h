@@ -67,64 +67,6 @@ void listTest() {
   assert(c3.size()  == 0);
   assert(c3.empty());
 
-  List<std::string> c4;
-  c4.push_back("3");
-  assert(c4.size()  == 1);
-  assert(c4.front() == "3");
-  c4.front() = "7";
-  assert(c4.front() == "7");
-  c4.push_back("10");
-  assert(c4.back()  == "10");
-  c4.push_back("11");
-  assert(c4.back()  == "11");
-  c4.push_front("2");
-  assert(c4.front() == "2");
-  List<std::string> c8(c4);
-  c4.remove("2");
-  List<std::string>::iterator it4 = c4.begin();
-  c4.erase(it4);
-  assert(c4.size()  == 2);
-  c4.pop_back();
-  assert(c4.size()  == 1);
-  c4.pop_front();
-  assert(c4.size()  == 0);
-
-  List<std::string> c5;
-  c5.push_back("hello");
-  c5.push_back("world");
-  c5.clear();
-  assert(c5.size()  == 0);
-  c5.push_back("hello");
-  c5.push_back("world");
-  assert(c5.size()  == 2);
-
-  List<std::string> c6;
-  assert(c6.size()  == 0);
-  assert(c6.empty());
-  c6.push_front("44");
-  assert(!c6.empty());
-  assert(c6.front() == "44");
-  assert(c6.back()  == "44");
-  c6.push_front("33");
-  assert(c6.size()  == 2);
-  assert(c6.front() == "33");
-  assert(c6.back()  == "44");
-  c6.push_front("22");
-  assert(c6.front() == "22");
-  List<std::string>::iterator it6 = c6.begin();
-  assert(*it6   == "22");
-  assert(*++it6 == "33");
-  assert(*++it6 ==  "44");
-  c6.pop_front();
-  it6 = c6.begin();
-  assert(*it6   == "33");
-  assert(*++it6 == "44");
-  c6.pop_back();
-  it6 = c6.begin();
-  c6.erase(it6);
-  assert(c6.size() == 0);
-  assert(c6.empty());
-
   printf("ListTest: All tests passed.\n");
 }
 
