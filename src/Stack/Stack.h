@@ -25,20 +25,17 @@ class Stack {
   Container c1;
 };
 
-
 /**
  * Default constructor
  */
 template <typename T, typename Container>
 Stack<T, Container>::Stack() {}
 
-
 /**
  * Default destructor
  */
 template <typename T, typename Container>
 Stack<T, Container>::~Stack() {}
-
 
 /**
  * Push item onto the stack
@@ -49,7 +46,6 @@ void Stack<T, Container>::push(const T x) {
   c1.push_back(x);
 }
 
-
 /**
  * Remove item from the stack
  */
@@ -57,7 +53,6 @@ template <typename T, typename Container>
 void Stack<T, Container>::pop() {
   c1.pop_back();
 }
-
 
 /**
  * Get a reference to the top item.
@@ -68,7 +63,6 @@ T& Stack<T, Container>::top() {
   return c1.back();
 }
 
-
 /**
  * Get the size of the stack
  * @return the size of the stack
@@ -77,7 +71,6 @@ template <typename T, typename Container>
 unsigned int Stack<T, Container>::size() const {
   return c1.size();
 }
-
 
 /**
  * Check whether the stack is empty
@@ -90,3 +83,4 @@ bool Stack<T, Container>::empty() const {
 
 
 #endif  // STACK_H
+
