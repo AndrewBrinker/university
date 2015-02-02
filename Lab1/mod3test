@@ -1,0 +1,53 @@
+#! /c/iverilog/bin/vvp
+:ivl_version "0.9.7 " "(v0_9_7)";
+:vpi_time_precision + 0;
+:vpi_module "system";
+:vpi_module "v2005_math";
+:vpi_module "va_math";
+S_00753E20 .scope module, "mod3counter_test" "mod3counter_test" 2 3;
+ .timescale 0 0;
+v0075FEE8_0 .var "num_in", 1 0;
+v0075FF40_0 .net "num_out", 1 0, v00753890_0; 1 drivers
+S_00753808 .scope module, "mod3inc" "mod3counter" 2 7, 3 1, S_00753E20;
+ .timescale 0 0;
+v00753890_0 .var "mod3num", 1 0;
+v007538E8_0 .net "num", 1 0, v0075FEE8_0; 1 drivers
+E_00759C10 .event edge, v007538E8_0;
+    .scope S_00753808;
+T_0 ;
+    %wait E_00759C10;
+    %load/v 8, v007538E8_0, 2;
+    %mov 10, 0, 30;
+    %addi 8, 1, 32;
+    %movi 40, 3, 32;
+    %mod 8, 40, 32;
+    %set/v v00753890_0, 8, 2;
+    %jmp T_0;
+    .thread T_0, $push;
+    .scope S_00753E20;
+T_1 ;
+    %vpi_call 2 13 "$dumpfile", "mod3.vcd";
+    %vpi_call 2 14 "$dumpvars";
+    %movi 8, 2, 2;
+    %ix/load 0, 2, 0;
+    %assign/v0 v0075FEE8_0, 0, 8;
+    %delay 10, 0;
+    %movi 8, 1, 2;
+    %ix/load 0, 2, 0;
+    %assign/v0 v0075FEE8_0, 0, 8;
+    %delay 10, 0;
+    %ix/load 0, 2, 0;
+    %assign/v0 v0075FEE8_0, 0, 0;
+    %delay 10, 0;
+    %movi 8, 1, 2;
+    %ix/load 0, 2, 0;
+    %assign/v0 v0075FEE8_0, 0, 8;
+    %delay 10, 0;
+    %end;
+    .thread T_1;
+# The file index is used to find the file name in the following table.
+:file_names 4;
+    "N/A";
+    "<interactive>";
+    "mod3counter_test.v";
+    "./mod3counter.v";
