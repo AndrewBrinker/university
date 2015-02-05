@@ -2,3 +2,4 @@ build/
 bin/release/
 bin/debug/
 fa_to_regex
+.release_time
