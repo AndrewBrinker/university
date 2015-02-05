@@ -1,4 +1,4 @@
 build/
-gram
 bin/release/
 bin/debug/
+fa_to_regex
