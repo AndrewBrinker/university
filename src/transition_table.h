@@ -36,7 +36,7 @@ struct transition {
  */
 struct transition_table {
   int                start_id;
-  vector<int>        accept_id;
+  vector<int>        accept_ids;
   vector<transition> transitions;
 };
 
@@ -77,7 +77,7 @@ static bool starts_with(const string &str, const string &sub) {
   if (sub.length() > str.length()) {
     return false;
   }
-  return str.substr(0, sub.length() - 1) == sub;
+  return str.substr(0, sub.length()) == sub;
 }
 
 /**
@@ -92,7 +92,7 @@ static bool starts_with(const string &str, const string &sub) {
  */
 static string slice_from(string str, size_t idx) {
   if (idx > str.length() - 1) return "";
-  return string(str.begin() + idx, str.end() - 1);
+  return string(str.begin() + idx, str.end());
 }
 
 
@@ -112,32 +112,63 @@ static string slice_from(string str, size_t idx) {
 transition_table load(string name) {
   transition_table table;
   ifstream input(name);
+  string line;
 
-  // For each line in the file...
-  for (string line; getline(input, line);) {
 
-    // Set start state.
-    if (starts_with(line, "#start:")) {
-      table.start_id = stoi(slice_from(line, 8));
+  // Set start state.
+  getline(input, line);
+  if (starts_with(line, "#start:")) {
+    table.start_id = stoi(slice_from(line, 8));
+  }
+  else {
+    printf("Missing list of start states on line 1.\n");
+    exit(EXIT_FAILURE);
+  }
+
+
+  // Set accept states.
+  getline(input, line);
+  if (starts_with(line, "#accept:")) {
+    vector<string> states = split(slice_from(line, 9));
+    for (string state : states) {
+      table.accept_ids.push_back(stoi(state));
     }
+  }
+  else {
+    printf("Missing list of accepting states on line 2.\n");
+    exit(EXIT_FAILURE);
+  }
 
-    // Set accept states.
-    if (starts_with(line, "#accept:")) {
-      auto states = split(slice_from(line, 9));
-      for (string state : states) {
-        table.accept_id.push_back(stoi(state));
-      }
-    }
 
-    // Otherwise, add a new transition to the transition table.
-    else {
-      transition row;
-      istringstream iss(line);
-      iss >> row.src_id >> row.dest_id >> row.expr;
-      table.transitions.push_back(row);
-    }
-
+  // For each line in the file add a new transition to the table
+  while (getline(input, line)) {
+    transition row;
+    istringstream iss(line);
+    iss >> row.src_id >> row.dest_id >> row.expr;
+    table.transitions.push_back(row);
   }
 
   return table;
 }
+
+void show_transition(transition t) {
+  printf("%d -> %d :: %s\n", t.src_id, t.dest_id, t.expr.c_str());
+}
+
+void show_table(transition_table table) {
+  printf("Start:\t%d\n", table.start_id);
+
+  printf("Accept:\t");
+  for (int id : table.accept_ids) {
+    printf("%d ", id);
+  }
+  printf("\n");
+
+  printf("Transitions:\n");
+  for (transition t : table.transitions) {
+    printf("\t");
+    show_transition(t);
+  }
+}
+
+
