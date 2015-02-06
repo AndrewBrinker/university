@@ -11,9 +11,11 @@
 using namespace std;
 
 
+
 /*=============================================================================
  * Private Functions
  **/
+
 
 /**
  * @brief   Split a string on spaces.
@@ -33,6 +35,7 @@ static vector<string> split(const string &str) {
   return words;
 }
 
+
 /**
  * @brief   Check whether a string starts with the given substring.
  * @details Check whether a string starts with the given substring. Will return
@@ -48,6 +51,7 @@ static bool starts_with(const string &str, const string &sub) {
   return str.substr(0, sub.length()) == sub;
 }
 
+
 /**
  * @brief   Get the contents of a string from idx to end.
  * @details Get the contents of a string from idx to end. Returns an empty
@@ -62,6 +66,7 @@ static string slice_from(const string &str, const size_t &idx) {
   if (idx > str.length() - 1) return "";
   return string(str.begin() + idx, str.end());
 }
+
 
 /**
  * @brief   Crash the program with the given message.
@@ -79,6 +84,7 @@ static void crash(const std::string &msg) {
 /*=============================================================================
  * Public Functions
  **/
+
 
 /**
  * @brief   Load a transition table from its file representation.
@@ -125,6 +131,7 @@ transition_table load(const string name) {
   return table;
 }
 
+
 /**
  * @brief   Display an individual FA transition.
  * @details Pretty prints an individual transition in an FA, indicating the
@@ -135,6 +142,7 @@ transition_table load(const string name) {
 void show_transition(const transition t) {
   printf("%d -> %d :: %s\n", t.src_id, t.dest_id, t.expr.c_str());
 }
+
 
 /**
  * @brief   Display an FA
