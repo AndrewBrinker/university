@@ -29,8 +29,8 @@ static vector<string> split(const string &str) {
 
   istringstream iss(str);
   copy(istream_iterator<string>(iss),
-            istream_iterator<string>(),
-            back_inserter(words));
+       istream_iterator<string>(),
+       back_inserter(words));
 
   return words;
 }
@@ -100,7 +100,6 @@ transition_table load(const string &name) {
   ifstream input(name);
   string line;
 
-
   // Set start state.
   getline(input, line);
   if (!starts_with(line, "#start: ")) {
@@ -108,17 +107,15 @@ transition_table load(const string &name) {
   }
   table.start_id = stoi(slice_from(line, 8));
 
-
   // Set accept states.
   getline(input, line);
   if (!starts_with(line, "#accept: ")) {
     crash("Missing accepting states on line 2.");
   }
   vector<string> states = split(slice_from(line, 9));
-  for (string state : states) {
-    table.accept_ids.push_back(stoi(state));
-  }
-
+  table.accept_ids.resize(states.size());
+  transform(states.begin(), states.end(), table.accept_ids.begin(),
+            [] (string &s) -> int { return stoi(s); });
 
   // For each line in the file add a new transition to the table
   while (getline(input, line)) {

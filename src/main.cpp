@@ -8,7 +8,7 @@
 
 int main(int argc, char **argv) {
   if (argc != 2) {
-  	crash("Usage: ./fa_to_regex <fa_file_name>");
+    crash("Usage: ./fa_to_regex <fa_file_name>");
   }
 
   transition_table table = load({argv[1]});
