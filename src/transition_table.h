@@ -12,6 +12,10 @@
 using namespace std;
 
 
+/*=============================================================================
+ * Structs
+ **/
+
 /**
  * @brief   An individual transition in a transition table.
  * @details Indicates a single arrow in a Finite Automata (of any sort). Has a
@@ -19,9 +23,9 @@ using namespace std;
  *          or GNFA.
  */
 struct transition {
-	int    src_id;
-	int    dest_id;
-	string expr;
+  int    src_id;
+  int    dest_id;
+  string expr;
 };
 
 /**
@@ -31,10 +35,15 @@ struct transition {
  *          transitions.
  */
 struct transition_table {
-	int                start_id;
-	vector<int>        accept_id;
-	vector<transition> transitions;
+  int                start_id;
+  vector<int>        accept_id;
+  vector<transition> transitions;
 };
+
+
+/*=============================================================================
+ * Private Functions
+ **/
 
 /**
  * @brief   Split a string on spaces.
@@ -44,14 +53,14 @@ struct transition_table {
  * @return  the vector of split-up substrings, in order of appearance in str.
  */
 static vector<string> split(const string str) {
-	vector<string> words;
+  vector<string> words;
 
-	istringstream iss(str);
-	copy(istream_iterator<string>(iss),
-						istream_iterator<string>(),
-						back_inserter(words));
+  istringstream iss(str);
+  copy(istream_iterator<string>(iss),
+            istream_iterator<string>(),
+            back_inserter(words));
 
-	return words;
+  return words;
 }
 
 /**
@@ -66,9 +75,9 @@ static vector<string> split(const string str) {
  */
 static bool starts_with(const string &str, const string &sub) {
   if (sub.length() > str.length()) {
-  	return false;
+    return false;
   }
-	return str.substr(0, sub.length() - 1) == sub;
+  return str.substr(0, sub.length() - 1) == sub;
 }
 
 /**
@@ -82,9 +91,14 @@ static bool starts_with(const string &str, const string &sub) {
  * @return  String slice from idx to end.
  */
 static string slice_from(string str, size_t idx) {
-	if (idx > str.length() - 1) return "";
-	return string(str.begin() + idx, str.end() - 1);
+  if (idx > str.length() - 1) return "";
+  return string(str.begin() + idx, str.end() - 1);
 }
+
+
+/*=============================================================================
+ * Public Functions
+ **/
 
 /**
  * @brief   Load a transition table from its file representation.
@@ -96,34 +110,34 @@ static string slice_from(string str, size_t idx) {
  * @return  The transition table constructed from the file.
  */
 transition_table load(string name) {
-	transition_table table;
-	ifstream input(name);
+  transition_table table;
+  ifstream input(name);
 
-	// For each line in the file...
-	for (string line; getline(input, line);) {
+  // For each line in the file...
+  for (string line; getline(input, line);) {
 
-		// Set start state.
-		if (starts_with(line, "#start:")) {
-			table.start_id = stoi(slice_from(line, 8));
-		}
+    // Set start state.
+    if (starts_with(line, "#start:")) {
+      table.start_id = stoi(slice_from(line, 8));
+    }
 
-		// Set accept states.
-		if (starts_with(line, "#accept:")) {
-			auto states = split(slice_from(line, 9));
-			for (string state : states) {
-				table.accept_id.push_back(stoi(state));
-			}
-		}
+    // Set accept states.
+    if (starts_with(line, "#accept:")) {
+      auto states = split(slice_from(line, 9));
+      for (string state : states) {
+        table.accept_id.push_back(stoi(state));
+      }
+    }
 
-		// Otherwise, add a new transition to the transition table.
-		else {
-			transition row;
-			istringstream iss(line);
-			iss >> row.src_id >> row.dest_id >> row.expr;
-			table.transitions.push_back(row);
-		}
+    // Otherwise, add a new transition to the transition table.
+    else {
+      transition row;
+      istringstream iss(line);
+      iss >> row.src_id >> row.dest_id >> row.expr;
+      table.transitions.push_back(row);
+    }
 
-	}
+  }
 
-	return table;
+  return table;
 }
