@@ -8,7 +8,7 @@ SRC_EXT = cpp
 # Path to the source directory, relative to the makefile
 SRC_PATH = src
 # General compiler flags
-COMPILE_FLAGS = -std=c++11 -Wall -Wextra -g
+COMPILE_FLAGS = -std=c++11 -Wall -Wextra -pedantic -g
 # Additional release-specific flags
 RCOMPILE_FLAGS = -D NDEBUG
 # Additional debug-specific flags
@@ -135,8 +135,8 @@ uninstall:
 # target: lint        Checks files against cpplint
 .PHONY: lint
 lint:
-	@echo "Linting sources files against lint/cpplint.py"
-	@python cpplint --filter=$(FILTERS) $(SOURCES)
+	@echo "Linting sources files against cpplint"
+	@cpplint --filter=$(FILTERS) $(SOURCES)
 
 # target: clean       Removes all build files
 .PHONY: clean
