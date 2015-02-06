@@ -95,6 +95,17 @@ static string slice_from(string str, size_t idx) {
   return string(str.begin() + idx, str.end());
 }
 
+/**
+ * @brief   Crash the program with the given message.
+ * @details Prints out the given message and then exits with a failure.
+ *
+ * @param   msg - The message to be printed
+ */
+static void crash(const std::string msg) {
+  printf("%s\n", msg.c_str());
+  exit(EXIT_FAILURE);
+}
+
 
 /*=============================================================================
  * Public Functions
@@ -117,26 +128,20 @@ transition_table load(string name) {
 
   // Set start state.
   getline(input, line);
-  if (starts_with(line, "#start:")) {
-    table.start_id = stoi(slice_from(line, 8));
+  if (!starts_with(line, "#start: ")) {
+    crash("Missing start state on line 1.");
   }
-  else {
-    printf("Missing list of start states on line 1.\n");
-    exit(EXIT_FAILURE);
-  }
+  table.start_id = stoi(slice_from(line, 8));
 
 
   // Set accept states.
   getline(input, line);
-  if (starts_with(line, "#accept:")) {
-    vector<string> states = split(slice_from(line, 9));
-    for (string state : states) {
-      table.accept_ids.push_back(stoi(state));
-    }
+  if (!starts_with(line, "#accept: ")) {
+    crash("Missing accepting states on line 2.");
   }
-  else {
-    printf("Missing list of accepting states on line 2.\n");
-    exit(EXIT_FAILURE);
+  vector<string> states = split(slice_from(line, 9));
+  for (string state : states) {
+    table.accept_ids.push_back(stoi(state));
   }
 
 
@@ -151,10 +156,24 @@ transition_table load(string name) {
   return table;
 }
 
+/**
+ * @brief   Display an individual FA transition.
+ * @details Pretty prints an individual transition in an FA, indicating the
+ *          source state, the destination state, and the transition expression.
+ *
+ * @param t - The transition being displayed
+ */
 void show_transition(transition t) {
   printf("%d -> %d :: %s\n", t.src_id, t.dest_id, t.expr.c_str());
 }
 
+/**
+ * @brief   Display an FA
+ * @details Pretty prints a finite automata, indicating the start state,
+ *          accepting states, and transitions.
+ *
+ * @param table - The transition table being displayed
+ */
 void show_table(transition_table table) {
   printf("Start:\t%d\n", table.start_id);
 
