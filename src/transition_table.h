@@ -20,7 +20,7 @@ struct transition_table {
   vector<transition> transitions;
 };
 
-transition_table load(string);
-void             show_transition(transition);
-void             show_table(transition_table);
+transition_table load(const string);
+void             show_transition(const transition);
+void             show_table(const transition_table);
 

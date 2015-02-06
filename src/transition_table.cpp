@@ -22,7 +22,7 @@ using namespace std;
  * @param   str - The string to be split
  * @return  the vector of split-up substrings, in order of appearance in str.
  */
-static vector<string> split(const string str) {
+static vector<string> split(const string &str) {
   vector<string> words;
 
   istringstream iss(str);
@@ -58,7 +58,7 @@ static bool starts_with(const string &str, const string &sub) {
  *
  * @return  String slice from idx to end.
  */
-static string slice_from(string str, size_t idx) {
+static string slice_from(const string &str, const size_t &idx) {
   if (idx > str.length() - 1) return "";
   return string(str.begin() + idx, str.end());
 }
@@ -69,7 +69,7 @@ static string slice_from(string str, size_t idx) {
  *
  * @param   msg - The message to be printed
  */
-static void crash(const std::string msg) {
+static void crash(const std::string &msg) {
   printf("%s\n", msg.c_str());
   exit(EXIT_FAILURE);
 }
@@ -89,7 +89,7 @@ static void crash(const std::string msg) {
  * @param   name - The name of the file to load
  * @return  The transition table constructed from the file.
  */
-transition_table load(string name) {
+transition_table load(const string name) {
   transition_table table;
   ifstream input(name);
   string line;
@@ -132,7 +132,7 @@ transition_table load(string name) {
  *
  * @param t - The transition being displayed
  */
-void show_transition(transition t) {
+void show_transition(const transition t) {
   printf("%d -> %d :: %s\n", t.src_id, t.dest_id, t.expr.c_str());
 }
 
@@ -143,7 +143,7 @@ void show_transition(transition t) {
  *
  * @param table - The transition table being displayed
  */
-void show_table(transition_table table) {
+void show_table(const transition_table table) {
   printf("Start:\t%d\n", table.start_id);
 
   printf("Accept:\t");
