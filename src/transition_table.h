@@ -12,6 +12,7 @@
 using namespace std;
 
 
+
 /*=============================================================================
  * Structs
  **/
@@ -39,6 +40,7 @@ struct transition_table {
   vector<int>        accept_ids;
   vector<transition> transitions;
 };
+
 
 
 /*=============================================================================
@@ -74,9 +76,7 @@ static vector<string> split(const string str) {
  * @return  whether str starts with sub.
  */
 static bool starts_with(const string &str, const string &sub) {
-  if (sub.length() > str.length()) {
-    return false;
-  }
+  if (sub.length() > str.length()) return false;
   return str.substr(0, sub.length()) == sub;
 }
 
@@ -105,6 +105,7 @@ static void crash(const std::string msg) {
   printf("%s\n", msg.c_str());
   exit(EXIT_FAILURE);
 }
+
 
 
 /*=============================================================================
