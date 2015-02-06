@@ -20,6 +20,7 @@ struct transition_table {
   vector<transition> transitions;
 };
 
+void crash(const std::string &);
 transition_table load(const string &);
 
 void show_transition(const transition &);

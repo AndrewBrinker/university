@@ -68,22 +68,22 @@ static string slice_from(const string &str, const size_t &idx) {
 }
 
 
+
+/*=============================================================================
+ * Public Functions
+ **/
+
+
 /**
  * @brief   Crash the program with the given message.
  * @details Prints out the given message and then exits with a failure.
  *
  * @param   msg - The message to be printed
  */
-static void crash(const std::string &msg) {
+void crash(const std::string &msg) {
   printf("%s\n", msg.c_str());
   exit(EXIT_FAILURE);
 }
-
-
-
-/*=============================================================================
- * Public Functions
- **/
 
 
 /**

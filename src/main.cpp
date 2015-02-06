@@ -8,12 +8,9 @@
 
 int main(int argc, char **argv) {
   if (argc != 2) {
-    printf("Usage: ./fa_to_regex <fa_file_name>\n");
-    exit(EXIT_FAILURE);
+  	crash("Usage: ./fa_to_regex <fa_file_name>");
   }
 
   transition_table table = load({argv[1]});
   show_table(table);
-
-  return 0;
 }
