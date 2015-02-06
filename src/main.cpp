@@ -1,4 +1,4 @@
-#include <Preprocessor.h>
+#include <transition_table.h>
 #include <cstdlib>
 #include <cstdio>
 
@@ -8,8 +8,7 @@ int main(int argc, char **argv) {
 		exit(EXIT_FAILURE);
 	}
 
-	Preprocessor p;
-	p.run({argv[1]});
+	transition_table table = load({argv[1]});
 
 	printf("Hello, World!\n");
 	return 0;
