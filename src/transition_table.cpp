@@ -18,6 +18,31 @@ using namespace std;
 
 
 /**
+ * @brief   Calculate the length of a C-string at compile time.
+ * @details Calculates the length of a C-string at compile time by essentially
+ *          emulating a left fold operation on the string, terminating at null.
+ *
+ * @param   str - The string whose length is being calculated
+ * @return  The length of the string.
+ */
+static constexpr int c_len(const char *str) {
+    return *str ? 1 + c_len(str + 1) : 0;
+}
+
+
+/**
+ * @brief   Calculate the length of a C++ string at compile time.
+ * @details Simply calls c_len() on the C string inside str.
+ *
+ * @param   str - The string whose length is being calculated
+ * @return  The length of the string.
+ */
+static constexpr int len(const string &str) {
+  return c_len(str.c_str());
+}
+
+
+/**
  * @brief   Split a string on spaces.
  * @details Split a string into a vector of strings, splitting on spaces.
  *
@@ -100,19 +125,22 @@ transition_table load(const string &name) {
   ifstream input(name);
   string line;
 
+  const string start_str  = "#start: ";
+  const string accept_str = "#accept: ";
+
   // Set start state.
   getline(input, line);
-  if (!starts_with(line, "#start: ")) {
+  if (!starts_with(line, start_str)) {
     crash("Missing start state on line 1.");
   }
-  table.start_id = stoi(slice_from(line, 8));
+  table.start_id = stoi(slice_from(line, len(start_str)));
 
   // Set accept states.
   getline(input, line);
-  if (!starts_with(line, "#accept: ")) {
+  if (!starts_with(line, accept_str)) {
     crash("Missing accepting states on line 2.");
   }
-  vector<string> states = split(slice_from(line, 9));
+  vector<string> states = split(slice_from(line, len(accept_str)));
   table.accept_ids.resize(states.size());
   transform(states.begin(), states.end(), table.accept_ids.begin(),
             [] (string &s) -> int { return stoi(s); });
