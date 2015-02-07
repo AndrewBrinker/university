@@ -8,11 +8,13 @@
 #include <sstream>
 #include <fstream>
 #include <algorithm>
+#include <set>
 using std::vector;
 using std::string;
 using std::istream_iterator;
 using std::ifstream;
 using std::istringstream;
+using std::set;
 
 
 
@@ -137,25 +139,30 @@ transition_table load(const string &name) {
   if (!starts_with(line, start_str)) {
     crash("Missing start state on line 1.");
   }
-  table.start_id = stoi(slice_from(line, len(start_str)));
+  table.start_node = slice_from(line, len(start_str));
 
   // Set accept states.
   getline(input, line);
   if (!starts_with(line, accept_str)) {
     crash("Missing accepting states on line 2.");
   }
-  vector<string> states = split(slice_from(line, len(accept_str)));
-  table.accept_ids.resize(states.size());
-  transform(states.begin(), states.end(), table.accept_ids.begin(),
-            [] (string &s) -> int { return stoi(s); });
+  table.accept_nodes = split(slice_from(line, len(accept_str)));
 
-  // For each line in the file add a new transition to the table
+  // For each line in the file add a new transition to the table.
   while (getline(input, line)) {
     transition row;
     istringstream iss(line);
-    iss >> row.src_id >> row.dest_id >> row.expr;
+    iss >> row.src_node >> row.dest_node >> row.expr;
     table.transitions.push_back(row);
   }
+
+  // Count the number of states.
+  set<string> s;
+  for (transition t : table.transitions) {
+    s.insert(t.src_node);
+    s.insert(t.dest_node);
+  }
+  table.num_states = s.size();
 
   return table;
 }
@@ -171,7 +178,11 @@ transition_table load(const string &name) {
  * @return  The final converted regular expression.
  */
 string fa_to_regex(const transition_table &table) {
-  // Blah
+  // If there are only two states, then the recursion is done and the final
+  // expression can be returned.
+  if (table.num_states == 2) return table.transitions[0].expr;
+  // 1. Select a random state that is not the start state or accepting state
+  // 2. Do more stuff...
   return "";
 }
 
@@ -184,7 +195,10 @@ string fa_to_regex(const transition_table &table) {
  * @param t - The transition being displayed
  */
 void show_transition(const transition &t) {
-  printf("%d -> %d :: %s\n", t.src_id, t.dest_id, t.expr.c_str());
+  printf("%s -> %s :: %s\n",
+         t.src_node.c_str(),
+         t.dest_node.c_str(),
+         t.expr.c_str());
 }
 
 
@@ -196,11 +210,11 @@ void show_transition(const transition &t) {
  * @param table - The transition table being displayed
  */
 void show_table(const transition_table &table) {
-  printf("Start:\t%d\n", table.start_id);
+  printf("Start:\t%s\n", table.start_node.c_str());
 
   printf("Accept:\t");
-  for (int id : table.accept_ids) {
-    printf("%d ", id);
+  for (string node : table.accept_nodes) {
+    printf("%s ", node.c_str());
   }
   printf("\n");
 

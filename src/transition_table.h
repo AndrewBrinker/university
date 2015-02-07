@@ -10,15 +10,16 @@ using std::vector;
 using std::string;
 
 struct transition {
-  int    src_id;
-  int    dest_id;
+  string src_node;
+  string dest_node;
   string expr;
 };
 
 struct transition_table {
-  int                start_id;
-  vector<int>        accept_ids;
+  string             start_node;
+  vector<string>     accept_nodes;
   vector<transition> transitions;
+  int                num_states;
 };
 
 void crash(const std::string &);
