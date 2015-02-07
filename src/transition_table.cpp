@@ -8,7 +8,11 @@
 #include <sstream>
 #include <fstream>
 #include <algorithm>
-using namespace std;
+using std::vector;
+using std::string;
+using std::istream_iterator;
+using std::ifstream;
+using std::istringstream;
 
 
 
@@ -154,6 +158,21 @@ transition_table load(const string &name) {
   }
 
   return table;
+}
+
+
+/**
+ * @brief   Convert a finite automata into a regular expression
+ * @details Converts a finite automata into a regular expression per the
+ *          algorithm on page 73 of Introduction to the Theory of Computation
+ *          Third Edition by Michael Sipser.
+ *
+ * @param   table - The finite automata being converted
+ * @return  The final converted regular expression.
+ */
+string fa_to_regex(const transition_table &table) {
+  // Blah
+  return "";
 }
 
 

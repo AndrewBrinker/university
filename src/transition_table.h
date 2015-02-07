@@ -6,7 +6,8 @@
 
 #include <string>
 #include <vector>
-using namespace std;
+using std::vector;
+using std::string;
 
 struct transition {
   int    src_id;
