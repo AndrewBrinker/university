@@ -12,5 +12,5 @@ int main(int argc, char **argv) {
   }
 
   transition_table table = load({argv[1]});
-  show_table(table);
+  printf("%s\n", fa_to_regex(table).c_str());
 }

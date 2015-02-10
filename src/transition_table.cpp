@@ -14,6 +14,7 @@ using std::string;
 using std::istream_iterator;
 using std::ifstream;
 using std::istringstream;
+using std::stringstream;
 using std::set;
 
 
@@ -58,7 +59,7 @@ static constexpr int len(const string &str) {
 static vector<string> split(const string &str) {
   vector<string> words;
 
-  istringstream iss(str);
+  stringstream iss(str);
   copy(istream_iterator<string>(iss),
        istream_iterator<string>(),
        back_inserter(words));
@@ -169,21 +170,91 @@ transition_table load(const string &name) {
 
 
 /**
+ * @brief   Construct a regex from the given transition table.
+ * @details Construct a regex from the given transition table, following the
+ *          algorithm given in class.
+ *
+ * @param   table - The table defining the FA.
+ * @param   i - The start node
+ * @param   j - The end node
+ * @param   k - The intermediate node
+ * @return  the regex accepting the language described by the table.
+ */
+static string L(transition_table table,
+                const int &i,
+                const int &j,
+                const int &k) {
+  stringstream expr;
+  if (k == 0) {
+    if (i == j) {
+      expr << "e+";
+    }
+    for (transition t : table.transitions) {
+      if (table.labels[t.src_node] == i && table.labels[t.dest_node] == j) {
+         expr << t.expr << "+";
+      }
+    }
+    return expr.str().substr(0, expr.str().length() - 1);
+  }
+
+  string atob = L(table, i, j, k - 1);
+  string atoc = L(table, i, k, k - 1);
+  string ctoc = L(table, k, k, k - 1);
+  string ctob = L(table, k, j, k - 1);
+
+  if (atoc == "" || ctoc == "" || ctob == "") {
+    if (atob != "") {
+      expr << "(" << atob << ")";
+    }
+  } else {
+    expr << "(" << atoc << ")(" << ctoc << ")*(" << ctob + ")";
+    if (atob != "") {
+      expr << "+(" << atob << ")";
+    }
+  }
+
+  return expr.str();
+}
+
+
+/**
  * @brief   Convert a finite automata into a regular expression
  * @details Converts a finite automata into a regular expression per the
- *          algorithm on page 73 of Introduction to the Theory of Computation
- *          Third Edition by Michael Sipser.
+ *          algorithm given in class.
  *
  * @param   table - The finite automata being converted
  * @return  The final converted regular expression.
  */
-string fa_to_regex(const transition_table &table) {
-  // If there are only two states, then the recursion is done and the final
-  // expression can be returned.
-  if (table.num_states == 2) return table.transitions[0].expr;
-  // 1. Select a random state that is not the start state or accepting state
-  // 2. Do more stuff...
-  return "";
+string fa_to_regex(transition_table table) {
+  // Add labels
+  set<string> nodes;
+  for (transition t : table.transitions) {
+    nodes.insert(t.src_node);
+    nodes.insert(t.dest_node);
+  }
+
+  int i = 0;
+  for (string node : nodes) {
+    table.labels[node] = i;
+    ++i;
+  }
+
+  vector<string> partial_regexes;
+  for (string accept_node : table.accept_nodes) {
+    string partial = L(table, table.labels[table.start_node], table.labels[accept_node], i - 1);
+    if (partial != "") {
+      partial_regexes.push_back(partial);
+    }
+  }
+
+  stringstream regex;
+  regex << "(";
+  for (string partial : partial_regexes) {
+    regex << partial << ") + (";
+  }
+  regex << partial_regexes.back() << ")";
+
+  return regex.str();
 }
 
 
