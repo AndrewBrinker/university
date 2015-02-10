@@ -185,6 +185,8 @@ static string L(transition_table table,
                 const int &j,
                 const int &k) {
   stringstream expr;
+
+  // If k is 0, then find the direct paths without intermediate states
   if (k == 0) {
     if (i == j) {
       expr << "e+";
@@ -197,11 +199,13 @@ static string L(transition_table table,
     return expr.str().substr(0, expr.str().length() - 1);
   }
 
+  // Otherwise, use the recursive definition
   string atob = L(table, i, j, k - 1);
   string atoc = L(table, i, k, k - 1);
   string ctoc = L(table, k, k, k - 1);
   string ctob = L(table, k, j, k - 1);
 
+  // And make sure to propogate the nulls
   if (atoc == "" || ctoc == "" || ctob == "") {
     if (atob != "") {
       expr << "(" << atob << ")";
@@ -213,6 +217,7 @@ static string L(transition_table table,
     }
   }
 
+  // Return the final expression
   return expr.str();
 }
 
@@ -226,27 +231,33 @@ static string L(transition_table table,
  * @return  The final converted regular expression.
  */
 string fa_to_regex(transition_table table) {
-  // Add labels
+  // Collect nodes into a set for use in assigning unique labels
   set<string> nodes;
   for (transition t : table.transitions) {
     nodes.insert(t.src_node);
     nodes.insert(t.dest_node);
   }
 
+  // Assign the unique labels
   int i = 0;
   for (string node : nodes) {
     table.labels[node] = i;
     ++i;
   }
 
+  // Construct partial regexes for each of the accepting states
   vector<string> partial_regexes;
   for (string accept_node : table.accept_nodes) {
-    string partial = L(table, table.labels[table.start_node], table.labels[accept_node], i - 1);
+    string partial = L(table,
+                       table.labels[table.start_node],
+                       table.labels[accept_node],
+                       i - 1);
     if (partial != "") {
       partial_regexes.push_back(partial);
     }
   }
 
+  // Combine the partial regexes together
   stringstream regex;
   regex << "(";
   for (string partial : partial_regexes) {
@@ -254,6 +265,7 @@ string fa_to_regex(transition_table table) {
   }
   regex << partial_regexes.back() << ")";
 
+  // Return the result of the combination
   return regex.str();
 }
 
