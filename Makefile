@@ -27,6 +27,14 @@ DLINK_FLAGS =
 DESTDIR = /
 # Install path (bin/ is appended automatically)
 INSTALL_PREFIX = usr/local
+# LaTeX compiler used
+LATEX = pdflatex
+# Authors file name
+AUTHORS = AUTHORS.md
+# Path to scripts
+SCRIPTS_PATH = scripts
+# Listing script name
+LISTING = listing.py
 # Linting filters
 FILTERS = -readability/streams,-build/header_guard,-build/namespaces
 #### END PROJECT SETTINGS ####
@@ -141,6 +149,14 @@ uninstall:
 lint:
 	@echo "Linting sources files against cpplint"
 	@cpplint --filter=$(FILTERS) $(SOURCES) $(HEADERS)
+
+# target: listing     Create LaTeX code listing
+.PHONY: listing
+listing:
+	@python $(SCRIPTS_PATH)/$(LISTING) $(BIN_NAME)
+	@$(LATEX) $(BIN_NAME).tex
+	@$(RM) $(BIN_NAME).aux
+	@$(RM) $(BIN_NAME).log
 
 # target: clean       Removes all build files
 .PHONY: clean
