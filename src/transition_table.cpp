@@ -263,10 +263,12 @@ string fa_to_regex(transition_table table) {
   for (string partial : partial_regexes) {
     regex << partial << ") + (";
   }
-  regex << partial_regexes.back() << ")";
 
-  // Return the result of the combination
-  return regex.str();
+  // Silly hack to remove the final "+ ("
+  string re = regex.str();
+  re = re.substr(0, re.length() - 3);
+
+  return re;
 }
 
 
