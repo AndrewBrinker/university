@@ -91,7 +91,7 @@ module adders(
 	assign available = ~(Busy[0] & Busy[1] & Busy[2]);
 	//assign RS_availability_of_Last = 
 	//	finish this line
-	//assing RS_availability_of_Second_or_Last = 
+	//assign RS_availability_of_Second_or_Last = 
 	//	finish this line
 	assign RS_available = ~Busy[Priority_Station] ? 
 		RS_num_of[Priority_Station] : 
