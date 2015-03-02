@@ -25,7 +25,7 @@ struct transition_table {
   map<string, int>   labels;
 };
 
-void crash(const std::string &);
+void crash(const string &);
 transition_table load(const string &);
 string fa_to_regex(transition_table);
 

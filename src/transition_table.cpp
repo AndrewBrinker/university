@@ -112,7 +112,7 @@ static string slice_from(const string &str, const size_t &idx) {
  *
  * @param   msg - The message to be printed
  */
-void crash(const std::string &msg) {
+void crash(const string &msg) {
   printf("%s\n", msg.c_str());
   exit(EXIT_FAILURE);
 }
