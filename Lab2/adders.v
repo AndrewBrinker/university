@@ -135,17 +135,21 @@ module adders(
 	
 	always @ (negedge(CDB_xmit))
 	begin
-		//clean up write when finished
-		CDB_rts <= not_ready;
-		//CDB_write_out // finish this line
-		//Unit_Busy // finish this line
-		//Busy[adder_calculating] // finish this line
-		//adder_calculating // finish this line
+		// Clean up write when finished
+		CDB_rts                 <= not_ready;
+		CDB_write_out           <= not_ready;
+		Unit_Busy               <= not_busy;
+		Busy[adder_calculating] <= not_busy;
+		adder_calculating       <= none;
 	end
 	
 	always @ (posedge(clock))
 	begin
-		//each cycle handle execution
+		// Each cycle handle execution
+		if (~Unit_busy)
+		begin
+			// Do stuff
+		end
 	end
 	
 	always @ (negedge(clock))
