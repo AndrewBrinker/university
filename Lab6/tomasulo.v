@@ -81,7 +81,7 @@ module tomasulo ();
 
     instruction_queue instructions (
         .clock(clk),
-        .issue(issue)
+        .issue(issue),
         .adder_available(adder_available),
         .adder_RS_available(adder_rs_available),
         .RS_issued(rs_issued),
@@ -93,7 +93,7 @@ module tomasulo ();
         .A_address(a_address),
         .B_address(b_address),
         .Dest_address(dest_address),
-        .issue_error(issue_error),
+        .issue_error(issue_error)
     );
 
 endmodule

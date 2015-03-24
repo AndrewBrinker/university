@@ -5,8 +5,10 @@ module mod3counter(
 
     always @ * begin
         if (num == 2'b11) begin
-            num <= 2'b00;
+            mod3num <= 2'b01;
         end
-        mod3num <= (num + 1) % 3;
+        else begin
+            mod3num <= (num + 1) % 3;
+        end
     end
 endmodule

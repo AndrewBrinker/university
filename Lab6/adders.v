@@ -27,7 +27,7 @@ module adders (
     parameter none         = 2'b00;
     parameter valid        = 6'b000000;
     parameter no_error     = 1'b0;
-    parameter all_rs_bus   = 1'b1;
+    parameter all_rs_busy  = 1'b1;
     parameter not_issued   = 6'b000000;
     parameter not_busy     = 1'b0;
     parameter in_use       = 1'b1;
