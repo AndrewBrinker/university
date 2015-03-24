@@ -74,8 +74,7 @@ module adders (
                         : ~Busy[Third_Station]  ? RS_num_of[Third_Station]
                         : no_rs;
 
-    assign RS_executing = Unit_Busy ?
-                RS_num_of[adder_calculating] : no_rs;
+    assign RS_executing = Unit_Busy ? RS_num_of[adder_calculating] : no_rs;
 
     mod3counter mod1 (
         .num(First_Station),
