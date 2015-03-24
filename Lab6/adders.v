@@ -142,6 +142,7 @@ module adders (
                 CDB_write_out     <= ready;
                 CDB_rts           <= 1;
                 adder_calculating <= First_Station;
+                First_Station     <= First_Station + 1;
             end
             else if (Busy[Second_Station] &&
                      Qj[Second_Station] == valid &&
@@ -161,6 +162,7 @@ module adders (
                 CDB_write_out     <= ready;
                 CDB_rts           <= 1;
                 adder_calculating <= Second_Station;
+                Second_Station    <= Second_Station + 1;
             end
             else if (Busy[Third_Station] &&
                      Qj[Third_Station] == valid &&
@@ -180,6 +182,7 @@ module adders (
                 CDB_write_out     <= ready;
                 CDB_rts           <= 1;
                 adder_calculating <= Third_Station;
+                Third_Station     <= Third_Station + 1;
             end
         end
     end
@@ -288,11 +291,9 @@ module adders (
                     end
                     error <= no_error;
                 end
-
-                else begin
-                    error <= all_rs_busy;
-                end
-
+            end
+            else begin
+                error <= all_rs_busy;
             end
         end
     end
