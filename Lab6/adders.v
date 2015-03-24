@@ -7,7 +7,7 @@ module adders (
 
         input  wire CDB_xmit,
         inout  wire signed [31:0] CDB_data,
-        inout  wire [5:0] CDB_course,
+        inout  wire [5:0] CDB_source,
         inout  wire CDB_write,
         output reg  CDB_rts,
 

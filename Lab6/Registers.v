@@ -25,9 +25,7 @@ module Registers (
 
     initial begin
         // Initialize register file
-        reg_file[0] = 1;
-        redirection[0] = not_redirected;
-        for(i = 1; i < num_of_regs; i = i + 1) begin
+        for (i = 0; i < num_of_regs; i = i + 1) begin
                 reg_file[i] = i;
                 redirection[i] = not_redirected;
         end

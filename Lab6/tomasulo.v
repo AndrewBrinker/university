@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 `include "adders"
 `include "instruction_queue"
-`include "Regsters"
+`include "Registers"
 
 module tomasulo ();
 	parameter CLEAR = 0;
@@ -30,7 +30,7 @@ module tomasulo ();
 	initial begin
 		clk <= 0;
 		forever begin
-			#20 clk <= ~clk;
+			#15 clk <= ~clk;
 		end
 	end
 
@@ -74,7 +74,9 @@ module tomasulo ();
 		.dest(dest_address),
 		.In_data(cdb_data),
 		.In_source(cdb_source),
+
 		.RS_calculating_value(adder_rs_available),
+
 		.write(cdb_write),
 		.A_out(a),
 		.B_out(b),
@@ -84,7 +86,7 @@ module tomasulo ();
 
 	instruction_queue instructions (
 		.clock(clk),
-		.issue_error(issue_error),
+		.issue(issue)
 		.adder_available(adder_available),
 		.adder_RS_available(adder_rs_available),
 		.RS_issued(rs_issued),
@@ -93,10 +95,10 @@ module tomasulo ();
 		.RS_finished(cdb_source),
 		.operation(opcode),
 		.execution_unit(execution_unit),
-		.Dest_address(dest_address),
 		.A_address(a_address),
 		.B_address(b_address),
-		.issue(issue)
+		.Dest_address(dest_address),
+		.issue_error(issue_error),
 	);
 
 endmodule
