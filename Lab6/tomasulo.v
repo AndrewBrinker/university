@@ -1,7 +1,4 @@
 `timescale 1ns / 1ps
-`include "adders"
-`include "instruction_queue"
-`include "Registers"
 
 module tomasulo ();
     parameter CLEAR = 0;
@@ -100,4 +97,3 @@ module tomasulo ();
     );
 
 endmodule
-

@@ -173,29 +173,34 @@ module adders (
     always @ (negedge(clock)) begin
         if (CDB_write) begin
             #update_delay;
-            if (Qj[Priority_Station] == CDB_source) begin
-                Vj[Priority_Station] <= CDB_data;
-                Qj[Priority_Station] <= valid;
+            if (Qj[Priority_Station] == CDB_source ||
+                Qk[Priority_Station] == CDB_source) begin
+                if (Qj[Priority_Station] == CDB_source) begin
+                    Vj[Priority_Station] <= CDB_data;
+                    Qj[Priority_Station] <= valid;
+                end
+                if (Qk[Priority_Station] == CDB_source) begin
+                    Vk[Priority_Station] <= CDB_data;
+                    Qk[Priority_Station] <= valid;
+                end
             end
-            if (Qk[Priority_Station] == CDB_source) begin
-                Vk[Priority_Station] <= CDB_data;
-                Qk[Priority_Station] <= valid;
-            end
-            else if (Qj[Second_Station] == CDB_source) begin
+            else if (Qj[Second_Station] == CDB_source ||
+                     Qk[Second_Station] == CDB_source) begin
+                if (Qj[Second_Station] == CDB_source) begin
                     Vj[Second_Station] <= CDB_data;
                     Qj[Second_Station] <= valid;
                 end
-            end
-            if (Qk[Second_Station] == CDB_source) begin
-                Vk[Second_Station] <= CDB_data;
-                Qk[Second_Station] <= valid;
+                if (Qk[Second_Station] == CDB_source) begin
+                    Vk[Second_Station] <= CDB_data;
+                    Qk[Second_Station] <= valid;
+                end
             end
             else begin
-                if (Qj[Last_Station] == CDB_source) begin
+                if(Qj[Last_Station] == CDB_source) begin
                     Vj[Last_Station] <= CDB_data;
                     Qj[Last_Station] <= valid;
                 end
-                if (Qk[Last_Station] == CDB_source) begin
+                if(Qk[Last_Station] == CDB_source) begin
                     Vk[Last_Station] <= CDB_data;
                     Qk[Last_Station] <= valid;
                 end
