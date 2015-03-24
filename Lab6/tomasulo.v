@@ -27,7 +27,7 @@ module tomasulo ();
     initial begin
         clk <= 0;
         forever begin
-            #20 clk <= ~clk;
+            #10 clk <= ~clk;
         end
     end
 
