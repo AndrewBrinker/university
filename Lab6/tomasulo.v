@@ -4,87 +4,100 @@
 `include "Regsters"
 
 module tomasulo ();
+	parameter CLEAR = 0;
+	reg cdb_xmit;
 	reg clk;
-	wire issue_command;
-	wire [5:0] command;
-	wire signed [31:0] A, B;
-	wire A_invalid, B_invalid;
-	wire CDB_xmit;
+	wire issue_error;
+	wire adder_available;
+	wire [5:0] adder_rs_available;
+	wire [5:0] rs_issued;
+	wire [5:0] rs_executing_adder;
+	wire [5:0] opcode;
+	wire [2:0] execution_unit;
+	wire [4:0] dest_address;
+	wire [4:0] a_address;
+	wire [4:0] b_address;
+	wire issue;
+	wire [31:0] a;
+	wire [31:0] b;
+	wire a_invalid;
+	wire b_invalid;
+	wire cdb_rts;
+	wire cdb_write;
+	wire [5:0] cdb_source;
+	wire [31:0] cdb_data;
 
-	wire signed [31:0] data_out;
-	wire [5:0] data_from_rs_num;
-	wire data_valid;
+	initial begin
+		clk <= 0;
+		forever begin
+			#20 clk <= ~clk;
+		end
+	end
 
-	wire CDB_rts;
-	wire available;
-	wire [5:0] issued_to_rs_num, RS_available;
-	wire [5:0] RS_executing;
-	wire error;
+	initial begin
+		cdb_xmit <= CLEAR;
+	end
 
-	wire [2:0] exec_unit;
-	wire [5:0] RS_finished;
-	wire [4:0] Dest_address;
-	wire [4:0] A_address;
-	wire [4:0] B_address;
+	always @(cdb_rts) begin
+		cdb_xmit <= cdb_rts;
+	end
 
-	adders adder (
+	always @(negedge clk) begin
+		cdb_xmit <= CLEAR;
+	end
+
+	instruction_queue instructions (
 		.clock(clk),
-		.issue(issue_command),
-		.A(A),
-		.B(B),
-		.A_invalid(A_invalid),
-		.B_invalid(B_invalid),
-		.opcode(command),
-		.CDB_xmit(CDB_xmit),
-		.CDB_data(data_out),
-		.CDB_source(data_from_rs_num),
-		.CDB_write(data_valid),
-		.CDB_rts(CDB_rts),
-		.available(available),
-		.RS_available(RS_available),
-		.issued(issued_to_rs_num),
-		.RS_executing(RS_executing),
-		.error(error)
+		.issue_error(issue_error),
+		.adder_available(adder_available),
+		.adder_RS_available(adder_rs_available),
+		.RS_issued(rs_issued),
+		.RS_executing_adder(rs_executing_adder),
+		.adder_rts(cdb_rts),
+		.RS_finished(cdb_source),
+		.operation(opcode),
+		.execution_unit(execution_unit),
+		.Dest_address(dest_address),
+		.A_address(a_address),
+		.B_address(b_address),
+		.issue(issue)
 	);
 
 	Registers registers (
 		.clock(clk),
-		.issue(issue_command),
-		.A_address(A_address),
-		.B_address(B_address),
-		.dest(Dest_address),
-		.In_data(data_out),
-		.In_source(data_from_rs_num),
-		.RS_calculating_value(RS_executing),
-		.write(data_valid),
-		.A_out(A),
-		.B_out(B),
-		.A_invalid(A_invalid),
-		.B_invalid(B_invalid)
+		.issue(issue),
+		.A_address(a_address),
+		.B_address(b_address),
+		.dest(dest_address),
+		.In_data(cdb_data),
+		.In_source(cdb_source),
+		.RS_calculating_value(adder_rs_available),
+		.write(cdb_write),
+		.A_out(a),
+		.B_out(b),
+		.A_invalid(a_invalid),
+		.B_invalid(b_invalid)
 	);
 
-	instruction_queue instructions (
+	adders adder (
 		.clock(clk),
-		.issue_error(error),
-		.adder_available(available),
-		.adder_RS_available(RS_available),
-		.RS_issued(issued_to_rs_num),
-		.RS_executing_adder(RS_executing),
-		.adder_rts(CDB_rts),
-		.RS_finished(RS_finished),
-		.operation(command),
-		.execution_unit(exec_unit),
-		.Dest_address(Dest_address),
-		.A_address(A_address),
-		.B_address(B_address),
-		.issue(issue_command)
+		.issue(issue),
+		.A(a),
+		.B(b),
+		.A_invalid(a_invalid),
+		.B_invalid(b_invalid),
+		.opcode(opcode),
+		.CDB_xmit(cdb_xmit),
+		.CDB_data(cdb_data),
+		.CDB_source(cdb_source),
+		.CDB_write(cdb_write),
+		.CDB_rts(cdb_rts),
+		.available(adder_available),
+		.RS_available(adder_rs_available),
+		.issued(rs_issued),
+		.RS_executing(rs_executing_adder),
+		.error(issue_error)
 	);
-
-	initial begin
-		clk = 0;
-		forever begin
-			#10 clk = ~clk;
-		end
-	end
 
 endmodule
+

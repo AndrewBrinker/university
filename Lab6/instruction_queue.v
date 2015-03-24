@@ -1,4 +1,4 @@
-module instruction_queue(
+module instruction_queue (
 		input wire clock,
 		input wire issue_error,
 		input wire adder_available,
@@ -64,9 +64,12 @@ module instruction_queue(
 			RS_Holding[i]  <= CLEAR;
 			Status[i]      <= CLEAR;
 		end
-		for (i = 0; i <= 32; i = i + 1) begin
-			Instruction_Memory[i] <= {ADDER, alu_add, 5'b00001, 5'b00011, 5'b00111, 11'b0};
-		end
+		Instruction_Memory[0] <= {ADDER, alu_add, 5'b00000, 5'b00000, 5'b00001, 11'b0};
+		Instruction_Memory[1] <= {ADDER, alu_add, 5'b00000, 5'b00000, 5'b00010, 11'b0};
+		Instruction_Memory[2] <= {ADDER, alu_add, 5'b00000, 5'b00000, 5'b00011, 11'b0};
+		Instruction_Memory[3] <= {ADDER, alu_add, 5'b00000, 5'b00000, 5'b00100, 11'b0};
+		Instruction_Memory[4] <= {ADDER, alu_add, 5'b00000, 5'b00000, 5'b00101, 11'b0};
+		Instruction_Memory[5] <= {ADDER, alu_add, 5'b00000, 5'b00000, 5'b00110, 11'b0};
 	end
 
 	always @(posedge clock) begin
