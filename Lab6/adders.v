@@ -60,8 +60,6 @@ module adders (
     reg  [1:0] First_Station;
     wire [1:0] Second_Station;
     wire [1:0] Third_Station;
-    wire [5:0] RS_availability_of_Second_or_Last;
-    wire [5:0] RS_availability_of_Last;
 
     assign CDB_data   = CDB_xmit ? CDB_data_out   : disconnected;
     assign CDB_source = CDB_xmit ? CDB_source_out : disconnected;
@@ -99,7 +97,7 @@ module adders (
         CDB_data_out      <= clear;
         CDB_source_out    <= no_rs;
         CDB_write_out     <= not_ready;
-        First_Station  <= no_rs;
+        First_Station     <= no_rs;
         Unit_Busy         <= not_busy;
         Busy[0]           <= not_busy;
         Busy[1]           <= not_busy;
