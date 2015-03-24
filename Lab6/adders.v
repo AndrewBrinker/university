@@ -67,13 +67,15 @@ module adders (
     assign CDB_source = CDB_xmit ? CDB_source_out : disconnected;
     assign CDB_write  = CDB_xmit ? CDB_write_out  : disconnected;
 
-    assign available = ~(Busy[0] & Busy[1] & Busy[2]);
-    assign RS_avalaibility_of_Last = ~Busy[Last_Station] ?
-                RS_num_of[Last_Station] : no_rs;
-    assign RS_availability_of_Second_or_Last = ~Busy[Second_Station] ?
-                RS_num_of[Second_Station] : RS_num_of[Last_Station];
-    assign RS_available = ~Busy[Priority_Station] ?
-                RS_num_of[Priority_Station] : RS_availability_of_Second_or_Last;
+    assign available = ~(Busy[Priority_Station] &
+                         Busy[Second_Station] &
+                         Busy[Last_Station]);
+
+    assign RS_available = ~Busy[Priority_Station] ? RS_num_of[Priority_Station]
+                        : ~Busy[Second_Station]   ? RS_num_of[Second_Station]
+                        : ~Busy[Last_Station]     ? RS_num_of[Last_Station]
+                        : no_rs;
+
     assign RS_executing = Unit_Busy ?
                 RS_num_of[adder_calculating] : no_rs;
 

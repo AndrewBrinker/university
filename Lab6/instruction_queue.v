@@ -19,7 +19,7 @@ module instruction_queue (
     parameter TRUE                     = 1'b1;
     parameter FALSE                    = 1'b0;
     parameter LAST_INSTRUCTION_ELEMENT = 1023;
-    parameter INSTRUCTION_ADDRESS_BITS = 10;
+    parameter INSTRUCTION_ADDRESS_BITS = 9;
     parameter LAST_QUEUE_ELEMENT       = 7;
     parameter QUEUE_ADDRESS_BITS       = 3;
     parameter CLEAR                    = 0;
@@ -68,48 +68,45 @@ module instruction_queue (
         Instruction_Memory[1] <= {ADDER, alu_add, 5'b00010, 5'b00111, 5'b00011, 11'b0}; // R2 + R7  => R3
         Instruction_Memory[2] <= {ADDER, alu_add, 5'b00011, 5'b01010, 5'b00100, 11'b0}; // R3 + R10 => R4
         Instruction_Memory[3] <= {ADDER, alu_add, 5'b00100, 5'b01101, 5'b00101, 11'b0}; // R4 + R13 => R5
-        Instruction_Memory[4] <= {ADDER, alu_add, 5'b00101, 5'b10000, 5'b00110, 11'b0}; // R5 + R16 => R6
-        for (i = 5; i < 32; i = i + 1) begin
-            Instruction_Memory[i] <= {ADDER, alu_add, 5'b00000, 5'b00000, 5'b00000, 11'b0};
-        end
+        Instruction_Memory[4] <= {ADDER, alu_add, 5'b00101, 5'b10000, 5'b00110, 11'b0}; // R5 + R16 => R62
     end
 
-    always @(posedge clock) begin
+    always @ (posedge clock) begin
         // If there are still items in the queue, and there's no issue error
         if ((PC == 0 || Queue_End != CLEAR) &&
            !issue_error) begin
             // Issue the instruction
-            Instruction[Queue_End] <= Instruction_Memory[PC];
-            Status[Queue_End]      <= Status[Queue_End] | BUSY_MASK;
-            RS_Holding[Queue_End]  <= CLEAR;
+            Instruction[Queue_End] = Instruction_Memory[PC];
+            Status[Queue_End]      = Status[Queue_End] | BUSY_MASK;
+            RS_Holding[Queue_End]  = CLEAR;
             // Update the program counter and queue
-            PC        <= PC + 1;
-            Queue_End <= Queue_End + 1;
+            PC        = PC + 1;
+            Queue_End = Queue_End + 1;
         end
     end
 
-    always @(posedge clock) begin
+    always @ (posedge clock) begin
         // Check that the adder is available for new inputs
         if (adder_available) begin
             // For each item in the queue
-            for (i = 0; i <= Queue_End - 1; i = i + 1) begin
+            for (i = 0; i < Queue_End; i = i + 1) begin
                 // If everything is ready and we haven't issued yet, issue
                 if (!issued_this_clock &&
                    (Status[i] & BUSY_MASK) == 1 &&
                    (Status[i] & ISSUE_MASK) == 0) begin
                     // The relevant reservation station
-                    RS_Holding[i] <= adder_RS_available;
+                    RS_Holding[i] = adder_RS_available;
 
                     // Pull out all the parts of the current instruction
-                    operation      <= Instruction[i][OPCODE_HIGH:OPCODE_LOW];
-                    execution_unit <= Instruction[i][EXEC_UNIT_HIGH:EXEC_UNIT_LOW];
-                    Dest_address   <= Instruction[i][DESTINATION_HIGH:DESTINATION_LOW];
-                    A_address      <= Instruction[i][SOURCE1_HIGH:SOURCE1_LOW];
-                    B_address      <= Instruction[i][SOURCE2_HIGH:SOURCE2_LOW];
+                    operation      = Instruction[i][OPCODE_HIGH:OPCODE_LOW];
+                    execution_unit = Instruction[i][EXEC_UNIT_HIGH:EXEC_UNIT_LOW];
+                    Dest_address   = Instruction[i][DESTINATION_HIGH:DESTINATION_LOW];
+                    A_address      = Instruction[i][SOURCE1_HIGH:SOURCE1_LOW];
+                    B_address      = Instruction[i][SOURCE2_HIGH:SOURCE2_LOW];
 
                     // Set the issue flags to true
-                    issue             <= TRUE;
-                    issued_this_clock <= TRUE;
+                    issue             = TRUE;
+                    issued_this_clock = TRUE;
 
                     // Block for one time unit to make sure issues happen on
                     // the correct timesclae
@@ -120,11 +117,11 @@ module instruction_queue (
     end
 
     // Whenever the reservation station status changes
-    always @(RS_issued or RS_executing_adder) begin
+    always @ (RS_issued || RS_executing_adder) begin
         // If either is true (they might both be false, so we have to check)
         if (RS_issued || RS_executing_adder) begin
             // For each item in the queue...
-            for (i = 0; i <= Queue_End - 1; i = i + 1) begin
+            for (i = 0; i < Queue_End; i = i + 1) begin
                 // If it's been issued
                 if (RS_issued != CLEAR &&
                    (Status[i] & BUSY_MASK) &&
@@ -148,7 +145,7 @@ module instruction_queue (
         // If the reservation station is done
         if (RS_finished) begin
             // For each item in the queue
-            for (i = 0; i <= Queue_End - 1; i = i + 1) begin
+            for (i = 0; i < Queue_End; i = i + 1) begin
                 // If the item is busy and the reservation station is finished
                 if ((Status[i] & BUSY_MASK) &&
                    RS_Holding[i] == RS_finished) begin
