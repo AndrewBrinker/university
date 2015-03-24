@@ -46,39 +46,6 @@ module tomasulo ();
 		cdb_xmit <= CLEAR;
 	end
 
-	instruction_queue instructions (
-		.clock(clk),
-		.issue_error(issue_error),
-		.adder_available(adder_available),
-		.adder_RS_available(adder_rs_available),
-		.RS_issued(rs_issued),
-		.RS_executing_adder(rs_executing_adder),
-		.adder_rts(cdb_rts),
-		.RS_finished(cdb_source),
-		.operation(opcode),
-		.execution_unit(execution_unit),
-		.Dest_address(dest_address),
-		.A_address(a_address),
-		.B_address(b_address),
-		.issue(issue)
-	);
-
-	Registers registers (
-		.clock(clk),
-		.issue(issue),
-		.A_address(a_address),
-		.B_address(b_address),
-		.dest(dest_address),
-		.In_data(cdb_data),
-		.In_source(cdb_source),
-		.RS_calculating_value(adder_rs_available),
-		.write(cdb_write),
-		.A_out(a),
-		.B_out(b),
-		.A_invalid(a_invalid),
-		.B_invalid(b_invalid)
-	);
-
 	adders adder (
 		.clock(clk),
 		.issue(issue),
@@ -97,6 +64,39 @@ module tomasulo ();
 		.issued(rs_issued),
 		.RS_executing(rs_executing_adder),
 		.error(issue_error)
+	);
+
+	Registers registers (
+		.clock(clk),
+		.issue(issue),
+		.A_address(a_address),
+		.B_address(b_address),
+		.dest(dest_address),
+		.In_data(cdb_data),
+		.In_source(cdb_source),
+		.RS_calculating_value(adder_rs_available),
+		.write(cdb_write),
+		.A_out(a),
+		.B_out(b),
+		.A_invalid(a_invalid),
+		.B_invalid(b_invalid)
+	);
+
+	instruction_queue instructions (
+		.clock(clk),
+		.issue_error(issue_error),
+		.adder_available(adder_available),
+		.adder_RS_available(adder_rs_available),
+		.RS_issued(rs_issued),
+		.RS_executing_adder(rs_executing_adder),
+		.adder_rts(cdb_rts),
+		.RS_finished(cdb_source),
+		.operation(opcode),
+		.execution_unit(execution_unit),
+		.Dest_address(dest_address),
+		.A_address(a_address),
+		.B_address(b_address),
+		.issue(issue)
 	);
 
 endmodule

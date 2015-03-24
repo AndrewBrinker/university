@@ -191,11 +191,11 @@ module adders (
                 Qk[Second_Station] <= valid;
             end
             else begin
-                if(Qj[Last_Station] == CDB_source) begin
+                if (Qj[Last_Station] == CDB_source) begin
                     Vj[Last_Station] <= CDB_data;
                     Qj[Last_Station] <= valid;
                 end
-                if(Qk[Last_Station] == CDB_source) begin
+                if (Qk[Last_Station] == CDB_source) begin
                     Vk[Last_Station] <= CDB_data;
                     Qk[Last_Station] <= valid;
                 end
