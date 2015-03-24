@@ -26,8 +26,8 @@ module Registers (
     initial begin
         // Initialize register file
         for (i = 0; i < num_of_regs; i = i + 1) begin
-                reg_file[i] <= i;
-                redirection[i] <= not_redirected;
+                reg_file[i] = i;
+                redirection[i] = not_redirected;
         end
     end
 
@@ -35,22 +35,22 @@ module Registers (
         // Handle issues
         if (issue) begin
             if (redirection[A_address] == not_redirected) begin
-                A_out <= reg_file[A_address];
-                A_invalid <= false;
+                A_out = reg_file[A_address];
+                A_invalid = false;
             end
             else begin
-                A_out <= redirection[A_address];
-                A_invalid <= true;
+                A_out = redirection[A_address];
+                A_invalid = true;
             end
             if (redirection[B_address] == not_redirected) begin
-                B_out <= reg_file[B_address];
-                B_invalid <= false;
+                B_out = reg_file[B_address];
+                B_invalid = false;
             end
             else begin
-                B_out <= redirection[B_address];
-                B_invalid <= true;
+                B_out = redirection[B_address];
+                B_invalid = true;
             end
-            redirection[dest] <= RS_calculating_value;
+            redirection[dest] = RS_calculating_value;
         end
     end
 
@@ -59,8 +59,8 @@ module Registers (
         if (write) begin
             for (i = 0; i < num_of_regs; i = i + 1) begin
                 if (redirection[i] == In_source) begin
-                    redirection[i] <= not_redirected;
-                    reg_file[i] <= In_data;
+                    redirection[i] = not_redirected;
+                    reg_file[i] = In_data;
                 end
             end
         end
