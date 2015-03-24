@@ -77,9 +77,14 @@ module adders (
     assign RS_executing = Unit_Busy ?
                 RS_num_of[adder_calculating] : no_rs;
 
-    mod3counter mod (
+    mod3counter mod1 (
         .num(Priority_Station),
         .mod3num(Second_Station)
+    );
+
+    mod3counter mod2 (
+        .num(Second_Station),
+        .mod3num(Last_Station)
     );
 
     initial begin
