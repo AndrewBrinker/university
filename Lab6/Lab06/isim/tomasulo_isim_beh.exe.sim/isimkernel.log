@@ -1,0 +1,10 @@
+Command line:
+   tomasulo_isim_beh.exe
+     -simmode  gui
+     -simrunnum  0
+     -socket  51750
+
+Tue Mar 24 11:22:24 2015
+
+
+ Elaboration Time: 0.0624 sec

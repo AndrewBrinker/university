@@ -1,0 +1,6 @@
+verilog work "mod3counter.v"
+verilog work "Registers.v"
+verilog work "instruction_queue.v"
+verilog work "adders.v"
+verilog work "tomasulo.v"
+verilog work "C:/Xilinx/14.7/ISE_DS/ISE//verilog/src/glbl.v"
