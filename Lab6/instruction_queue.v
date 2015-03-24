@@ -68,7 +68,7 @@ module instruction_queue (
         Instruction_Memory[1] <= {ADDER, alu_add, 5'b00010, 5'b00111, 5'b00011, 11'b0}; // R2 + R7  => R3
         Instruction_Memory[2] <= {ADDER, alu_add, 5'b00011, 5'b01010, 5'b00100, 11'b0}; // R3 + R10 => R4
         Instruction_Memory[3] <= {ADDER, alu_add, 5'b00100, 5'b01101, 5'b00101, 11'b0}; // R4 + R13 => R5
-        Instruction_Memory[4] <= {ADDER, alu_add, 5'b00101, 5'b10000, 5'b00110, 11'b0}; // R5 + R16 => R62
+        Instruction_Memory[4] <= {ADDER, alu_add, 5'b00101, 5'b10000, 5'b00110, 11'b0}; // R5 + R16 => R6
     end
 
     always @ (posedge clock) begin
