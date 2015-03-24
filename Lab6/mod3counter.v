@@ -4,6 +4,6 @@ module mod3counter(
     );
 
     always @ * begin
-        mod3num = (num + 1) % 3;
+        mod3num <= (num % 3) + 1;
     end
 endmodule

@@ -87,6 +87,11 @@ module adders (
         .mod3num(Last_Station)
     );
 
+    mod3counter mod3 (
+        .num(Last_Station),
+        .mod3num(Priority_Station)
+    );
+
     initial begin
         CDB_rts           <= not_ready;
         CDB_data_out      <= clear;
