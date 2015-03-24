@@ -206,6 +206,7 @@ module adders (
     always @ (negedge(clock)) begin
         if (issue) begin
             if (RS_available) begin
+
                 if (~Busy[Priority_Station]) begin
                     Busy[Priority_Station] <= in_use;
                     operation[Priority_Station] <= opcode;
@@ -226,53 +227,53 @@ module adders (
                     end
                     error = no_error;
                 end
-                else begin
-                    if (~Busy[Second_Station]) begin
-                        Busy[Second_Station] <= in_use;
-                        issued <= RS_num_of[Second_Station];
-                        operation[Second_Station] <= opcode;
-                        if (A_invalid) begin
-                            Qj[Second_Station] <= A[5:0];
-                        end
-                        else begin
-                            Qj[Second_Station] <= valid;
-                            Vj[Second_Station] <= A;
-                        end
-                        if (B_invalid) begin
-                            Qk[Second_Station] <= B[5:0];
-                        end
-                        else begin
-                            Qk[Second_Station] <= valid;
-                            Vk[Second_Station] <= B;
-                        end
-                        error <= no_error;
+
+                else if (~Busy[Second_Station]) begin
+                    Busy[Second_Station] <= in_use;
+                    issued <= RS_num_of[Second_Station];
+                    operation[Second_Station] <= opcode;
+                    if (A_invalid) begin
+                        Qj[Second_Station] <= A[5:0];
                     end
                     else begin
-                        if (~Busy[Last_Station]) begin
-                            Busy[Last_Station] <= in_use;
-                            issued <= RS_num_of[Last_Station];
-                            operation[Last_Station] <= opcode;
-                            operation[Last_Station] <= opcode;
-                        if (A_invalid) begin
-                            Qj[Last_Station] <= A[5:0];
-                        end
-                        else begin
-                            Qj[Last_Station] <= valid;
-                            Vj[Last_Station] <= A;
-                            if (B_invalid) begin
-                                Qk[Last_Station] <= B[5:0];
-                            end
-                            else begin
-                                Qk[Last_Station] <= valid;
-                                Vk[Last_Station] <= B;
-                            end
-                            error <= no_error;
-                        end
+                        Qj[Second_Station] <= valid;
+                        Vj[Second_Station] <= A;
+                    end
+                    if (B_invalid) begin
+                        Qk[Second_Station] <= B[5:0];
                     end
                     else begin
-                        error =  all_rs_busy;
+                        Qk[Second_Station] <= valid;
+                        Vk[Second_Station] <= B;
                     end
+                    error <= no_error;
                 end
+
+                else if (~Busy[Last_Station]) begin
+                    Busy[Last_Station] <= in_use;
+                    issued <= RS_num_of[Last_Station];
+                    operation[Last_Station] <= opcode;
+                    if (A_invalid) begin
+                        Qj[Last_Station] <= A[5:0];
+                    end
+                    else begin
+                        Qj[Last_Station] <= valid;
+                        Vj[Last_Station] <= A;
+                    end
+                    if (B_invalid) begin
+                        Qk[Last_Station] <= B[5:0];
+                    end
+                    else begin
+                        Qk[Last_Station] <= valid;
+                        Vk[Last_Station] <= B;
+                    end
+                    error <= no_error;
+                end
+
+                else begin
+                    error <= all_rs_busy;
+                end
+
             end
         end
     end
