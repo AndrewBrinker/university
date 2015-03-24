@@ -64,16 +64,11 @@ module instruction_queue (
             RS_Holding[i]  <= CLEAR;
             Status[i]      <= CLEAR;
         end
-        // R1 + R4 => R2
-        Instruction_Memory[0] <= {ADDER, alu_add, 5'b00001, 5'b00100, 5'b00010, 11'b0};
-        // R2 + R7 => R3
-        Instruction_Memory[1] <= {ADDER, alu_add, 5'b00010, 5'b00111, 5'b00011, 11'b0};
-        // R3 + R10 => R4
-        Instruction_Memory[2] <= {ADDER, alu_add, 5'b00011, 5'b01010, 5'b00100, 11'b0};
-        // R4 + R13 => R5
-        Instruction_Memory[3] <= {ADDER, alu_add, 5'b00100, 5'b01101, 5'b00101, 11'b0};
-        // R5 + R16 => R6
-        Instruction_Memory[4] <= {ADDER, alu_add, 5'b00101, 5'b10000, 5'b00110, 11'b0};
+        Instruction_Memory[0] <= {ADDER, alu_add, 5'b00001, 5'b00100, 5'b00010, 11'b0}; // R1 + R4  => R2
+        Instruction_Memory[1] <= {ADDER, alu_add, 5'b00010, 5'b00111, 5'b00011, 11'b0}; // R2 + R7  => R3
+        Instruction_Memory[2] <= {ADDER, alu_add, 5'b00011, 5'b01010, 5'b00100, 11'b0}; // R3 + R10 => R4
+        Instruction_Memory[3] <= {ADDER, alu_add, 5'b00100, 5'b01101, 5'b00101, 11'b0}; // R4 + R13 => R5
+        Instruction_Memory[4] <= {ADDER, alu_add, 5'b00101, 5'b10000, 5'b00110, 11'b0}; // R5 + R16 => R6
         for (i = 5; i < 32; i = i + 1) begin
             Instruction_Memory[i] <= {ADDER, alu_add, 5'b00000, 5'b00000, 5'b00000, 11'b0};
         end
@@ -160,9 +155,9 @@ module instruction_queue (
                     // For each item in the queue
                     for (j = i; j < Queue_End; j = j + 1) begin
                         // Move the item up one step
-                        Instruction[j] = Instruction[j+1];
-                        Status[j]      = Status[j+1];
-                        RS_Holding[j]  = RS_Holding[j+1];
+                        Instruction[j] = Instruction[j + 1];
+                        Status[j]      = Status[j + 1];
+                        RS_Holding[j]  = RS_Holding[j + 1];
                     end
 
                     // Clear out the old head of the queue.
@@ -171,7 +166,7 @@ module instruction_queue (
                     RS_Holding[Queue_End - 1]  = CLEAR;
 
                     // Move to the next item.
-                    Queue_End = Queue_End-1;
+                    Queue_End = Queue_End - 1;
                 end
             end
         end

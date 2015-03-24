@@ -1,8 +1,11 @@
 module adders (
-        input  wire clock, issue,
+        input  wire clock,
+                    issue,
 
-        input  wire signed [31:0] A, B,
-        input  wire A_invalid, B_invalid,
+        input  wire signed [31:0] A,
+                                  B,
+        input  wire A_invalid,
+                    B_invalid,
         input  wire [5:0] opcode,
 
         input  wire CDB_xmit,
@@ -42,17 +45,19 @@ module adders (
     parameter alu_not      = 3'b110;
     parameter alu_xor      = 3'b111;
 
-    reg signed [31:0] CDB_data_out;
-    reg [5:0] CDB_source_out;
-    reg CDB_write_out;
-    reg [5:0] operation [2:0];
-    reg [5:0] Qj [2:0], Qk [2:0];
-    reg signed [31:0] Vj [2:0], Vk [2:0];
-    reg Busy [2:0];
-    reg Unit_Busy;
-    reg [1:0] adder_calculating;
-    reg [5:0] RS_num_of [2:0];
-    reg [1:0] Priority_Station;
+    reg  signed [31:0] CDB_data_out;
+    reg          [5:0] CDB_source_out;
+    reg                CDB_write_out;
+    reg  [5:0] operation [2:0];
+    reg  [5:0] Qj [2:0],
+               Qk [2:0];
+    reg  signed [31:0] Vj [2:0],
+                       Vk [2:0];
+    reg  Busy [2:0];
+    reg  Unit_Busy;
+    reg  [1:0] adder_calculating;
+    reg  [5:0] RS_num_of [2:0];
+    reg  [1:0] Priority_Station;
     wire [1:0] Second_Station;
     wire [1:0] Last_Station;
     wire [5:0] RS_availability_of_Second_or_Last;
@@ -62,7 +67,7 @@ module adders (
     assign CDB_source = CDB_xmit ? CDB_source_out : disconnected;
     assign CDB_write  = CDB_xmit ? CDB_write_out  : disconnected;
 
-    assign available  = ~(Busy[0] & Busy[1] & Busy[2]);
+    assign available = ~(Busy[0] & Busy[1] & Busy[2]);
     assign RS_avalaibility_of_Last = ~Busy[Last_Station] ?
                 RS_num_of[Last_Station] : no_rs;
     assign RS_availability_of_Second_or_Last = ~Busy[Second_Station] ?
@@ -72,7 +77,7 @@ module adders (
     assign RS_executing = Unit_Busy ?
                 RS_num_of[adder_calculating] : no_rs;
 
-    mod3counter mod3count1 (
+    mod3counter mod (
         .num(Priority_Station),
         .mod3num(Second_Station)
     );
