@@ -245,7 +245,7 @@ module adders (
                         Qk[Priority_Station] <= valid;
                         Vk[Priority_Station] <= B;
                     end
-                    error = no_error;
+                    error <= no_error;
                 end
 
                 else if (~Busy[Second_Station]) begin
