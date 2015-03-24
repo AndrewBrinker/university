@@ -270,7 +270,7 @@ module adders (
                         end
                     end
                     else begin
-                        error =  all_rs_busy;
+                        error <= all_rs_busy;
                     end
                 end
             end

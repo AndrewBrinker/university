@@ -74,9 +74,7 @@ module tomasulo ();
 		.dest(dest_address),
 		.In_data(cdb_data),
 		.In_source(cdb_source),
-
 		.RS_calculating_value(adder_rs_available),
-
 		.write(cdb_write),
 		.A_out(a),
 		.B_out(b),
