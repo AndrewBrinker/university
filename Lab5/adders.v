@@ -126,6 +126,7 @@ module adders (
                 Unit_Busy         <= in_use;
                 CDB_source_out    <= RS_num_of[Priority_Station];
                 CDB_write_out     <= ready;
+                CDB_rts           <= 1;
                 adder_calculating <= Priority_Station;
             end
             else if (Busy[Second_Station] &&
@@ -144,6 +145,7 @@ module adders (
                 Unit_Busy         <= in_use;
                 CDB_source_out    <= RS_num_of[Second_Station];
                 CDB_write_out     <= ready;
+                CDB_rts           <= 1;
                 adder_calculating <= Second_Station;
             end
             else if (Busy[Last_Station] &&
@@ -162,6 +164,7 @@ module adders (
                 Unit_Busy         <= in_use;
                 CDB_source_out    <= RS_num_of[Last_Station];
                 CDB_write_out     <= ready;
+                CDB_rts           <= 1;
                 adder_calculating <= Last_Station;
             end
         end

@@ -1,4 +1,4 @@
-module instruction_queue(
+module instruction_queue (
 		input wire clock,
 		input wire issue_error,
 		input wire adder_available,
