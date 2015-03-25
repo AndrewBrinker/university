@@ -1,6 +1,9 @@
 `timescale 1ns / 1ps
+`include "adders.v"
+`include "instruction_queue.v"
+`include "Registers.v"
 
-module tomasulo ();
+module tomasulo;
     parameter CLEAR = 0;
     reg cdb_xmit;
     reg clk;
@@ -25,6 +28,13 @@ module tomasulo ();
     wire [31:0] cdb_data;
 
     initial begin
+        $dumpfile("test.vcd");
+        $dumpvars(0, cdb_xmit, clk, issue_error, adder_available,
+                     adder_rs_available, rs_issued, rs_executing_adder, opcode,
+                     execution_unit, dest_address, a_address, b_address, issue,
+                     a, b, a_invalid, b_invalid, cdb_rts, cdb_write, cdb_source,
+                     cdb_data, adder, registers, instructions);
+
         clk <= 0;
         forever begin
             #10 clk <= ~clk;

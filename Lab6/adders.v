@@ -1,3 +1,5 @@
+`include "mod3counter.v"
+
 module adders (
         input  wire clock,
                     issue,
@@ -137,7 +139,6 @@ module adders (
                 CDB_write_out     <= ready;
                 CDB_rts           <= 1;
                 adder_calculating <= First_Station;
-                First_Station     <= First_Station + 1;
             end
             else if (Busy[Second_Station] &&
                      Qj[Second_Station] == valid &&
@@ -157,7 +158,6 @@ module adders (
                 CDB_write_out     <= ready;
                 CDB_rts           <= 1;
                 adder_calculating <= Second_Station;
-                Second_Station    <= Second_Station + 1;
             end
             else if (Busy[Third_Station] &&
                      Qj[Third_Station] == valid &&
@@ -177,7 +177,6 @@ module adders (
                 CDB_write_out     <= ready;
                 CDB_rts           <= 1;
                 adder_calculating <= Third_Station;
-                Third_Station     <= Third_Station + 1;
             end
         end
     end
