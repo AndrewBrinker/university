@@ -115,6 +115,11 @@ module instruction_queue (
             end
         end
     end
+	 
+	 always @(negedge clock) begin
+	   	issue <= FALSE;
+			issued_this_clock <= FALSE;
+	 end
 
     // Whenever the reservation station status changes
     always @ (RS_issued || RS_executing_adder) begin
