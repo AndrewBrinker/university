@@ -1,3 +1,5 @@
+`include "mod3counter.v"
+
 module adders (
         input  wire clock,
                     issue,
@@ -57,9 +59,9 @@ module adders (
     reg Unit_Busy;
     reg [1:0] adder_calculating;
     reg [5:0] RS_num_of [2:0];
-    reg [1:0] First_Station;
-    reg [1:0] Second_Station;
-    reg [1:0] Third_Station;
+    reg  [1:0] First_Station;
+    wire [1:0] Second_Station;
+    wire [1:0] Third_Station;
 
     assign CDB_data   = CDB_xmit ? CDB_data_out   : disconnected;
     assign CDB_source = CDB_xmit ? CDB_source_out : disconnected;
@@ -76,25 +78,20 @@ module adders (
 
     assign RS_executing = Unit_Busy ? RS_num_of[adder_calculating] : no_rs;
 
-    always @ * begin
-        if (First_Station == 2'b11) begin
-            Second_Station <= 2'b01;
-        end
-        else begin
-            Second_Station <= (First_Station + 1) % 3;
-        end
-    end
+    mod3counter mod1 (
+        .num(First_Station),
+        .mod3num(Second_Station)
+    );
 
-    always @ * begin
-        if (Second_Station == 2'b11) begin
-            Third_Station <= 2'b01;
-        end
-        else begin
-            Third_Station <= (Second_Station + 1) % 3;
-        end
-    end
+    mod3counter mod2 (
+        .num(Second_Station),
+        .mod3num(Third_Station)
+    );
 
     initial begin
+        $dumpfile("test.vcd");
+        $dumpvars(0, First_Station, Second_Station, Third_Station);
+
         CDB_rts           <= not_ready;
         CDB_data_out      <= clear;
         CDB_source_out    <= no_rs;
@@ -145,7 +142,6 @@ module adders (
                 CDB_write_out     <= ready;
                 CDB_rts           <= 1;
                 adder_calculating <= First_Station;
-                First_Station     <= First_Station + 1;
             end
             else if (Busy[Second_Station] &&
                      Qj[Second_Station] == valid &&
@@ -165,7 +161,6 @@ module adders (
                 CDB_write_out     <= ready;
                 CDB_rts           <= 1;
                 adder_calculating <= Second_Station;
-                Second_Station    <= Second_Station + 1;
             end
             else if (Busy[Third_Station] &&
                      Qj[Third_Station] == valid &&
@@ -185,7 +180,6 @@ module adders (
                 CDB_write_out     <= ready;
                 CDB_rts           <= 1;
                 adder_calculating <= Third_Station;
-                Third_Station     <= Third_Station + 1;
             end
         end
     end
@@ -283,7 +277,7 @@ module adders (
                 error <= no_error;
             end
             else begin
-                error <= Busy[First_Station]  &
+                error <= Busy[First_Station] &
                          Busy[Second_Station] &
                          Busy[Third_Station];
             end
