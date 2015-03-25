@@ -1,5 +1,3 @@
-`include "mod3counter.v"
-
 module adders (
         input  wire clock,
                     issue,
@@ -47,21 +45,21 @@ module adders (
     parameter alu_not      = 3'b110;
     parameter alu_xor      = 3'b111;
 
-    reg  signed [31:0] CDB_data_out;
-    reg          [5:0] CDB_source_out;
-    reg                CDB_write_out;
-    reg  [5:0] operation [2:0];
-    reg  [5:0] Qj [2:0],
-               Qk [2:0];
-    reg  signed [31:0] Vj [2:0],
-                       Vk [2:0];
-    reg  Busy [2:0];
-    reg  Unit_Busy;
-    reg  [1:0] adder_calculating;
-    reg  [5:0] RS_num_of [2:0];
-    reg  [1:0] First_Station;
-    wire [1:0] Second_Station;
-    wire [1:0] Third_Station;
+    reg signed [31:0] CDB_data_out;
+    reg         [5:0] CDB_source_out;
+    reg               CDB_write_out;
+    reg [5:0] operation [2:0];
+    reg [5:0] Qj [2:0],
+              Qk [2:0];
+    reg signed [31:0] Vj [2:0],
+                      Vk [2:0];
+    reg Busy [2:0];
+    reg Unit_Busy;
+    reg [1:0] adder_calculating;
+    reg [5:0] RS_num_of [2:0];
+    reg [1:0] First_Station;
+    reg [1:0] Second_Station;
+    reg [1:0] Third_Station;
 
     assign CDB_data   = CDB_xmit ? CDB_data_out   : disconnected;
     assign CDB_source = CDB_xmit ? CDB_source_out : disconnected;
@@ -78,15 +76,23 @@ module adders (
 
     assign RS_executing = Unit_Busy ? RS_num_of[adder_calculating] : no_rs;
 
-    mod3counter mod1 (
-        .num(First_Station),
-        .mod3num(Second_Station)
-    );
+    always @ * begin
+        if (First_Station == 2'b11) begin
+            Second_Station <= 2'b01;
+        end
+        else begin
+            Second_Station <= (First_Station + 1) % 3;
+        end
+    end
 
-    mod3counter mod2 (
-        .num(Second_Station),
-        .mod3num(Third_Station)
-    );
+    always @ * begin
+        if (Second_Station == 2'b11) begin
+            Third_Station <= 2'b01;
+        end
+        else begin
+            Third_Station <= (Second_Station + 1) % 3;
+        end
+    end
 
     initial begin
         CDB_rts           <= not_ready;
