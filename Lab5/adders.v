@@ -1,8 +1,13 @@
-module adders (
-        input  wire clock, issue,
+`include "mod3counter.v"
 
-        input  wire signed [31:0] A, B,
-        input  wire A_invalid, B_invalid,
+module adders (
+        input  wire clock,
+                    issue,
+
+        input  wire signed [31:0] A,
+                                  B,
+        input  wire A_invalid,
+                    B_invalid,
         input  wire [5:0] opcode,
 
         input  wire CDB_xmit,
@@ -24,7 +29,7 @@ module adders (
     parameter none         = 2'b00;
     parameter valid        = 6'b000000;
     parameter no_error     = 1'b0;
-    parameter all_rs_bus   = 1'b1;
+    parameter all_rs_busy  = 1'b1;
     parameter not_issued   = 6'b000000;
     parameter not_busy     = 1'b0;
     parameter in_use       = 1'b1;
@@ -43,38 +48,44 @@ module adders (
     parameter alu_xor      = 3'b111;
 
     reg signed [31:0] CDB_data_out;
-    reg [5:0] CDB_source_out;
-    reg CDB_write_out;
+    reg         [5:0] CDB_source_out;
+    reg               CDB_write_out;
     reg [5:0] operation [2:0];
-    reg [5:0] Qj [2:0], Qk [2:0];
-    reg signed [31:0] Vj [2:0], Vk [2:0];
+    reg [5:0] Qj [2:0],
+              Qk [2:0];
+    reg signed [31:0] Vj [2:0],
+                      Vk [2:0];
     reg Busy [2:0];
     reg Unit_Busy;
     reg [1:0] adder_calculating;
     reg [5:0] RS_num_of [2:0];
-    reg [1:0] Priority_Station;
+    reg  [1:0] First_Station;
     wire [1:0] Second_Station;
-    wire [1:0] Last_Station;
-    wire [5:0] RS_availability_of_Second_or_Last;
-    wire [5:0] RS_availability_of_Last;
+    wire [1:0] Third_Station;
 
     assign CDB_data   = CDB_xmit ? CDB_data_out   : disconnected;
     assign CDB_source = CDB_xmit ? CDB_source_out : disconnected;
     assign CDB_write  = CDB_xmit ? CDB_write_out  : disconnected;
 
-    assign available  = ~(Busy[0] & Busy[1] & Busy[2]);
-    assign RS_avalaibility_of_Last = ~Busy[Last_Station] ?
-                RS_num_of[Last_Station] : no_rs;
-    assign RS_availability_of_Second_or_Last = ~Busy[Second_Station] ?
-                RS_num_of[Second_Station] : RS_num_of[Last_Station];
-    assign RS_available = ~Busy[Priority_Station] ?
-                RS_num_of[Priority_Station] : RS_availability_of_Second_or_Last;
-    assign RS_executing = Unit_Busy ?
-                RS_num_of[adder_calculating] : no_rs;
+    assign available = ~(Busy[First_Station]  &
+                         Busy[Second_Station] &
+                         Busy[Third_Station]);
 
-    mod3counter mod3count1 (
-        .num(Priority_Station),
+    assign RS_available = ~Busy[First_Station]  ? RS_num_of[First_Station]
+                        : ~Busy[Second_Station] ? RS_num_of[Second_Station]
+                        : ~Busy[Third_Station]  ? RS_num_of[Third_Station]
+                        : no_rs;
+
+    assign RS_executing = Unit_Busy ? RS_num_of[adder_calculating] : no_rs;
+
+    mod3counter mod1 (
+        .num(First_Station),
         .mod3num(Second_Station)
+    );
+
+    mod3counter mod2 (
+        .num(Second_Station),
+        .mod3num(Third_Station)
     );
 
     initial begin
@@ -82,7 +93,7 @@ module adders (
         CDB_data_out      <= clear;
         CDB_source_out    <= no_rs;
         CDB_write_out     <= not_ready;
-        Priority_Station  <= no_rs;
+        First_Station     <= no_rs;
         Unit_Busy         <= not_busy;
         Busy[0]           <= not_busy;
         Busy[1]           <= not_busy;
@@ -110,24 +121,24 @@ module adders (
 
     always @ (posedge(clock)) begin
         if (~Unit_Busy) begin
-            if (Busy[Priority_Station] &&
-                Qj[Priority_Station] == valid &&
-                Qk[Priority_Station] == valid) begin
-                case (operation[Priority_Station])
-                    alu_add: CDB_data_out <= Vj[Priority_Station] + Vk[Priority_Station];
-                    alu_sub: CDB_data_out <= Vj[Priority_Station] - Vk[Priority_Station];
-                    alu_or:  CDB_data_out <= Vj[Priority_Station] | Vk[Priority_Station];
-                    alu_and: CDB_data_out <= Vj[Priority_Station] & Vk[Priority_Station];
-                    alu_xor: CDB_data_out <= Vj[Priority_Station] ^ Vk[Priority_Station];
-                    alu_not: CDB_data_out <= ~Vj[Priority_Station];
+            if (Busy[First_Station] &&
+                Qj[First_Station] == valid &&
+                Qk[First_Station] == valid) begin
+                case (operation[First_Station])
+                    alu_add: CDB_data_out <= Vj[First_Station] + Vk[First_Station];
+                    alu_sub: CDB_data_out <= Vj[First_Station] - Vk[First_Station];
+                    alu_or:  CDB_data_out <= Vj[First_Station] | Vk[First_Station];
+                    alu_and: CDB_data_out <= Vj[First_Station] & Vk[First_Station];
+                    alu_xor: CDB_data_out <= Vj[First_Station] ^ Vk[First_Station];
+                    alu_not: CDB_data_out <= ~Vj[First_Station];
                 endcase
 
                 #delay;
                 Unit_Busy         <= in_use;
-                CDB_source_out    <= RS_num_of[Priority_Station];
+                CDB_source_out    <= RS_num_of[First_Station];
                 CDB_write_out     <= ready;
                 CDB_rts           <= 1;
-                adder_calculating <= Priority_Station;
+                adder_calculating <= First_Station;
             end
             else if (Busy[Second_Station] &&
                      Qj[Second_Station] == valid &&
@@ -148,24 +159,24 @@ module adders (
                 CDB_rts           <= 1;
                 adder_calculating <= Second_Station;
             end
-            else if (Busy[Last_Station] &&
-                     Qj[Last_Station] == valid &&
-                     Qk[Last_Station] == valid) begin
-                case (operation[Last_Station])
-                    alu_add: CDB_data_out <= Vj[Last_Station] + Vk[Last_Station];
-                    alu_sub: CDB_data_out <= Vj[Last_Station] - Vk[Last_Station];
-                    alu_or:  CDB_data_out <= Vj[Last_Station] | Vk[Last_Station];
-                    alu_and: CDB_data_out <= Vj[Last_Station] & Vk[Last_Station];
-                    alu_xor: CDB_data_out <= Vj[Last_Station] ^ Vk[Last_Station];
-                    alu_not: CDB_data_out <= ~Vj[Last_Station];
+            else if (Busy[Third_Station] &&
+                     Qj[Third_Station] == valid &&
+                     Qk[Third_Station] == valid) begin
+                case (operation[Third_Station])
+                    alu_add: CDB_data_out <= Vj[Third_Station] + Vk[Third_Station];
+                    alu_sub: CDB_data_out <= Vj[Third_Station] - Vk[Third_Station];
+                    alu_or:  CDB_data_out <= Vj[Third_Station] | Vk[Third_Station];
+                    alu_and: CDB_data_out <= Vj[Third_Station] & Vk[Third_Station];
+                    alu_xor: CDB_data_out <= Vj[Third_Station] ^ Vk[Third_Station];
+                    alu_not: CDB_data_out <= ~Vj[Third_Station];
                 endcase
 
                 #delay;
                 Unit_Busy         <= in_use;
-                CDB_source_out    <= RS_num_of[Last_Station];
+                CDB_source_out    <= RS_num_of[Third_Station];
                 CDB_write_out     <= ready;
                 CDB_rts           <= 1;
-                adder_calculating <= Last_Station;
+                adder_calculating <= Third_Station;
             end
         end
     end
@@ -173,106 +184,99 @@ module adders (
     always @ (negedge(clock)) begin
         if (CDB_write) begin
             #update_delay;
-            if (Qj[Priority_Station] == CDB_source) begin
-                Vj[Priority_Station] <= CDB_data;
-                Qj[Priority_Station] <= valid;
+            if (Qj[First_Station] == CDB_source) begin
+                Vj[First_Station] <= CDB_data;
+                Qj[First_Station] <= valid;
             end
-            if (Qk[Priority_Station] == CDB_source) begin
-                Vk[Priority_Station] <= CDB_data;
-                Qk[Priority_Station] <= valid;
+            if (Qk[First_Station] == CDB_source) begin
+                Vk[First_Station] <= CDB_data;
+                Qk[First_Station] <= valid;
             end
-            else if (Qj[Second_Station] == CDB_source) begin
-                    Vj[Second_Station] <= CDB_data;
-                    Qj[Second_Station] <= valid;
-                end
+            if (Qj[Second_Station] == CDB_source) begin
+                Vj[Second_Station] <= CDB_data;
+                Qj[Second_Station] <= valid;
             end
             if (Qk[Second_Station] == CDB_source) begin
                 Vk[Second_Station] <= CDB_data;
                 Qk[Second_Station] <= valid;
             end
-            else begin
-                if(Qj[Last_Station] == CDB_source) begin
-                    Vj[Last_Station] <= CDB_data;
-                    Qj[Last_Station] <= valid;
-                end
-                if(Qk[Last_Station] == CDB_source) begin
-                    Vk[Last_Station] <= CDB_data;
-                    Qk[Last_Station] <= valid;
-                end
+            if(Qj[Third_Station] == CDB_source) begin
+                Vj[Third_Station] <= CDB_data;
+                Qj[Third_Station] <= valid;
+            end
+            if(Qk[Third_Station] == CDB_source) begin
+                Vk[Third_Station] <= CDB_data;
+                Qk[Third_Station] <= valid;
             end
         end
     end
 
     always @ (negedge(clock)) begin
         if (issue) begin
-            if (RS_available) begin
-                if (~Busy[Priority_Station]) begin
-                    Busy[Priority_Station] <= in_use;
-                    operation[Priority_Station] <= opcode;
-                    issued <= RS_num_of[Priority_Station];
-                    if (A_invalid) begin
-                        Qj[Priority_Station] <= A[5:0];
-                    end
-                    else begin
-                        Qj[Priority_Station] <= valid;
-                        Vj[Priority_Station] <= A;
-                    end
-                    if (B_invalid) begin
-                        Qk[Priority_Station] <= B[5:0];
-                    end
-                    else begin
-                        Qk[Priority_Station] <= valid;
-                        Vk[Priority_Station] <= B;
-                    end
-                    error = no_error;
+            if (~Busy[First_Station]) begin
+                Busy[First_Station] <= in_use;
+                operation[First_Station] <= opcode;
+                issued <= RS_num_of[First_Station];
+                if (A_invalid) begin
+                    Qj[First_Station] <= A[5:0];
                 end
                 else begin
-                    if (~Busy[Second_Station]) begin
-                        Busy[Second_Station] <= in_use;
-                        issued <= RS_num_of[Second_Station];
-                        operation[Second_Station] <= opcode;
-                        if (A_invalid) begin
-                            Qj[Second_Station] <= A[5:0];
-                        end
-                        else begin
-                            Qj[Second_Station] <= valid;
-                            Vj[Second_Station] <= A;
-                        end
-                        if (B_invalid) begin
-                            Qk[Second_Station] <= B[5:0];
-                        end
-                        else begin
-                            Qk[Second_Station] <= valid;
-                            Vk[Second_Station] <= B;
-                        end
-                        error <= no_error;
-                    end
-                    else begin
-                        if (~Busy[Last_Station]) begin
-                            Busy[Last_Station] <= in_use;
-                            issued <= RS_num_of[Last_Station];
-                            operation[Last_Station] <= opcode;
-                            operation[Last_Station] <= opcode;
-                        if (A_invalid) begin
-                            Qj[Last_Station] <= A[5:0];
-                        end
-                        else begin
-                            Qj[Last_Station] <= valid;
-                            Vj[Last_Station] <= A;
-                            if (B_invalid) begin
-                                Qk[Last_Station] <= B[5:0];
-                            end
-                            else begin
-                                Qk[Last_Station] <= valid;
-                                Vk[Last_Station] <= B;
-                            end
-                            error <= no_error;
-                        end
-                    end
-                    else begin
-                        error =  all_rs_busy;
-                    end
+                    Qj[First_Station] <= valid;
+                    Vj[First_Station] <= A;
                 end
+                if (B_invalid) begin
+                    Qk[First_Station] <= B[5:0];
+                end
+                else begin
+                    Qk[First_Station] <= valid;
+                    Vk[First_Station] <= B;
+                end
+                error <= no_error;
+            end
+            else if (~Busy[Second_Station]) begin
+                Busy[Second_Station] <= in_use;
+                issued <= RS_num_of[Second_Station];
+                operation[Second_Station] <= opcode;
+                if (A_invalid) begin
+                    Qj[Second_Station] <= A[5:0];
+                end
+                else begin
+                    Qj[Second_Station] <= valid;
+                    Vj[Second_Station] <= A;
+                end
+                if (B_invalid) begin
+                    Qk[Second_Station] <= B[5:0];
+                end
+                else begin
+                    Qk[Second_Station] <= valid;
+                    Vk[Second_Station] <= B;
+                end
+                error <= no_error;
+            end
+            else if (~Busy[Third_Station]) begin
+                Busy[Third_Station] <= in_use;
+                issued <= RS_num_of[Third_Station];
+                operation[Third_Station] <= opcode;
+                if (A_invalid) begin
+                    Qj[Third_Station] <= A[5:0];
+                end
+                else begin
+                    Qj[Third_Station] <= valid;
+                    Vj[Third_Station] <= A;
+                end
+                if (B_invalid) begin
+                    Qk[Third_Station] <= B[5:0];
+                end
+                else begin
+                    Qk[Third_Station] <= valid;
+                    Vk[Third_Station] <= B;
+                end
+                error <= no_error;
+            end
+            else begin
+                error <= Busy[First_Station] &
+                         Busy[Second_Station] &
+                         Busy[Third_Station];
             end
         end
     end

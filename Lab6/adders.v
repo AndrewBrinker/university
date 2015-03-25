@@ -89,9 +89,6 @@ module adders (
     );
 
     initial begin
-        $dumpfile("test.vcd");
-        $dumpvars(0, First_Station, Second_Station, Third_Station);
-
         CDB_rts           <= not_ready;
         CDB_data_out      <= clear;
         CDB_source_out    <= no_rs;

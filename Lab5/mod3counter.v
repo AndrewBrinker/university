@@ -4,6 +4,10 @@ module mod3counter(
     );
 
     always @ * begin
+        if (num == 2'b11) begin
+            mod3num = 2'b01;
+        end
+
         mod3num = (num + 1) % 3;
     end
 endmodule
