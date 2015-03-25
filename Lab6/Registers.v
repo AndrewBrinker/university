@@ -58,10 +58,7 @@ module Registers (
         // Handle updates
         if (write) begin
             for (i = 0; i < num_of_regs; i = i + 1) begin
-                $display("Redirection[%0d]: %0d", i, redirection[i]);
-                $display("In_source: %0d", In_source);
                 if (redirection[i] == In_source) begin
-                    $display("Match!");
                     redirection[i] <= not_redirected;
                     reg_file[i]    <= In_data;
                 end

@@ -64,11 +64,12 @@ module instruction_queue (
             RS_Holding[i]  <= CLEAR;
             Status[i]      <= CLEAR;
         end
-        Instruction_Memory[0] <= {ADDER, alu_add, 5'b00001, 5'b00100, 5'b00010, 11'b0}; // R1 + R4  => R2
-        Instruction_Memory[1] <= {ADDER, alu_add, 5'b00010, 5'b00111, 5'b00011, 11'b0}; // R2 + R7  => R3
-        Instruction_Memory[2] <= {ADDER, alu_add, 5'b00011, 5'b01010, 5'b00100, 11'b0}; // R3 + R10 => R4
-        Instruction_Memory[3] <= {ADDER, alu_add, 5'b00100, 5'b01101, 5'b00101, 11'b0}; // R4 + R13 => R5
-        Instruction_Memory[4] <= {ADDER, alu_add, 5'b00101, 5'b10000, 5'b00110, 11'b0}; // R5 + R16 => R6
+        Instruction_Memory[0] <= {ADDER, alu_add, 5'b00000, 5'b00001, 5'b00001, 11'b0}; // R0 + R1  => R1 (0+1=1)
+        Instruction_Memory[1] <= {ADDER, alu_add, 5'b00001, 5'b00100, 5'b00010, 11'b0}; // R1 + R4  => R2 (1+4=5)
+        Instruction_Memory[2] <= {ADDER, alu_add, 5'b00010, 5'b00111, 5'b00011, 11'b0}; // R2 + R7  => R3 (5+7=12)
+        Instruction_Memory[3] <= {ADDER, alu_add, 5'b00011, 5'b01010, 5'b00100, 11'b0}; // R3 + R10 => R4 (12+10=22)
+        Instruction_Memory[4] <= {ADDER, alu_add, 5'b00100, 5'b01101, 5'b00101, 11'b0}; // R4 + R13 => R5 (22+13=35)
+        Instruction_Memory[5] <= {ADDER, alu_add, 5'b00101, 5'b10000, 5'b00110, 11'b0}; // R5 + R16 => R6 (35+16=41)
     end
 
     always @ (posedge clock) begin
@@ -115,7 +116,7 @@ module instruction_queue (
             end
         end
     end
-	 
+
 	 always @(negedge clock) begin
 	   	issue <= FALSE;
 			issued_this_clock <= FALSE;
