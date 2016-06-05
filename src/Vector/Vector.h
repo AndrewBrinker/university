@@ -7,34 +7,34 @@
 
 template <typename T>
 class Vector {
- public:
-  typedef T* iterator;
+    public:
+        typedef T* iterator;
 
-  Vector();
-  Vector(const Vector &v);
-  Vector(unsigned int n, T x);
-  ~Vector();
+        Vector();
+        Vector(const Vector &v);
+        Vector(unsigned int n, T x);
+        ~Vector();
 
-  Vector & operator=(const Vector &v);
-  T & operator[](unsigned int i);
+        Vector & operator=(const Vector &v);
+        T & operator[](unsigned int i);
 
-  unsigned int capacity() const;
-  unsigned int size() const;
-  bool empty() const;
-  void reserve(unsigned int min_cap);
-  void resize(unsigned int min_size, T k = T());
-  T& front() const;
-  T& back() const;
-  void pop_back();
-  void push_back(T x);
+        unsigned int capacity() const;
+        unsigned int size() const;
+        bool empty() const;
+        void reserve(unsigned int min_cap);
+        void resize(unsigned int min_size, T k = T());
+        T& front() const;
+        T& back() const;
+        void pop_back();
+        void push_back(T x);
 
-  iterator begin() const;
-  iterator end() const;
+        iterator begin() const;
+        iterator end() const;
 
- private:
-  unsigned int _capacity;
-  unsigned int _size;
-  T *data;
+    private:
+        unsigned int _capacity;
+        unsigned int _size;
+        T *data;
 };
 
 /**
@@ -49,12 +49,12 @@ Vector<T>::Vector(): _capacity(0), _size(0), data(0) {}
  */
 template <typename T>
 Vector<T>::Vector(const Vector &v) {
-  _capacity = v.capacity();
-  _size = v.size();
-  data = new T[_capacity];
-  for (unsigned int i = 0; i < _size; ++i) {
-    data[i] = v.data[i];
-  }
+    _capacity = v.capacity();
+    _size = v.size();
+    data = new T[_capacity];
+    for (unsigned int i = 0; i < _size; ++i) {
+        data[i] = v.data[i];
+    }
 }
 
 /**
@@ -64,10 +64,10 @@ Vector<T>::Vector(const Vector &v) {
  */
 template <typename T>
 Vector<T>::Vector(unsigned int n, T x): _capacity(n), _size(n) {
-  data = new T[n];
-  for (unsigned int i = 0; i < _size; ++i) {
-    data[i] = x;
-  }
+    data = new T[n];
+    for (unsigned int i = 0; i < _size; ++i) {
+        data[i] = x;
+    }
 }
 
 /**
@@ -75,7 +75,7 @@ Vector<T>::Vector(unsigned int n, T x): _capacity(n), _size(n) {
  */
 template <typename T>
 Vector<T>::~Vector() {
-  delete [] data;
+    delete [] data;
 }
 
 /**
@@ -85,17 +85,17 @@ Vector<T>::~Vector() {
  */
 template <typename T>
 Vector<T>& Vector<T>::operator=(const Vector &v) {
-  if (v.capacity() > _capacity) {
-    _capacity = v.capacity();
-  } else if (_capacity < v.size()) {
-    _capacity = (v.size() + 1);
-  }
-  _size = v.size();
-  data = new T[_capacity];
-  for (unsigned int i = 0; i < _size; ++i) {
-    data[i] = v.data[i];
-  }
-  return *this;
+    if (v.capacity() > _capacity) {
+        _capacity = v.capacity();
+    } else if (_capacity < v.size()) {
+        _capacity = (v.size() + 1);
+    }
+    _size = v.size();
+    data = new T[_capacity];
+    for (unsigned int i = 0; i < _size; ++i) {
+        data[i] = v.data[i];
+    }
+    return *this;
 }
 
 /**
@@ -105,7 +105,7 @@ Vector<T>& Vector<T>::operator=(const Vector &v) {
  */
 template <typename T>
 T & Vector<T>::operator[](unsigned int i) {
-  return data[i];
+    return data[i];
 }
 
 /**
@@ -132,7 +132,7 @@ unsigned int Vector<T>::size() const {
  */
 template <typename T>
 bool Vector<T>::empty() const {
-  return _size == 0;
+    return _size == 0;
 }
 
 /**
@@ -141,18 +141,18 @@ bool Vector<T>::empty() const {
  */
 template <typename T>
 void Vector<T>::reserve(unsigned int min_cap) {
-  if (_capacity >= min_cap) return;
-  if (data == 0) {
-    data = new T[min_cap];
-  } else {
-    T *old_data = data;
-    data = new T[min_cap];
-    for (unsigned int i = 0; i < _size; ++i) {
-      data[i] = old_data[i];
+    if (_capacity >= min_cap) return;
+    if (data == 0) {
+        data = new T[min_cap];
+    } else {
+        T *old_data = data;
+        data = new T[min_cap];
+        for (unsigned int i = 0; i < _size; ++i) {
+            data[i] = old_data[i];
+        }
+        delete [] old_data;
     }
-    delete [] old_data;
-  }
-  _capacity = min_cap;
+    _capacity = min_cap;
 }
 
 /**
@@ -162,15 +162,15 @@ void Vector<T>::reserve(unsigned int min_cap) {
  */
 template <typename T>
 void Vector<T>::resize(unsigned int min_size, T k) {
-  if (min_size > _capacity) {
-    reserve(min_size + 5);
-  }
-  if (min_size > _size) {
-    for (unsigned int i = _size; i < min_size; ++i) {
-      data[i] = k;
+    if (min_size > _capacity) {
+        reserve(min_size + 5);
     }
-  }
-  _size = min_size;
+    if (min_size > _size) {
+        for (unsigned int i = _size; i < min_size; ++i) {
+            data[i] = k;
+        }
+    }
+    _size = min_size;
 }
 
 /**
@@ -179,7 +179,7 @@ void Vector<T>::resize(unsigned int min_size, T k) {
  */
 template <typename T>
 T& Vector<T>::front() const {
-  return data[0];
+    return data[0];
 }
 
 /**
@@ -188,7 +188,7 @@ T& Vector<T>::front() const {
  */
 template <typename T>
 T& Vector<T>::back() const {
-  return data[_size - 1];
+    return data[_size - 1];
 }
 
 /**
@@ -196,7 +196,7 @@ T& Vector<T>::back() const {
  */
 template <typename T>
 void Vector<T>::pop_back() {
-  --_size;
+    --_size;
 }
 
 /**
@@ -205,8 +205,8 @@ void Vector<T>::pop_back() {
  */
 template <typename T>
 void Vector<T>::push_back(T x) {
-  resize(_size + 1);
-  data[_size - 1] = x;
+    resize(_size + 1);
+    data[_size - 1] = x;
 }
 
 /**
@@ -215,7 +215,7 @@ void Vector<T>::push_back(T x) {
  */
 template <typename T>
 typename Vector<T>::iterator Vector<T>::begin() const {
-  return data;
+    return data;
 }
 
 /**
@@ -224,9 +224,8 @@ typename Vector<T>::iterator Vector<T>::begin() const {
  */
 template <typename T>
 typename Vector<T>::iterator Vector<T>::end() const {
-  return data + _size;
+    return data + _size;
 }
-
 
 #endif   // VECTOR_H
 

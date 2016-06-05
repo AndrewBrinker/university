@@ -9,20 +9,20 @@
 
 template <typename T, typename Container = Vector<T>>
 class Stack {
- public:
-  Stack();
-  ~Stack();
+    public:
+        Stack();
+        ~Stack();
 
-  Stack<T> operator=(Stack<T> s1);
+        Stack<T> operator=(Stack<T> s1);
 
-  void push(const T x);
-  void pop();
-  T& top();
-  unsigned int size() const;
-  bool empty() const;
+        void push(const T x);
+        void pop();
+        T& top();
+        unsigned int size() const;
+        bool empty() const;
 
- private:
-  Container c1;
+    private:
+        Container c1;
 };
 
 /**
@@ -43,7 +43,7 @@ Stack<T, Container>::~Stack() {}
  */
 template <typename T, typename Container>
 void Stack<T, Container>::push(const T x) {
-  c1.push_back(x);
+    c1.push_back(x);
 }
 
 /**
@@ -51,7 +51,7 @@ void Stack<T, Container>::push(const T x) {
  */
 template <typename T, typename Container>
 void Stack<T, Container>::pop() {
-  c1.pop_back();
+    c1.pop_back();
 }
 
 /**
@@ -60,7 +60,7 @@ void Stack<T, Container>::pop() {
  */
 template <typename T, typename Container>
 T& Stack<T, Container>::top() {
-  return c1.back();
+    return c1.back();
 }
 
 /**
@@ -69,7 +69,7 @@ T& Stack<T, Container>::top() {
  */
 template <typename T, typename Container>
 unsigned int Stack<T, Container>::size() const {
-  return c1.size();
+    return c1.size();
 }
 
 /**
@@ -78,9 +78,8 @@ unsigned int Stack<T, Container>::size() const {
  */
 template <typename T, typename Container>
 bool Stack<T, Container>::empty() const {
-  return c1.empty();
+    return c1.empty();
 }
-
 
 #endif  // STACK_H
 

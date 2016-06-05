@@ -12,17 +12,17 @@
  */
 template <typename T>
 class ListIterator {
- public:
-  ListIterator();
-  explicit ListIterator(ListNode<T> temp);
+    public:
+        ListIterator();
+        explicit ListIterator(ListNode<T> temp);
 
-  T operator*();
-  ListIterator operator++();
-  ListIterator operator--();
-  bool operator==(const ListIterator it) const;
-  bool operator!=(const ListIterator it) const;
+        T operator*();
+        ListIterator operator++();
+        ListIterator operator--();
+        bool operator==(const ListIterator it) const;
+        bool operator!=(const ListIterator it) const;
 
-  ListNode<T> *link;
+        ListNode<T> *link;
 };
 
 /**
@@ -44,7 +44,7 @@ ListIterator<T>::ListIterator(ListNode<T> temp) : link(temp) {}
  */
 template <typename T>
 T ListIterator<T>::operator*() {
-  return link->x;
+    return link->x;
 }
 
 /**
@@ -53,8 +53,8 @@ T ListIterator<T>::operator*() {
  */
 template <typename T>
 ListIterator<T> ListIterator<T>::operator++() {
-  link = link->next;
-  return *this;
+    link = link->next;
+    return *this;
 }
 
 /**
@@ -63,8 +63,8 @@ ListIterator<T> ListIterator<T>::operator++() {
  */
 template <typename T>
 ListIterator<T> ListIterator<T>::operator--() {
-  link = link->prev;
-  return *this;
+    link = link->prev;
+    return *this;
 }
 
 /**
@@ -74,7 +74,7 @@ ListIterator<T> ListIterator<T>::operator--() {
  */
 template <typename T>
 bool ListIterator<T>::operator==(const ListIterator it) const {
-  return link == it.link;
+    return link == it.link;
 }
 
 /**
@@ -84,9 +84,8 @@ bool ListIterator<T>::operator==(const ListIterator it) const {
  */
 template <typename T>
 bool ListIterator<T>::operator!=(const ListIterator it) const {
-  return link != it.link;
+    return link != it.link;
 }
 
-
-#endif
+#endif  // LIST_ITERATOR_H
 

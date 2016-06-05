@@ -11,12 +11,12 @@
  */
 template <typename T>
 class ListNode {
- public:
-  explicit ListNode(T x);
+    public:
+        explicit ListNode(T x);
 
-  T x;
-  ListNode<T> *prev;
-  ListNode<T> *next;
+        T x;
+        ListNode<T> *prev;
+        ListNode<T> *next;
 };
 
 /**
@@ -27,6 +27,5 @@ class ListNode {
 template <typename T>
 ListNode<T>::ListNode(T x) : x(x), prev(0), next(0) {}
 
-
-#endif
+#endif  // LIST_NODE_H
 
