@@ -1,0 +1,6 @@
+E -> T D
+D -> + T D | e
+T -> F U
+U -> * F U | e
+F -> (E) | I
+I -> x | y | z

@@ -1,0 +1,18 @@
+# [PackageDev] target_format: plist, ext: tmLanguage
+---
+name: Grammar
+scopeName: source.grammar
+fileTypes: ["grammar"]
+uuid: add9d173-274b-4b22-abe1-3ab498a763ba
+
+patterns:
+- name: comment.line.number-sign
+  match: "(#).*$\n?"
+- name: keyword.control
+  match: "->"
+- name: constant.character
+  match: "[$|]"
+- name: entity.name
+  match: "[a-z+*(){}_'\"]"
+- name: entity.name.function
+  match: "[A-Z]"
