@@ -1,0 +1,41 @@
+$date
+	Mon Feb 02 11:34:26 2015
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1s
+$end
+$scope module mod3counter_test $end
+$var wire 2 ! num_out [1:0] $end
+$var reg 2 " num_in [1:0] $end
+$scope module mod3inc $end
+$var wire 2 # num [1:0] $end
+$var reg 2 $ mod3num [1:0] $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+#0
+$dumpvars
+b0 $
+b10 #
+b10 "
+b0 !
+$end
+#10
+b10 $
+b10 !
+b1 "
+b1 #
+#20
+b1 $
+b1 !
+b0 "
+b0 #
+#30
+b10 $
+b10 !
+b1 "
+b1 #
+#40
