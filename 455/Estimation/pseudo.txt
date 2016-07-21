@@ -1,0 +1,41 @@
+getRegressionCoefficients():
+    _x_avg    = 0.0
+    _y_avg    = 0.0
+    num_sum   = 0.0
+    denom_sum = 0.0
+    num       = 0.0
+    denom     = 0.0
+    for each pair in data:
+        num_sum   += pair.first * pair.second
+        denom_sum += square(pair.first)
+        _x_avg    += pair.first
+        _y_avg    += pair.second
+    _x_avg /= _n
+    _y_avg /= _n
+    num     = (num_sum - (_n * _x_avg * _y_avg))
+    denom   = (denom_sum - (_n * square(_x_avg)))
+    _beta_1 = num / denom
+    _beta_0 = _y_avg - (_beta_1 * _x_avg)
+    _yk     = _beta_0 + (_beta_1 * _xk)
+
+getStandardDeviation():
+    variance = 0.0
+    for each pair in data:
+        variance += square(pair.second - _beta_0 - (_beta_1 * pair.first))
+    variance /= (_n - 2)
+    _std_dev = sqrt(variance)
+
+getRange():
+    num   = square(_xk - _x_avg)
+    denom = 0.0
+    for each pair in data:
+        denom += square(pair.first - _x_avg)
+    square_root = sqrt(1.0 + (1.0 / _n) + (num / denom))
+    _range_seventy     = _t_seventy * _std_dev * square_root
+    _range_ninety      = _t_ninety  * _std_dev * square_root
+
+getPredictionIntervals():
+    _upi_seventy = _yk + _range_seventy
+    _upi_ninety  = _yk + _range_ninety
+    _lpi_seventy = _yk - _range_seventy
+    _lpi_ninety  = _yk - _range_ninety
