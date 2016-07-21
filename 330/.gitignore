@@ -2,4 +2,12 @@
 test
 build/
 lint/
-
+bin/test
+build/
+lint/
+*.dSYM/
+*.o
+shed
+bin/
+*.sublime-project
+*.sublime-workspace

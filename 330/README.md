@@ -1,4 +1,2 @@
-# 330 Example Work
-
-This code is example code for CSE 330 at CSUSB. DO NOT TURN IN THIS CODE AS YOUR OWN.
+# Code from CSE 330 at CSUSB
 
