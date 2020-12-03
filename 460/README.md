@@ -5,8 +5,8 @@ San Bernardino.
 
 ## Developers
 
-- Andrew Brinker
-- Anthony Sterrett
+- Andrew Lilley Brinker
+- Siobhán Sterrett
 
 ## Compilation
 
